@@ -9,10 +9,14 @@ Konvencija (kao istorijski podaci): oznaka sata = KRAJ sata, 01:00–24:00 lokal
 Dan prelaska na letnje vreme ima 23 sata, na zimsko 25 (oznaka 02:00 se tada javlja dva puta —
 jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sledeći dan).
 
-    python -m scraper.satno
+    python -m scraper.satno                  # jučerašnji dan (pokreće se posle ponoći)
+    python -m scraper.satno --dan 2026-10-09 # zadati dan
+    python -m scraper.satno --sve            # svi dani za koje postoje čitanja
+    python -m scraper.satno --spoji          # sve dane spoji u podaci/satno.parquet i .csv (lokalno)
 
-Izlaz: podaci/satno.parquet i .csv (stanica_id, ts, y, razlog, ts_utc), podaci/satno_smerovi.csv,
-podaci/satno_provera.csv (odstupanja zbira 24 sata od „juče").
+Izlaz za dan D (folder podaci/YYYY/MM/DD/): satno.csv (stanica_id, ts, y, razlog, ts_utc — po seriji),
+satno_smerovi.csv (po smeru), satno_provera.csv (samo ako zbir sati odstupa od „juče").
+Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv.
 """
 from __future__ import annotations
 
@@ -43,13 +47,26 @@ def kvar(state) -> str:
     return f"kvar_state_{state}"
 
 
-def ucitaj_snimke(folder: Path | None = None) -> pd.DataFrame:
-    folder = folder or konfig.SNIMCI
-    fajlovi = sorted(folder.glob("*.csv"))
+def _citaj_csv(fajlovi) -> pd.DataFrame:
+    fajlovi = list(fajlovi)
     if not fajlovi:
         return pd.DataFrame()
     return pd.concat([pd.read_csv(f, dtype={"location": str, "direction": str}, keep_default_na=False,
                                   na_values=[""]) for f in fajlovi], ignore_index=True)
+
+
+def ucitaj_snimke(dani, koren: Path | None = None) -> pd.DataFrame:
+    """Učitava čitanja (podaci/YYYY/MM/DD/HHMM.csv) za date lokalne dane."""
+    return _citaj_csv(f for d in dani for f in sorted(konfig.folder_dana(d, koren).glob("[0-9]*.csv")))
+
+
+def dani_sa_citanjima(koren: Path | None = None) -> list[date]:
+    koren = koren or konfig.PODACI
+    dani = set()
+    for f in koren.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/[0-9]*.csv"):
+        g, m, d = f.parts[-4:-1]
+        dani.add(date(int(g), int(m), int(d)))
+    return sorted(dani)
 
 
 def _vreme_brojaca(datum: str, vreme: str, citanje: datetime) -> datetime | None:
@@ -209,28 +226,72 @@ def satno_po_seriji(smerovi: pd.DataFrame) -> pd.DataFrame:
     return out.sort_values(["stanica_id", "ts_utc"]).reset_index(drop=True)
 
 
+def obradi_dan(d: date, koren: Path | None = None) -> pd.DataFrame:
+    """Računa dan d (potrebna su čitanja dana d i prvog čitanja dana d+1) i upisuje u folder dana."""
+    df = ucitaj_snimke([d, d + timedelta(days=1)], koren)
+    df = df[pd.to_datetime(df["vreme_citanja_utc"], utc=True).dt.tz_convert(konfig.TZ).dt.date >= d] \
+        if not df.empty else df
+    smerovi, provera = satno_po_smeru(df, do_dana=d + timedelta(days=1))
+    serije = satno_po_seriji(smerovi)
+    folder = konfig.folder_dana(d, koren)
+    if serije.empty:
+        log.info("%s: nema čitanja", d)
+        return serije
+    folder.mkdir(parents=True, exist_ok=True)
+    serije.to_csv(folder / "satno.csv", index=False)
+    smerovi.to_csv(folder / "satno_smerovi.csv", index=False)
+    if not provera.empty:
+        provera.to_csv(folder / "satno_provera.csv", index=False)
+        log.warning("%s: odstupanja zbira od „juče“: %d (satno_provera.csv)", d, len(provera))
+    log.info("%s: serija %d, sati %d, popunjeno %d, NaN %d %s", d, serije["stanica_id"].nunique(), len(serije),
+             serije["y"].notna().sum(), serije["y"].isna().sum(),
+             serije["razlog"].value_counts().to_dict() if serije["razlog"].notna().any() else "")
+    return serije
+
+
+def _ucitaj_satno(fajlovi) -> pd.DataFrame:
+    df = _citaj_csv(fajlovi)
+    if df.empty:
+        return df
+    df["stanica_id"] = df["stanica_id"].astype(str)
+    df["ts"] = pd.to_datetime(df["ts"])
+    df["ts_utc"] = pd.to_datetime(df["ts_utc"], utc=True)
+    df["y"] = df["y"].astype("float64")
+    return df.sort_values(["stanica_id", "ts_utc"]).reset_index(drop=True)
+
+
+def spoji_mesec(d: date, koren: Path | None = None) -> None:
+    folder = konfig.folder_meseca(d, koren)
+    df = _ucitaj_satno(sorted(folder.glob("[0-9][0-9]/satno.csv")))
+    if df.empty:
+        return
+    ime = folder / f"satno_{d:%Y-%m}"
+    df.to_parquet(ime.with_suffix(".parquet"), index=False)
+    df.to_csv(ime.with_suffix(".csv"), index=False)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--podaci", type=Path, default=konfig.PODACI)
+    ap.add_argument("--dan", type=date.fromisoformat, help="lokalni datum (podrazumevano: juče)")
+    ap.add_argument("--sve", action="store_true", help="preračunaj sve dane sa čitanjima")
+    ap.add_argument("--spoji", action="store_true", help="spoji sve dane u podaci/satno.parquet i .csv")
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
-    df = ucitaj_snimke(a.podaci / "snimci")
-    smerovi, provera = satno_po_smeru(df)
-    serije = satno_po_seriji(smerovi)
-    serije.to_parquet(a.podaci / "satno.parquet", index=False)
-    serije.to_csv(a.podaci / "satno.csv", index=False)
-    smerovi.to_csv(a.podaci / "satno_smerovi.csv", index=False)
-    provera.to_csv(a.podaci / "satno_provera.csv", index=False)
-    if serije.empty:
-        log.info("nema završenih dana")
-        return 0
-    log.info("serija: %d, sati: %d, popunjeno: %d, NaN: %d", serije["stanica_id"].nunique(), len(serije),
-             serije["y"].notna().sum(), serije["y"].isna().sum())
-    for r, n in serije["razlog"].value_counts().items():
-        log.info("  NaN razlog %s: %d", r, n)
-    if not provera.empty:
-        log.warning("odstupanja zbira od „juče“: %d (vidi satno_provera.csv)", len(provera))
+    danas = datetime.now(konfig.TZ).date()
+    if a.sve:
+        dani = [d for d in dani_sa_citanjima() if d < danas]
+    else:
+        dani = [a.dan or danas - timedelta(days=1)]
+    for d in dani:
+        obradi_dan(d)
+    for m in sorted({d.replace(day=1) for d in dani}):
+        spoji_mesec(m)
+    if a.spoji:
+        df = _ucitaj_satno(sorted(konfig.PODACI.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/satno.csv")))
+        df.to_parquet(konfig.PODACI / "satno.parquet", index=False)
+        df.to_csv(konfig.PODACI / "satno.csv", index=False)
+        log.info("spojeno: %d redova -> podaci/satno.parquet", len(df))
     return 0
 
 

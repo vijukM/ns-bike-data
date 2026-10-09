@@ -19,6 +19,13 @@ TZ = ZoneInfo("Europe/Belgrade")
 
 KOREN = Path(__file__).resolve().parent.parent
 PODACI = Path(os.environ.get("NS_BIKE_PODACI", KOREN / "podaci"))
-SIROVO = PODACI / "sirovo"
-SNIMCI = PODACI / "snimci"
 GRESKE_LOG = PODACI / "greske.log"
+
+
+def folder_dana(dan, koren: Path | None = None) -> Path:
+    """podaci/YYYY/MM/DD za lokalni datum."""
+    return (koren or PODACI) / f"{dan:%Y}" / f"{dan:%m}" / f"{dan:%d}"
+
+
+def folder_meseca(dan, koren: Path | None = None) -> Path:
+    return (koren or PODACI) / f"{dan:%Y}" / f"{dan:%m}"

@@ -1,4 +1,4 @@
-"""Jedno čitanje: preuzmi bicikliste, sačuvaj sirov XML (gzip) i dodaj redove u dnevni CSV sa snimcima.
+"""Jedno čitanje: preuzmi bicikliste i sačuvaj podaci/YYYY/MM/DD/HHMM.xml.gz (sirovo) i HHMM.csv (57 redova).
 
     python -m scraper.citaj                  # obično čitanje (XX:01)
     python -m scraper.citaj --samo-ako-nema  # rezerva (XX:20): čita samo ako za tekući sat nema čitanja
@@ -38,44 +38,42 @@ def _gh_output(**kv) -> None:
 
 
 def postoji_citanje_za_sat(sada_utc: datetime) -> bool:
-    """Da li u snimcima već postoji čitanje u istom satu (po UTC satu = jedinstven i lokalno)."""
-    lok = sada_utc.astimezone(konfig.TZ)
-    csv_put = konfig.SNIMCI / f"{lok:%Y-%m-%d}.csv"
-    if not csv_put.exists():
-        return False
+    """Da li u folderu dana već postoji čitanje u istom satu (po UTC satu = jedinstven i lokalno)."""
+    folder = konfig.folder_dana(sada_utc.astimezone(konfig.TZ))
     prefiks = f"{sada_utc:%Y-%m-%dT%H}:"
-    with open(csv_put, encoding="utf-8") as f:
-        return any(red["vreme_citanja_utc"].startswith(prefiks) for red in csv.DictReader(f))
+    for f in folder.glob("[0-9]*.csv"):
+        with open(f, encoding="utf-8") as fh:
+            red = next(csv.DictReader(fh), None)
+        if red and red["vreme_citanja_utc"].startswith(prefiks):
+            return True
+    return False
 
 
-def sacuvaj(data: bytes, sada_utc: datetime) -> tuple[Path, Path, int, bool]:
-    """Čuva sirov XML i dodaje redove u CSV. Vraća (sirov put, csv put, broj redova, prvo_u_danu)."""
+def sacuvaj(data: bytes, sada_utc: datetime) -> tuple[Path, int, bool]:
+    """Čuva sirov XML i CSV ovog čitanja u podaci/YYYY/MM/DD/HHMM.*.
+
+    Vraća (putanja CSV-a, broj redova, prvo_u_danu). Svako čitanje je novi fajl — postojeći se ne menjaju.
+    """
     lok = sada_utc.astimezone(konfig.TZ)
-    dan = f"{lok:%Y-%m-%d}"
     feed_updated, unosi = parsiraj(data)
-
-    sirovo_dir = konfig.SIROVO / dan
-    prvo_u_danu = not (sirovo_dir.exists() and any(sirovo_dir.glob("*.xml.gz")))
-    sirovo_dir.mkdir(parents=True, exist_ok=True)
-    sirov = sirovo_dir / f"{lok:%H%M}.xml.gz"
+    folder = konfig.folder_dana(lok)
+    prvo_u_danu = not any(folder.glob("[0-9]*.csv"))
+    folder.mkdir(parents=True, exist_ok=True)
+    ime = f"{lok:%H%M}"
     i = 2
-    while sirov.exists():  # npr. dva čitanja u 02:01 na dan prelaska na zimsko vreme
-        sirov = sirovo_dir / f"{lok:%H%M}_{i}.xml.gz"
+    while (folder / f"{ime}.csv").exists():  # npr. dva čitanja u 02:01 na dan prelaska na zimsko vreme
+        ime = f"{lok:%H%M}_{i}"
         i += 1
-    with gzip.open(sirov, "wb") as f:
+    with gzip.open(folder / f"{ime}.xml.gz", "wb") as f:
         f.write(data)
-
-    konfig.SNIMCI.mkdir(parents=True, exist_ok=True)
-    csv_put = konfig.SNIMCI / f"{dan}.csv"
-    nov = not csv_put.exists()
+    csv_put = folder / f"{ime}.csv"
     vreme = f"{sada_utc:%Y-%m-%dT%H:%M:%SZ}"
-    with open(csv_put, "a", newline="", encoding="utf-8") as f:
+    with open(csv_put, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=KOLONE_SNIMKA)
-        if nov:
-            w.writeheader()
+        w.writeheader()
         for u in unosi:
             w.writerow({"vreme_citanja_utc": vreme, "feed_updated_utc": feed_updated, **u})
-    return sirov, csv_put, len(unosi), prvo_u_danu
+    return csv_put, len(unosi), prvo_u_danu
 
 
 def main(argv=None) -> int:
@@ -100,7 +98,7 @@ def main(argv=None) -> int:
         else:
             data = preuzmi_bicikliste(a.metod, a.ponavljanja)
         sada = datetime.now(timezone.utc).replace(microsecond=0)
-        sirov, csv_put, n, prvo = sacuvaj(data, sada)
+        csv_put, n, prvo = sacuvaj(data, sada)
     except Exception as e:  # noqa: BLE001
         poruka = f"metod={a.metod}\t{type(e).__name__}: {e}"
         _upisi_gresku(poruka, sada)
@@ -110,7 +108,7 @@ def main(argv=None) -> int:
 
     _, unosi = parsiraj(data)
     nedostaju, visak = proveri_serije(unosi)
-    log.info("sačuvano: %s, %d redova -> %s", sirov.name, n, csv_put)
+    log.info("sačuvano: %d redova -> %s (+ .xml.gz)", n, csv_put)
     log.info("serija: %d / 46", len({u["serija"] for u in unosi} - set(visak)))
     if nedostaju:
         log.warning("NEDOSTAJU serije: %s", " ".join(nedostaju))

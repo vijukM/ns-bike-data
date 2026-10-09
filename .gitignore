@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 .venv/
 istrazi/
+podaci/satno.parquet
+podaci/satno.csv

@@ -55,7 +55,8 @@ python -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt
 pytest                                   # testovi
 python -m scraper.citaj                  # jedno čitanje -> podaci/
-python -m scraper.satno                  # satne vrednosti -> podaci/satno.parquet, .csv
+python -m scraper.satno                  # satne vrednosti za juče -> podaci/YYYY/MM/DD/satno.csv
+python -m scraper.satno --spoji          # svi dani u jedan fajl -> podaci/satno.parquet (samo lokalno)
 # rezerva sa pregledačem (samo ako brza varijanta ne radi):
 pip install playwright && python -m playwright install chromium
 python -m scraper.citaj --metod pregledac
@@ -67,8 +68,10 @@ Izlazni kod je `2` ako preuzimanje ne uspe (zapis u `podaci/greske.log`).
 
 ## GitHub Actions + cron-job.org
 
-GitHub-ov `schedule` kasni i do desetine minuta i ponekad preskače pokretanja, pa je glavni okidač
-`workflow_dispatch` koji spoljni servis poziva tačno u XX:01. Workflow `citaj.yml`:
+**Podela posla:** cron-job.org je samo „budilnik“ — u XX:01 pošalje jedan HTTP zahtev GitHub-u. Samo
+preuzimanje, obrada i commit se izvršavaju u GitHub Actions (za javne repozitorijume besplatno, bez
+limita minuta na standardnim runner-ima; jedno pokretanje traje ≈ 30 s). GitHub-ov `schedule` kasni i
+do desetine minuta i ponekad preskače pokretanja, zato je on samo rezerva. Workflow `citaj.yml`:
 
 - `workflow_dispatch` (glavni) + `schedule` u XX:20 (rezerva: čita samo ako za tekući sat nema čitanja);
 - Python 3.12 sa pip keš-om; Playwright Chromium se instalira **samo** ako brza varijanta ne uspe;
@@ -85,7 +88,15 @@ GitHub → Settings → Developer settings → Personal access tokens → **Fine
 
 ### cron-job.org
 
-Create cronjob:
+Besplatan je; svaki posao sme da se izvršava najviše jednom u minuti (ovde: jednom na sat), broj poslova
+po nalogu nije ograničen uz „fair use“. Na <https://console.cron-job.org/jobs/create>:
+
+1. **Common** → Title: `ns-bike-data citaj`; URL: (vidi tabelu); Enable job: uključeno;
+   Execution schedule: **Custom** → upisati izraz iz tabele (ili „Every hour“ uz minut 1).
+2. **Advanced** → Time zone, Request method, Headers (svaki header posebno: *Add header* → ključ i
+   vrednost), Request body — kao u tabeli. Opciono: Notifications → obaveštenje mejlom kad poziv ne uspe.
+3. **Test run** → očekivani odgovor je `204 No Content`; zatim **Create**. U GitHub-u (Actions → citaj)
+   se pojavi novo pokretanje, a posle ~30 s i commit `podaci: čitanje …`.
 
 | Polje | Vrednost |
 |---|---|
@@ -113,13 +124,29 @@ sat ima commit sa podacima, pa se to ne dešava dok čitanja rade.
 
 ```
 podaci/
-  sirovo/YYYY-MM-DD/HHMM.xml.gz   sirov XML (lokalni datum/vreme čitanja)
-  snimci/YYYY-MM-DD.csv           jedan red po smeru po čitanju
-  satno.parquet, satno.csv        satne vrednosti po seriji
-  satno_smerovi.csv               satne vrednosti po smeru
-  satno_provera.csv               odstupanja zbira sati od „juče"
-  greske.log                      neuspela čitanja (UTC vreme, metod, greška)
+  2026/                              godina
+    10/                              mesec
+      satno_2026-10.parquet, .csv    satne vrednosti po seriji za ceo mesec (osvežava se posle ponoći)
+      09/                            dan (lokalni datum čitanja)
+        0001.csv, 0001.xml.gz        čitanje u 00:01 — CSV (57 redova) i sirov XML
+        0101.csv, 0101.xml.gz        …  24 čitanja dnevno (HHMM = lokalno vreme čitanja)
+        …
+        2301.csv, 2301.xml.gz
+        satno.csv                    24 sata × 46 serija za ovaj dan (upisuje se posle ponoći)
+        satno_smerovi.csv            isto, po smeru
+        satno_provera.csv            samo ako zbir sati odstupa od „juče"
+  greske.log                         neuspela čitanja (UTC vreme, metod, greška)
 ```
+
+Svako čitanje je **novi fajl** — postojeći fajlovi se ne menjaju (osim mesečnog zbira i `greske.log`).
+`python -m scraper.satno --spoji` lokalno pravi `podaci/satno.parquet` sa svim danima (nije u repozitorijumu).
+
+### Zauzeće prostora
+
+Jedno čitanje ≈ 17 KB (CSV 11,5 KB + XML.gz 5,7 KB), dnevni satni fajlovi ≈ 0,2 MB, dakle ≈ 0,6 MB
+dnevno, ≈ 220 MB godišnje na disku; git čuva fajlove kompresovano (≈ 3–5× manje). GitHub preporučuje
+repozitorijum do 1 GB (jako preporučeno do 5 GB) i fajlove do 100 MB, što je daleko iznad potreba
+jedne do dve godine prikupljanja. Broj commit-ova (24 dnevno ≈ 8 760 godišnje) nije ograničen.
 
 **Ulazni fajl** (Atom + GeoRSS, Mikrobit; namespace `http://www.w3.org/2005/Atom` i
 `http://www.mikrobit.si/schemas/counters/v1`): `volume_today` (danas do vremena brojača),
@@ -128,7 +155,7 @@ lokalno vreme brojača (Europe/Belgrade), `<updated>` = UTC, decimalni zarez u `
 osvežava otprilike svakog minuta. `<id>` **nije** jedinstven (npr. `0040-21` za 40NSa i 40NSb) —
 ključ smera je `(locationID, direction, directionDesc)`.
 
-**Snimci** (`snimci/*.csv`): `vreme_citanja_utc, feed_updated_utc, location, locationID, direction,
+**Čitanja** (`YYYY/MM/DD/HHMM.csv`): `vreme_citanja_utc, feed_updated_utc, location, locationID, direction,
 directionDesc, serija, datum_brojaca (ISO), vreme_brojaca, danas, juce, ove_godine, state, stateDesc,
 lat, lon`.
 
@@ -136,7 +163,7 @@ lat, lon`.
 15NSaPS → 15a). Vrednost serije = zbir svih smerova serije (25, 26, 28, 41, 47 i svaki uređaj
 40/46/51 imaju 2 smera). Očekuje se 46 serija; `citaj.py` prijavljuje serije koje nedostaju ili su višak.
 
-**Satne vrednosti** (`satno.parquet`/`.csv`): `stanica_id, ts, y, razlog, ts_utc` — isti oblik kao
+**Satne vrednosti** (`YYYY/MM/DD/satno.csv`, `YYYY/MM/satno_YYYY-MM.parquet`): `stanica_id, ts, y, razlog, ts_utc` — isti oblik kao
 istorijski master (`stanica_id, ts, y_A, razlog_A`) uz dodatnu kolonu `ts_utc`.
 
 - `ts` = **kraj sata**, lokalno vreme bez zone, konvencija 01:00–24:00; 24:00 = 00:00 sledećeg dana;
