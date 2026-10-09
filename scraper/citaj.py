@@ -1,6 +1,6 @@
 """Jedno čitanje: preuzmi bicikliste i sačuvaj podaci/YYYY/MM/DD/HHMM.xml.gz (sirovo) i HHMM.csv (57 redova).
 
-    python -m scraper.citaj                  # obično čitanje (XX:01)
+    python -m scraper.citaj                  # obično čitanje (XX:08)
     python -m scraper.citaj --samo-ako-nema  # rezerva (XX:20): čita samo ako za tekući sat nema čitanja
 
 Izlazni kod: 0 = uspeh (ili već postoji čitanje), 2 = preuzimanje/parsiranje nije uspelo (zapis u greske.log).
@@ -19,6 +19,7 @@ from pathlib import Path
 from . import konfig
 from .parsiranje import KOLONE_SNIMKA, parsiraj, proveri_serije
 from .preuzimanje import preuzmi_bicikliste, proveri_sadrzaj
+from .razlika import KOLONE_RAZLIKE, dodaj_razlike, prethodno_citanje
 
 log = logging.getLogger(__name__)
 
@@ -68,11 +69,12 @@ def sacuvaj(data: bytes, sada_utc: datetime) -> tuple[Path, int, bool]:
         f.write(data)
     csv_put = folder / f"{ime}.csv"
     vreme = f"{sada_utc:%Y-%m-%dT%H:%M:%SZ}"
+    redovi = [{"vreme_citanja_utc": vreme, "feed_updated_utc": feed_updated, **u} for u in unosi]
+    redovi = dodaj_razlike(redovi, prethodno_citanje(vreme))
     with open(csv_put, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=KOLONE_SNIMKA)
+        w = csv.DictWriter(f, fieldnames=KOLONE_SNIMKA + KOLONE_RAZLIKE)
         w.writeheader()
-        for u in unosi:
-            w.writerow({"vreme_citanja_utc": vreme, "feed_updated_utc": feed_updated, **u})
+        w.writerows(redovi)
     return csv_put, len(unosi), prvo_u_danu
 
 

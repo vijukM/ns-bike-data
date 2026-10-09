@@ -8,7 +8,7 @@ istorijskim satnim podacima do 31.08.2026; ovaj repozitorijum od sada skuplja no
 
 ## Šta radi
 
-1. `scraper/citaj.py` — jednom na sat (u XX:01 po lokalnom vremenu) preuzima fajl sa biciklistima
+1. `scraper/citaj.py` — jednom na sat (u XX:08 po lokalnom vremenu) preuzima fajl sa biciklistima
    (`bicycles_georss_gps_sr.xml`, 57 unosa), čuva sirov XML i dodaje redove u dnevni CSV.
 2. `scraper/satno.py` — iz čitanja „danas/juče" računa satne vrednosti po smeru i po seriji
    (posle prvog čitanja posle ponoći, za prethodni dan).
@@ -68,7 +68,7 @@ Izlazni kod je `2` ako preuzimanje ne uspe (zapis u `podaci/greske.log`).
 
 ## GitHub Actions + cron-job.org
 
-**Podela posla:** cron-job.org je samo „budilnik“ — u XX:01 pošalje jedan HTTP zahtev GitHub-u. Samo
+**Podela posla:** cron-job.org je samo „budilnik“ — u XX:08 pošalje jedan HTTP zahtev GitHub-u. Samo
 preuzimanje, obrada i commit se izvršavaju u GitHub Actions (za javne repozitorijume besplatno, bez
 limita minuta na standardnim runner-ima; jedno pokretanje traje ≈ 30 s). GitHub-ov `schedule` kasni i
 do desetine minuta i ponekad preskače pokretanja, zato je on samo rezerva. Workflow `citaj.yml`:
@@ -92,7 +92,7 @@ Besplatan je; svaki posao sme da se izvršava najviše jednom u minuti (ovde: je
 po nalogu nije ograničen uz „fair use“. Na <https://console.cron-job.org/jobs/create>:
 
 1. **Common** → Title: `ns-bike-data citaj`; URL: (vidi tabelu); Enable job: uključeno;
-   Execution schedule: **Custom** → upisati izraz iz tabele (ili „Every hour“ uz minut 1).
+   Execution schedule: **Custom** → upisati izraz iz tabele (`8 * * * *`).
 2. **Advanced** → Time zone, Request method, Headers (svaki header posebno: *Add header* → ključ i
    vrednost), Request body — kao u tabeli. Opciono: Notifications → obaveštenje mejlom kad poziv ne uspe.
 3. **Test run** → očekivani odgovor je `204 No Content`; zatim **Create**. U GitHub-u (Actions → citaj)
@@ -101,7 +101,7 @@ po nalogu nije ograničen uz „fair use“. Na <https://console.cron-job.org/jo
 | Polje | Vrednost |
 |---|---|
 | URL | `https://api.github.com/repos/<korisnik>/ns-bike-data/actions/workflows/citaj.yml/dispatches` |
-| Execution schedule | Custom → `1 * * * *` (svakog sata u XX:01) |
+| Execution schedule | Custom → `8 * * * *` (svakog sata u XX:08 — sajt osvežava fajl na ~5 min, pa je u XX:08 poslednje osvežavanje sigurno posle punog sata) |
 | Time zone | `Europe/Belgrade` |
 | Advanced → Request method | `POST` |
 | Advanced → Headers | `Authorization: Bearer <fine-grained token>`<br>`Accept: application/vnd.github+json`<br>`X-GitHub-Api-Version: 2022-11-28` |
@@ -158,6 +158,18 @@ ključ smera je `(locationID, direction, directionDesc)`.
 **Čitanja** (`YYYY/MM/DD/HHMM.csv`): `vreme_citanja_utc, feed_updated_utc, location, locationID, direction,
 directionDesc, serija, datum_brojaca (ISO), vreme_brojaca, danas, juce, ove_godine, state, stateDesc,
 lat, lon`.
+
+Dodatne kolone u svakom čitanju (`scraper/razlika.py`) — broj biciklista od prethodnog čitanja, po smeru:
+
+| kolona | značenje |
+|---|---|
+| `bicikala_od_prethodnog` | `danas − danas_prethodno`; preko ponoći `juče − danas_prethodno + danas`. Kad su čitanja na sat, to je broj biciklista **u tom satu** |
+| `minuta_od_prethodnog` | razmak vremena brojača (60 = tačno sat) |
+| `prethodno_citanje_utc` | sa kojim čitanjem je poređeno |
+| `razlog_razlike` | prazno, ili zašto vrednost nedostaje: `nema_prethodnog`, `kvar_state_N`, `negativna_razlika`, `nema_vrednosti`, `razmak_vise_od_dana` |
+
+Ovo je brzi pregled po smeru odmah posle čitanja; konačne satne vrednosti po seriji (sa proverom svežine
+i zbira) daje `satno.py` posle ponoći.
 
 **Mapiranje na serije**: regex `^(\d+)NS([ab]?)` nad `locationID` (34NSa → 34a, 26NS → 26,
 15NSaPS → 15a). Vrednost serije = zbir svih smerova serije (25, 26, 28, 41, 47 i svaki uređaj
