@@ -1,6 +1,6 @@
 """Jedno čitanje: preuzmi bicikliste i sačuvaj podaci/YYYY/MM/DD/HHMM.xml.gz (sirovo) i HHMM.csv (57 redova).
 
-    python -m scraper.citaj                  # obično čitanje (XX:08)
+    python -m scraper.citaj                  # obično čitanje (XX:02)
     python -m scraper.citaj --samo-ako-nema  # rezerva (XX:20): čita samo ako za tekući sat nema čitanja
 
 Izlazni kod: 0 = uspeh (ili već postoji čitanje), 2 = preuzimanje/parsiranje nije uspelo (zapis u greske.log).

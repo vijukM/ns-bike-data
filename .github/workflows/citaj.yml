@@ -1,5 +1,5 @@
 # Čitanje podataka o biciklistima jednom na sat.
-# Glavni okidač: workflow_dispatch koji u XX:08 (Europe/Belgrade) poziva cron-job.org (vidi README).
+# Glavni okidač: workflow_dispatch koji u XX:02 (Europe/Belgrade) poziva cron-job.org (vidi README).
 # Rezerva: schedule u XX:20 — čita samo ako za tekući sat još nema čitanja.
 name: citaj
 

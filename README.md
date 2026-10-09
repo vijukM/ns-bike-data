@@ -8,7 +8,7 @@ istorijskim satnim podacima do 31.08.2026; ovaj repozitorijum od sada skuplja no
 
 ## Šta radi
 
-1. `scraper/citaj.py` — jednom na sat (u XX:08 po lokalnom vremenu) preuzima fajl sa biciklistima
+1. `scraper/citaj.py` — jednom na sat (u XX:02 po lokalnom vremenu) preuzima fajl sa biciklistima
    (`bicycles_georss_gps_sr.xml`, 57 unosa), čuva sirov XML i dodaje redove u dnevni CSV.
 2. `scraper/satno.py` — iz čitanja „danas/juče" računa satne vrednosti po smeru i po seriji
    (posle prvog čitanja posle ponoći, za prethodni dan).
@@ -68,7 +68,7 @@ Izlazni kod je `2` ako preuzimanje ne uspe (zapis u `podaci/greske.log`).
 
 ## GitHub Actions + cron-job.org
 
-**Podela posla:** cron-job.org je samo „budilnik“ — u XX:08 pošalje jedan HTTP zahtev GitHub-u. Samo
+**Podela posla:** cron-job.org je samo „budilnik“ — u XX:02 pošalje jedan HTTP zahtev GitHub-u. Samo
 preuzimanje, obrada i commit se izvršavaju u GitHub Actions (za javne repozitorijume besplatno, bez
 limita minuta na standardnim runner-ima; jedno pokretanje traje ≈ 30 s). GitHub-ov `schedule` kasni i
 do desetine minuta i ponekad preskače pokretanja, zato je on samo rezerva. Workflow `citaj.yml`:
@@ -92,7 +92,7 @@ Besplatan je; svaki posao sme da se izvršava najviše jednom u minuti (ovde: je
 po nalogu nije ograničen uz „fair use“. Na <https://console.cron-job.org/jobs/create>:
 
 1. **Common** → Title: `ns-bike-data citaj`; URL: (vidi tabelu); Enable job: uključeno;
-   Execution schedule: **Custom** → upisati izraz iz tabele (`8 * * * *`).
+   Execution schedule: **Custom** → upisati izraz iz tabele (`2 * * * *`).
 2. **Advanced** → Time zone, Request method, Headers (svaki header posebno: *Add header* → ključ i
    vrednost), Request body — kao u tabeli. Opciono: Notifications → obaveštenje mejlom kad poziv ne uspe.
 3. **Test run** → očekivani odgovor je `204 No Content`; zatim **Create**. U GitHub-u (Actions → citaj)
@@ -101,7 +101,7 @@ po nalogu nije ograničen uz „fair use“. Na <https://console.cron-job.org/jo
 | Polje | Vrednost |
 |---|---|
 | URL | `https://api.github.com/repos/<korisnik>/ns-bike-data/actions/workflows/citaj.yml/dispatches` |
-| Execution schedule | Custom → `8 * * * *` (svakog sata u XX:08 — sajt osvežava fajl na ~5 min, pa je u XX:08 poslednje osvežavanje sigurno posle punog sata) |
+| Execution schedule | Custom → `2 * * * *` (svakog sata u XX:02; sajt osvežava fajl na ~5 min, pa poslednje osvežavanje može biti do ~5 min pre ili posle punog sata — obračun to dozvoljava) |
 | Time zone | `Europe/Belgrade` |
 | Advanced → Request method | `POST` |
 | Advanced → Headers | `Authorization: Bearer <fine-grained token>`<br>`Accept: application/vnd.github+json`<br>`X-GitHub-Api-Version: 2022-11-28` |
@@ -175,17 +175,20 @@ i zbira) daje `satno.py` posle ponoći.
 15NSaPS → 15a). Vrednost serije = zbir svih smerova serije (25, 26, 28, 41, 47 i svaki uređaj
 40/46/51 imaju 2 smera). Očekuje se 46 serija; `citaj.py` prijavljuje serije koje nedostaju ili su višak.
 
-**Satne vrednosti** (`YYYY/MM/DD/satno.csv`, `YYYY/MM/satno_YYYY-MM.parquet`): `stanica_id, ts, y, razlog, ts_utc` — isti oblik kao
+**Satne vrednosti** (`YYYY/MM/DD/satno.csv`, `YYYY/MM/satno_YYYY-MM.parquet`): `stanica_id, ts, y, razlog, ts_utc, datum, sat` — isti oblik kao
 istorijski master (`stanica_id, ts, y_A, razlog_A`) uz dodatnu kolonu `ts_utc`.
 
-- `ts` = **kraj sata**, lokalno vreme bez zone, konvencija 01:00–24:00; 24:00 = 00:00 sledećeg dana;
+- `ts` = **kraj sata**, lokalno vreme bez zone, konvencija 01:00–24:00; pošto tip datum-vreme ne poznaje
+  „24:00“, sat 23–24 dana D ima `ts` = 00:00 dana D+1. Zato postoje i kolone **`datum`** (dan D) i
+  **`sat`** (1–24): npr. biciklisti 13–14 h → `sat = 14`, a 23–24 h → `datum = D, sat = 24`;
 - sat 00–01 = danas@01:01; sat (h−1)–h = danas@h:01 − danas@(h−1):01;
   sat 23–24 = „juče" iz prvog ispravnog čitanja posle ponoći − danas@23:01;
 - bez interpolacije; `y` je prazno (NaN) uz `razlog`:
   - `nema_citanja` — čitanje u tom satu nije uspelo / ne postoji;
   - `nema_smera` — čitanje postoji, ali u njemu nema tog smera;
-  - `zastarelo` — vreme brojača nije posle pune sata ili je starije od 15 min od čitanja;
+  - `zastarelo` — vreme brojača je više od 6 min pre punog sata ili je starije od 15 min od čitanja;
   - `negativna_razlika` — npr. reset brojača;
+  - `nepotpun_sat` — vremena brojača dva čitanja nisu razmaknuta 50–70 min (npr. ručno dodatno čitanje);
 - serija ima vrednost samo ako je imaju svi njeni smerovi;
 - dan prelaska na letnje vreme ima 23 sata (nema oznake 02:00), na zimsko 25 (oznaka 02:00 dva puta —
   jednoznačno je `ts_utc`);

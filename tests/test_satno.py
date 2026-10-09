@@ -2,7 +2,6 @@
 from datetime import date, datetime, timedelta, timezone
 
 import pandas as pd
-import pytest
 
 from scraper.konfig import TZ
 from scraper.satno import satno_po_seriji, satno_po_smeru
@@ -154,3 +153,43 @@ def test_serija_nan_ako_fali_smer():
     nan = serije[serije["y"].isna()]
     assert nan["ts"].dt.hour.tolist() == [5, 6] and set(nan["razlog"]) == {"nema_smera"}
     assert smerovi[smerovi["direction"] == "1"]["y"].notna().all()
+
+
+def test_citanje_xx02_sa_brojacem_pre_punog_sata():
+    # čitanje u XX:01 vidi brojač 3 min pre punog sata — prihvata se (tolerancija 6 min)
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    izmene = {(i, j): {"vreme_brojaca": f"{i - 1:02d}:57:00"} for i in range(2, 23) for j in (0, 1)}
+    _, serije, _ = izracunaj(napravi(D, satni, izmene=izmene))
+    assert serije["y"].notna().all() and len(serije) == 24
+
+
+def test_datum_i_sat_kolone():
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    _, serije, _ = izracunaj(napravi(D, satni))
+    assert serije["sat"].tolist() == list(range(1, 25))
+    assert set(serije["datum"]) == {"2026-10-05"}
+    poslednji = serije.iloc[-1]
+    assert (poslednji["sat"], str(poslednji["ts"])) == (24, "2026-10-06 00:00:00")
+
+
+def test_ponoc_brojac_jos_od_prethodnog_dana():
+    # čitanje u 00:01 vidi brojač u 23:58 dana D -> njegovo „juče“ je za D−1, ne sme se koristiti;
+    # „juče“ za D uzima se iz sledećeg čitanja (01:01) čiji je brojač već od dana D+1
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    df = napravi(D, satni, izmene={(24, j): {"datum_brojaca": "2026-10-05", "vreme_brojaca": "23:58:00",
+                                             "danas": sum(satni[j]) - 1, "juce": 7} for j in (0, 1)})
+    sled = napravi(D + timedelta(days=1), [[5] * 24, [5] * 24])
+    sled = sled[sled["vreme_citanja_utc"] == "2026-10-05T23:01:00Z"].copy()
+    sled["juce"] = [sum(s) for s in satni]
+    _, serije, provera = izracunaj(pd.concat([df, sled]))
+    assert serije.iloc[-1]["y"] == satni[0][23] + satni[1][23] and provera.empty
+
+
+def test_nepotpun_sat():
+    # umesto čitanja u 10:01 postoji samo ručno čitanje u 10:40 -> sati 10 i 11 nisu puni sati
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    df = napravi(D, satni, izmene={(10, j): {"vreme_citanja_utc": "2026-10-05T08:40:00Z",
+                                             "vreme_brojaca": "10:39:30"} for j in (0, 1)})
+    _, serije, _ = izracunaj(df)
+    nan = serije[serije["y"].isna()]
+    assert nan["sat"].tolist() == [10, 11] and set(nan["razlog"]) == {"nepotpun_sat"}

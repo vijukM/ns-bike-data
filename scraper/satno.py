@@ -5,7 +5,9 @@ Konvencija (kao istorijski podaci): oznaka sata = KRAJ sata, 01:00–24:00 lokal
     sat 00–01 = danas@R(1)
     sat (h−1)–h = danas@R(h) − danas@R(h−1)
     sat 23–24 = juče@(prvo ispravno čitanje posle ponoći) − danas@R(23)
-Čitanje važi samo ako je vreme brojača posle pune sata i ne starije od 15 min od čitanja.
+Čitanje važi ako vreme brojača nije više od 6 min pre punog sata (sajt osvežava na ~5 min, čitanje je
+u XX:02) i nije starije od 15 min od čitanja; „juče“ se uzima samo iz čitanja sa datumom brojača D+1.
+Kolone datum (dan D) i sat (1–24) jednoznačno označavaju sat; ts = kraj sata (24:00 = 00:00 dana D+1).
 Dan prelaska na letnje vreme ima 23 sata, na zimsko 25 (oznaka 02:00 se tada javlja dva puta —
 jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sledeći dan).
 
@@ -34,6 +36,11 @@ from . import konfig
 log = logging.getLogger(__name__)
 
 MAKS_STAROST = timedelta(minutes=15)
+# Čitanje je u XX:02, a sajt osvežava fajl na ~5 min, pa poslednje osvežavanje može biti i do ~5 min
+# PRE punog sata (npr. 16:59). Takvo čitanje se prihvata kao stanje „na kraju sata“.
+TOLERANCIJA_PRE_SATA = timedelta(minutes=6)
+# Razmak vremena brojača dva čitanja koja omeđuju sat (≈ 60 min ± kašnjenje osvežavanja).
+RAZMAK_SATA = (timedelta(minutes=50), timedelta(minutes=70))
 KLJUC = ["locationID", "direction", "directionDesc"]
 
 # razlozi (prioritet: prvi pronađeni po redosledu potrebnih čitanja)
@@ -41,6 +48,7 @@ NEMA_CITANJA = "nema_citanja"
 NEMA_SMERA = "nema_smera"
 ZASTARELO = "zastarelo"
 NEGATIVNO = "negativna_razlika"
+NEPOTPUN_SAT = "nepotpun_sat"
 
 
 def _citaj_csv(fajlovi) -> pd.DataFrame:
@@ -102,6 +110,7 @@ class _Citanje:
     juce: float | None
     state: int | None
     razlog: str | None  # None = ispravno
+    t: pd.Timestamp | None = None  # vreme brojača (UTC)
 
 
 def _granice_dana(d: date) -> tuple[datetime, datetime]:
@@ -111,22 +120,26 @@ def _granice_dana(d: date) -> tuple[datetime, datetime]:
     return pocetak, kraj
 
 
-def _ocitaj(red: pd.Series | None, ima_citanja: bool, pocetak_sata: datetime) -> _Citanje:
+def _ocitaj(red: pd.Series | None, ima_citanja: bool, pocetak_sata: datetime,
+            tolerancija: timedelta = TOLERANCIJA_PRE_SATA) -> _Citanje:
     if not ima_citanja:
         return _Citanje(None, None, None, NEMA_CITANJA)
     if red is None:
         return _Citanje(None, None, None, NEMA_SMERA)
     tb, tc = red["t_brojaca"], red["t_citanja"]
-    if pd.isna(tb) or tb < pocetak_sata or tc - tb > MAKS_STAROST:
+    if pd.isna(tb) or tb < pocetak_sata - tolerancija or tc - tb > MAKS_STAROST:
         return _Citanje(None, None, None, ZASTARELO)
     st = None if pd.isna(red["state"]) else int(red["state"])
-    return _Citanje(red["danas"], red["juce"], st, None)
+    return _Citanje(red["danas"], red["juce"], st, None, tb)
 
 
-def _razlika(citanja: list[_Citanje], vrednost) -> tuple[float | None, str | None]:
+def _razlika(citanja: list[_Citanje], vrednost, od=None, do=None) -> tuple[float | None, str | None]:
+    """od/do = vremena brojača koja omeđuju sat; razmak mora biti RAZMAK_SATA (inače nije pun sat)."""
     for c in citanja:
         if c.razlog:
             return None, c.razlog
+    if od is not None and do is not None and not (RAZMAK_SATA[0] <= do - od <= RAZMAK_SATA[1]):
+        return None, NEPOTPUN_SAT
     # state se NE koristi kao uslov: 6 = „nema saobraćaja“ u poslednjih 5 min (validna nula, npr. noću),
     # a ispad uređaja („nema podataka“ > 30 min) hvata provera svežine vremena brojača.
     y = vrednost()
@@ -174,23 +187,25 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
             kand = sledeci[(sledeci[KLJUC] == list(k)).all(axis=1)].sort_values("t_citanja")
             J = _Citanje(None, None, None, NEMA_CITANJA if sledeci.empty else NEMA_SMERA)
             for _, red in kand.iterrows():
-                c = _ocitaj(red, True, kraj)
+                c = _ocitaj(red, True, kraj, tolerancija=timedelta(0))  # „juče“ mora biti od dana D+1
                 J = c
                 if c.razlog is None:
                     break
             R = [citanje(i) for i in range(n)]
             vrednosti = []
             for i in range(n):
+                ponoc_d, ponoc_d1 = pd.Timestamp(pocetak), pd.Timestamp(kraj)
                 if i == 0:
-                    y, razlog = _razlika([R[1]], lambda: R[1].danas)
+                    y, razlog = _razlika([R[1]], lambda: R[1].danas, ponoc_d, R[1].t)
                 elif i < n - 1:
-                    y, razlog = _razlika([R[i], R[i + 1]], lambda: R[i + 1].danas - R[i].danas)
+                    y, razlog = _razlika([R[i], R[i + 1]], lambda: R[i + 1].danas - R[i].danas, R[i].t, R[i + 1].t)
                 else:
-                    y, razlog = _razlika([R[i], J], lambda: J.juce - R[i].danas)
+                    y, razlog = _razlika([R[i], J], lambda: J.juce - R[i].danas, R[i].t, ponoc_d1)
                 kraj_sata = sati[i + 1] if i + 1 < n else pd.Timestamp(kraj)
                 vrednosti.append(y)
                 redovi.append({
                     "serija": kr["serija"], "locationID": k[0], "direction": k[1], "directionDesc": k[2],
+                    "datum": d.isoformat(), "sat": i + 1,
                     "ts": kraj_sata.tz_convert(konfig.TZ).tz_localize(None),
                     "ts_utc": kraj_sata,
                     "y": y, "razlog": razlog,
@@ -212,14 +227,15 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
 def satno_po_seriji(smerovi: pd.DataFrame) -> pd.DataFrame:
     """Serija = zbir svih smerova, samo ako svi smerovi imaju vrednost; inače NaN sa razlogom prvog smera."""
     if smerovi.empty:
-        return pd.DataFrame(columns=["stanica_id", "ts", "y", "razlog", "ts_utc"])
+        return pd.DataFrame(columns=["stanica_id", "ts", "y", "razlog", "ts_utc", "datum", "sat"])
     redovi = []
     for (serija, ts_utc), g in smerovi.groupby(["serija", "ts_utc"], sort=True):
         if g["y"].notna().all():
             y, razlog = float(g["y"].sum()), None
         else:
             y, razlog = None, g.loc[g["y"].isna(), "razlog"].iloc[0]
-        redovi.append({"stanica_id": serija, "ts": g["ts"].iloc[0], "y": y, "razlog": razlog, "ts_utc": ts_utc})
+        redovi.append({"stanica_id": serija, "ts": g["ts"].iloc[0], "y": y, "razlog": razlog, "ts_utc": ts_utc,
+                       "datum": g["datum"].iloc[0], "sat": int(g["sat"].iloc[0])})
     out = pd.DataFrame(redovi)
     out["y"] = out["y"].astype("float64")
     return out.sort_values(["stanica_id", "ts_utc"]).reset_index(drop=True)
