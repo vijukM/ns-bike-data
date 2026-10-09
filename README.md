@@ -45,8 +45,7 @@ Isto radi ručni workflow **istrazi** (Actions → istrazi → Run workflow) sa 
 ### Pristojno korišćenje
 
 - jedno preuzimanje po čitanju, **jedno čitanje na sat**;
-- `User-Agent: ns-bike-data / master rad FTN Novi Sad (kontakt: …)` — kontakt se zadaje promenljivom
-  okruženja `NS_BIKE_KONTAKT` (podrazumevano adresa ovog repozitorijuma);
+- običan User-Agent pregledača (Chrome); menja se promenljivom okruženja `NS_BIKE_USER_AGENT`;
 - timeout 30 s, najviše 2 ponovna pokušaja sa pauzom 30–60 s.
 
 ## Lokalno pokretanje
