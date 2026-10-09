@@ -42,3 +42,15 @@ def test_obradi_dan_iz_foldera(tmp_path, monkeypatch):
     mesec = pd.read_parquet(tmp_path / "2026/10/satno_2026-10.parquet")
     assert len(mesec) == 24
     assert not (tmp_path / "2026/10/05/satno_provera.csv").exists()
+
+
+def test_excel_mesec(tmp_path, monkeypatch):
+    from openpyxl import load_workbook
+    test_obradi_dan_iz_foldera(tmp_path, monkeypatch)  # pravi satno.csv za 2026-10-05 i Excel
+    wb = load_workbook(tmp_path / "excel" / "bicikli_2026-10.xlsx")
+    assert wb.sheetnames == ["26", "Info"]
+    ws = wb["26"]
+    redovi = list(ws.values)
+    assert redovi[0] == ("Date", "Time", "Status", "Sum1", "Sum2", "Sum")
+    assert redovi[1][1] == "01:00" and redovi[-1][1] == "24:00" and len(redovi) == 25
+    assert redovi[1][3:] == (10, 1, 11) and redovi[1][2] is None

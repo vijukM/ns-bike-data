@@ -135,8 +135,16 @@ podaci/
         satno.csv                    24 sata × 46 serija za ovaj dan (upisuje se posle ponoći)
         satno_smerovi.csv            isto, po smeru
         satno_provera.csv            samo ako zbir sati odstupa od „juče"
+  excel/
+    bicikli_2026-10.xlsx             Excel za ceo mesec: sheet po seriji (15a … 51b), kao istorijska tabela
   greske.log                         neuspela čitanja (UTC vreme, metod, greška)
 ```
+
+**Excel** (`podaci/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
+seriji, kolone `Date | Time (01:00–24:00) | Status | S<n>` za seriju sa jednim smerom (npr. `S4` za 15a,
+smer 14), odnosno `Sum1 | Sum2 | Sum` za seriju sa dva smera (Sum1 = smer 1x, Sum2 = smer 2x).
+`Status` je prazan kad je sat ispravan, inače razlog (vidi dole); vrednosti > 400 su crvene.
+Klase vozila (A/B/C), OCC i GAP iz istorijskog izvoza sajt ne objavljuje, pa ih nema.
 
 Svako čitanje je **novi fajl** — postojeći fajlovi se ne menjaju (osim mesečnog zbira i `greske.log`).
 `python -m scraper.satno --spoji` lokalno pravi `podaci/satno.parquet` sa svim danima (nije u repozitorijumu).

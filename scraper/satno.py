@@ -18,7 +18,8 @@ jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sle
 
 Izlaz za dan D (folder podaci/YYYY/MM/DD/): satno.csv (stanica_id, ts, y, razlog, ts_utc — po seriji),
 satno_smerovi.csv (po smeru), satno_provera.csv (samo ako zbir sati odstupa od „juče" ili je smer ceo dan 0).
-Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv.
+Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv; Excel (sheet po seriji):
+podaci/excel/bicikli_YYYY-MM.xlsx.
 """
 from __future__ import annotations
 
@@ -32,6 +33,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import konfig
+from .excel import napravi_mesec as napravi_excel
 
 log = logging.getLogger(__name__)
 
@@ -205,7 +207,7 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
                 vrednosti.append(y)
                 redovi.append({
                     "serija": kr["serija"], "locationID": k[0], "direction": k[1], "directionDesc": k[2],
-                    "datum": d.isoformat(), "sat": i + 1,
+                    "datum": d.isoformat(), "sat": kraj_sata.tz_convert(konfig.TZ).hour or 24,
                     "ts": kraj_sata.tz_convert(konfig.TZ).tz_localize(None),
                     "ts_utc": kraj_sata,
                     "y": y, "razlog": razlog,
@@ -302,6 +304,7 @@ def main(argv=None) -> int:
         obradi_dan(d)
     for m in sorted({d.replace(day=1) for d in dani}):
         spoji_mesec(m)
+        napravi_excel(m)
     if a.spoji:
         df = _ucitaj_satno(sorted(konfig.PODACI.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/satno.csv")))
         df.to_parquet(konfig.PODACI / "satno.parquet", index=False)
