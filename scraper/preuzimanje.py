@@ -123,22 +123,50 @@ class _Stranica(HTMLParser):
             d[ime] = p.get("value", "")
         return d
 
-    def nadji_dugme(self, tekst: str) -> dict | None:
-        for b in self.dugmad:
-            if tekst.lower() in (b.get("_tekst") or "").lower():
-                return b
-        # IntraWeb ponekad crta dugme kao <div>/<span> sa tekstom — traži id elementa sa tim tekstom
-        m = re.search(r'id="([A-Za-z0-9_]+)"[^>]*>\s*(?:<[^>]+>\s*)*' + re.escape(tekst), self.html)
-        return {"id": m.group(1), "name": m.group(1), "_tekst": tekst} if m else None
-
-
-def _iw_ime(el: dict) -> str:
-    """IntraWeb ime kontrole (IW_Action / callback) — velikim slovima, bez sufiksa _INPUT/_BTN."""
-    ime = el.get("name") or el.get("id") or ""
-    return re.sub(r"_(INPUT|BTN|IMG|BUTTON)$", "", ime.upper())
-
 
 # ---------------------------------------------------------------- a) brza varijanta
+#
+# Tok (utvrđeno snimanjem odgovora sajta, IntraWeb 15.2):
+#  1. GET glavne stranice vraća „bootstrap“ formu (IW_width, IW_height, IW_dpr, IW_iframe) koju pregledač
+#     odmah šalje POST-om; odgovor je prava stranica (TAForm) i kolačić IW_QLTCnet3TA.
+#  2. Radio grupa ETYPETABLE ima polje ETYPETABLE_INPUT (0 = Sve, 1 = Vozila, 2 = Biciklisti); promena ide
+#     kao asinhroni poziv $/callback?callback=ETYPETABLE.DoOnAsyncChange.
+#  3. /rss (RssTAForm) prikazuje „Biciklisti: Da li želite da preuzmete RSS podatke?“; dugme DOWNLOADBUTTON
+#     radi SubmitClickConfirm('DOWNLOADBUTTON') = POST forme SubmitForm na /rss sa IW_Action=DOWNLOADBUTTON.
+
+_RE_GAPPID = re.compile(r'GAppID\s*=\s*"([^"]+)"')
+_RE_GTRACKID = re.compile(r"GTrackID\s*=\s*(\d+)")
+
+
+def _submit_forma(st: _Stranica) -> tuple[str, dict[str, str]]:
+    """Akcija i polja IntraWeb forme name="SubmitForm" (ona koju šalju SubmitClick/SubmitClickConfirm)."""
+    m = re.search(r'<form[^>]*action="([^"]*)"[^>]*name="SubmitForm"[^>]*>(.*?)</form>', st.html, flags=re.S | re.I)
+    if not m:
+        raise GreskaPreuzimanja("na stranici nema IntraWeb forme SubmitForm")
+    polja = {}
+    for tag in re.findall(r"<input[^>]*>", m.group(2), flags=re.I):
+        ime = re.search(r'name="([^"]*)"', tag, flags=re.I)
+        vrednost = re.search(r'value="([^"]*)"', tag, flags=re.I)
+        if ime:
+            polja[ime.group(1)] = vrednost.group(1) if vrednost else ""
+    return urljoin(st.url, m.group(1)), polja
+
+
+def _iw_sesija(st: _Stranica) -> dict[str, str]:
+    d = {}
+    if m := _RE_GAPPID.search(st.html):
+        d["IW_SessionID_"] = m.group(1)
+    if m := _RE_GTRACKID.search(st.html):
+        d["IW_TrackID_"] = m.group(1)
+    return d
+
+
+def _izabrano(st: _Stranica, ime: str) -> str:
+    for p in st.polja:
+        if p.get("name") == ime and "checked" in p:
+            return p.get("value", "")
+    return ""
+
 
 class _Brza:
     def __init__(self, debug_dir: Path | None = None):
@@ -160,116 +188,81 @@ class _Brza:
         (self.debug_dir / f"{self.n:02d}_{oznaka}.zaglavlja.txt").write_text(zaglavlje, encoding="utf-8")
         (self.debug_dir / f"{self.n:02d}_{oznaka}.telo").write_bytes(r.content)
 
-    def get(self, url, oznaka, **kw) -> requests.Response:
-        r = self.s.get(url, timeout=TIMEOUT_S, **kw)
+    def _zahtev(self, metod: str, url: str, oznaka: str, **kw) -> requests.Response:
+        r = self.s.request(metod, url, timeout=TIMEOUT_S, **kw)
         self._zapamti(r, oznaka)
         r.raise_for_status()
         return r
 
-    def post(self, url, oznaka, **kw) -> requests.Response:
-        r = self.s.post(url, timeout=TIMEOUT_S, **kw)
-        self._zapamti(r, oznaka)
-        r.raise_for_status()
-        return r
+    def otvori_glavnu(self) -> _Stranica:
+        r = self._zahtev("GET", BASE_URL + "/", "glavna")
+        st = _Stranica(r.text, r.url)
+        if "IW_width" in r.text:  # bootstrap forma — pošalji je kao pregledač
+            podaci = st.podaci_forme()
+            podaci.update({"IW_width": "1920", "IW_height": "1080", "IW_dpr": "1", "IW_iframe": "0"})
+            r = self._zahtev("POST", st.action(), "glavna_start", data=podaci)
+            st = _Stranica(r.text, r.url)
+        if "ETYPETABLE" not in st.html:
+            raise GreskaPreuzimanja("glavna stranica nema filter ETYPETABLE")
+        return st
 
-    # -- postavljanje filtera
-
-    def _callback_urlovi(self, st: _Stranica) -> list[str]:
-        kandidati = []
-        akcija = st.action()
-        if "$/" in akcija:
-            kandidati.append(akcija[: akcija.index("$/") + 2] + "callback")
-        kandidati += [urljoin(st.url, "$/callback"), BASE_URL + "/$/callback"]
-        return list(dict.fromkeys(kandidati))
-
-    def pokusaji_filtera(self, st: _Stranica):
-        """Generator: svaki korak pokušava da u sesiji postavi ETYPETABLE = 2 (pozivalac proverava /rss)."""
-        polja = st.podaci_forme()
-        polja["ETYPETABLE"] = FILTER_BICIKLISTI
-        dogadjaji = re.findall(r"ETYPETABLE\.(DoOnAsync\w+)", st.html, flags=re.I)
-        dogadjaji = list(dict.fromkeys(dogadjaji + ["DoOnAsyncChange", "DoOnAsyncClick"]))
-        # 1) IntraWeb asinhroni poziv $/callback?callback=ETYPETABLE.<Događaj>
-        for url in self._callback_urlovi(st):
-            for dog in dogadjaji:
-                try:
-                    r = self.post(url, "filter_callback",
-                                  params={"callback": f"ETYPETABLE.{dog}", "x": 0, "y": 0, "which": 0, "modifiers": ""},
-                                  data={**polja, "IW_Action": "ETYPETABLE", "IW_ActionParam": ""})
-                except requests.RequestException as e:
-                    log.debug("callback %s %s: %s", url, dog, e)
-                    continue
-                m = re.search(r"<trackid>(\d+)</trackid>", r.text, flags=re.I)
-                if m:
-                    polja["IW_TrackID_"] = m.group(1)
-                yield f"callback {url} ETYPETABLE.{dog}"
-        # 2) klasičan submit forme sa IW_Action=ETYPETABLE
-        self.post(st.action(), "filter_submit", data={**polja, "IW_Action": "ETYPETABLE", "IW_ActionParam": ""})
-        yield "submit forme"
-
-    # -- /rss i „Preuzimanje“
+    def postavi_filter(self, st: _Stranica) -> None:
+        _, polja = _submit_forma(st)
+        for ime in polja:
+            if ime.endswith("_INPUT"):
+                polja[ime] = _izabrano(st, ime)
+        polja["ETYPETABLE_INPUT"] = FILTER_BICIKLISTI
+        polja.update(_iw_sesija(st))
+        self._zahtev(
+            "POST", BASE_URL + "/$/callback", "filter_callback",
+            params={"callback": "ETYPETABLE.DoOnAsyncChange", "x": 0, "y": 0, "which": 0, "modifiers": ""},
+            data=polja,
+        )
 
     def preuzmi_sa_rss(self) -> bytes:
-        r = self.get(BASE_URL + "/rss", "rss")
+        r = self._zahtev("GET", BASE_URL + "/rss", "rss")
         if _je_xml(r.content):
             return r.content
-        if "Biciklisti" not in r.text:
-            raise FilterNijePostavljen("/rss ne nudi „Biciklisti“ — filter nije postavljen u sesiji")
         st = _Stranica(r.text, r.url)
-        dugme = st.nadji_dugme(TEKST_DUGMETA)
-        if not dugme:
-            raise GreskaPreuzimanja(f"na /rss nije nađeno dugme „{TEKST_DUGMETA}“")
-        ime = _iw_ime(dugme)
-        polja = st.podaci_forme()
-        # 1) submit forme kao da je kliknuto dugme (IntraWeb: IW_Action = ime dugmeta)
-        podaci = {**polja, "IW_Action": ime, "IW_ActionParam": ""}
-        if dugme.get("name"):
-            podaci[dugme["name"]] = dugme.get("value", TEKST_DUGMETA)
-        r = self.post(st.action(), "preuzimanje_submit", data=podaci)
+        if "Biciklisti" not in r.text:
+            poruka = re.search(r'id="EMESSAGE"[^>]*>([^<]*)', r.text, flags=re.I)
+            raise FilterNijePostavljen(
+                f"/rss ne nudi „Biciklisti“ ({poruka.group(1).strip() if poruka else '?'}) — filter nije postavljen")
+        akcija, polja = _submit_forma(st)
+        polja.update(_iw_sesija(st))
+        polja.update({"IW_Action": "DOWNLOADBUTTON", "IW_ActionParam": ""})
+        r = self._zahtev("POST", akcija, "preuzimanje", data=polja)
         if _je_xml(r.content):
             return r.content
-        # 2) asinhroni događaj dugmeta; odgovor može da sadrži URL fajla za preuzimanje
-        for url in self._callback_urlovi(st):
-            try:
-                r = self.post(url, "preuzimanje_callback",
-                              params={"callback": f"{ime}.DoOnAsyncClick", "x": 0, "y": 0, "which": 0, "modifiers": ""},
-                              data=podaci)
-            except requests.RequestException:
-                continue
-            if _je_xml(r.content):
-                return r.content
-            for link in re.findall(r"""["'(]([^"'()<>\s]*(?:\$/[^"'()<>\s]+|\.xml)[^"'()<>\s]*)""", r.text):
-                rr = self.get(urljoin(r.url, link.replace("&amp;", "&")), "preuzimanje_link")
-                if _je_xml(rr.content):
-                    return rr.content
-        raise GreskaPreuzimanja("klik na „Preuzimanje“ nije vratio XML")
+        # Odgovor je stranica koja preuzima fajl preko skrivenog <a id="downlink" download href=...>.
+        for link in re.findall(r"""(?:href|src)\s*=\s*["']([^"']+\.xml[^"']*)["']|["']([^"'\s]*\$/[^"'\s]+\.xml[^"'\s]*)["']""",
+                               r.text, flags=re.I):
+            url = next(x for x in link if x)
+            rr = self._zahtev("GET", urljoin(r.url, url.replace("&amp;", "&")), "preuzimanje_link")
+            if _je_xml(rr.content):
+                return rr.content
+        raise GreskaPreuzimanja("klik na „Preuzimanje“ nije vratio XML ni link ka XML-u")
 
     def preuzmi(self) -> bytes:
-        r = self.get(BASE_URL, "glavna")
-        st = _Stranica(r.text, r.url)
-        poslednja: Exception = GreskaPreuzimanja("nijedan način postavljanja filtera nije pokušan")
-        for opis in self.pokusaji_filtera(st):
-            try:
-                data = self.preuzmi_sa_rss()
-                proveri_sadrzaj(data)
-                log.info("brza varijanta uspela (filter: %s)", opis)
-                return data
-            except FilterNijePostavljen as e:
-                log.info("filter (%s) nije delovao: %s", opis, e)
-                poslednja = e
-        raise poslednja
+        st = self.otvori_glavnu()
+        self.postavi_filter(st)
+        data = self.preuzmi_sa_rss()
+        proveri_sadrzaj(data)
+        return data
 
     def istrazi(self) -> None:
-        """Snima glavnu stranicu, /rss (pre i posle filtera) i IntraWeb JS fajlove."""
-        r = self.get(BASE_URL, "glavna")
-        st = _Stranica(r.text, r.url)
+        """Snima ceo tok i IntraWeb JS fajlove (za otklanjanje grešaka)."""
+        st = self.otvori_glavnu()
         for src in st.skripte:
-            try:
-                self.get(src, "js_" + re.sub(r"\W+", "_", src.rsplit("/", 1)[-1])[:60])
-            except requests.RequestException as e:
-                log.warning("JS %s: %s", src, e)
-        self.get(BASE_URL + "/rss", "rss_pre_filtera")
+            if "/$/js/" in src:
+                try:
+                    self._zahtev("GET", src, "js_" + re.sub(r"\W+", "_", src.rsplit("/", 1)[-1])[:60])
+                except requests.RequestException as e:
+                    log.warning("JS %s: %s", src, e)
         try:
-            data = self.preuzmi()
+            self.postavi_filter(st)
+            data = self.preuzmi_sa_rss()
+            proveri_sadrzaj(data)
             log.info("istraživanje: brza varijanta USPELA (%d bajtova)", len(data))
         except Exception as e:  # noqa: BLE001 — istraživanje, sve se snima
             log.warning("istraživanje: brza varijanta nije uspela: %s", e)
@@ -291,10 +284,7 @@ def preuzmi_pregledacem() -> bytes:
             page = ctx.new_page()
             page.set_default_timeout(TIMEOUT_S * 1000)
             page.goto(BASE_URL, wait_until="networkidle")
-            radio = page.locator(f'input[name="ETYPETABLE"][value="{FILTER_BICIKLISTI}"]')
-            if radio.count() == 0:
-                radio = page.get_by_label("Biciklisti")
-            radio.first.check()
+            page.locator(f'input[name="ETYPETABLE_INPUT"][value="{FILTER_BICIKLISTI}"]').first.check()
             page.wait_for_load_state("networkidle")
             page.wait_for_timeout(1500)
             page.goto(BASE_URL + "/rss", wait_until="networkidle")

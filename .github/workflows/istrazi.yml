@@ -27,8 +27,9 @@ jobs:
           for f in istrazi/*.zaglavlja.txt; do
             echo "::group::$f"; cat "$f"; b="${f%.zaglavlja.txt}.telo"
             case "$f" in
-              *js_*) grep -oE '.{0,120}(callback|SubmitClick|Download|IW_Action|DoOnAsync).{0,120}' "$b" | head -60 ;;
-              *) head -c 20000 "$b" ;;
+              *js_*) grep -oE '.{0,200}(function SubmitClick|SubmitForm|IW_TrackID_|IW_WindowID_|downlink|download).{0,300}' "$b" | head -40 ;;
+              *callback*) head -c 3000 "$b" ;;
+              *) head -c 12000 "$b" ;;
             esac
             echo; echo "::endgroup::"
           done
