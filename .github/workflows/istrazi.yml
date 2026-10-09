@@ -1,0 +1,39 @@
+# Ručno istraživanje mehanizma preuzimanja sa GitHub servera (ispisuje HTML i delove IntraWeb JS-a).
+name: istrazi
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  istrazi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Dostupnost sajta
+        run: curl -sS -m 30 -o /dev/null -w "HTTP %{http_code}, %{time_total}s\n" http://stari.ugzins.rs/SAUS/QLTCnetTrafficAgent
+      - name: Snimanje odgovora
+        run: python -m scraper.preuzimanje --istrazi istrazi
+      - name: Ispis
+        if: always()
+        run: |
+          for f in istrazi/*.zaglavlja.txt; do
+            echo "::group::$f"; cat "$f"; b="${f%.zaglavlja.txt}.telo"
+            case "$f" in
+              *js_*) grep -oE '.{0,120}(callback|SubmitClick|Download|IW_Action|DoOnAsync).{0,120}' "$b" | head -60 ;;
+              *) head -c 20000 "$b" ;;
+            esac
+            echo; echo "::endgroup::"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: istrazi
+          path: istrazi/
