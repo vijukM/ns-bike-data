@@ -1,0 +1,58 @@
+vreme_citanja_utc,feed_updated_utc,location,locationID,direction,directionDesc,serija,datum_brojaca,vreme_brojaca,danas,juce,ove_godine,state,stateDesc,lat,lon
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0015,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),15a,2026-10-09,16:33:57,870,1314,346851,1,Saobraćaj se odvija normalno,45.246414,19.840201
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0015,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),15b,2026-10-09,16:33:58,401,1033,279495,1,Saobraćaj se odvija normalno,45.24633,19.83993
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0020,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),20b,2026-10-09,16:34:19,339,614,117765,1,Saobraćaj se odvija normalno,45.251322,19.805641
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0020,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),20a,2026-10-09,16:33:59,184,380,117685,1,Saobraćaj se odvija normalno,45.25125,19.805401
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0022,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),22b,2026-10-09,16:34:05,273,625,107345,1,Saobraćaj se odvija normalno,45.262045,19.836839
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0022,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),22a,2026-10-09,16:34:05,354,640,94767,1,Saobraćaj se odvija normalno,45.261829,19.836955
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0023,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),23a,2026-10-09,16:34:02,1060,2268,448514,1,Saobraćaj se odvija normalno,45.240293,19.827405
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0025,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),25a,2026-10-09,16:34:01,263,780,199624,1,Saobraćaj se odvija normalno,45.252942,19.855554
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0025,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),25a,2026-10-09,16:34:01,273,798,201113,1,Saobraćaj se odvija normalno,45.252942,19.855554
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0026,26NS Strand,21,Beogradski kej - Fruskogorska,26,2026-10-09,16:34:04,161,549,124597,1,Saobraćaj se odvija normalno,45.237826,19.848426
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0026,26NS Strand,11,Fruskogorska - Beogradski kej,26,2026-10-09,16:34:00,140,473,113908,1,Saobraćaj se odvija normalno,45.237826,19.848426
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0027,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),27b,2026-10-09,16:33:59,547,1352,273447,1,Saobraćaj se odvija normalno,45.257879,19.810436
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0027,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),27a,2026-10-09,16:34:00,257,672,52393,1,Saobraćaj se odvija normalno,45.257699,19.810026
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0028,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,28,2026-10-09,16:34:00,0,0,85362,6,Nema saobraćaja,45.256758,19.834542
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0028,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,28,2026-10-09,16:34:02,1011,1982,287930,1,Saobraćaj se odvija normalno,45.256758,19.834542
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0029,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),29a,2026-10-09,16:34:02,769,1197,226723,1,Saobraćaj se odvija normalno,45.260059,19.82153
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0029,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),29b,2026-10-09,16:34:01,401,786,209586,1,Saobraćaj se odvija normalno,45.260162,19.821722
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0030,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),30a,2026-10-09,16:34:03,934,1798,335576,1,Saobraćaj se odvija normalno,45.244116,19.843214
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0030,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),30b,2026-10-09,16:34:03,806,2007,361891,1,Saobraćaj se odvija normalno,45.24442,19.843149
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0031,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),31b,2026-10-09,16:34:03,1263,1937,450208,1,Saobraćaj se odvija normalno,45.259558,19.827023
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0034,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),34b,2026-10-09,16:34:06,1094,2270,416300,1,Saobraćaj se odvija normalno,45.24924,19.82866
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0034,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),34a,2026-10-09,16:34:10,2615,5178,901910,1,Saobraćaj se odvija normalno,45.249,19.82831
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0036,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),36b,2026-10-09,16:34:06,474,1428,81917,1,Saobraćaj se odvija normalno,45.25272,19.83855
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0036,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),36a,2026-10-09,16:34:06,1221,2547,496231,1,Saobraćaj se odvija normalno,45.25254,19.83869
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0037,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),37a,2026-10-09,16:34:11,148,345,99783,1,Saobraćaj se odvija normalno,45.240876,19.843284
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0038,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),38a,2026-10-09,16:34:09,658,1327,220042,1,Saobraćaj se odvija normalno,45.258039,19.818758
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0038,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),38b,2026-10-09,16:34:07,759,1405,307680,1,Saobraćaj se odvija normalno,45.258395,19.819157
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0039,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),39b,2026-10-09,16:34:07,544,993,192171,1,Saobraćaj se odvija normalno,45.26411,19.821189
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0039,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),39a,2026-10-09,16:34:11,424,227,145114,1,Saobraćaj se odvija normalno,45.263871,19.821154
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0040,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,40a,2026-10-09,16:34:08,310,722,129057,1,Saobraćaj se odvija normalno,45.240035,19.817155
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0040,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,40b,2026-10-09,16:34:08,216,465,86809,1,Saobraćaj se odvija normalno,45.240244,19.817184
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0040,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,40b,2026-10-09,16:34:09,201,368,67664,1,Saobraćaj se odvija normalno,45.240244,19.817184
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0040,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,40a,2026-10-09,16:34:12,434,851,143681,1,Saobraćaj se odvija normalno,45.240035,19.817155
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0041,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,41,2026-10-09,16:34:12,848,1212,241215,1,Saobraćaj se odvija normalno,45.255568,19.834719
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0041,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,41,2026-10-09,16:34:08,714,1008,198192,1,Saobraćaj se odvija normalno,45.255568,19.834719
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0042,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),42b,2026-10-09,16:34:11,382,884,191849,1,Saobraćaj se odvija normalno,45.253968,19.806119
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0042,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),42a,2026-10-09,16:34:09,126,3,175083,1,Saobraćaj se odvija normalno,45.253781,19.806246
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0043,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),43a,2026-10-09,16:34:15,505,1028,208601,1,Saobraćaj se odvija normalno,45.262419,19.814289
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0043,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),43b,2026-10-09,16:34:13,232,441,87002,1,Saobraćaj se odvija normalno,45.262573,19.814263
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0044,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),44b,2026-10-09,16:34:16,486,1154,217729,1,Saobraćaj se odvija normalno,45.253588,19.81339
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0044,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),44a,2026-10-09,16:34:16,406,792,164530,1,Saobraćaj se odvija normalno,45.253448,19.813023
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0045,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),45a,2026-10-09,16:34:13,231,526,94633,1,Saobraćaj se odvija normalno,45.249447,19.798124
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0045,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),45b,2026-10-09,16:34:17,416,810,169613,1,Saobraćaj se odvija normalno,45.24953,19.798362
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0046,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,46a,2026-10-09,16:34:14,237,445,84231,1,Saobraćaj se odvija normalno,45.245966,19.800219
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0046,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,46b,2026-10-09,16:34:15,357,619,113451,1,Saobraćaj se odvija normalno,45.245971,19.799306
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0046,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,46a,2026-10-09,16:34:10,293,501,100206,1,Saobraćaj se odvija normalno,45.245966,19.800219
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0046,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,46b,2026-10-09,16:34:15,310,700,134276,1,Saobraćaj se odvija normalno,45.245971,19.799306
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0047,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,47,2026-10-09,16:34:14,179,331,66786,1,Saobraćaj se odvija normalno,45.240345,19.838594
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0047,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,47,2026-10-09,16:34:13,275,488,108195,1,Saobraćaj se odvija normalno,45.240345,19.838594
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0049,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),49b,2026-10-09,16:34:18,0,4,22515,6,Nema saobraćaja,45.249741,19.845811
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0049,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),49a,2026-10-09,16:34:17,207,328,64524,1,Saobraćaj se odvija normalno,45.24962,19.845863
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0050,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),50a,2026-10-09,16:34:18,518,1079,167799,1,Saobraćaj se odvija normalno,45.248713,19.833487
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0050,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),50b,2026-10-09,16:34:18,351,731,106408,1,Saobraćaj se odvija normalno,45.248852,19.833603
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0051,51NSb Futoski put,11,Bul.Evrope-Suboticka,51b,2026-10-09,16:34:04,677,1547,288524,1,Saobraćaj se odvija normalno,45.248277,19.814417
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0051,51NSa Futoski put,21,Bul.Evrope-Suboticka,51a,2026-10-09,16:33:59,264,410,79282,1,Saobraćaj se odvija normalno,45.24806,19.81453
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0051,51NSa Futoski put,11,Suboticka-Bul.Evrope,51a,2026-10-09,16:33:58,236,395,70575,1,Saobraćaj se odvija normalno,45.24806,19.81453
+2026-10-09T14:37:50Z,2026-10-09T14:34:19Z,0051,51NSb Futoski put,21,Suboticka-Bul.Evrope,51b,2026-10-09,16:34:05,878,1560,289557,1,Saobraćaj se odvija normalno,45.248277,19.814417
