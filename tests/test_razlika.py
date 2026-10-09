@@ -21,9 +21,9 @@ def test_preko_ponoci():
     assert r["bicikala_od_prethodnog"] == 52 and r["minuta_od_prethodnog"] == 60
 
 
-def test_kvar_negativno_prvo():
-    assert izracunaj(red("2026-10-09", "21:00", 0, state="6"), red("2026-10-09", "20:00", 0))["razlog_razlike"] \
-        == "kvar_state_6"
+def test_state6_negativno_prvo():
+    r = izracunaj(red("2026-10-09", "21:00", 7, state="6"), red("2026-10-09", "20:00", 7))
+    assert r["bicikala_od_prethodnog"] == 0 and r["razlog_razlike"] == ""
     assert izracunaj(red("2026-10-09", "21:00", 5), red("2026-10-09", "20:00", 90))["razlog_razlike"] \
         == "negativna_razlika"
     assert izracunaj(red("2026-10-09", "21:00", 5), None)["razlog_razlike"] == "nema_prethodnog"
@@ -39,4 +39,4 @@ def test_sacuvaj_upisuje_razliku(tmp_path, monkeypatch):
     redovi = prethodno_citanje("2026-10-09T13:00:00Z")
     assert len(redovi) == 57 and redovi[0]["prethodno_citanje_utc"] == "2026-10-09T11:08:00Z"
     vrednosti = {r["razlog_razlike"] or r["bicikala_od_prethodnog"] for r in redovi}
-    assert vrednosti == {"0", "kvar_state_6"}
+    assert vrednosti == {"0"}

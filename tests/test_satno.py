@@ -101,12 +101,13 @@ def test_propusteno_citanje():
     assert serije["y"].notna().sum() == 22
 
 
-def test_kvar_state_6():
-    satni = [satni_profil(24, 10), satni_profil(24, 1)]
-    _, serije, _ = izracunaj(napravi(D, satni, izmene={(10, 1): {"state": 6}}))
-    nan = serije[serije["y"].isna()]
-    assert nan["ts"].dt.hour.tolist() == [10, 11]
-    assert set(nan["razlog"]) == {"kvar_state_6"}
+def test_state_6_je_validna_nula():
+    # state 6 = „nema saobraćaja“ u poslednjih 5 min — vrednost se računa normalno
+    satni = [satni_profil(24, 10), [0] * 24]
+    df = napravi(D, satni, izmene={(i, 1): {"state": 6} for i in range(26)})
+    _, serije, provera = izracunaj(df)
+    assert serije["y"].notna().all() and serije["y"].tolist() == satni[0]
+    assert provera["napomena"].tolist() == ["nula_ceo_dan"] and provera["direction"].tolist() == ["2"]
 
 
 def test_reset_brojaca():

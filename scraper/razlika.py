@@ -78,10 +78,6 @@ def izracunaj(red: dict, pre: dict | None) -> dict:
     if None in (danas, danas0) or not (t and t0):
         out["razlog_razlike"] = "nema_vrednosti"
         return out
-    for s in (pre["state"], red["state"]):
-        if str(s) != "1":
-            out["razlog_razlike"] = f"kvar_state_{s}"
-            return out
     if t.date() == t0.date():
         y = danas - danas0
     elif t.date() == t0.date() + timedelta(days=1) and juce is not None:

@@ -150,7 +150,7 @@ jedne do dve godine prikupljanja. Broj commit-ova (24 dnevno ≈ 8 760 godišnje
 
 **Ulazni fajl** (Atom + GeoRSS, Mikrobit; namespace `http://www.w3.org/2005/Atom` i
 `http://www.mikrobit.si/schemas/counters/v1`): `volume_today` (danas do vremena brojača),
-`volume_yesterday`, `volumethisyear`, `state` (1 = normalno, 6 = nema saobraćaja/kvar), `date`/`time` =
+`volume_yesterday`, `volumethisyear`, `state` (stanje u poslednjih 5 min: 1 = normalno, 6 = „nema saobraćaja“ — niko nije prošao, validna nula), `date`/`time` =
 lokalno vreme brojača (Europe/Belgrade), `<updated>` = UTC, decimalni zarez u `geoX`/`geoY`. Fajl se
 osvežava otprilike svakog minuta. `<id>` **nije** jedinstven (npr. `0040-21` za 40NSa i 40NSb) —
 ključ smera je `(locationID, direction, directionDesc)`.
@@ -166,7 +166,7 @@ Dodatne kolone u svakom čitanju (`scraper/razlika.py`) — broj biciklista od p
 | `bicikala_od_prethodnog` | `danas − danas_prethodno`; preko ponoći `juče − danas_prethodno + danas`. Kad su čitanja na sat, to je broj biciklista **u tom satu** |
 | `minuta_od_prethodnog` | razmak vremena brojača (60 = tačno sat) |
 | `prethodno_citanje_utc` | sa kojim čitanjem je poređeno |
-| `razlog_razlike` | prazno, ili zašto vrednost nedostaje: `nema_prethodnog`, `kvar_state_N`, `negativna_razlika`, `nema_vrednosti`, `razmak_vise_od_dana` |
+| `razlog_razlike` | prazno, ili zašto vrednost nedostaje: `nema_prethodnog`, `negativna_razlika`, `nema_vrednosti`, `razmak_vise_od_dana` |
 
 Ovo je brzi pregled po smeru odmah posle čitanja; konačne satne vrednosti po seriji (sa proverom svežine
 i zbira) daje `satno.py` posle ponoći.
@@ -185,12 +185,15 @@ istorijski master (`stanica_id, ts, y_A, razlog_A`) uz dodatnu kolonu `ts_utc`.
   - `nema_citanja` — čitanje u tom satu nije uspelo / ne postoji;
   - `nema_smera` — čitanje postoji, ali u njemu nema tog smera;
   - `zastarelo` — vreme brojača nije posle pune sata ili je starije od 15 min od čitanja;
-  - `kvar_state_N` — `state != 1` u nekom od potrebnih čitanja;
   - `negativna_razlika` — npr. reset brojača;
 - serija ima vrednost samo ako je imaju svi njeni smerovi;
 - dan prelaska na letnje vreme ima 23 sata (nema oznake 02:00), na zimsko 25 (oznaka 02:00 dva puta —
   jednoznačno je `ts_utc`);
-- provera: kada su svi sati smera prisutni, zbir == „juče" (odstupanja idu u `satno_provera.csv`).
+- `state` se ne koristi kao uslov: po opisu sistema (dugme Info na sajtu) brojač stanje računa na 5 min,
+  a 6 („SIVO – nema saobraćaja“) znači da u tih 5 min niko nije prošao — to je validna nula. Ispad
+  uređaja („CRNO – nema podataka“, > 30 min bez podataka) hvata provera svežine (`zastarelo`);
+- provera (`satno_provera.csv`): zbir sati ≠ „juče" (`zbir_sati_razlicit_od_juce`) i smerovi koji su ceo
+  dan 0 (`nula_ceo_dan` — moguće neispravan senzor; odluka o seriji je na korisniku).
 
 ## Ograničenja
 

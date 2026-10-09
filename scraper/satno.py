@@ -15,7 +15,7 @@ jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sle
     python -m scraper.satno --spoji          # sve dane spoji u podaci/satno.parquet i .csv (lokalno)
 
 Izlaz za dan D (folder podaci/YYYY/MM/DD/): satno.csv (stanica_id, ts, y, razlog, ts_utc — po seriji),
-satno_smerovi.csv (po smeru), satno_provera.csv (samo ako zbir sati odstupa od „juče").
+satno_smerovi.csv (po smeru), satno_provera.csv (samo ako zbir sati odstupa od „juče" ili je smer ceo dan 0).
 Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv.
 """
 from __future__ import annotations
@@ -41,10 +41,6 @@ NEMA_CITANJA = "nema_citanja"
 NEMA_SMERA = "nema_smera"
 ZASTARELO = "zastarelo"
 NEGATIVNO = "negativna_razlika"
-
-
-def kvar(state) -> str:
-    return f"kvar_state_{state}"
 
 
 def _citaj_csv(fajlovi) -> pd.DataFrame:
@@ -131,9 +127,8 @@ def _razlika(citanja: list[_Citanje], vrednost) -> tuple[float | None, str | Non
     for c in citanja:
         if c.razlog:
             return None, c.razlog
-    for c in citanja:
-        if c.state != 1:
-            return None, kvar(c.state)
+    # state se NE koristi kao uslov: 6 = „nema saobraćaja“ u poslednjih 5 min (validna nula, npr. noću),
+    # a ispad uređaja („nema podataka“ > 30 min) hvata provera svežine vremena brojača.
     y = vrednost()
     if y is None or pd.isna(y):
         return None, NEMA_SMERA
@@ -200,12 +195,16 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
                     "ts_utc": kraj_sata,
                     "y": y, "razlog": razlog,
                 })
-            if all(v is not None for v in vrednosti) and J.juce is not None:
-                zbir = sum(vrednosti)
-                if zbir != J.juce:
-                    provera.append({"datum": d.isoformat(), "locationID": k[0], "direction": k[1],
-                                    "directionDesc": k[2], "zbir_sati": zbir, "juce": J.juce,
-                                    "razlika": zbir - J.juce})
+            napomena = None
+            if all(v is not None for v in vrednosti) and J.juce is not None and sum(vrednosti) != J.juce:
+                napomena = "zbir_sati_razlicit_od_juce"
+            elif J.juce == 0:
+                napomena = "nula_ceo_dan"  # moguće neispravan senzor koji javlja „nema saobraćaja“
+            if napomena:
+                zbir = sum(vrednosti) if all(v is not None for v in vrednosti) else None
+                provera.append({"datum": d.isoformat(), "locationID": k[0], "direction": k[1],
+                                "directionDesc": k[2], "zbir_sati": zbir, "juce": J.juce,
+                                "napomena": napomena})
         d += timedelta(days=1)
     return pd.DataFrame(redovi), pd.DataFrame(provera)
 
