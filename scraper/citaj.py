@@ -88,9 +88,10 @@ def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
     sada = datetime.now(timezone.utc).replace(microsecond=0)
-    if a.samo_ako_nema and postoji_citanje_za_sat(sada):
-        log.info("za tekući sat već postoji čitanje — preskačem")
-        _gh_output(procitano="false", prvo_u_danu="false")
+    if a.samo_ako_nema and (sada.minute < 10 or postoji_citanje_za_sat(sada)):
+        # rezerva (XX:20) koju GitHub zakasni do početka sledećeg sata ne čita — glavno čitanje stiže u XX:02
+        log.info("rezerva: za tekući sat već postoji čitanje ili je početak sata — preskačem")
+        _gh_output(procitano="false", prvo_u_danu="false", obracunaj="false")
         return 0
 
     try:
@@ -105,7 +106,7 @@ def main(argv=None) -> int:
         poruka = f"metod={a.metod}\t{type(e).__name__}: {e}"
         _upisi_gresku(poruka, sada)
         log.error("čitanje nije uspelo: %s", poruka)
-        _gh_output(procitano="false", prvo_u_danu="false")
+        _gh_output(procitano="false", prvo_u_danu="false", obracunaj="false")
         return 2
 
     _, unosi = parsiraj(data)
@@ -116,7 +117,10 @@ def main(argv=None) -> int:
         log.warning("NEDOSTAJU serije: %s", " ".join(nedostaju))
     if visak:
         log.warning("serije VIŠKA: %s", " ".join(visak))
-    _gh_output(procitano="true", prvo_u_danu=str(prvo).lower())
+    # satni obračun za juče: u prvom čitanju dana i u čitanju u 01:xx (u 00:02 brojač je često još od 23:58,
+    # pa „juče“ za sat 23–24 stiže tek u 01:02)
+    lok_sat = sada.astimezone(konfig.TZ).hour
+    _gh_output(procitano="true", prvo_u_danu=str(prvo).lower(), obracunaj=str(prvo or lok_sat == 1).lower())
     return 0
 
 

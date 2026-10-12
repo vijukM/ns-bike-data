@@ -45,8 +45,8 @@ jobs:
           python -m playwright install --with-deps chromium
           python -m scraper.citaj --metod pregledac $SAMO_AKO_NEMA
 
-      - name: Satne vrednosti (prvo čitanje posle ponoći)
-        if: steps.brza.outputs.prvo_u_danu == 'true' || steps.pregledac.outputs.prvo_u_danu == 'true'
+      - name: Satne vrednosti i Excel za juče (prvo čitanje dana i čitanje u 01:xx)
+        if: steps.brza.outputs.obracunaj == 'true' || steps.pregledac.outputs.obracunaj == 'true'
         run: python -m scraper.satno
 
       - name: Commit i push podataka

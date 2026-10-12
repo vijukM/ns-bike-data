@@ -161,8 +161,10 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
     prvi, poslednji = lok_dan.min(), lok_dan.max()
     do_dana = do_dana or poslednji  # isključivo: dan D se računa samo ako je počeo D+1
     # prvo čitanje u svakom UTC satu (svaki lokalni sat je tačno jedan UTC sat)
-    df_prva = df[df["t_citanja"] == df.groupby("sat_utc")["t_citanja"].transform("min")]
-    po_satu = {_sat(s): g.set_index(KLJUC) for s, g in df_prva.groupby("sat_utc")}
+    # sva čitanja po UTC satu, redom po vremenu — za svaki smer se uzima prvo ISPRAVNO čitanje u satu
+    # (npr. zakasnela rezervna pokretanja u XX:00 sa brojačem od XX:53 se preskaču)
+    po_satu = {_sat(s): g.sort_values("t_citanja").set_index(KLJUC).sort_index(kind="mergesort")
+               for s, g in df.groupby("sat_utc")}
 
     redovi, provera = [], []
     d = prvi
@@ -180,10 +182,16 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
             def citanje(i: int) -> _Citanje:
                 s = sati[i]
                 g = po_satu.get(_sat(s))
-                red = g.loc[k] if g is not None and k in g.index else None
-                if isinstance(red, pd.DataFrame):
-                    red = red.iloc[0]
-                return _ocitaj(red, g is not None, s)
+                if g is None or k not in g.index:
+                    return _ocitaj(None, g is not None, s)
+                redovi_k = g.loc[[k]]
+                prvo = None
+                for _, red in redovi_k.iterrows():
+                    c = _ocitaj(red, True, s)
+                    if c.razlog is None:
+                        return c
+                    prvo = prvo or c
+                return prvo
 
             # „juče" iz prvog ispravnog čitanja posle ponoći
             kand = sledeci[(sledeci[KLJUC] == list(k)).all(axis=1)].sort_values("t_citanja")
@@ -259,7 +267,7 @@ def obradi_dan(d: date, koren: Path | None = None) -> pd.DataFrame:
     smerovi.to_csv(folder / "satno_smerovi.csv", index=False)
     if not provera.empty:
         provera.to_csv(folder / "satno_provera.csv", index=False)
-        log.warning("%s: odstupanja zbira od „juče“: %d (satno_provera.csv)", d, len(provera))
+        log.warning("%s: napomene u satno_provera.csv: %s", d, provera["napomena"].value_counts().to_dict())
     log.info("%s: serija %d, sati %d, popunjeno %d, NaN %d %s", d, serije["stanica_id"].nunique(), len(serije),
              serije["y"].notna().sum(), serije["y"].isna().sum(),
              serije["razlog"].value_counts().to_dict() if serije["razlog"].notna().any() else "")

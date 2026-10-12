@@ -193,3 +193,14 @@ def test_nepotpun_sat():
     _, serije, _ = izracunaj(df)
     nan = serije[serije["y"].isna()]
     assert nan["sat"].tolist() == [10, 11] and set(nan["razlog"]) == {"nepotpun_sat"}
+
+
+def test_zakasnela_rezerva_ne_kvari_sat():
+    # zakasnelo rezervno čitanje u 08:00 sa brojačem od 07:53 pre redovnog u 08:01 — uzima se ispravno
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    df = napravi(D, satni)
+    los = df[df["vreme_citanja_utc"] == "2026-10-05T06:01:00Z"].assign(
+        vreme_citanja_utc="2026-10-05T06:00:10Z", vreme_brojaca="07:53:00", danas=lambda x: x["danas"] - 3)
+    _, serije, _ = izracunaj(pd.concat([los, df]))
+    assert serije["y"].notna().all()
+    assert serije["y"].tolist() == [a + b for a, b in zip(*satni)]
