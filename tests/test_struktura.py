@@ -51,6 +51,6 @@ def test_excel_mesec(tmp_path, monkeypatch):
     assert wb.sheetnames == ["26", "Info"]
     ws = wb["26"]
     redovi = list(ws.values)
-    assert redovi[0] == ("Date", "Time", "y_A", "razlog_A", "oznaka")
+    assert redovi[0] == ("Date", "Time", "A01", "A02", "Sum", "razlog_A", "oznaka")
     assert redovi[1][1] == "01:00" and redovi[-1][1] == "24:00" and len(redovi) == 25
-    assert redovi[1][2:4] == (11, "ok")
+    assert redovi[1][2:6] == (10, 1, 11, "ok")

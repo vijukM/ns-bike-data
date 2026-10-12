@@ -142,7 +142,9 @@ podaci/
 ```
 
 **Excel** (`podaci/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
-seriji, kolone `Date | Time (01:00–24:00) | y_A | razlog_A | oznaka`. `y_A` = broj biciklista (cilj
+seriji, kolone `Date | Time (01:00–24:00) | y_A | razlog_A | oznaka`. Stari dvosmerni brojači (25a, 26, 28, 40a/b, 41,
+46a/b, 47, 51a/b) imaju `Date | Time | A01 | A02 | Sum | razlog_A | oznaka` (A01 = smer 1x, A02 = smer 2x,
+Sum = A01 + A02 = `y_A`, kao u istorijskom masteru); u parquet fajlovima za model kolona je uvek `y_A`. `y_A` = broj biciklista (cilj
 modela; feed daje A = samo bicikli; dvosmerne serije = zbir oba smera), `razlog_A` = `ok` ili razlog zašto
 vrednost nedostaje (vidi dole), `oznaka` = neobičan sat po smeru. Vrednosti > 400 su crvene, nedostajući
 sati sivi. Neobični sati (`scraper/anomalije.py`, vrednosti se ne menjaju):
