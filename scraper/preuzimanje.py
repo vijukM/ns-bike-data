@@ -284,7 +284,9 @@ def preuzmi_pregledacem() -> bytes:
             page = ctx.new_page()
             page.set_default_timeout(TIMEOUT_S * 1000)
             page.goto(BASE_URL, wait_until="networkidle")
-            page.locator(f'input[name="ETYPETABLE_INPUT"][value="{FILTER_BICIKLISTI}"]').first.check()
+            # mapa (div#qTAMap) prekriva radio dugme, pa se klik šalje direktno elementu (kao korisnički klik)
+            radio = page.locator(f'input[name="ETYPETABLE_INPUT"][value="{FILTER_BICIKLISTI}"]').first
+            radio.evaluate("e => e.click()")
             page.wait_for_load_state("networkidle")
             page.wait_for_timeout(1500)
             page.goto(BASE_URL + "/rss", wait_until="networkidle")

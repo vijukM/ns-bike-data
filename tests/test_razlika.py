@@ -40,3 +40,8 @@ def test_sacuvaj_upisuje_razliku(tmp_path, monkeypatch):
     assert len(redovi) == 57 and redovi[0]["prethodno_citanje_utc"] == "2026-10-09T11:08:00Z"
     vrednosti = {r["razlog_razlike"] or r["bicikala_od_prethodnog"] for r in redovi}
     assert vrednosti == {"0"}
+
+
+def test_state0_nema_podataka():
+    r = izracunaj(red("2026-10-12", "12:00", 0, state="0"), red("2026-10-12", "11:00", 0, state="0"))
+    assert r["bicikala_od_prethodnog"] == "" and r["razlog_razlike"] == "nema_podataka"

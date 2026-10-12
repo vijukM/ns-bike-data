@@ -16,7 +16,7 @@ jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sle
     python -m scraper.satno --sve            # svi dani za koje postoje čitanja
     python -m scraper.satno --spoji          # sve dane spoji u podaci/satno.parquet i .csv (lokalno)
 
-Izlaz za dan D (folder podaci/YYYY/MM/DD/): satno.csv (stanica_id, ts, y, razlog, ts_utc — po seriji),
+Izlaz za dan D (folder podaci/YYYY/MM/DD/): satno.csv (stanica_id, ts, y_A, razlog_A, ts_utc, datum, sat — po seriji),
 satno_smerovi.csv (po smeru), satno_provera.csv (samo ako zbir sati odstupa od „juče" ili je smer ceo dan 0).
 Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv; u formatu istorijskog mastera
 (stanica_id, ts, y_A, razlog_A): podaci/YYYY/MM/master_YYYY-MM.parquet; Excel (sheet po seriji):
@@ -52,6 +52,7 @@ NEMA_SMERA = "nema_smera"
 ZASTARELO = "zastarelo"
 NEGATIVNO = "negativna_razlika"
 NEPOTPUN_SAT = "nepotpun_sat"
+NEMA_PODATAKA = "nema_podataka"  # state 0: uređaj > 30 min bez podataka (danas je „zamrznut“)
 
 
 def _citaj_csv(fajlovi) -> pd.DataFrame:
@@ -133,6 +134,8 @@ def _ocitaj(red: pd.Series | None, ima_citanja: bool, pocetak_sata: datetime,
     if pd.isna(tb) or tb < pocetak_sata - tolerancija or tc - tb > MAKS_STAROST:
         return _Citanje(None, None, None, ZASTARELO)
     st = None if pd.isna(red["state"]) else int(red["state"])
+    if st == 0:
+        return _Citanje(None, None, st, NEMA_PODATAKA)
     return _Citanje(red["danas"], red["juce"], st, None, tb)
 
 
@@ -219,7 +222,7 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
                     "datum": d.isoformat(), "sat": kraj_sata.tz_convert(konfig.TZ).hour or 24,
                     "ts": kraj_sata.tz_convert(konfig.TZ).tz_localize(None),
                     "ts_utc": kraj_sata,
-                    "y": y, "razlog": razlog,
+                    "y_A": y, "razlog_A": razlog,
                 })
             napomena = None
             if all(v is not None for v in vrednosti) and J.juce is not None and sum(vrednosti) != J.juce:
@@ -232,23 +235,26 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
                                 "directionDesc": k[2], "zbir_sati": zbir, "juce": J.juce,
                                 "napomena": napomena})
         d += timedelta(days=1)
-    return pd.DataFrame(redovi), pd.DataFrame(provera)
+    smerovi = pd.DataFrame(redovi)
+    if not smerovi.empty:
+        smerovi["razlog_A"] = smerovi["razlog_A"].fillna("ok")
+    return smerovi, pd.DataFrame(provera)
 
 
 def satno_po_seriji(smerovi: pd.DataFrame) -> pd.DataFrame:
     """Serija = zbir svih smerova, samo ako svi smerovi imaju vrednost; inače NaN sa razlogom prvog smera."""
     if smerovi.empty:
-        return pd.DataFrame(columns=["stanica_id", "ts", "y", "razlog", "ts_utc", "datum", "sat"])
+        return pd.DataFrame(columns=["stanica_id", "ts", "y_A", "razlog_A", "ts_utc", "datum", "sat"])
     redovi = []
     for (serija, ts_utc), g in smerovi.groupby(["serija", "ts_utc"], sort=True):
-        if g["y"].notna().all():
-            y, razlog = float(g["y"].sum()), None
+        if g["y_A"].notna().all():
+            y, razlog = float(g["y_A"].sum()), "ok"
         else:
-            y, razlog = None, g.loc[g["y"].isna(), "razlog"].iloc[0]
-        redovi.append({"stanica_id": serija, "ts": g["ts"].iloc[0], "y": y, "razlog": razlog, "ts_utc": ts_utc,
+            y, razlog = None, g.loc[g["y_A"].isna(), "razlog_A"].iloc[0]
+        redovi.append({"stanica_id": serija, "ts": g["ts"].iloc[0], "y_A": y, "razlog_A": razlog, "ts_utc": ts_utc,
                        "datum": g["datum"].iloc[0], "sat": int(g["sat"].iloc[0])})
     out = pd.DataFrame(redovi)
-    out["y"] = out["y"].astype("float64")
+    out["y_A"] = out["y_A"].astype("float64")
     return out.sort_values(["stanica_id", "ts_utc"]).reset_index(drop=True)
 
 
@@ -270,8 +276,8 @@ def obradi_dan(d: date, koren: Path | None = None) -> pd.DataFrame:
         provera.to_csv(folder / "satno_provera.csv", index=False)
         log.warning("%s: napomene u satno_provera.csv: %s", d, provera["napomena"].value_counts().to_dict())
     log.info("%s: serija %d, sati %d, popunjeno %d, NaN %d %s", d, serije["stanica_id"].nunique(), len(serije),
-             serije["y"].notna().sum(), serije["y"].isna().sum(),
-             serije["razlog"].value_counts().to_dict() if serije["razlog"].notna().any() else "")
+             serije["y_A"].notna().sum(), serije["y_A"].isna().sum(),
+             serije.loc[serije["razlog_A"] != "ok", "razlog_A"].value_counts().to_dict())
     return serije
 
 
@@ -282,7 +288,7 @@ def _ucitaj_satno(fajlovi) -> pd.DataFrame:
     df["stanica_id"] = df["stanica_id"].astype(str)
     df["ts"] = pd.to_datetime(df["ts"])
     df["ts_utc"] = pd.to_datetime(df["ts_utc"], utc=True)
-    df["y"] = df["y"].astype("float64")
+    df["y_A"] = df["y_A"].astype("float64")
     return df.sort_values(["stanica_id", "ts_utc"]).reset_index(drop=True)
 
 
@@ -312,17 +318,17 @@ def u_master(df: pd.DataFrame) -> pd.DataFrame:
     for st, g in df.groupby("stanica_id"):
         mreza = pd.date_range(g["ts"].min(), g["ts"].max(), freq="h")
         g = g.set_index("ts").reindex(mreza).rename_axis("ts").reset_index()
-        g = g.astype({"razlog": object, "datum": object})
+        g = g.astype({"razlog_A": object, "datum": object})
         nema = g["stanica_id"].isna()
         g["stanica_id"] = st
-        g.loc[nema, "razlog"] = "nema_reda"
+        g.loc[nema, "razlog_A"] = "nema_reda"
         kraj = g["ts"] - pd.Timedelta(hours=1)  # dan kome sat pripada (24:00 → prethodni dan)
         g.loc[nema, "datum"] = kraj[nema].dt.strftime("%Y-%m-%d")
         g.loc[nema, "sat"] = kraj[nema].dt.hour + 1
         delovi.append(g)
     m = pd.concat(delovi, ignore_index=True)
-    m["razlog_A"] = m["razlog"].fillna("ok")
-    m["y_A"] = m["y"].astype("float64")
+    m["razlog_A"] = m["razlog_A"].fillna("ok")
+    m["y_A"] = m["y_A"].astype("float64")
     m["sat"] = m["sat"].astype("int64")
     return m[kolone].sort_values(["stanica_id", "ts"]).reset_index(drop=True)
 

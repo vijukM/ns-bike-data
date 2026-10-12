@@ -6,7 +6,7 @@ from scraper.anomalije import oznaci
 def dan(vrednosti, datum="2026-10-10"):
     n = len(vrednosti)
     return pd.DataFrame({"ts_utc": pd.date_range(f"{datum} 00:00", periods=n, freq="h", tz="UTC"),
-                         "datum": datum, "sat": range(1, n + 1), "y": vrednosti})
+                         "datum": datum, "sat": range(1, n + 1), "y_A": vrednosti})
 
 
 def test_obican_dan_bez_oznaka():

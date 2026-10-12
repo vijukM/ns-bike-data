@@ -75,7 +75,7 @@ do desetine minuta i ponekad preskače pokretanja, zato je on samo rezerva. Work
 
 - `workflow_dispatch` (glavni) + `schedule` u XX:20 (rezerva: čita samo ako za tekući sat nema čitanja);
 - Python 3.12 sa pip keš-om; Playwright Chromium se instalira **samo** ako brza varijanta ne uspe;
-- u prvom čitanju posle ponoći pokreće i `satno.py`;
+- u prvom čitanju dana i u čitanju u 01:xx pokreće i `satno.py` (obračun i Excel za juče);
 - commit + push `podaci/` (`git pull --rebase` pre push-a, bez praznog commit-a); `concurrency` grupa
   sprečava preklapanje dva pokretanja.
 
@@ -129,10 +129,10 @@ podaci/
       satno_2026-10.parquet, .csv    satne vrednosti po seriji za ceo mesec (osvežava se posle ponoći)
       master_2026-10.parquet         isto u formatu istorijskog mastera: stanica_id, ts, y_A, razlog_A (+ datum, sat)
       09/                            dan (lokalni datum čitanja)
-        0001.csv, 0001.xml.gz        čitanje u 00:01 — CSV (57 redova) i sirov XML
-        0101.csv, 0101.xml.gz        …  24 čitanja dnevno (HHMM = lokalno vreme čitanja)
+        0002.csv, 0002.xml.gz        čitanje u 00:02 — CSV (57 redova) i sirov XML
+        0102.csv, 0102.xml.gz        …  24 čitanja dnevno (HHMM = lokalno vreme čitanja)
         …
-        2301.csv, 2301.xml.gz
+        2302.csv, 2302.xml.gz
         satno.csv                    24 sata × 46 serija za ovaj dan (upisuje se posle ponoći)
         satno_smerovi.csv            isto, po smeru
         satno_provera.csv            samo ako zbir sati odstupa od „juče"
@@ -142,16 +142,17 @@ podaci/
 ```
 
 **Excel** (`podaci/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
-seriji, kolone `Date | Time (01:00–24:00) | Status | y_A` za seriju sa jednim smerom (cilj modela; u
-istorijskom izvozu kolona A1k/A2k), odnosno `Sum1 | Sum2 | Sum` za stare dvosmerne brojače (Sum = y_A).
-`Status` je prazan kad je sat ispravan, inače razlog (vidi dole) ili oznaka neobičnog sata; vrednosti
-> 400 su crvene, nedostajući sati sivi. Neobični sati (`scraper/anomalije.py`, vrednosti se ne menjaju):
+seriji, kolone `Date | Time (01:00–24:00) | y_A | razlog_A | oznaka`. `y_A` = broj biciklista (cilj
+modela; feed daje A = samo bicikli; dvosmerne serije = zbir oba smera), `razlog_A` = `ok` ili razlog zašto
+vrednost nedostaje (vidi dole), `oznaka` = neobičan sat po smeru. Vrednosti > 400 su crvene, nedostajući
+sati sivi. Neobični sati (`scraper/anomalije.py`, vrednosti se ne menjaju):
 
 | oznaka | boja | pravilo |
 |---|---|---|
 | `nula_dan` | narandžasto | smer je ceo dan imao 0 (moguće neispravan senzor) |
 | `nula_niz` | narandžasto | ≥ 3 uzastopna sata sa 0 između 07:00 i 21:00, a smer tog dana ima ≥ 100 |
 | `skok` | žuto | vrednost ≥ 50 i ≥ 3× veća od oba susedna sata |
+
 Klase vozila (A/B/C), OCC i GAP iz istorijskog izvoza sajt ne objavljuje, pa ih nema.
 
 Svako čitanje je **novi fajl** — postojeći fajlovi se ne menjaju (osim mesečnog zbira i `greske.log`).
@@ -166,7 +167,8 @@ jedne do dve godine prikupljanja. Broj commit-ova (24 dnevno ≈ 8 760 godišnje
 
 **Ulazni fajl** (Atom + GeoRSS, Mikrobit; namespace `http://www.w3.org/2005/Atom` i
 `http://www.mikrobit.si/schemas/counters/v1`): `volume_today` (danas do vremena brojača),
-`volume_yesterday`, `volumethisyear`, `state` (stanje u poslednjih 5 min: 1 = normalno, 6 = „nema saobraćaja“ — niko nije prošao, validna nula), `date`/`time` =
+`volume_yesterday`, `volumethisyear`, `state` (1 = normalno, 6 = „nema saobraćaja“ u poslednjih 5 min —
+validna nula, 0 = „nema podataka“ — uređaj > 30 min ne javlja, `danas` nije pouzdan), `date`/`time` =
 lokalno vreme brojača (Europe/Belgrade), `<updated>` = UTC, decimalni zarez u `geoX`/`geoY`. Fajl se
 osvežava otprilike svakog minuta. `<id>` **nije** jedinstven (npr. `0040-21` za 40NSa i 40NSb) —
 ključ smera je `(locationID, direction, directionDesc)`.
@@ -182,7 +184,7 @@ Dodatne kolone u svakom čitanju (`scraper/razlika.py`) — broj biciklista od p
 | `bicikala_od_prethodnog` | `danas − danas_prethodno`; preko ponoći `juče − danas_prethodno + danas`. Kad su čitanja na sat, to je broj biciklista **u tom satu** |
 | `minuta_od_prethodnog` | razmak vremena brojača (60 = tačno sat) |
 | `prethodno_citanje_utc` | sa kojim čitanjem je poređeno |
-| `razlog_razlike` | prazno, ili zašto vrednost nedostaje: `nema_prethodnog`, `negativna_razlika`, `nema_vrednosti`, `razmak_vise_od_dana` |
+| `razlog_razlike` | prazno, ili zašto vrednost nedostaje: `nema_prethodnog`, `nema_podataka` (state 0), `negativna_razlika`, `nema_vrednosti`, `razmak_vise_od_dana` |
 
 Ovo je brzi pregled po smeru odmah posle čitanja; konačne satne vrednosti po seriji (sa proverom svežine
 i zbira) daje `satno.py` posle ponoći.
@@ -191,32 +193,36 @@ i zbira) daje `satno.py` posle ponoći.
 15NSaPS → 15a). Vrednost serije = zbir svih smerova serije (25, 26, 28, 41, 47 i svaki uređaj
 40/46/51 imaju 2 smera). Očekuje se 46 serija; `citaj.py` prijavljuje serije koje nedostaju ili su višak.
 
-**Satne vrednosti** (`YYYY/MM/DD/satno.csv`, `YYYY/MM/satno_YYYY-MM.parquet`): `stanica_id, ts, y, razlog, ts_utc, datum, sat` — isti oblik kao
-istorijski master (`stanica_id, ts, y_A, razlog_A`) uz dodatnu kolonu `ts_utc`.
+**Satne vrednosti** (`YYYY/MM/DD/satno.csv`, `YYYY/MM/satno_YYYY-MM.parquet`): `stanica_id, ts, y_A,
+razlog_A, ts_utc, datum, sat` — kolone kao istorijski master (`stanica_id, ts, y_A, razlog_A`); feed daje
+A (samo bicikli). `YYYY/MM/master_YYYY-MM.parquet` je isto na punoj naivnoj satnoj mreži kao master
+(jesen: zadržan prvi od dva ista `ts`; proleće: nepostojeći sat = `nema_reda`).
 
 - `ts` = **kraj sata**, lokalno vreme bez zone, konvencija 01:00–24:00; pošto tip datum-vreme ne poznaje
   „24:00“, sat 23–24 dana D ima `ts` = 00:00 dana D+1. Zato postoje i kolone **`datum`** (dan D) i
   **`sat`** (1–24): npr. biciklisti 13–14 h → `sat = 14`, a 23–24 h → `datum = D, sat = 24`;
-- sat 00–01 = danas@01:01; sat (h−1)–h = danas@h:01 − danas@(h−1):01;
-  sat 23–24 = „juče" iz prvog ispravnog čitanja posle ponoći − danas@23:01;
-- bez interpolacije; `y` je prazno (NaN) uz `razlog`:
+- sat 00–01 = danas@01:02; sat (h−1)–h = danas@h:02 − danas@(h−1):02;
+  sat 23–24 = „juče" iz prvog ispravnog čitanja posle ponoći (brojač već od novog dana) − danas@23:02;
+- bez interpolacije; ispravan sat ima `razlog_A = ok`, inače je `y_A` prazno (NaN) uz razlog:
   - `nema_citanja` — čitanje u tom satu nije uspelo / ne postoji;
   - `nema_smera` — čitanje postoji, ali u njemu nema tog smera;
   - `zastarelo` — vreme brojača je više od 6 min pre punog sata ili je starije od 15 min od čitanja;
+  - `nema_podataka` — `state = 0` („Nema podataka“) u nekom od dva čitanja koja omeđuju sat; brojač tada
+    i dalje javlja sveže vreme, ali `danas` je zamrznut (često 0), pa to NIJE nula;
   - `negativna_razlika` — npr. reset brojača;
   - `nepotpun_sat` — vremena brojača dva čitanja nisu razmaknuta 50–70 min (npr. ručno dodatno čitanje);
 - serija ima vrednost samo ako je imaju svi njeni smerovi;
 - dan prelaska na letnje vreme ima 23 sata (nema oznake 02:00), na zimsko 25 (oznaka 02:00 dva puta —
   jednoznačno je `ts_utc`);
-- `state` se ne koristi kao uslov: po opisu sistema (dugme Info na sajtu) brojač stanje računa na 5 min,
-  a 6 („SIVO – nema saobraćaja“) znači da u tih 5 min niko nije prošao — to je validna nula. Ispad
-  uređaja („CRNO – nema podataka“, > 30 min bez podataka) hvata provera svežine (`zastarelo`);
+- `state = 6` („SIVO – nema saobraćaja“) znači da u poslednjih 5 min niko nije prošao — validna nula;
+  `state = 0` („CRNO – nema podataka“) → `nema_podataka` (vidi gore);
 - provera (`satno_provera.csv`): zbir sati ≠ „juče" (`zbir_sati_razlicit_od_juce`) i smerovi koji su ceo
   dan 0 (`nula_ceo_dan` — moguće neispravan senzor; odluka o seriji je na korisniku).
 
 ## Ograničenja
 
-- Sat 00–01 sadrži i prvi minut sledećeg sata (čitanje je u 01:01); svaki sat je pomeren za ~1 min.
+- Granice sati određuju vremena brojača (sajt osvežava na ~5 min, čitanje u XX:02), pa svaki sat može biti
+  pomeren do nekoliko minuta; zbir sati dana je ipak tačno „juče“.
 - Rezolucija je ograničena tačnošću pokretanja: ako čitanje kasni više od 15 min posle vremena brojača
   ili pređe u sledeći sat, pogođeni sati su NaN.
 - Prvi (nepotpun) dan prikupljanja ima NaN za sate pre prvog čitanja.

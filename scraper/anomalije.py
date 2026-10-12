@@ -26,13 +26,13 @@ OPIS = {
 
 
 def oznaci(df: pd.DataFrame) -> pd.Series:
-    """df: kolone ts_utc, datum, sat, y za JEDAN smer. Vraća Series oznaka (None = običan sat), indeks = df.index."""
+    """df: kolone ts_utc, datum, sat, y_A za JEDAN smer. Vraća Series oznaka (None = običan sat), indeks = df.index."""
     df = df.sort_values("ts_utc")
-    y = df["y"]
+    y = df["y_A"]
     oznake = pd.Series(None, index=df.index, dtype=object)
 
     # nula_dan: svi sati dana prisutni i = 0
-    po_danu = df.groupby("datum")["y"]
+    po_danu = df.groupby("datum")["y_A"]
     ceo_dan_nula = po_danu.transform(lambda s: s.notna().all() and (s == 0).all())
     oznake[ceo_dan_nula.astype(bool)] = "nula_dan"
 

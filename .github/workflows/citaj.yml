@@ -35,7 +35,7 @@ jobs:
       - name: Čitanje (brza varijanta, bez pregledača)
         id: brza
         continue-on-error: true
-        run: python -m scraper.citaj --metod brza --ponavljanja 0 $SAMO_AKO_NEMA
+        run: python -m scraper.citaj --metod brza --ponavljanja 1 $SAMO_AKO_NEMA
 
       - name: Čitanje (rezerva, Playwright) — samo ako brza varijanta ne uspe
         id: pregledac

@@ -85,6 +85,9 @@ def izracunaj(red: dict, pre: dict | None) -> dict:
     else:
         out["razlog_razlike"] = "razmak_vise_od_dana"
         return out
+    if "0" in (str(red.get("state")), str(pre.get("state"))):
+        out["razlog_razlike"] = "nema_podataka"  # state 0: uređaj > 30 min bez podataka
+        return out
     if y < 0:
         out["razlog_razlike"] = "negativna_razlika"
         return out

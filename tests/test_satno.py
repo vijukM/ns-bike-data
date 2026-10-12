@@ -63,13 +63,13 @@ D = date(2026, 10, 5)
 def test_normalan_dan():
     satni = [satni_profil(24, 10), satni_profil(24, 1)]
     smerovi, serije, provera = izracunaj(napravi(D, satni))
-    assert len(serije) == 24 and serije["y"].notna().all()
-    assert serije["y"].tolist() == [a + b for a, b in zip(*satni)]
+    assert len(serije) == 24 and serije["y_A"].notna().all()
+    assert serije["y_A"].tolist() == [a + b for a, b in zip(*satni)]
     assert serije["ts"].iloc[0] == pd.Timestamp("2026-10-05 01:00")
     assert serije["stanica_id"].unique().tolist() == ["26"]
     assert provera.empty
     for j in range(2):
-        assert smerovi[smerovi["direction"] == SMEROVI[j][1]]["y"].sum() == sum(satni[j])
+        assert smerovi[smerovi["direction"] == SMEROVI[j][1]]["y_A"].sum() == sum(satni[j])
 
 
 def test_ponoc_sat_24_iz_juce():
@@ -77,7 +77,7 @@ def test_ponoc_sat_24_iz_juce():
     _, serije, _ = izracunaj(napravi(D, satni))
     poslednji = serije.iloc[-1]
     assert poslednji["ts"] == pd.Timestamp("2026-10-06 00:00")  # 24:00
-    assert poslednji["y"] == satni[0][23] + satni[1][23]
+    assert poslednji["y_A"] == satni[0][23] + satni[1][23]
 
 
 def test_ponoc_bez_citanja_u_0001_koristi_sledece():
@@ -88,16 +88,16 @@ def test_ponoc_bez_citanja_u_0001_koristi_sledece():
     sled = sled[sled["vreme_citanja_utc"] == "2026-10-05T23:01:00Z"].assign(juce=[sum(s) for s in satni])
     df = pd.concat([df[df["vreme_citanja_utc"] != "2026-10-05T22:01:00Z"], sled])
     _, serije, _ = izracunaj(df)
-    assert serije.iloc[-1]["y"] == satni[0][23] + satni[1][23]
+    assert serije.iloc[-1]["y_A"] == satni[0][23] + satni[1][23]
 
 
 def test_propusteno_citanje():
     satni = [satni_profil(24, 10), satni_profil(24, 1)]
     _, serije, _ = izracunaj(napravi(D, satni, preskoci={10}))
-    nan = serije[serije["y"].isna()]
+    nan = serije[serije["y_A"].isna()]
     assert nan["ts"].dt.hour.tolist() == [10, 11]
-    assert set(nan["razlog"]) == {"nema_citanja"}
-    assert serije["y"].notna().sum() == 22
+    assert set(nan["razlog_A"]) == {"nema_citanja"}
+    assert serije["y_A"].notna().sum() == 22
 
 
 def test_state_6_je_validna_nula():
@@ -105,7 +105,7 @@ def test_state_6_je_validna_nula():
     satni = [satni_profil(24, 10), [0] * 24]
     df = napravi(D, satni, izmene={(i, 1): {"state": 6} for i in range(26)})
     _, serije, provera = izracunaj(df)
-    assert serije["y"].notna().all() and serije["y"].tolist() == satni[0]
+    assert serije["y_A"].notna().all() and serije["y_A"].tolist() == satni[0]
     assert provera["napomena"].tolist() == ["nula_ceo_dan"] and provera["direction"].tolist() == ["2"]
 
 
@@ -113,35 +113,35 @@ def test_reset_brojaca():
     satni = [satni_profil(24, 10), satni_profil(24, 1)]
     _, serije, _ = izracunaj(napravi(D, satni, izmene={(15, 0): {"danas": 4}}))
     s = serije.set_index(serije["ts"].dt.hour)
-    assert pd.isna(s.loc[15, "y"]) and s.loc[15, "razlog"] == "negativna_razlika"
-    assert s.loc[16, "y"] == (sum(satni[0][:16]) - 4) + satni[1][15]  # posle reseta razlika je pozitivna
+    assert pd.isna(s.loc[15, "y_A"]) and s.loc[15, "razlog_A"] == "negativna_razlika"
+    assert s.loc[16, "y_A"] == (sum(satni[0][:16]) - 4) + satni[1][15]  # posle reseta razlika je pozitivna
 
 
 def test_zastarelo():
     satni = [satni_profil(24, 10), satni_profil(24, 1)]
     _, serije, _ = izracunaj(napravi(D, satni, izmene={(12, 0): {"vreme_brojaca": "11:50:00"}}))
-    nan = serije[serije["y"].isna()]
+    nan = serije[serije["y_A"].isna()]
     assert nan["ts"].dt.hour.tolist() == [12, 13]
-    assert set(nan["razlog"]) == {"zastarelo"}
+    assert set(nan["razlog_A"]) == {"zastarelo"}
 
 
 def test_prelaz_na_letnje_vreme_23_sata():
     d = date(2027, 3, 28)
     satni = [satni_profil(23, 10), satni_profil(23, 1)]
     _, serije, provera = izracunaj(napravi(d, satni))
-    assert len(serije) == 23 and serije["y"].notna().all()
+    assert len(serije) == 23 and serije["y_A"].notna().all()
     assert 2 not in serije["ts"].dt.hour.tolist()
-    assert serije["y"].sum() == sum(map(sum, satni)) and provera.empty
+    assert serije["y_A"].sum() == sum(map(sum, satni)) and provera.empty
 
 
 def test_prelaz_na_zimsko_vreme_25_sati():
     d = date(2026, 10, 25)
     satni = [satni_profil(25, 10), satni_profil(25, 1)]
     _, serije, provera = izracunaj(napravi(d, satni))
-    assert len(serije) == 25 and serije["y"].notna().all()
+    assert len(serije) == 25 and serije["y_A"].notna().all()
     assert serije["ts"].dt.hour.tolist().count(2) == 2
     assert serije["ts_utc"].is_unique
-    assert serije["y"].tolist() == [a + b for a, b in zip(*satni)]
+    assert serije["y_A"].tolist() == [a + b for a, b in zip(*satni)]
     assert provera.empty
 
 
@@ -150,9 +150,9 @@ def test_serija_nan_ako_fali_smer():
     df = napravi(D, satni)
     df = df[~((df["direction"] == "2") & (df["vreme_citanja_utc"] == "2026-10-05T03:01:00Z"))]
     smerovi, serije, _ = izracunaj(df)
-    nan = serije[serije["y"].isna()]
-    assert nan["ts"].dt.hour.tolist() == [5, 6] and set(nan["razlog"]) == {"nema_smera"}
-    assert smerovi[smerovi["direction"] == "1"]["y"].notna().all()
+    nan = serije[serije["y_A"].isna()]
+    assert nan["ts"].dt.hour.tolist() == [5, 6] and set(nan["razlog_A"]) == {"nema_smera"}
+    assert smerovi[smerovi["direction"] == "1"]["y_A"].notna().all()
 
 
 def test_citanje_xx02_sa_brojacem_pre_punog_sata():
@@ -160,7 +160,7 @@ def test_citanje_xx02_sa_brojacem_pre_punog_sata():
     satni = [satni_profil(24, 10), satni_profil(24, 1)]
     izmene = {(i, j): {"vreme_brojaca": f"{i - 1:02d}:57:00"} for i in range(2, 23) for j in (0, 1)}
     _, serije, _ = izracunaj(napravi(D, satni, izmene=izmene))
-    assert serije["y"].notna().all() and len(serije) == 24
+    assert serije["y_A"].notna().all() and len(serije) == 24
 
 
 def test_datum_i_sat_kolone():
@@ -182,7 +182,7 @@ def test_ponoc_brojac_jos_od_prethodnog_dana():
     sled = sled[sled["vreme_citanja_utc"] == "2026-10-05T23:01:00Z"].copy()
     sled["juce"] = [sum(s) for s in satni]
     _, serije, provera = izracunaj(pd.concat([df, sled]))
-    assert serije.iloc[-1]["y"] == satni[0][23] + satni[1][23] and provera.empty
+    assert serije.iloc[-1]["y_A"] == satni[0][23] + satni[1][23] and provera.empty
 
 
 def test_nepotpun_sat():
@@ -191,8 +191,8 @@ def test_nepotpun_sat():
     df = napravi(D, satni, izmene={(10, j): {"vreme_citanja_utc": "2026-10-05T08:40:00Z",
                                              "vreme_brojaca": "10:39:30"} for j in (0, 1)})
     _, serije, _ = izracunaj(df)
-    nan = serije[serije["y"].isna()]
-    assert nan["sat"].tolist() == [10, 11] and set(nan["razlog"]) == {"nepotpun_sat"}
+    nan = serije[serije["y_A"].isna()]
+    assert nan["sat"].tolist() == [10, 11] and set(nan["razlog_A"]) == {"nepotpun_sat"}
 
 
 def test_zakasnela_rezerva_ne_kvari_sat():
@@ -202,8 +202,8 @@ def test_zakasnela_rezerva_ne_kvari_sat():
     los = df[df["vreme_citanja_utc"] == "2026-10-05T06:01:00Z"].assign(
         vreme_citanja_utc="2026-10-05T06:00:10Z", vreme_brojaca="07:53:00", danas=lambda x: x["danas"] - 3)
     _, serije, _ = izracunaj(pd.concat([los, df]))
-    assert serije["y"].notna().all()
-    assert serije["y"].tolist() == [a + b for a, b in zip(*satni)]
+    assert serije["y_A"].notna().all()
+    assert serije["y_A"].tolist() == [a + b for a, b in zip(*satni)]
 
 
 def test_u_master_zimsko_vreme_i_rupe():
@@ -227,3 +227,12 @@ def test_u_master_letnje_vreme_nema_reda():
     assert len(m) == 24
     r = m[m["ts"] == pd.Timestamp("2027-03-28 02:00")].iloc[0]
     assert pd.isna(r["y_A"]) and r["razlog_A"] == "nema_reda" and (r["datum"], r["sat"]) == ("2027-03-28", 2)
+
+
+def test_state_0_nema_podataka():
+    # state 0 („Nema podataka“) u čitanju u 11:01 -> sati 11 i 12 su NaN, ne 0
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    _, serije, _ = izracunaj(napravi(D, satni, izmene={(11, 1): {"state": 0}}))
+    nan = serije[serije["y_A"].isna()]
+    assert nan["sat"].tolist() == [11, 12] and set(nan["razlog_A"]) == {"nema_podataka"}
+    assert set(serije.loc[serije["y_A"].notna(), "razlog_A"]) == {"ok"}

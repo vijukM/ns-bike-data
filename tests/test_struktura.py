@@ -38,7 +38,7 @@ def test_obradi_dan_iz_foldera(tmp_path, monkeypatch):
     assert satno.dani_sa_citanjima() == [D, date(2026, 10, 6)]
     satno.main(["--dan", D.isoformat()])
     dan = pd.read_csv(tmp_path / "2026/10/05/satno.csv")
-    assert len(dan) == 24 and dan["y"].tolist() == [a + b for a, b in zip(*satni)]
+    assert len(dan) == 24 and dan["y_A"].tolist() == [a + b for a, b in zip(*satni)]
     mesec = pd.read_parquet(tmp_path / "2026/10/satno_2026-10.parquet")
     assert len(mesec) == 24
     assert not (tmp_path / "2026/10/05/satno_provera.csv").exists()
@@ -51,6 +51,6 @@ def test_excel_mesec(tmp_path, monkeypatch):
     assert wb.sheetnames == ["26", "Info"]
     ws = wb["26"]
     redovi = list(ws.values)
-    assert redovi[0] == ("Date", "Time", "Status", "Sum1", "Sum2", "Sum")
+    assert redovi[0] == ("Date", "Time", "y_A", "razlog_A", "oznaka")
     assert redovi[1][1] == "01:00" and redovi[-1][1] == "24:00" and len(redovi) == 25
-    assert redovi[1][3:] == (10, 1, 11) and redovi[1][2] is None
+    assert redovi[1][2:4] == (11, "ok")

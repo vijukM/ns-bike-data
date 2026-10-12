@@ -27,7 +27,8 @@ log = logging.getLogger(__name__)
 def _upisi_gresku(poruka: str, sada_utc: datetime) -> None:
     konfig.GRESKE_LOG.parent.mkdir(parents=True, exist_ok=True)
     with open(konfig.GRESKE_LOG, "a", encoding="utf-8") as f:
-        f.write(f"{sada_utc:%Y-%m-%dT%H:%M:%SZ}\t{poruka}\n")
+        jedan_red = " ".join(poruka.split())[:500]  # npr. Playwright poruke imaju stotine redova
+        f.write(f"{sada_utc:%Y-%m-%dT%H:%M:%SZ}\t{jedan_red}\n")
 
 
 def _gh_output(**kv) -> None:

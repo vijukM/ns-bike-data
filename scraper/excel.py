@@ -2,12 +2,10 @@
 
     python -m scraper.excel --mesec 2026-10   # -> podaci/excel/bicikli_2026-10.xlsx
 
-Kolone sheeta: Date | Time (01:00–24:00) | Status | brojevi po smeru | (Sum)
-  - serija sa jednim smerom (novi brojači, npr. 15a): jedna kolona y_A (cilj modela; u istorijskom izvozu
-    A1k/A2k — feed ne kaže koji kanal, pa je naziv generički);
-  - serija sa dva smera (stari brojači 25a, 26, 28, 40a/b, 41, 46a/b, 47, 51a/b): Sum1 (smer 1x),
-    Sum2 (smer 2x), Sum (= y_A, kao u istoriji).
-Status je prazan kada je sat ispravan, inače razlog (nema_citanja, zastarelo, …); vrednosti tada nema.
+Kolone sheeta: Date | Time (01:00–24:00) | y_A | razlog_A | oznaka
+  - y_A = broj biciklista u satu (cilj modela; feed = A, samo bicikli); dvosmerne serije = zbir oba smera;
+  - razlog_A = „ok“ za ispravan sat, inače razlog (nema_citanja, zastarelo, nema_podataka, …), y_A prazno;
+  - oznaka = neobičan sat po smeru (anomalije.py), vrednost se ne menja.
 Ćelije sa vrednošću > 400 su crvene (kao u istorijskoj tabeli); neobični sati (anomalije.py) su
 narandžasti (nule koje liče na kvar senzora) ili žuti (nagli izolovani skok); nedostajući sati su sivi.
 Klase vozila (A/B/C), OCC i GAP iz istorijskog izvoza sajt ne objavljuje, pa ih nema.
@@ -32,6 +30,7 @@ from .parsiranje import OCEKIVANE_SERIJE
 log = logging.getLogger(__name__)
 
 PRAG_CRVENO = 400
+ZAGLAVLJE = ["Date", "Time", "y_A", "razlog_A", "oznaka"]
 _ZAGLAVLJE_FILL = PatternFill("solid", fgColor="305496")
 _ZAGLAVLJE_FONT = Font(bold=True, color="FFFFFF")
 _CRVENO_FILL = PatternFill("solid", fgColor="FF0000")
@@ -51,13 +50,6 @@ def folder_excel(koren: Path | None = None) -> Path:
 def _vreme(ts: pd.Timestamp) -> str:
     """Kraj sata kao tekst 01:00–24:00 (00:00 sledećeg dana -> 24:00)."""
     return f"{ts.hour or 24:02d}:00"
-
-
-def _kolone_smerova(smerovi: list[str]) -> dict[str, str]:
-    """smer -> naziv kolone (y_A za jedan smer; Sum1/Sum2 za dva)."""
-    if len(smerovi) == 1:
-        return {smerovi[0]: "y_A"}
-    return {s: f"Sum{s[0]}" if s[0] in "12" else f"Sum_{s}" for s in sorted(smerovi)}
 
 
 def _ucitaj(folder_meseca: Path, ime: str) -> pd.DataFrame:
@@ -84,48 +76,37 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
     redosled += sorted(set(serije["stanica_id"]) - set(redosled))
     for serija in redosled:
         sr = serije[serije["stanica_id"] == serija].sort_values("ts_utc")
-        sm = smerovi[smerovi["serija"] == serija]
-        nazivi = _kolone_smerova(sorted(sm["direction"].unique()))
-        po_smeru = {s: g.set_index("ts_utc")["y"] for s, g in sm.groupby("direction")}
+        sm = smerovi[smerovi["serija"] == serija].reset_index(drop=True)
+        vise_smerova = sm["direction"].nunique() > 1
         oznake_smera = {}
-        for s, g in sm.reset_index(drop=True).groupby("direction"):
+        for s, g in sm.groupby("direction"):
             o = anomalije.oznaci(g)
             oznake_smera[s] = pd.Series(o.values, index=g.loc[o.index, "ts_utc"])
-        dva_smera = len(nazivi) > 1
-        zaglavlje = ["Date", "Time", "Status"] + list(nazivi.values()) + (["Sum"] if dva_smera else [])
 
         ws = wb.create_sheet(serija)
-        ws.append(zaglavlje)
+        ws.append(ZAGLAVLJE)
         for _, r in sr.iterrows():
-            vrednosti = [po_smeru[s].get(r["ts_utc"]) for s in nazivi]
-            oznake = [oznake_smera[s].get(r["ts_utc"]) for s in nazivi]
-            status = "" if pd.isna(r["razlog"]) else r["razlog"]
-            if not status:
-                status = ", ".join(f"{o} ({nazivi[s]})" if dva_smera else o
-                                   for s, o in zip(nazivi, oznake) if isinstance(o, str))
-            red = [date.fromisoformat(r["datum"]), _vreme(r["ts"]), status]
-            red += [None if v is None or pd.isna(v) else int(v) for v in vrednosti]
-            if dva_smera:
-                red.append(None if pd.isna(r["y"]) else int(r["y"]))
-            ws.append(red)
-            celije = ws[ws.max_row][3:]
-            for c, o in zip(celije, oznake + ([next((x for x in oznake if isinstance(x, str)), None)]
-                                              if dva_smera else [])):
-                if c.value is None:
-                    c.fill = _NEMA_FILL
-                elif isinstance(o, str):
-                    c.fill = _OZNAKA_FILL[o]
+            oznake = [(s, o.get(r["ts_utc"])) for s, o in sorted(oznake_smera.items())]
+            oznake = [(s, o) for s, o in oznake if isinstance(o, str)]
+            tekst = ", ".join(f"{o} (smer {s})" if vise_smerova else o for s, o in oznake)
+            y = None if pd.isna(r["y_A"]) else int(r["y_A"])
+            ws.append([date.fromisoformat(r["datum"]), _vreme(r["ts"]), y, r["razlog_A"], tekst])
+            c = ws.cell(row=ws.max_row, column=3)
+            if y is None:
+                c.fill = _NEMA_FILL
+            elif oznake:
+                c.fill = _OZNAKA_FILL[oznake[0][1]]
 
         for c in ws[1]:
             c.fill, c.font, c.alignment = _ZAGLAVLJE_FILL, _ZAGLAVLJE_FONT, Alignment(horizontal="center")
         for c in ws["A"][1:]:
             c.number_format = "yyyy-mm-dd"
         ws.column_dimensions["A"].width = 12
-        ws.column_dimensions["C"].width = 18
-        poslednja = get_column_letter(len(zaglavlje))
+        ws.column_dimensions["D"].width = 16
+        ws.column_dimensions["E"].width = 28
         if ws.max_row > 1:
             ws.conditional_formatting.add(
-                f"D2:{poslednja}{ws.max_row}",
+                f"C2:C{ws.max_row}",
                 CellIsRule(operator="greaterThan", formula=[str(PRAG_CRVENO)], fill=_CRVENO_FILL, font=_CRVENO_FONT))
         ws.freeze_panes = "A2"
 
@@ -133,16 +114,16 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
     for red in [
         ["Izvor", "UGZINS / Mikrobit QLTCnet Traffic Agent — biciklisti, čitanje svakog sata (XX:02)"],
         ["Time", "kraj sata (01:00 = 00–01 h, 24:00 = 23–24 h)"],
-        ["y_A", "broj biciklista (cilj modela) — serija sa jednim smerom"],
-        ["Sum1, Sum2, Sum", "stari dvosmerni brojači: po smeru i zbir (Sum = y_A, samo kada oba smera imaju vrednost)"],
-        ["Status prazan", "sat je ispravan"],
+        ["y_A", "broj biciklista u satu (cilj modela, samo bicikli); dvosmerne serije = zbir oba smera"],
+        ["razlog_A = ok", "sat je ispravan; inače y_A je prazno, a razlog_A kaže zašto"],
+        ["nema_podataka", "uređaj javlja „Nema podataka“ (state 0) — sat nije 0 nego nepoznat"],
         ["nema_citanja", "čitanje u tom satu nije uspelo"],
         ["nema_smera", "u čitanju nema tog smera"],
         ["zastarelo", "podatak brojača je prestar (uređaj ne javlja nove podatke)"],
         ["nepotpun_sat", "razmak čitanja nije ~1 sat"],
         ["negativna_razlika", "brojač je resetovan"],
         ["Crveno", f"vrednost > {PRAG_CRVENO}"],
-        ["Sivo", "nema vrednosti za taj sat (razlog u Status)"],
+        ["Sivo", "nema vrednosti za taj sat (razlog u razlog_A)"],
         ["Narandžasto: nula_dan", anomalije.OPIS["nula_dan"]],
         ["Narandžasto: nula_niz", anomalije.OPIS["nula_niz"]],
         ["Žuto: skok", anomalije.OPIS["skok"]],
