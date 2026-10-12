@@ -3,8 +3,10 @@
     python -m scraper.excel --mesec 2026-10   # -> podaci/excel/bicikli_2026-10.xlsx
 
 Kolone sheeta: Date | Time (01:00–24:00) | Status | brojevi po smeru | (Sum)
-  - serija sa jednim smerom (npr. 15a, smer 14): jedna kolona S<poslednja cifra smera> (S4), kao u istoriji;
-  - serija sa dva smera (25a, 26, 28, 40a/b, 41, 46a/b, 47, 51a/b): Sum1 (smer 1x), Sum2 (smer 2x), Sum.
+  - serija sa jednim smerom (novi brojači, npr. 15a): jedna kolona y_A (cilj modela; u istorijskom izvozu
+    A1k/A2k — feed ne kaže koji kanal, pa je naziv generički);
+  - serija sa dva smera (stari brojači 25a, 26, 28, 40a/b, 41, 46a/b, 47, 51a/b): Sum1 (smer 1x),
+    Sum2 (smer 2x), Sum (= y_A, kao u istoriji).
 Status je prazan kada je sat ispravan, inače razlog (nema_citanja, zastarelo, …); vrednosti tada nema.
 Ćelije sa vrednošću > 400 su crvene (kao u istorijskoj tabeli); neobični sati (anomalije.py) su
 narandžasti (nule koje liče na kvar senzora) ili žuti (nagli izolovani skok); nedostajući sati su sivi.
@@ -52,9 +54,9 @@ def _vreme(ts: pd.Timestamp) -> str:
 
 
 def _kolone_smerova(smerovi: list[str]) -> dict[str, str]:
-    """smer -> naziv kolone (S4 za jedan smer; Sum1/Sum2 za dva)."""
+    """smer -> naziv kolone (y_A za jedan smer; Sum1/Sum2 za dva)."""
     if len(smerovi) == 1:
-        return {smerovi[0]: f"S{smerovi[0][-1]}"}
+        return {smerovi[0]: "y_A"}
     return {s: f"Sum{s[0]}" if s[0] in "12" else f"Sum_{s}" for s in sorted(smerovi)}
 
 
@@ -131,7 +133,8 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
     for red in [
         ["Izvor", "UGZINS / Mikrobit QLTCnet Traffic Agent — biciklisti, čitanje svakog sata (XX:02)"],
         ["Time", "kraj sata (01:00 = 00–01 h, 24:00 = 23–24 h)"],
-        ["S<n> / Sum1, Sum2", "broj biciklista po smeru; Sum = zbir smerova (samo kada oba smera imaju vrednost)"],
+        ["y_A", "broj biciklista (cilj modela) — serija sa jednim smerom"],
+        ["Sum1, Sum2, Sum", "stari dvosmerni brojači: po smeru i zbir (Sum = y_A, samo kada oba smera imaju vrednost)"],
         ["Status prazan", "sat je ispravan"],
         ["nema_citanja", "čitanje u tom satu nije uspelo"],
         ["nema_smera", "u čitanju nema tog smera"],

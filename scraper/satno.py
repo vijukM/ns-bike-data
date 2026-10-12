@@ -18,7 +18,8 @@ jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sle
 
 Izlaz za dan D (folder podaci/YYYY/MM/DD/): satno.csv (stanica_id, ts, y, razlog, ts_utc — po seriji),
 satno_smerovi.csv (po smeru), satno_provera.csv (samo ako zbir sati odstupa od „juče" ili je smer ceo dan 0).
-Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv; Excel (sheet po seriji):
+Mesečni zbir: podaci/YYYY/MM/satno_YYYY-MM.parquet i .csv; u formatu istorijskog mastera
+(stanica_id, ts, y_A, razlog_A): podaci/YYYY/MM/master_YYYY-MM.parquet; Excel (sheet po seriji):
 podaci/excel/bicikli_YYYY-MM.xlsx.
 """
 from __future__ import annotations
@@ -293,6 +294,37 @@ def spoji_mesec(d: date, koren: Path | None = None) -> None:
     ime = folder / f"satno_{d:%Y-%m}"
     df.to_parquet(ime.with_suffix(".parquet"), index=False)
     df.to_csv(ime.with_suffix(".csv"), index=False)
+    u_master(df).to_parquet(folder / f"master_{d:%Y-%m}.parquet", index=False)
+
+
+def u_master(df: pd.DataFrame) -> pd.DataFrame:
+    """Format istorijskog mastera: stanica_id, ts, y_A, razlog_A (+ datum, sat) na punoj naivnoj satnoj mreži.
+
+    Kao master: dan prelaska na zimsko vreme — od dva sata sa istim ts zadržava se PRVI; dan prelaska na
+    letnje vreme — nepostojeći sat 02:00 postoji u mreži kao NaN sa razlogom „nema_reda“. Ispravan sat → „ok“.
+    Čišćenje (> 400, otkaz smera, skokovi…) radi se na strani modela, kao za istoriju.
+    """
+    kolone = ["stanica_id", "ts", "y_A", "razlog_A", "datum", "sat"]
+    if df.empty:
+        return pd.DataFrame(columns=kolone)
+    df = df.sort_values(["stanica_id", "ts_utc"]).drop_duplicates(["stanica_id", "ts"], keep="first")
+    delovi = []
+    for st, g in df.groupby("stanica_id"):
+        mreza = pd.date_range(g["ts"].min(), g["ts"].max(), freq="h")
+        g = g.set_index("ts").reindex(mreza).rename_axis("ts").reset_index()
+        g = g.astype({"razlog": object, "datum": object})
+        nema = g["stanica_id"].isna()
+        g["stanica_id"] = st
+        g.loc[nema, "razlog"] = "nema_reda"
+        kraj = g["ts"] - pd.Timedelta(hours=1)  # dan kome sat pripada (24:00 → prethodni dan)
+        g.loc[nema, "datum"] = kraj[nema].dt.strftime("%Y-%m-%d")
+        g.loc[nema, "sat"] = kraj[nema].dt.hour + 1
+        delovi.append(g)
+    m = pd.concat(delovi, ignore_index=True)
+    m["razlog_A"] = m["razlog"].fillna("ok")
+    m["y_A"] = m["y"].astype("float64")
+    m["sat"] = m["sat"].astype("int64")
+    return m[kolone].sort_values(["stanica_id", "ts"]).reset_index(drop=True)
 
 
 def main(argv=None) -> int:
@@ -316,6 +348,7 @@ def main(argv=None) -> int:
     if a.spoji:
         df = _ucitaj_satno(sorted(konfig.PODACI.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/satno.csv")))
         df.to_parquet(konfig.PODACI / "satno.parquet", index=False)
+        u_master(df).to_parquet(konfig.PODACI / "master_novo.parquet", index=False)
         df.to_csv(konfig.PODACI / "satno.csv", index=False)
         log.info("spojeno: %d redova -> podaci/satno.parquet", len(df))
     return 0

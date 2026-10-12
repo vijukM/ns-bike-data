@@ -127,6 +127,7 @@ podaci/
   2026/                              godina
     10/                              mesec
       satno_2026-10.parquet, .csv    satne vrednosti po seriji za ceo mesec (osvežava se posle ponoći)
+      master_2026-10.parquet         isto u formatu istorijskog mastera: stanica_id, ts, y_A, razlog_A (+ datum, sat)
       09/                            dan (lokalni datum čitanja)
         0001.csv, 0001.xml.gz        čitanje u 00:01 — CSV (57 redova) i sirov XML
         0101.csv, 0101.xml.gz        …  24 čitanja dnevno (HHMM = lokalno vreme čitanja)
@@ -141,8 +142,8 @@ podaci/
 ```
 
 **Excel** (`podaci/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
-seriji, kolone `Date | Time (01:00–24:00) | Status | S<n>` za seriju sa jednim smerom (npr. `S4` za 15a,
-smer 14), odnosno `Sum1 | Sum2 | Sum` za seriju sa dva smera (Sum1 = smer 1x, Sum2 = smer 2x).
+seriji, kolone `Date | Time (01:00–24:00) | Status | y_A` za seriju sa jednim smerom (cilj modela; u
+istorijskom izvozu kolona A1k/A2k), odnosno `Sum1 | Sum2 | Sum` za stare dvosmerne brojače (Sum = y_A).
 `Status` je prazan kad je sat ispravan, inače razlog (vidi dole) ili oznaka neobičnog sata; vrednosti
 > 400 su crvene, nedostajući sati sivi. Neobični sati (`scraper/anomalije.py`, vrednosti se ne menjaju):
 

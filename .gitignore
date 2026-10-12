@@ -5,3 +5,4 @@ __pycache__/
 istrazi/
 podaci/satno.parquet
 podaci/satno.csv
+podaci/master_novo.parquet

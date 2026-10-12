@@ -204,3 +204,26 @@ def test_zakasnela_rezerva_ne_kvari_sat():
     _, serije, _ = izracunaj(pd.concat([los, df]))
     assert serije["y"].notna().all()
     assert serije["y"].tolist() == [a + b for a, b in zip(*satni)]
+
+
+def test_u_master_zimsko_vreme_i_rupe():
+    from scraper.satno import u_master
+    d = date(2026, 10, 25)
+    satni = [satni_profil(25, 10), satni_profil(25, 1)]
+    _, serije, _ = izracunaj(napravi(d, satni, preskoci={10}))
+    m = u_master(serije)
+    assert list(m.columns) == ["stanica_id", "ts", "y_A", "razlog_A", "datum", "sat"]
+    assert m["ts"].is_unique and len(m) == 24  # 25 sati -> 24 (zadržan prvi 02:00)
+    prvi_02 = m[m["ts"] == pd.Timestamp("2026-10-25 02:00")]["y_A"].item()
+    assert prvi_02 == satni[0][1] + satni[1][1]
+    assert set(m["razlog_A"]) == {"ok", "nema_citanja"}
+
+
+def test_u_master_letnje_vreme_nema_reda():
+    from scraper.satno import u_master
+    d = date(2027, 3, 28)
+    _, serije, _ = izracunaj(napravi(d, [satni_profil(23, 10), satni_profil(23, 1)]))
+    m = u_master(serije)
+    assert len(m) == 24
+    r = m[m["ts"] == pd.Timestamp("2027-03-28 02:00")].iloc[0]
+    assert pd.isna(r["y_A"]) and r["razlog_A"] == "nema_reda" and (r["datum"], r["sat"]) == ("2027-03-28", 2)
