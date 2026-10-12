@@ -143,7 +143,14 @@ podaci/
 **Excel** (`podaci/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
 seriji, kolone `Date | Time (01:00–24:00) | Status | S<n>` za seriju sa jednim smerom (npr. `S4` za 15a,
 smer 14), odnosno `Sum1 | Sum2 | Sum` za seriju sa dva smera (Sum1 = smer 1x, Sum2 = smer 2x).
-`Status` je prazan kad je sat ispravan, inače razlog (vidi dole); vrednosti > 400 su crvene.
+`Status` je prazan kad je sat ispravan, inače razlog (vidi dole) ili oznaka neobičnog sata; vrednosti
+> 400 su crvene, nedostajući sati sivi. Neobični sati (`scraper/anomalije.py`, vrednosti se ne menjaju):
+
+| oznaka | boja | pravilo |
+|---|---|---|
+| `nula_dan` | narandžasto | smer je ceo dan imao 0 (moguće neispravan senzor) |
+| `nula_niz` | narandžasto | ≥ 3 uzastopna sata sa 0 između 07:00 i 21:00, a smer tog dana ima ≥ 100 |
+| `skok` | žuto | vrednost ≥ 50 i ≥ 3× veća od oba susedna sata |
 Klase vozila (A/B/C), OCC i GAP iz istorijskog izvoza sajt ne objavljuje, pa ih nema.
 
 Svako čitanje je **novi fajl** — postojeći fajlovi se ne menjaju (osim mesečnog zbira i `greske.log`).

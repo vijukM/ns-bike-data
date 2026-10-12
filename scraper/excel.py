@@ -6,7 +6,8 @@ Kolone sheeta: Date | Time (01:00–24:00) | Status | brojevi po smeru | (Sum)
   - serija sa jednim smerom (npr. 15a, smer 14): jedna kolona S<poslednja cifra smera> (S4), kao u istoriji;
   - serija sa dva smera (25a, 26, 28, 40a/b, 41, 46a/b, 47, 51a/b): Sum1 (smer 1x), Sum2 (smer 2x), Sum.
 Status je prazan kada je sat ispravan, inače razlog (nema_citanja, zastarelo, …); vrednosti tada nema.
-Ćelije sa vrednošću > 400 su crvene (kao u istorijskoj tabeli).
+Ćelije sa vrednošću > 400 su crvene (kao u istorijskoj tabeli); neobični sati (anomalije.py) su
+narandžasti (nule koje liče na kvar senzora) ili žuti (nagli izolovani skok); nedostajući sati su sivi.
 Klase vozila (A/B/C), OCC i GAP iz istorijskog izvoza sajt ne objavljuje, pa ih nema.
 """
 from __future__ import annotations
@@ -23,7 +24,7 @@ from openpyxl.formatting.rule import CellIsRule
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
-from . import konfig
+from . import anomalije, konfig
 from .parsiranje import OCEKIVANE_SERIJE
 
 log = logging.getLogger(__name__)
@@ -33,6 +34,12 @@ _ZAGLAVLJE_FILL = PatternFill("solid", fgColor="305496")
 _ZAGLAVLJE_FONT = Font(bold=True, color="FFFFFF")
 _CRVENO_FILL = PatternFill("solid", fgColor="FF0000")
 _CRVENO_FONT = Font(bold=True, color="FFFFFF")
+_OZNAKA_FILL = {
+    "nula_dan": PatternFill("solid", fgColor="FFC000"),   # narandžasto
+    "nula_niz": PatternFill("solid", fgColor="FFC000"),
+    "skok": PatternFill("solid", fgColor="FFFF00"),       # žuto
+}
+_NEMA_FILL = PatternFill("solid", fgColor="D9D9D9")        # sivo — nedostaje vrednost
 
 
 def folder_excel(koren: Path | None = None) -> Path:
@@ -78,6 +85,10 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
         sm = smerovi[smerovi["serija"] == serija]
         nazivi = _kolone_smerova(sorted(sm["direction"].unique()))
         po_smeru = {s: g.set_index("ts_utc")["y"] for s, g in sm.groupby("direction")}
+        oznake_smera = {}
+        for s, g in sm.reset_index(drop=True).groupby("direction"):
+            o = anomalije.oznaci(g)
+            oznake_smera[s] = pd.Series(o.values, index=g.loc[o.index, "ts_utc"])
         dva_smera = len(nazivi) > 1
         zaglavlje = ["Date", "Time", "Status"] + list(nazivi.values()) + (["Sum"] if dva_smera else [])
 
@@ -85,12 +96,23 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
         ws.append(zaglavlje)
         for _, r in sr.iterrows():
             vrednosti = [po_smeru[s].get(r["ts_utc"]) for s in nazivi]
-            red = [date.fromisoformat(r["datum"]), _vreme(r["ts"]),
-                   "" if pd.isna(r["razlog"]) else r["razlog"]]
+            oznake = [oznake_smera[s].get(r["ts_utc"]) for s in nazivi]
+            status = "" if pd.isna(r["razlog"]) else r["razlog"]
+            if not status:
+                status = ", ".join(f"{o} ({nazivi[s]})" if dva_smera else o
+                                   for s, o in zip(nazivi, oznake) if isinstance(o, str))
+            red = [date.fromisoformat(r["datum"]), _vreme(r["ts"]), status]
             red += [None if v is None or pd.isna(v) else int(v) for v in vrednosti]
             if dva_smera:
                 red.append(None if pd.isna(r["y"]) else int(r["y"]))
             ws.append(red)
+            celije = ws[ws.max_row][3:]
+            for c, o in zip(celije, oznake + ([next((x for x in oznake if isinstance(x, str)), None)]
+                                              if dva_smera else [])):
+                if c.value is None:
+                    c.fill = _NEMA_FILL
+                elif isinstance(o, str):
+                    c.fill = _OZNAKA_FILL[o]
 
         for c in ws[1]:
             c.fill, c.font, c.alignment = _ZAGLAVLJE_FILL, _ZAGLAVLJE_FONT, Alignment(horizontal="center")
@@ -117,6 +139,11 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
         ["nepotpun_sat", "razmak čitanja nije ~1 sat"],
         ["negativna_razlika", "brojač je resetovan"],
         ["Crveno", f"vrednost > {PRAG_CRVENO}"],
+        ["Sivo", "nema vrednosti za taj sat (razlog u Status)"],
+        ["Narandžasto: nula_dan", anomalije.OPIS["nula_dan"]],
+        ["Narandžasto: nula_niz", anomalije.OPIS["nula_niz"]],
+        ["Žuto: skok", anomalije.OPIS["skok"]],
+        ["Napomena", "markirane vrednosti NISU menjane — markiranje samo upozorava; odluka je na korisniku"],
     ]:
         info.append(red)
     info.column_dimensions["A"].width = 20
