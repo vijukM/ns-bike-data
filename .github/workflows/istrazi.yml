@@ -27,6 +27,18 @@ jobs:
           pip install playwright
           python -m playwright install --with-deps chromium
           python -m scraper.preuzimanje --metod pregledac | head -c 600
+      - name: Proba Open-Meteo (faza 3) — ništa se ne čuva
+        if: always()
+        run: |
+          python - <<'PY'
+          from prognoza.meteo import preuzmi, obradi
+          o = preuzmi()
+          df = obradi(o)
+          print("sati:", len(df), "|", df["Datum"].min().date(), df["Cas"].iloc[0], "–", df["Datum"].max().date(), df["Cas"].iloc[-1])
+          print("jedinice:", o.get("hourly_units"))
+          print(df.tail(3).T.to_string())
+          PY
+
       - name: Ispis
         if: always()
         run: |

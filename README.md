@@ -243,6 +243,22 @@ mreži (rupa 01.09–08.10.2026 = `nema_reda`). Novi sati se čiste istim pravil
 Fajl se ne commit-uje (pravi se iznova pre svake prognoze, za nekoliko sekundi), da repozitorijum ne raste
 za ~1 MB dnevno. Potrebni su `model/istorija.parquet` i `model/p90.parquet` iz paketa modela.
 
+## Vremenska prognoza (`prognoza/meteo.py`) i praznici (`prognoza/praznici.py`)
+
+`python -m prognoza.meteo` preuzima Open-Meteo Forecast API (bez ključa; lat 45.33, lon 19.85,
+`timezone=Europe/Belgrade`, `past_days=8`, `forecast_days=2`, satno), čuva sirov odgovor u
+`meteo/YYYY/MM/DD/HHMM.json` (da se zna koja prognoza je korišćena) i pravi `model_podaci/meteo.parquet` u
+formatu treninga: `Datum` + `Cas` 01:00–24:00 (kraj sata; vrednost za vreme T → Cas T, 00:00 → 24:00
+prethodnog dana), DST: prolećna rupa interpolirana, jesenji duplikat usrednjen. Promenljive: temperatura ←
+temperature_2m, vlaznost ← relative_humidity_2m, brzina_vetra ← wind_speed_10m (km/h), insolacija ←
+shortwave_radiation, oblacnost ← cloud_cover, padavine ← precipitation, sneg_U ← snow_depth (m),
+vlaznost_zemljista ← soil_moisture_0_to_7cm (od pre 24 h). Izvedeno: padavine_pre_1h, padavine_3h,
+padavine_dan, sati_kise_dan (> 0,1 mm), sat/dan/doy sin-cos, is_weekend, is_holiday, trend.
+
+`is_holiday`: državni praznici Srbije po zakonu (Nova godina, Božić, Sretenje, Praznik rada, Dan primirja,
+pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Provera prema trening listi:
+`python -m prognoza.praznici --proveri model/praznici.csv` (razlike se prijavljuju, lista se ne menja).
+
 ## Ograničenja
 
 - Granice sati određuju vremena brojača, ne pun sat. Sajt osvežava fajl na ~5 min i ponekad kasni do
