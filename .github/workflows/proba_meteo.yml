@@ -1,0 +1,48 @@
+# Jednokratna provera (ručno): poravnanje Cas u meteo istoriji iz treninga sa Open-Meteo vremenom i
+# učestalost osvežavanja Open-Meteo modela. Ništa se ne čuva.
+name: proba_meteo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proba:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Paket modela (samo meteo_istorija)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download model-v1 -p model.zip && unzip -q model.zip model/meteo_istorija.parquet
+      - name: Poravnanje Cas (trening) prema Open-Meteo vremenu
+        run: |
+          python - <<'PY'
+          import pandas as pd, requests
+          from prognoza.meteo import PROMENLJIVE
+          r = requests.get("https://historical-forecast-api.open-meteo.com/v1/forecast", params={
+              "latitude": 45.33, "longitude": 19.85, "timezone": "Europe/Belgrade", "start_date": "2026-08-01",
+              "end_date": "2026-08-31", "hourly": ",".join(PROMENLJIVE.values())}, timeout=60).json()
+          om = pd.DataFrame({k: r["hourly"][v] for k, v in PROMENLJIVE.items()}); om["T"] = pd.to_datetime(r["hourly"]["time"])
+          m = pd.read_parquet("model/meteo_istorija.parquet")
+          m["ts"] = pd.to_datetime(m["Datum"]) + pd.to_timedelta(m["Cas"].str[:2].astype(int), unit="h")
+          for pomak in (-2, -1, 0, 1, 2):
+              x = m.merge(om.assign(ts=om["T"] + pd.Timedelta(hours=pomak)), on="ts", suffixes=("", "_om"))
+              rez = {c: round(float((x[c] - x[c + "_om"]).abs().mean()), 3) for c in ["temperatura", "vlaznost", "insolacija", "padavine", "oblacnost"]}
+              print(f"Cas = T{pomak:+d} h: n={len(x)} prosečna |razlika|: {rez}")
+          print(m[m["Datum"] == "2026-08-25"][["Cas", "temperatura", "insolacija"]].head(15).to_string())
+          print(om[(om["T"] >= "2026-08-25") & (om["T"] < "2026-08-25 15:00")][["T", "temperatura", "insolacija"]].to_string())
+          PY
+      - name: Koliko često se Open-Meteo modeli osvežavaju
+        run: |
+          for m in best_match dwd_icon_eu dwd_icon_d2 dwd_icon ecmwf_ifs025 ecmwf_aifs025 ncep_gfs013 meteofrance_arpege_europe; do
+            echo "== $m"; curl -s -m 20 "https://api.open-meteo.com/data/$m/static/meta.json" | head -c 400; echo
+          done
+          curl -s -m 20 "https://api.open-meteo.com/v1/forecast?latitude=45.33&longitude=19.85&hourly=temperature_2m&forecast_days=1&models=best_match" | head -c 300; echo

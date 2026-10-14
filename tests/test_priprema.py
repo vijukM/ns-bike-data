@@ -14,8 +14,8 @@ def serija(st, od, do, profil=PROFIL, faktor=1.0):
 
 
 def p90_konst(stanice, vrednost=60.0):
-    return pd.DataFrame([(s, h, m, vrednost) for s in stanice for h in range(1, 25) for m in range(1, 13)],
-                        columns=["stanica_id", "sat", "mesec", "p90"])
+    return pd.DataFrame([(s, h, m, vrednost) for s in stanice for h in range(0, 24) for m in range(1, 13)],
+                        columns=["stanica_id", "sat_pocetak", "mesec", "p90"])
 
 
 IST_DO = "2026-08-31 23:00"

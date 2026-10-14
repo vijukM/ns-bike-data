@@ -111,8 +111,10 @@ def pravilo_nula_dan(df: pd.DataFrame) -> int:
 
 
 def pravilo_skok(df: pd.DataFrame, p90: pd.DataFrame) -> int:
-    """p90: kolone stanica_id, sat (1–24), mesec (1–12), p90."""
-    m = df[["stanica_id", "sat", "mesec"]].merge(p90, on=["stanica_id", "sat", "mesec"], how="left")["p90"]
+    """p90 (model/p90.parquet): stanica_id, sat_pocetak (0–23 = početak sata), mesec (1–12), p90."""
+    kljuc = pd.DataFrame({"stanica_id": df["stanica_id"], "sat_pocetak": df["sat"] - 1, "mesec": df["mesec"]})
+    m = kljuc.merge(p90[["stanica_id", "sat_pocetak", "mesec", "p90"]], on=["stanica_id", "sat_pocetak", "mesec"],
+                    how="left")["p90"]
     m.index = df.index
     kandidat = df["novo"] & df["razlog_A"].isin(VALIDNI)
     skok = kandidat & (df["y_A"] > np.maximum(SKOK_MIN, SKOK_PUTA * m))
@@ -195,7 +197,7 @@ def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
     df["novo"] = df["novo"].astype("boolean").fillna(True).astype(bool)  # rupa između = nov deo
     df.loc[df["razlog_A"].eq("ok") & df["y_A"].isna(), "razlog_A"] = "nema_reda"
     df["dan"], df["sat"] = _dan_i_sat(df["ts"])
-    df["mesec"] = df["dan"].dt.month
+    df["mesec"] = (df["ts"] - pd.Timedelta(hours=1)).dt.month   # mesec početka sata (kao sat_pocetak)
 
     izvestaj = {
         "outlier": pravilo_outlier(df),
