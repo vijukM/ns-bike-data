@@ -13,7 +13,7 @@ const MAPA = (() => {
   const TIPOVI_STAZA = { s: "izdvojena staza", t: "traka na kolovozu", z: "zajednička sa pešacima" };
   const REDOSLED = ["radi", "delimicno", "ne_radi", "neispravan"];
   const css = (ime) => getComputedStyle(document.documentElement).getPropertyValue(ime).trim();
-  const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}">i</span>`;
+  const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>`;
   const mac = /Mac|iPhone|iPad/.test(navigator.platform);
 
   // „danas do Xh“ (poslednje čitanje scraper-a)
@@ -111,8 +111,8 @@ const MAPA = (() => {
       return km;
     }).catch(() => null);
     if (opcije.stazeEl) {
-      opcije.stazeEl.innerHTML = `<label class="stikla"><input type="checkbox" ${stazeUkljucene ? "checked" : ""}>
-        <span class="kvacica" aria-hidden="true"></span><i class="linija" style="--b:var(--staza)"></i>Biciklističke staze</label>`;
+      opcije.stazeEl.innerHTML = `<label class="cip cip-stikla" style="--boja:var(--staza)"><input type="checkbox" ${stazeUkljucene ? "checked" : ""}>
+        <span class="kvacica" aria-hidden="true"></span>Biciklističke staze</label>`;
       opcije.stazeEl.querySelector("input").addEventListener("change", (e) => {
         stazeUkljucene = e.target.checked;
         try { localStorage.setItem("ns-staze", stazeUkljucene ? "1" : "0"); } catch (x) { /* */ }
@@ -138,13 +138,13 @@ const MAPA = (() => {
     }
     const pinovi = {};
     const stanjePina = {};
-    let izabrana = null, skok = false, vidljive = null;
+    let izabrana = null, vidljive = null;
     function ikona(serija, stanje, brojTekst) {
       const sv = stanje === "nije_postavljen" || stanje === "neispravan" ? " svetli-obod" : "";
       const izab = serija === izabrana;
       return L.divIcon({
         className: "", iconSize: [34, 34], iconAnchor: [17, 33], tooltipAnchor: [0, -30], popupAnchor: [0, -34],
-        html: `<div class="pin${sv}${brojTekst == null ? " bez-broja" : ""}${izab ? " izabran" : ""}${izab && skok ? " skok" : ""}">
+        html: `<div class="pin${sv}${brojTekst == null ? " bez-broja" : ""}${izab ? " izabran" : ""}">
           <div class="telo"><img class="n" src="${NS.pin(stanje)}" alt=""><img class="h" src="${NS.pin("izabrana")}" alt=""></div>
           <span class="pin-broj">${brojTekst ?? ""}</span></div>`,
       });
@@ -153,6 +153,12 @@ const MAPA = (() => {
     for (const r of s.serije) {
       const p = L.marker(polozaj(r), { icon: ikona(r.serija, r.stanje), riseOnHover: true, keyboard: true, title: `${r.serija} ${r.naziv}` }).addTo(m);
       p.on("click", () => fokus(r.serija, { leti: true }));
+      p.on("mouseover", () => naHover(r.serija));
+      p.on("mouseout", () => {
+        if (r.serija === izabrana) return;
+        p.closePopup();
+        if (izabrana && pinovi[izabrana]) pinovi[izabrana].openPopup();      // vrati karticu izabranog pina
+      });
       pinovi[r.serija] = p;
       stanjePina[r.serija] = { stanje: r.stanje, broj: null };
     }
@@ -171,7 +177,16 @@ const MAPA = (() => {
       stanjePina[serija] = { stanje, broj: brojTekst, tekst };
       osveziPin(serija);
       const p = pinovi[serija];
-      if (tekst) p.bindTooltip(tekst, { direction: "top", offset: [0, -2] }); else p.unbindTooltip();
+      p.unbindPopup();
+      if (tekst) p.bindPopup(`${tekst}<div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`,
+        { closeButton: true, autoPan: false, offset: [0, -2] });
+    }
+    /** Prelazak mišem: pin odskoči i otvori se ista kartica kao na klik. */
+    function naHover(serija) {
+      const p = pinovi[serija];
+      const el = p.getElement() && p.getElement().querySelector(".pin");
+      if (el) { el.classList.remove("skok"); void el.offsetWidth; el.classList.add("skok"); }
+      p.openPopup();
     }
     async function prikaziStanje() {
       for (const r of s.serije) {
@@ -193,26 +208,16 @@ const MAPA = (() => {
         else postaviPin(r.serija, "radi", NS.broj(v), `${opis(r)}<br><b>${NS.broj(v)}</b> biciklista, ${oznaka}`);
       }
     }
-    /** Fokus: pin se uveća i „odskoči“, mapa ga centrira, otvara se kartica sa linkom na stanicu. */
-    async function fokus(serija, { leti = true, popup = true } = {}) {
+    /** Fokus (klik): pin ostaje uvećan, mapa ga centrira, otvara se ista kartica kao na hover. */
+    function fokus(serija, { leti = true } = {}) {
       const pret = izabrana;
       izabrana = serija;
-      skok = true;
-      if (pret && pret !== serija) osveziPin(pret);
-      if (serija) {
-        osveziPin(serija);
-        setTimeout(() => { skok = false; }, 50);
-        if (leti) m.flyTo(pinovi[serija].getLatLng(), Math.max(m.getZoom(), 15), { duration: 0.7 });
-        if (popup) {
-          const r = rPo[serija];
-          const danas = await danasTekst(serija);
-          pinovi[serija].unbindPopup().bindPopup(`${opis(r)}<div class="tt-red"><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span></div>
-            ${r.prosek_12m != null && r.stanje !== "neispravan" ? `<div class="tt-red">prosek <b>${NS.broj(r.prosek_12m)}</b> / dan <small>12 meseci</small></div>` : ""}${danas}
-            <div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`, { closeButton: true, autoPan: false });
-          setTimeout(() => pinovi[serija].openPopup(), leti ? 750 : 0);
-        }
-        if (opcije.naFokus) opcije.naFokus(serija);
-      }
+      if (pret && pret !== serija) { osveziPin(pret); pinovi[pret].closePopup(); }
+      if (!serija) return;
+      osveziPin(serija);
+      if (leti) m.flyTo(pinovi[serija].getLatLng(), Math.max(m.getZoom(), 15), { duration: 0.7 });
+      setTimeout(() => pinovi[serija].openPopup(), leti ? 750 : 0);
+      if (opcije.naFokus) opcije.naFokus(serija);
     }
     /** Prikazuje samo zadate serije (null = sve). */
     function filtriraj(skup) {
@@ -243,16 +248,18 @@ const MAPA = (() => {
     for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
     const g = NS.grafik(el, (b) => {
       const boje = Object.fromEntries(REDOSLED.map((k) => [k, css(`--pin-${k}`)]));
+      const usko = el.clientWidth < 420;
       return {
-        animationType: "expansion", animationDuration: 1300, animationEasing: "cubicOut",
+        animationType: "expansion", animationDuration: 2600, animationEasing: "cubicInOut",
         textStyle: { fontFamily: "Inter, system-ui, sans-serif" },
         tooltip: { trigger: "item", backgroundColor: b.povrsina, borderColor: b.osa, textStyle: { color: b.ink },
           formatter: (q) => `<b>${q.name}</b><br>${q.value} brojača (${NS.dec(q.percent)} %)<br><span style="color:${b["ink-2"]}">${(s.stanja_opis || {})[q.data.k] || ""}</span>` },
-        legend: { orient: "vertical", left: "64%", top: "middle", icon: "circle", itemWidth: 10, itemHeight: 10, itemGap: 14,
+        legend: usko ? { bottom: 0, left: "center", icon: "circle", itemWidth: 9, itemHeight: 9, itemGap: 10, textStyle: { color: b["ink-2"], fontSize: 11.5 },
+          formatter: (ime) => { const k = REDOSLED.find((x) => s.stanja[x] === ime); return `${ime} ${brojevi[k] || 0}`; } } : { orient: "vertical", left: "64%", top: "middle", icon: "circle", itemWidth: 10, itemHeight: 10, itemGap: 14,
           textStyle: { color: b["ink-2"], fontSize: 13 }, formatter: (ime) => { const k = REDOSLED.find((x) => s.stanja[x] === ime); return `${ime}  ${brojevi[k] || 0}`; } },
-        title: { text: String(s.serije.length), subtext: "brojača", left: "34%", top: "40%", textAlign: "center",
+        title: { text: String(s.serije.length), subtext: "brojača", left: usko ? "49%" : "34%", top: usko ? "30%" : "40%", textAlign: "center",
           textStyle: { color: b.ink, fontSize: 28, fontWeight: 700, fontFamily: "Inter Tight, Inter, sans-serif" }, subtextStyle: { color: b["ink-3"], fontSize: 12 } },
-        series: [{ type: "pie", radius: ["52%", "78%"], center: ["35%", "50%"], padAngle: 2, itemStyle: { borderRadius: 6, borderColor: b.povrsina, borderWidth: 2 },
+        series: [{ type: "pie", radius: ["52%", "78%"], center: usko ? ["50%", "40%"] : ["35%", "50%"], padAngle: 2, itemStyle: { borderRadius: 6, borderColor: b.povrsina, borderWidth: 2 },
           label: { show: false }, emphasis: { scaleSize: 6, label: { show: false } },
           data: REDOSLED.filter((k) => brojevi[k]).map((k) => ({ name: s.stanja[k], value: brojevi[k], k, itemStyle: { color: boje[k] } })) }],
       };

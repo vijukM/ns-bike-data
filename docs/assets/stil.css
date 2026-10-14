@@ -454,3 +454,21 @@ footer.podnozje { color: var(--t-light); font-size: 12px; padding: 8px 28px 32px
 .leaflet-tooltip { max-width: 280px; white-space: normal; }
 .spisak-glava { display: flex; justify-content: space-between; align-items: center; padding: 4px 10px 8px; color: var(--t-light); }
 .krofna { height: 260px; }
+
+/* izmene: info ikonica, čip-štikla za staze, kontrole levo, krofna u spisku */
+.info { border: 0; width: 15px; height: 15px; color: var(--t-light); text-transform: none; letter-spacing: 0; }
+.info svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+.info:hover, .info:focus { color: var(--primary); outline: none; }
+.cip-stikla { position: relative; height: 38px; padding: 0 14px 0 10px; }
+.cip-stikla input { position: absolute; opacity: 0; width: 0; height: 0; }
+.cip-stikla .kvacica { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--t-light); display: grid; place-items: center; }
+.cip-stikla:has(input:checked) { color: var(--t-base); border-color: var(--boja); background: color-mix(in srgb, var(--boja) 12%, transparent); }
+.cip-stikla:has(input:checked) .kvacica { background: var(--boja); border-color: var(--boja); }
+.cip-stikla:has(input:checked) .kvacica::after { content: ""; width: 4px; height: 8px; border: solid #0B1120; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.cip-stikla:has(input:focus-visible) { outline: 2px solid var(--primary-ring); }
+.mapa-alat { justify-content: flex-start; gap: 14px 28px; }
+.mapa-raspored aside { display: flex; flex-direction: column; min-height: 0; }
+.mapa-raspored aside .spisak { max-height: none; min-height: 0; flex: 1 1 auto; height: calc(100vh - 290px - 300px); min-height: 220px; }
+.krofna-okvir { border-top: 1px solid var(--border-soft); margin-top: 10px; padding-top: 10px; }
+.krofna-okvir .krofna { height: 250px; cursor: pointer; }
+@media (max-width: 1180px) { .mapa-raspored aside .spisak { height: 320px; } }

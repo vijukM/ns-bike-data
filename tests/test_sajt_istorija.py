@@ -113,7 +113,7 @@ def test_28_posle_18_aprila_neispravan_i_van_gradskog_zbira(sinteticki):
     assert (g["v"][i17 + 1], g["n"][i17 + 1]) == (24, 1)                         # samo 15a
     st = {s["serija"]: s for s in json.loads((sinteticki / "stanice.json").read_text())["serije"]}
     assert st["28"]["napomena"] == "brojač neispravan od 04/2026" and st["28"]["do"] == "2026-04-17"
-    assert st["15a"]["naziv"] == "Vojvodjanska" and st["20a"]["smerovi"] == ["A-B"]
+    assert st["15a"]["naziv"] == "Vojvođanska" and st["20a"]["smerovi"] == ["A – B"]
 
 
 def test_meseci_bez_serije_i_razmak_parova():
@@ -184,3 +184,10 @@ def test_uzivo_danas_do_sata(tmp_path):
                   "vreme_citanja_utc": ["2026-10-14T15:02:00Z"] * 4}).to_csv(f, index=False)
     j = uzivo.napravi(f)
     assert j["serije"] == {"15a": [555, 17], "28": [30, 17], "29a": [None, 17]} and j["datum"] == "2026-10-14"
+
+
+def test_lepi_nazivi_smerova():
+    d = {"Bul. M. Pupina": "Bulevar Mihajla Pupina", "Maksima Gorkog": "Maksima Gorkog", "Bul.Evrope": "Bulevar Evrope", "Rumenacka": "Rumenačka"}
+    assert pi.lep_smer("Maksima Gorkog - Bul. M. Pupina", d) == "Maksima Gorkog – Bulevar Mihajla Pupina"
+    assert pi.lep_smer("Bul.Evrope-Rumenacka (u oba smera)", d) == "Bulevar Evrope – Rumenačka (u oba smera)"
+    assert pi.lep_smer("X - Y", d) == "X – Y"

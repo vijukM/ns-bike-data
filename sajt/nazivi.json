@@ -1,0 +1,27 @@
+{
+  "_opis": "Nazivi za prikaz na sajtu (prava latinica, bez skraćenica). Ključevi su broj mesta i deo smera tačno kako ga piše feed; nepoznat deo ostaje kako jeste.",
+  "mesta": {
+    "15": "Vojvođanska", "20": "Bulevar Slobodana Jovanovića", "22": "Bulevar kralja Petra I", "23": "Bulevar cara Lazara",
+    "25": "Kej žrtava racije", "26": "Štrand", "27": "Bulevar Evrope (kod Koste Racina)", "28": "Bulevar oslobođenja – Slovačka",
+    "29": "Rumenačka", "30": "Bulevar cara Lazara", "31": "Bulevar kralja Petra I – P. Adamova", "34": "Futoška (kod Nikole Tesle)",
+    "36": "Jevrejska", "37": "Bulevar oslobođenja (kod Narodnog fronta)", "38": "Hadži Ruvimova", "39": "Bulevar Jaše Tomića",
+    "40": "Bulevar patrijarha Pavla", "41": "Bulevar oslobođenja (kod Novosadskog sajma)", "42": "Radomira Raše Radujkova",
+    "43": "Kornelija Stankovića", "44": "Bulevar Evrope (kod Branka Bajića)", "45": "Bate Brkića", "46": "Futoški put",
+    "47": "Narodnog fronta (kod Šekspirove)", "49": "Maksima Gorkog", "50": "Braće Ribnikar", "51": "Futoški put"
+  },
+  "delovi": {
+    "Cara Lazara": "Bulevar cara Lazara", "M. Gorkog": "Maksima Gorkog", "Maksima Gorkog": "Maksima Gorkog",
+    "V. Stepe": "Vojvode Stepe", "Futoski put": "Futoški put", "Kraljevica Marka": "Kraljevića Marka", "Kisacka": "Kisačka",
+    "Cara Dusana": "Cara Dušana", "C. Dušana": "Cara Dušana", "Balzakova": "Balzakova", "Bul. M. Pupina": "Bulevar Mihajla Pupina",
+    "Fruskogorska": "Fruškogorska", "Beogradski kej": "Beogradski kej", "K. Stankovica": "Kornelija Stankovića",
+    "H. Ruvimova": "Hadži Ruvimova", "H.Ruvimova": "Hadži Ruvimova", "Pap Pavla": "Pap Pavla",
+    "Bul. kralja Petra I": "Bulevar kralja Petra I", "Kralja Petra I": "Bulevar kralja Petra I", "J. Tomica": "Bulevar Jaše Tomića",
+    "Bul. Oslobodj.": "Bulevar oslobođenja", "Bul. Oslobodjenja": "Bulevar oslobođenja", "B. oslobodjenja": "Bulevar oslobođenja",
+    "Bul.oslobodjenja": "Bulevar oslobođenja", "Rumenacka": "Rumenačka", "Futoska": "Futoška", "Most slobode": "Most slobode",
+    "N. fronta": "Narodnog fronta", "B. Evrope": "Bulevar Evrope", "Bul Evrope": "Bulevar Evrope", "Bul.Evrope": "Bulevar Evrope",
+    "Vrsacka": "Vršačka", "N.Sajma": "Novosadski sajam", "Bul S. Jovanovica": "Bulevar Slobodana Jovanovića",
+    "Bul.J.Ducica": "Bulevar Jovana Dučića", "Bate Brkica": "Bate Brkića", "Bul.Kneza Milosa": "Bulevar kneza Miloša",
+    "Sekspirova": "Šekspirova", "Sutjeska": "Sutjeska", "Strazilovska": "Stražilovska", "M.Dimitrijevica": "Miše Dimitrijevića",
+    "Suboticka": "Subotička"
+  }
+}

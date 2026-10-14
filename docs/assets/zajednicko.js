@@ -6,6 +6,8 @@
 const NS = (() => {
   const TZ = "Europe/Belgrade";
   const PODACI = "data/istorija/";
+  // oznaka verzije sajta (iz ?v= na skripti) ide i na JSON, da pregledač ne meša stare i nove podatke
+  const VERZIJA = (() => { try { return new URL(document.currentScript.src).searchParams.get("v") || ""; } catch (e) { return ""; } })();
   const fBroj = new Intl.NumberFormat("sr-Latn-RS", { maximumFractionDigits: 0 });
   const fDec = new Intl.NumberFormat("sr-Latn-RS", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const fSat = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, hour: "2-digit", hourCycle: "h23" });
@@ -49,7 +51,7 @@ const NS = (() => {
   function json(put, koren = PODACI) {
     const kljuc = koren + put;
     if (!kes.has(kljuc)) {
-      kes.set(kljuc, fetch(kljuc).then((r) => {
+      kes.set(kljuc, fetch(VERZIJA ? `${kljuc}?v=${VERZIJA}` : kljuc).then((r) => {
         if (!r.ok) throw new Error(`${put}: HTTP ${r.status}`);
         return r.json();
       }));
