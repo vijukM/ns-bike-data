@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610141837">
+  <link rel="stylesheet" href="assets/stil.css?v=202610141943">
 </head>
 <body data-strana="kontrolna" data-putanja="Pregled|Kontrolna tabla">
   <main class="sadrzaj" id="sadrzaj">
@@ -33,13 +33,14 @@
     <section class="kartica pojava">
       <div class="kartica-glava">
         <div><span class="eyebrow">Geografija</span><h2>Mapa brojača i biciklističkih staza</h2>
-          <p class="opis">Ikonica pokazuje stanje brojača u poslednjih 30 dana istorije; klik otvara stanicu. Staze su iz OpenStreetMap-a.</p></div>
+          <p class="opis">Ikonica pokazuje stanje brojača u poslednjih 30 dana istorije; klik na pin ga fokusira, a kartica ima link na stanicu. Staze su iz OpenStreetMap-a.</p></div>
         <a class="vise" href="mapa.html?rezim=dan">Dan na mapi <svg class="ik" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       </div>
       <div class="mapa-alat">
-        <div class="kontrole"><div id="podloga"></div><div id="staze-cip"></div></div>
-        <div id="legenda-mape"></div>
+        <div class="grupa-kontrola"><span class="eyebrow">Podloga mape</span><div id="podloga"></div></div>
+        <div class="grupa-kontrola"><span class="eyebrow">Sloj</span><div id="staze-cip"></div></div>
       </div>
+      <div id="legenda-mape" style="margin-bottom:14px"></div>
       <div class="mapa" id="mapa" role="region" aria-label="Mapa brojača"></div>
       <div class="mesta" id="mesta" style="margin-top:20px"></div>
       <div class="prstenovi" id="prstenovi"></div>
@@ -75,7 +76,10 @@
           </div>
         </section>
         <section class="kartica pojava">
-          <div class="kartica-glava"><div><span class="eyebrow" id="stanje-period">Stanje brojača</span><h2>Traže pažnju</h2></div></div>
+          <div class="kartica-glava"><div><span class="eyebrow" id="stanje-period">Stanje brojača</span><h2>Stanje brojača</h2></div>
+            <a class="vise" href="mapa.html">Na mapi <svg class="ik" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+          <div class="grafik krofna" id="krofna" style="height:220px"></div>
+          <span class="eyebrow" style="display:block;margin:10px 0 6px">Traže pažnju</span>
           <div id="lose-stanice" class="spisak" style="max-height:none;min-height:0"></div>
         </section>
       </div>
@@ -86,9 +90,9 @@
           integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610141837"></script>
-  <script src="assets/ljuska.js?v=202610141837"></script>
-  <script src="assets/mapa-modul.js?v=202610141837"></script>
-  <script src="assets/kontrolna.js?v=202610141837"></script>
+  <script src="assets/zajednicko.js?v=202610141943"></script>
+  <script src="assets/ljuska.js?v=202610141943"></script>
+  <script src="assets/mapa-modul.js?v=202610141943"></script>
+  <script src="assets/kontrolna.js?v=202610141943"></script>
 </body>
 </html>

@@ -7,14 +7,15 @@
     const s = await NS.stanice();
     document.getElementById("period").textContent = s.stanje_period;
     const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
-    let upit = "", filter = "sve", sort = "serija", smer = 1, strana = 0, poStrani = 25;
+    let upit = "", filter = ["radi", "delimicno", "ne_radi", "neispravan"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "sve", sort = "serija", smer = 1, strana = 0, poStrani = 25;
 
     const brojevi = { sve: s.serije.length };
     for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
     const filterEl = document.getElementById("filter");
     filterEl.className = "cipovi";
-    filterEl.innerHTML = [["sve", "Sve"], ["radi", "Radi"], ["delimicno", "Delimično"], ["ne_radi", "Ne radi"], ["neispravan", "Neispravan"]]
-      .filter(([k]) => brojevi[k]).map(([k, t]) => `<button class="cip" data-k="${k}" aria-pressed="${k === filter}" style="--boja:var(--primary)">${t}<span class="broj">${brojevi[k]}</span></button>`).join("");
+    filterEl.innerHTML = [["sve", "Sve"], ...["radi", "delimicno", "ne_radi", "neispravan"].map((k) => [k, s.stanja[k]])].filter(([k]) => brojevi[k])
+      .map(([k, t]) => `<button class="cip" data-k="${k}" aria-pressed="${k === filter}" style="--boja:var(--primary)" title="${(s.stanja_opis || {})[k] || "svi brojači"}">
+        ${k === "sve" ? "" : `<img src="${NS.pin(k)}" alt="">`}${t}<span class="broj">${brojevi[k]}</span></button>`).join("");
     filterEl.addEventListener("click", (e) => {
       const d = e.target.closest("button"); if (!d) return;
       filter = d.dataset.k; strana = 0;

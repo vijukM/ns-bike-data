@@ -173,3 +173,14 @@ def test_staze_tipovi_i_geojson():
     assert len(g["features"]) == 1 and g["obelezja_po_tipu"] == {"s": 1, "t": 0, "z": 0}
     assert g["features"][0]["geometry"]["coordinates"][0] == [19.83123, 45.25123]
     assert "cycleway:both" in staze.upit()
+
+
+def test_uzivo_danas_do_sata(tmp_path):
+    from sajt import uzivo
+    assert uzivo.do_sata("20:56:07") == 21 and uzivo.do_sata("17:02:00") == 17
+    f = tmp_path / "1702.csv"
+    pd.DataFrame({"serija": ["15a", "28", "28", "29a"], "danas": [555, 10, 20, 7], "state": [1, 1, 6, 0],
+                  "vreme_brojaca": ["16:58:00"] * 4, "datum_brojaca": ["2026-10-14"] * 4,
+                  "vreme_citanja_utc": ["2026-10-14T15:02:00Z"] * 4}).to_csv(f, index=False)
+    j = uzivo.napravi(f)
+    assert j["serije"] == {"15a": [555, 17], "28": [30, 17], "29a": [None, 17]} and j["datum"] == "2026-10-14"

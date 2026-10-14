@@ -7,55 +7,63 @@
   const q = new URLSearchParams(location.search);
   try {
     const [s, g] = await Promise.all([NS.stanice(), NS.json("grad_dnevno.json")]);
+    let izabrana = null;
     const ctl = MAPA.napravi(document.getElementById("mapa"), s, {
       podlogaEl: document.getElementById("podloga"), stazeEl: document.getElementById("staze-cip"),
-      naKlik: (serija) => izaberi(serija, false),
+      naFokus: (serija) => { izabrana = serija; crtajSpisak(); skrolujDo(serija); },
     });
     MAPA.legenda(document.getElementById("legenda-mape"), s);
     kpi(s, ctl);
+    document.getElementById("stanje-period").textContent = s.stanje_period;
 
-    // spisak
-    let filter = "sve", upit = "", vrednostiSata = null, izabrana = null;
+    // spisak + filter (filter i pretraga važe i za pinove na mapi)
+    let filter = "sve", upit = "", vrednostiSata = null;
     const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
     const brojevi = { sve: s.serije.length };
     for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
     const filterEl = document.getElementById("spisak-filter");
     filterEl.className = "cipovi";
-    filterEl.innerHTML = [["sve", "Sve"], ["radi", "Radi"], ["delimicno", "Delimično"], ["ne_radi", "Ne radi"], ["neispravan", "Neispravan"]]
-      .filter(([k]) => brojevi[k]).map(([k, t]) => `<button class="cip" data-k="${k}" aria-pressed="${k === filter}" style="--boja:var(--primary)">${t}<span class="broj">${brojevi[k]}</span></button>`).join("");
-    filterEl.addEventListener("click", (e) => {
-      const d = e.target.closest("button"); if (!d) return;
-      filter = d.dataset.k;
-      filterEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === d)));
+    filterEl.innerHTML = [["sve", "Sve"], ...MAPA.REDOSLED.map((k) => [k, s.stanja[k]])].filter(([k]) => brojevi[k])
+      .map(([k, t]) => `<button class="cip" data-k="${k}" aria-pressed="${k === filter}" style="--boja:var(--primary)"
+        title="${k === "sve" ? "svi brojači" : (s.stanja_opis || {})[k] || ""}">${k === "sve" ? "" : `<img src="${NS.pin(k)}" alt="">`}${t}<span class="broj">${brojevi[k]}</span></button>`).join("");
+    function postaviFilter(k) {
+      filter = k;
+      filterEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.k === k)));
       crtajSpisak();
-    });
+    }
+    filterEl.addEventListener("click", (e) => { const d = e.target.closest("button"); if (d) postaviFilter(d.dataset.k); });
     document.getElementById("spisak-pretraga").addEventListener("input", (e) => { upit = bez(e.target.value); crtajSpisak(); });
     function crtajSpisak() {
       const el = document.getElementById("spisak");
       const red = s.serije.filter((r) => (filter === "sve" || r.stanje === filter) && (!upit || bez(`${r.serija} ${r.naziv} ${r.smerovi.join(" ")}`).includes(upit)));
+      ctl.filtriraj(filter === "sve" && !upit ? null : new Set(red.map((r) => r.serija)));
+      document.getElementById("spisak-kolona").innerHTML = vrednostiSata
+        ? `u izabranom satu${MAPA.info("broj biciklista koji je brojač izbrojao u izabranom satu izabranog dana")}`
+        : `prosek / dan${MAPA.info("prosečan broj biciklista dnevno: kompletni dani, 1. 9. 2025. – 31. 8. 2026. (poslednjih 12 meseci istorije)")}`;
       el.innerHTML = red.map((r) => {
         const v = vrednostiSata ? vrednostiSata[r.serija] : null;
         const desno = vrednostiSata ? (v == null ? "—" : NS.broj(v)) : (r.prosek_12m != null && r.stanje !== "neispravan" ? NS.broj(r.prosek_12m) : "—");
         return `<button type="button" data-s="${r.serija}" class="${r.serija === izabrana ? "izabran" : ""}" role="listitem">
           <img src="${NS.pin(r.serija === izabrana ? "izabrana" : r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}<small>${r.smerovi[0]}</small></span>
-          <span class="vrednost-reda" title="${vrednostiSata ? "biciklista u satu" : "prosek dnevno (12 m)"}">${desno}</span></button>`;
+          <span class="vrednost-reda" title="${vrednostiSata ? "biciklista u izabranom satu" : "prosek biciklista dnevno (12 meseci)"}">${desno}</span></button>`;
       }).join("") || '<p class="sitno" style="padding:10px">Nema stanica za ovaj filter.</p>';
     }
+    const skrolujDo = (serija) => {
+      const d = document.querySelector(`#spisak button[data-s="${CSS.escape(serija)}"]`);
+      const sp = document.getElementById("spisak");
+      if (d) sp.scrollTo({ top: d.offsetTop - sp.offsetTop - 40, behavior: "smooth" });
+    };
     document.getElementById("spisak").addEventListener("click", (e) => {
       const d = e.target.closest("button[data-s]"); if (!d) return;
       if (izabrana === d.dataset.s) location.href = `stanica.html?id=${encodeURIComponent(d.dataset.s)}`;
-      else izaberi(d.dataset.s, true);
+      else ctl.fokus(d.dataset.s, { leti: true });
     });
-    function izaberi(serija, leti) {
-      izabrana = serija;
-      ctl.izaberi(serija, leti);
-      crtajSpisak();
-      const r = s.serije.find((x) => x.serija === serija);
-      LJ.tost(`<b>${r.serija} · ${r.naziv}</b> — klikni ponovo u spisku ili <a href="stanica.html?id=${encodeURIComponent(serija)}">otvori stanicu</a>`, "pin");
-      document.querySelector(`#spisak button[data-s="${CSS.escape(serija)}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    }
     crtajSpisak();
-    if (q.get("id") && s.serije.some((r) => r.serija === q.get("id"))) setTimeout(() => izaberi(q.get("id"), true), 400);
+    MAPA.stanjeGrafik(document.getElementById("krofna"), s, (k) => {
+      postaviFilter(k);
+      document.getElementById("mapa").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    if (q.get("id") && s.serije.some((r) => r.serija === q.get("id"))) setTimeout(() => ctl.fokus(q.get("id"), { leti: true }), 400);
 
     // dan na mapi
     const dan = danNaMapi(s, g, ctl, (vrednosti) => { vrednostiSata = vrednosti; crtajSpisak(); });
@@ -64,7 +72,7 @@
     function postaviRezim(v) {
       document.getElementById("dan-panel").classList.toggle("skriveno", v !== "dan");
       if (v === "dan") dan.ukljuci(q.get("dan"), q.get("sat"));
-      else { dan.iskljuci(); ctl.prikaziStanje(); vrednostiSata = null; crtajSpisak(); }
+      else { dan.iskljuci(); vrednostiSata = null; ctl.prikaziStanje().then(crtajSpisak); }
       setTimeout(() => ctl.mapa.invalidateSize(), 50);
     }
     postaviRezim(q.get("rezim") === "dan" ? "dan" : "stanje");
