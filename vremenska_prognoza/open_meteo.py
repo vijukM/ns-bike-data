@@ -3,7 +3,7 @@
     python -m vremenska_prognoza.open_meteo
 
 Svako preuzimanje se čuva (ništa se ne briše):
-  podaci/vremenska_prognoza/YYYY/MM/DD/HHMM.json            sirov odgovor API-ja (lokalno vreme preuzimanja)
+  podaci/vremenska_prognoza/za_model/YYYY/MM/DD/HHMM.json   sirov odgovor API-ja (best_match = ulaz modela biciklista)
   podaci/vremenska_prognoza/excel/vremenska_prognoza_YYYY-MM.xlsx
         ceo grad, jedan red po satu — poslednja prognoza izdata pre tog sata (+ kada je izdata); sva ranija
         izdanja za isti sat ostaju u sirovim JSON fajlovima (Excel se ne pravi od svih, da repo ne raste)
@@ -46,7 +46,8 @@ PROMENLJIVE = {
     "sneg_U": "snow_depth",                    # m (ne cm!)
     "vlaznost_zemljista": "soil_moisture_0_to_7cm",  # m³/m³
 }
-FOLDER = konfig.KOREN / "podaci" / "vremenska_prognoza"
+FOLDER = konfig.KOREN / "podaci" / "vremenska_prognoza" / "za_model"      # Open-Meteo best_match = ulaz modela
+EXCEL = konfig.KOREN / "podaci" / "vremenska_prognoza" / "excel"
 ZA_MODEL = konfig.KOREN / "model_podaci" / "vremenska_prognoza.parquet"
 
 
@@ -120,7 +121,7 @@ def napravi_excel(mesec: str, folder: Path = FOLDER) -> Path | None:
     sve = sva_preuzimanja(folder, mesec)
     if sve.empty:
         return None
-    izlaz = folder / "excel" / f"vremenska_prognoza_{mesec}.xlsx"
+    izlaz = (EXCEL if folder == FOLDER else folder.parent / "excel") / f"vremenska_prognoza_{mesec}.xlsx"
     izlaz.parent.mkdir(parents=True, exist_ok=True)
     with pd.ExcelWriter(izlaz, engine="openpyxl") as w:
         po_satu(sve).to_excel(w, sheet_name="po_satu", index=False)

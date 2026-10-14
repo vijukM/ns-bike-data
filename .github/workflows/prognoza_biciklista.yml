@@ -56,6 +56,14 @@ jobs:
         id: prognoza
         run: python -m prognoza_biciklista.izdaj --vrsta ${{ inputs.vrsta }}
 
+      - name: Vremenska prognoza vs. stvarno (svi izvori, poslednjih 10 dana)
+        if: always() && steps.prognoza.outcome != 'skipped'
+        run: python -m vremenska_prognoza.poredjenje
+
+      - name: Prognoza biciklista vs. stvarno (poslednjih 10 dana, ocena)
+        if: always() && steps.prognoza.outcome != 'skipped'
+        run: python -m prognoza_biciklista.poredjenje
+
       - name: Commit i push (prognoza biciklista, vremenska prognoza, sajt)
         if: always()
         run: |

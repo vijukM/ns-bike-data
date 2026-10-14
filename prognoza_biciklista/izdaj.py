@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 
 from scraper import konfig
-from vremenska_prognoza import open_meteo
+from vremenska_prognoza import izvori, open_meteo
 
 from . import priprema
 from .model import ansambl, predvidi_tft, predvidi_xgb
@@ -143,6 +143,8 @@ def izdaj(vrsta: str, sada: datetime, paket: Paket, preuzmi_vreme: bool = True) 
         log.info("vremenska prognoza: %s", open_meteo.sacuvaj_sirovo(odgovor, sada))
         for mesec in sorted(set(open_meteo.u_format_treninga(odgovor)["Datum"].str[:7])):
             open_meteo.napravi_excel(mesec)
+        sacuvano = izvori.preuzmi_sve(sada)              # drugi izvori vremena — samo za poređenje
+        log.info("drugi izvori vremenske prognoze: %s", ", ".join(sacuvano) or "nijedan")
     novo, smerovi = priprema._ucitaj_novo(konfig.PODACI)        # BICIKLISTI: istorija za model
     master, izv = priprema.pripremi(pd.read_parquet(paket.folder / "istorija.parquet"), novo, smerovi,
                                     pd.read_parquet(paket.folder / "p90.parquet"))

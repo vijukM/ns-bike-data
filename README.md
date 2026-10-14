@@ -137,15 +137,32 @@ podaci/
     2026/10/satno_2026-10.parquet    satne vrednosti za ceo mesec; master_2026-10.parquet = format mastera
     excel/bicikli_2026-10.xlsx       Excel za ceo mesec, sheet po seriji (15a … 51b)
     greske.log                       neuspela čitanja
-  vremenska_prognoza/                VREMENSKA PROGNOZA (Open-Meteo), uz svako izdavanje prognoze biciklista
-    2026/10/14/0115.json             sirov odgovor API-ja (lokalno vreme preuzimanja), svako preuzimanje
+  vremenska_prognoza/                VREMENSKA PROGNOZA, uz svako izdavanje prognoze biciklista (01, 07, 13, 19 h)
+    za_model/2026/10/14/0115.json    Open-Meteo best_match — ULAZ MODELA biciklista (sirov odgovor)
+    drugi_izvori/<izvor>/2026/10/14/0115.json   samo za poređenje: open_meteo_icon_d2, _icon_eu, _ecmwf_ifs025,
+                                     _gfs_seamless, _meteofrance_seamless, _ukmo_seamless, met_norway (yr.no)
+    stvarno/2026/10/2026-10-13.json  „stvarno“ vreme za dan (Open-Meteo analiza sutradan, ERA5 posle ~5–7 dana)
+    prognoza_vs_stvarno/2026/10/2026-10-13.csv  svaka prognoza × sat × promenljiva: datum, vreme_lokalno,
+                                     promenljiva, izvor, izdato_utc, horizont_h, prognoza, stvarno, greska,
+                                     aps_greska, stvarno_izvor
+    prognoza_vs_stvarno/rezime.csv   koji izvor najbolje pogađa: izvor, promenljiva, horizont (0–24 / 24–48 /
+                                     48+ h), n, MAE, RMSE, bias, dana, od, do
     excel/vremenska_prognoza_2026-10.xlsx   ceo grad, red po satu (poslednja prognoza izdata pre tog sata)
   prognoza_biciklista/               PROGNOZA BICIKLISTA (izlaz modela)
     2026/10/15/2026-10-15_0115_zvanicna.parquet, .json   prognoza za 15.10. izdata 15.10. u 01:15
     2026/10/15/2026-10-14_1915_osvezavanje.parquet, .json
     zvanicne/2026-10-15.parquet      zvanična prognoza (01:xx) — nikad se ne prepisuje
+    prognoza_vs_stvarno/2026/10/2026-10-15.csv  svako izdanje × stanica × sat: datum, sat, ts, stanica_id, vrsta,
+                                     izdato_utc, horizont_h, prognoza, q10, q90, tft, xgb, stvarno, razlog_A,
+                                     greska, aps_greska, u_intervalu, naive_t168, nepouzdano
+    prognoza_vs_stvarno/rezime_dnevno.csv   zvanične po danu: datum, prozor, n, RMSE, MAE, bias, WAPE_%,
+                                     pokrivenost_%, RMSE_naive, MAE_naive, neobicne_stanice, gradski_dogadjaj
+    prognoza_vs_stvarno/po_stanici.csv      zvanične kumulativno: prozor, stanica_id, n, RMSE, MAE, bias, WAPE_%,
+                                     pokrivenost_%, RMSE_naive, dana
+    iskljucene_serije.log            povratak isključene serije (28), ako se desi
     greske.log                       neuspela izdavanja
-docs/data/prognoza_biciklista.json   poslednja prognoza biciklista za sajt
+docs/data/ocena_prognoze_biciklista.json   ocena za sajt (dnevni RMSE model vs. naive, referenca 12,85)
+docs/data/prognoza_biciklista.json   poslednja prognoza biciklista za sajt (danas, sutra; isključene serije)
 model/                               paket modela (GitHub Release model-v1; nije u git-u)
 model_podaci/                        privremeni ulazi modela (nije u git-u)
 ```
