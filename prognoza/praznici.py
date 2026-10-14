@@ -4,7 +4,7 @@ Zakon o državnim i drugim praznicima u Republici Srbiji:
   Nova godina 1–2.1, Božić 7.1, Sretenje 15–16.2, Praznik rada 1–2.5, Dan primirja 11.11,
   Vaskrs (pravoslavni): od Velikog petka zaključno sa drugim danom Vaskrsa (petak–ponedeljak).
   Ako Nova godina, Sretenje, Praznik rada ili Dan primirja padne u nedelju, ne radi se prvi naredni radni dan;
-  ako se Praznik rada poklopi sa vaskršnjim danima, neradni dani se pomeraju na prve naredne radne dane.
+  ako se Praznik rada poklopi sa vaskršnjim danima, ne radi se prvi naredni radni dan (jedan dan).
 
 Lista se mora poklapati sa is_holiday iz trening podataka (model/praznici.csv) — provera u testovima / ručno
 `python -m prognoza.praznici --proveri model/praznici.csv`. Razlike se prijavljuju, lista se ne „popravlja“.
@@ -39,7 +39,8 @@ def praznici(godina: int) -> frozenset[date]:
                 continue
             dani.add(d)
         # nedelja ili poklapanje sa Vaskrsom → prvi naredni radni dan(i)
-        za_pomeranje = sum(1 for d in grupa if d.weekday() == 6 or d in vaskrs)
+        # najviše JEDAN dan (2021: 1. i 2.5. u Vaskrs → neradan samo 4.5., kao u trening listi)
+        za_pomeranje = int(any(d.weekday() == 6 or d in vaskrs for d in grupa))
         sledeci = max(grupa)
         while za_pomeranje:
             sledeci += timedelta(days=1)

@@ -1,0 +1,12 @@
+# Paket modela (prognoza biciklista) — verzije zaključane; torch se instalira kao CPU wheel:
+#   pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-model.txt
+-r requirements.txt
+torch==2.11.0
+lightning==2.6.6
+pytorch-forecasting==1.8.0
+torchmetrics==1.9.0
+xgboost==3.4.1
+pandas>=2.2,<3
+numpy==2.5.3
+scikit-learn==1.9.1
+scipy==1.18.1
