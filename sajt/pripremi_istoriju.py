@@ -64,10 +64,10 @@ MIN_DANA_MESEC = 10                                    # mesečni prosek tek uz 
 # stanje brojača na kraju istorije (poslednjih 30 dana) → ikonica na mapi
 STANJA = {"radi": "radi", "delimicno": "delimično radi", "ne_radi": "ne radi", "neispravan": "neispravan"}
 STANJA_OPIS = {
-    "radi": "bar 90 % kompletnih dana u poslednjih 30 dana istorije",
-    "delimicno": "ima podataka, ali manje od 90 % kompletnih dana (nepotpuni dani)",
-    "ne_radi": "nijedan validan sat u poslednjih 30 dana (nema podataka)",
-    "neispravan": "brojač proglašen neispravnim (npr. 28 od 04/2026: jedan smer ne broji); ne ulazi u gradske zbirove",
+    "radi": "bar 90 % kompletnih dana u poslednjih 30 dana",
+    "delimicno": "nepotpuni dani: ima podataka, ali manje od 90 % kompletnih dana u poslednjih 30 dana",
+    "ne_radi": "nema podataka: nijedan validan sat u poslednjih 30 dana",
+    "neispravan": "brojač je neispravan (npr. 28 od 04/2026: jedan smer ne broji) i ne ulazi u gradske zbirove",
 }
 DANA_STANJE, PRAG_RADI = 30, 0.9
 
@@ -140,14 +140,33 @@ def meteo_na_mrezi(w: pd.DataFrame, pocetak_utc: pd.DatetimeIndex) -> pd.DataFra
     return w.reindex(lok)
 
 
-def opis_stanica(feed_csv: Path) -> pd.DataFrame:
+NAZIVI = Path(__file__).with_name("nazivi.json")
+
+
+def lep_smer(tekst: str, delovi: dict) -> str:
+    """„Bul. M. Pupina - Maksima Gorkog (u oba smera)“ → „Bulevar Mihajla Pupina – Maksima Gorkog (u oba smera)“."""
+    oba = "(u oba smera)" in tekst
+    jezgro = tekst.replace("(u oba smera)", "").strip()
+    deo = [d.strip() for d in re.split(r"\s*-\s*", jezgro) if d.strip()]
+    nepoznati = [d for d in deo if d not in delovi]
+    if nepoznati:
+        log.warning("smer bez lepog naziva (sajt/nazivi.json): %s", nepoznati)
+    return " – ".join(delovi.get(d, d) for d in deo) + (" (u oba smera)" if oba else "")
+
+
+def opis_stanica(feed_csv: Path, nazivi: Path = NAZIVI) -> pd.DataFrame:
+    """Nazivi i koordinate iz feed-a; za prikaz se zamenjuju lepim nazivima (prava latinica, bez skraćenica).
+    Mapiranje podataka ide preko serije (locationID), ne preko naziva, pa ovo ne utiče na podatke."""
+    lepo = json.loads(nazivi.read_text(encoding="utf-8")) if nazivi.exists() else {"mesta": {}, "delovi": {}}
     c = pd.read_csv(feed_csv, dtype={"serija": str})
     redovi = []
     for serija, g in c.groupby("serija"):
-        naziv = re.sub(r"^\d+NS\S*\s+", "", str(g["locationID"].iloc[0]).strip())  # „15NSaPS Vojvodjanska“
+        mesto = int(re.match(r"\d+", serija).group())
+        sirov = re.sub(r"^\d+NS\S*\s+", "", str(g["locationID"].iloc[0]).strip())  # „15NSaPS Vojvodjanska“
         smerovi = [re.sub(r"\s*\(b\)\s*$", "", str(d)).strip() for d in g.sort_values("direction")["directionDesc"]]
-        redovi.append({"serija": serija, "mesto": int(re.match(r"\d+", serija).group()), "naziv": naziv,
-                       "smerovi": smerovi, "lat": float(g["lat"].iloc[0]), "lon": float(g["lon"].iloc[0])})
+        redovi.append({"serija": serija, "mesto": mesto, "naziv": lepo["mesta"].get(str(mesto), sirov),
+                       "smerovi": [lep_smer(x, lepo["delovi"]) for x in smerovi],
+                       "lat": float(g["lat"].iloc[0]), "lon": float(g["lon"].iloc[0])})
     return pd.DataFrame(redovi)
 
 
