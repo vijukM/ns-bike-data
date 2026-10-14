@@ -149,3 +149,27 @@ def test_zbir_json_jednak_zbiru_mastera(serija, mesec):
             assert None not in sati and d["v"][k] == sum(sati)
         elif 0 <= k < len(d["v"]):
             assert d["h"][k] == n - sati.count(None)
+
+
+def test_stanje_brojaca():
+    assert pi.stanje_brojaca("28", 30, 720) == "neispravan"
+    assert pi.stanje_brojaca("23a", 27, 700) == "radi"
+    assert pi.stanje_brojaca("23a", 26, 700) == "delimicno"
+    assert pi.stanje_brojaca("27a", 0, 0) == "ne_radi"
+
+
+def test_staze_tipovi_i_geojson():
+    from sajt import staze
+    assert staze.tip({"highway": "cycleway"}) == "s"
+    assert staze.tip({"highway": "primary", "cycleway:right": "lane"}) == "t"
+    assert staze.tip({"highway": "secondary", "cycleway": "track"}) == "s"
+    assert staze.tip({"highway": "footway", "bicycle": "designated"}) == "z"
+    assert staze.tip({"highway": "residential"}) is None
+    g = staze.u_geojson({"elements": [
+        {"type": "way", "id": 2, "tags": {"highway": "cycleway"},
+         "geometry": [{"lat": 45.2512345, "lon": 19.8312345}, {"lat": 45.252, "lon": 19.832}]},
+        {"type": "way", "id": 1, "tags": {"highway": "residential"}, "geometry": [{"lat": 45, "lon": 19}] * 2},
+        {"type": "node", "id": 3}]})
+    assert len(g["features"]) == 1 and g["obelezja_po_tipu"] == {"s": 1, "t": 0, "z": 0}
+    assert g["features"][0]["geometry"]["coordinates"][0] == [19.83123, 45.25123]
+    assert "cycleway:both" in staze.upit()
