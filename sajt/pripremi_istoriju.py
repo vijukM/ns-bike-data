@@ -308,7 +308,7 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> 
         "najprometniji_dan": {"datum": naj_dan.isoformat(), "zbir": _i(grad.loc[naj_dan, "sum"]),
                               "serija": _i(grad.loc[naj_dan, "size"])},
         "najprometnija_serija": None if pg.empty else {"serija": pg["mean"].idxmax(), "prosek": _i(pg["mean"].max()),
-                                                       "period": "01.09.2025 – 31.08.2026"},
+                                                       "period": "1. 9. 2025. – 31. 8. 2026."},
         "kisa": {"kisni_dani": int(len(kisni)), "suvi_dani": int(len(suvi)),
                  "kisni_po_brojacu": _i(kisni.mean()), "suvi_po_brojacu": _i(suvi.mean()),
                  "razlika_pct": _r1(100 * (kisni.mean() / suvi.mean() - 1)),

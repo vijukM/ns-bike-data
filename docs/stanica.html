@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stanica · Biciklisti Novog Sada</title>
+  <meta name="description" content="Istorija brojanja biciklista na jednoj stanici u Novom Sadu: dnevno, satni profil, toplotna mapa, meseci po godinama i izabrani dan.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%232a78d6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/stil.css">
+</head>
+<body>
+  <div class="zaglavlje">
+    <div class="unutra">
+      <a class="logo" href="./"><span class="tacka"></span><span><b>Biciklisti Novog Sada</b>
+        <small>← početna · istorija 1. 1. 2021. – 31. 8. 2026.</small></span></a>
+      <select id="izbor-stanice" aria-label="Izaberi stanicu"></select>
+    </div>
+  </div>
+
+  <main id="sadrzaj">
+    <section class="kartica stanica-glava" id="glava" aria-live="polite"></section>
+
+    <div class="uskoro">
+      <div><strong>Prognoza za sutra</strong><br><span class="sitno">satna prognoza za ovu stanicu sa intervalom 10–90 % (model E28)</span></div>
+      <span class="znacka">uskoro</span>
+    </div>
+
+    <section class="kartica">
+      <header>
+        <div>
+          <h2>Biciklisti po danu, ceo period</h2>
+          <p class="opis">Sivo = brojač nije imao kompletne podatke tog dana (dan se ne prikazuje kao nula). Klik na dan ga otvara dole.</p>
+        </div>
+        <div class="prekidac" id="dnevno-gustina" role="group" aria-label="Gustina prikaza"></div>
+      </header>
+      <div class="grafik srednji" id="dnevno-grafik"></div>
+      <div class="legenda">
+        <span><i class="crta" style="background:var(--bicikl);opacity:.4"></i>dnevni zbir</span>
+        <span><i class="crta" style="background:var(--bicikl)"></i>prosek 7 dana</span>
+        <span><i style="background:var(--nema);border-radius:2px"></i>nema kompletnih podataka</span>
+      </div>
+    </section>
+
+    <div class="red-2">
+      <section class="kartica">
+        <header>
+          <div><h2>Prosečan dan po satima</h2><p class="opis">Prosek validnih sati, po lokalnom vremenu.</p></div>
+          <select id="sezona" aria-label="Godišnje doba"></select>
+        </header>
+        <div class="grafik" id="profil-grafik"></div>
+      </section>
+      <section class="kartica">
+        <header><div><h2>Sat × dan u nedelji</h2><p class="opis">Prosečan broj biciklista u satu, ceo period.</p></div></header>
+        <div class="grafik" id="toplota-grafik"></div>
+      </section>
+    </div>
+
+    <section class="kartica">
+      <header><div><h2>Meseci po godinama</h2>
+        <p class="opis">Prosečan dan u mesecu (samo kompletni dani; mesec se prikazuje uz bar 10 takvih dana).</p></div></header>
+      <div class="grafik" id="godine-grafik"></div>
+    </section>
+
+    <section class="kartica">
+      <header>
+        <div><h2>Izabrani dan</h2><p class="opis" id="dan-opis"></p></div>
+        <div class="kontrole">
+          <button type="button" id="dan-pre" aria-label="Prethodni dan">‹</button>
+          <input type="date" id="dan-datum" aria-label="Datum">
+          <button type="button" id="dan-posle" aria-label="Sledeći dan">›</button>
+        </div>
+      </header>
+      <div class="grafik srednji" id="dan-grafik"></div>
+      <div class="legenda">
+        <span><i style="background:var(--bicikl);border-radius:2px"></i>biciklisti u satu</span>
+        <span><i class="crta" style="background:var(--temp)"></i>temperatura</span>
+        <span><i style="background:var(--kisa);border-radius:2px"></i>padavine</span>
+        <span><i style="background:var(--nema);border-radius:2px"></i>nema podataka</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Izvor: UGZINS / Mikrobit brojači biciklista (očišćeni satni podaci iz master rada, FTN Novi Sad); vreme: Open-Meteo.
+    Sati su po lokalnom vremenu (Europe/Belgrade).
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
+          integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
+  <script src="assets/zajednicko.js"></script>
+  <script src="assets/stanica.js"></script>
+</body>
+</html>
