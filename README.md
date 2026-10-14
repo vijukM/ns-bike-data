@@ -55,9 +55,9 @@ Isto radi ručni workflow **istrazi** (Actions → istrazi → Run workflow) sa 
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt
 pytest                                   # testovi
-python -m scraper.citaj                  # jedno čitanje -> podaci/
-python -m scraper.satno                  # satne vrednosti za juče -> podaci/YYYY/MM/DD/satno.csv
-python -m scraper.satno --spoji          # svi dani u jedan fajl -> podaci/satno.parquet (samo lokalno)
+python -m scraper.citaj                  # jedno čitanje -> podaci/biciklisti/
+python -m scraper.satno                  # satne vrednosti za juče -> podaci/biciklisti/YYYY/MM/DD/satno.csv
+python -m scraper.satno --spoji          # svi dani u jedan fajl -> podaci/biciklisti/satno.parquet (samo lokalno)
 # rezerva sa pregledačem (samo ako brza varijanta ne radi):
 pip install playwright && python -m playwright install chromium
 python -m scraper.citaj --metod pregledac
@@ -66,7 +66,7 @@ python -m scraper.citaj --metod pregledac
 Opcije `citaj.py`: `--metod auto|brza|pregledac`, `--pokusaji-u 0,180,360` (trenuci pokušaja u sekundama od
 početka pokretanja, env `NS_BIKE_POCETAK`), `--samo-ako-nema` (preskoči ako za
 tekući sat već postoji čitanje), `--iz-fajla X.xml` (obrada lokalnog fajla, bez preuzimanja).
-Izlazni kod je `2` ako preuzimanje ne uspe (zapis u `podaci/greske.log`).
+Izlazni kod je `2` ako preuzimanje ne uspe (zapis u `podaci/biciklisti/greske.log`).
 
 ## GitHub Actions + cron-job.org
 
@@ -124,26 +124,33 @@ sat ima commit sa podacima, pa se to ne dešava dok čitanja rade.
 
 ## Format podataka
 
+Sve što se preuzme se trajno čuva u repozitorijumu. Tri jasno odvojena dela:
+
 ```
 podaci/
-  2026/                              godina
-    10/                              mesec
-      satno_2026-10.parquet, .csv    satne vrednosti po seriji za ceo mesec (osvežava se posle ponoći)
-      master_2026-10.parquet         isto u formatu istorijskog mastera: stanica_id, ts, y_A, razlog_A (+ datum, sat)
-      09/                            dan (lokalni datum čitanja)
-        0002.csv, 0002.xml.gz        čitanje u 00:02 — CSV (57 redova) i sirov XML
-        0102.csv, 0102.xml.gz        …  24 čitanja dnevno (HHMM = lokalno vreme čitanja)
-        …
-        2302.csv, 2302.xml.gz
-        satno.csv                    24 sata × 46 serija za ovaj dan (upisuje se posle ponoći)
-        satno_smerovi.csv            isto, po smeru
-        satno_provera.csv            samo ako zbir sati odstupa od „juče"
-  excel/
-    bicikli_2026-10.xlsx             Excel za ceo mesec: sheet po seriji (15a … 51b), kao istorijska tabela
-  greske.log                         neuspela čitanja (UTC vreme, metod, greška)
+  biciklisti/                        BROJAČI BICIKLISTA (scraper, svakog sata)
+    2026/10/09/
+      0002.csv, 0002.xml.gz          čitanje u 00:02 — CSV (57 redova) i sirov XML; 24 čitanja dnevno
+      …
+      satno.csv, satno_smerovi.csv   24 sata × 46 serija za ovaj dan (po seriji / po smeru)
+      satno_provera.csv              samo ako zbir sati odstupa od „juče" ili je smer ceo dan 0
+    2026/10/satno_2026-10.parquet    satne vrednosti za ceo mesec; master_2026-10.parquet = format mastera
+    excel/bicikli_2026-10.xlsx       Excel za ceo mesec, sheet po seriji (15a … 51b)
+    greske.log                       neuspela čitanja
+  vremenska_prognoza/                VREMENSKA PROGNOZA (Open-Meteo), uz svako izdavanje prognoze biciklista
+    2026/10/14/0115.json             sirov odgovor API-ja (lokalno vreme preuzimanja), svako preuzimanje
+    excel/vremenska_prognoza_2026-10.xlsx   ceo grad, red po satu (poslednja prognoza izdata pre tog sata)
+  prognoza_biciklista/               PROGNOZA BICIKLISTA (izlaz modela)
+    2026/10/15/2026-10-15_0115_zvanicna.parquet, .json   prognoza za 15.10. izdata 15.10. u 01:15
+    2026/10/15/2026-10-14_1915_osvezavanje.parquet, .json
+    zvanicne/2026-10-15.parquet      zvanična prognoza (01:xx) — nikad se ne prepisuje
+    greske.log                       neuspela izdavanja
+docs/data/prognoza_biciklista.json   poslednja prognoza biciklista za sajt
+model/                               paket modela (GitHub Release model-v1; nije u git-u)
+model_podaci/                        privremeni ulazi modela (nije u git-u)
 ```
 
-**Excel** (`podaci/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
+**Excel** (`podaci/biciklisti/excel/bicikli_YYYY-MM.xlsx`, osvežava se svake noći posle ponoći): jedan sheet po
 seriji, kolone `Date | Time (01:00–24:00) | y_A | razlog_A | oznaka`. Stari dvosmerni brojači (25a, 26, 28, 40a/b, 41,
 46a/b, 47, 51a/b) imaju `Date | Time | A01 | A02 | Sum | razlog_A | oznaka` (A01 = smer 1x, A02 = smer 2x,
 Sum = A01 + A02 = `y_A`, kao u istorijskom masteru); u parquet fajlovima za model kolona je uvek `y_A`. `y_A` = broj biciklista (cilj
@@ -160,7 +167,7 @@ sati sivi. Neobični sati (`scraper/anomalije.py`, vrednosti se ne menjaju):
 Klase vozila (A/B/C), OCC i GAP iz istorijskog izvoza sajt ne objavljuje, pa ih nema.
 
 Svako čitanje je **novi fajl** — postojeći fajlovi se ne menjaju (osim mesečnog zbira i `greske.log`).
-`python -m scraper.satno --spoji` lokalno pravi `podaci/satno.parquet` sa svim danima (nije u repozitorijumu).
+`python -m scraper.satno --spoji` lokalno pravi `podaci/biciklisti/satno.parquet` sa svim danima (nije u repozitorijumu).
 
 ### Zauzeće prostora
 
@@ -224,10 +231,10 @@ A (samo bicikli). `YYYY/MM/master_YYYY-MM.parquet` je isto na punoj naivnoj satn
 - provera (`satno_provera.csv`): zbir sati ≠ „juče" (`zbir_sati_razlicit_od_juce`) i smerovi koji su ceo
   dan 0 (`nula_ceo_dan` — moguće neispravan senzor; odluka o seriji je na korisniku).
 
-## Priprema podataka za model (`prognoza/priprema.py`)
+## Priprema podataka za model (`prognoza_biciklista/priprema.py`)
 
-`python -m prognoza.priprema` → `model_podaci/istorija.parquet` = `model/istorija.parquet` (očišćena istorija
-iz paketa modela, 01.06–31.08.2026) + novi sati iz `podaci/YYYY/MM/master_YYYY-MM.parquet`, na punoj satnoj
+`python -m prognoza_biciklista.priprema` → `model_podaci/istorija.parquet` = `model/istorija.parquet` (očišćena istorija
+iz paketa modela, 01.06–31.08.2026) + novi sati iz `podaci/biciklisti/YYYY/MM/master_YYYY-MM.parquet`, na punoj satnoj
 mreži (rupa 01.09–08.10.2026 = `nema_reda`). Novi sati se čiste istim pravilima kao istorijski master
 (`docs/MODEL_KONTEKST.md`, tačka 5); vrednost postaje NaN uz razlog:
 
@@ -243,9 +250,9 @@ mreži (rupa 01.09–08.10.2026 = `nema_reda`). Novi sati se čiste istim pravil
 Fajl se ne commit-uje (pravi se iznova pre svake prognoze, za nekoliko sekundi), da repozitorijum ne raste
 za ~1 MB dnevno. Potrebni su `model/istorija.parquet` i `model/p90.parquet` iz paketa modela.
 
-## Vremenska prognoza (`prognoza/meteo.py`) i praznici (`prognoza/praznici.py`)
+## Vremenska prognoza (`vremenska_prognoza/open_meteo.py`) i praznici (`prognoza_biciklista/praznici.py`)
 
-`python -m prognoza.meteo` preuzima Open-Meteo Forecast API (bez ključa; lat 45.33, lon 19.85,
+`python -m vremenska_prognoza.open_meteo` preuzima Open-Meteo Forecast API (bez ključa; lat 45.33, lon 19.85,
 `timezone=Europe/Belgrade`, `past_days=8`, `forecast_days=3` — sa 2 dana fali Cas 24:00 za sutra, satno), čuva sirov odgovor u
 `meteo/YYYY/MM/DD/HHMM.json` (da se zna koja prognoza je korišćena) i pravi `model_podaci/meteo.parquet` u
 formatu treninga: `Datum` + `Cas` 01:00–24:00 (kraj sata; vrednost za vreme T → Cas T, 00:00 → 24:00
@@ -257,7 +264,7 @@ padavine_dan, sati_kise_dan (> 0,1 mm), sat/dan/doy sin-cos, is_weekend, is_holi
 
 `is_holiday`: državni praznici Srbije po zakonu (Nova godina, Božić, Sretenje, Praznik rada, Dan primirja,
 pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Provera prema trening listi:
-`python -m prognoza.praznici --proveri model/praznici.csv` (razlike se prijavljuju, lista se ne menja).
+`python -m prognoza_biciklista.praznici --proveri model/praznici.csv` (razlike se prijavljuju, lista se ne menja).
 
 ## Ograničenja
 
@@ -269,6 +276,6 @@ pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Pro
   ili pređe u sledeći sat, pogođeni sati su NaN.
 - Prvi (nepotpun) dan prikupljanja ima NaN za sate pre prvog čitanja.
 - Izvor je javna veb-aplikacija bez dokumentovanog API-ja; promena IntraWeb stranice može da pokvari brzu
-  varijantu (tada radi rezerva sa pregledačem, a greške se vide u `podaci/greske.log`).
+  varijantu (tada radi rezerva sa pregledačem, a greške se vide u `podaci/biciklisti/greske.log`).
 - Podaci pripadaju UGZINS-u / Mikrobit sistemu; ovde se koriste isključivo za istraživanje u okviru
   master rada.

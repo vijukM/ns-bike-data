@@ -1,8 +1,8 @@
-"""Pravila čišćenja novih sati (prognoza/priprema.py) na veštačkim podacima."""
+"""Pravila čišćenja novih sati (prognoza_biciklista/priprema.py) na veštačkim podacima."""
 import numpy as np
 import pandas as pd
 
-from prognoza.priprema import STARI_DVOSMERNI, pripremi
+from prognoza_biciklista.priprema import STARI_DVOSMERNI, pripremi
 
 PROFIL = np.array([1, 0, 0, 0, 0, 2, 10, 40, 60, 50, 45, 50, 55, 60, 70, 80, 90, 70, 50, 30, 20, 10, 5, 2], float)
 

@@ -1,7 +1,7 @@
 """Faza 2: istorija za model = model/istorija.parquet (očišćena, 01.06–31.08.2026) + novi sati iz scrapera,
 očišćeni po istim pravilima kao istorijski master (docs/MODEL_KONTEKST.md, tačka 5).
 
-    python -m prognoza.priprema        # -> model_podaci/istorija.parquet
+    python -m prognoza_biciklista.priprema        # -> model_podaci/istorija.parquet
 
 Izlaz: stanica_id, ts, y_A, razlog_A na punoj naivnoj satnoj mreži (rupa 01.09–08.10.2026 = NaN, nema_reda).
 Istorija iz paketa se ne menja; pravila se primenjuju samo na nove sate (istorija služi kao kontekst).

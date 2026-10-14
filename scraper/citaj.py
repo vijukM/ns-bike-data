@@ -123,7 +123,8 @@ def main(argv=None) -> int:
     # satni obračun za juče: u prvom čitanju dana i u čitanju u 01:xx (u 00:02 brojač je često još od 23:58,
     # pa „juče“ za sat 23–24 stiže tek u 01:02)
     lok_sat = sada.astimezone(konfig.TZ).hour
-    _gh_output(procitano="true", prvo_u_danu=str(prvo).lower(), obracunaj=str(prvo or lok_sat == 1).lower())
+    _gh_output(procitano="true", prvo_u_danu=str(prvo).lower(), obracunaj=str(prvo or lok_sat == 1).lower(),
+               lokalni_sat=f"{lok_sat:02d}")
     return 0
 
 

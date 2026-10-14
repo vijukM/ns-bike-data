@@ -7,7 +7,7 @@ Zakon o državnim i drugim praznicima u Republici Srbiji:
   ako se Praznik rada poklopi sa vaskršnjim danima, ne radi se prvi naredni radni dan (jedan dan).
 
 Lista se mora poklapati sa is_holiday iz trening podataka (model/praznici.csv) — provera u testovima / ručno
-`python -m prognoza.praznici --proveri model/praznici.csv`. Razlike se prijavljuju, lista se ne „popravlja“.
+`python -m prognoza_biciklista.praznici --proveri model/praznici.csv`. Razlike se prijavljuju, lista se ne „popravlja“.
 """
 from __future__ import annotations
 

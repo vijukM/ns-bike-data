@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # pokretanje prognoza_biciklista.yml
 
 concurrency:
   group: citaj
@@ -65,3 +66,18 @@ jobs:
             sleep $((i * 5))
           done
           exit 1
+
+      - name: Pokreni prognozu biciklista (zvanična u 01:xx, osvežavanje u 07, 13 i 19 h)
+        if: steps.brza.outputs.procitano == 'true' || steps.pregledac.outputs.procitano == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SAT: ${{ steps.brza.outputs.lokalni_sat || steps.pregledac.outputs.lokalni_sat }}
+          OBRACUNAJ: ${{ steps.brza.outputs.obracunaj == 'true' || steps.pregledac.outputs.obracunaj == 'true' }}
+        run: |
+          if [ "$OBRACUNAJ" = "true" ] && [ "$SAT" = "01" ]; then
+            gh workflow run prognoza_biciklista.yml -f vrsta=zvanicna
+          elif [ "$SAT" = "07" ] || [ "$SAT" = "13" ] || [ "$SAT" = "19" ]; then
+            gh workflow run prognoza_biciklista.yml -f vrsta=osvezavanje
+          else
+            echo "sat $SAT: prognoza se ne pokreće"
+          fi

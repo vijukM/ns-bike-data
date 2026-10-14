@@ -31,7 +31,7 @@ jobs:
         if: always()
         run: |
           python - <<'PY'
-          from prognoza.meteo import preuzmi, obradi
+          from vremenska_prognoza.open_meteo import preuzmi, obradi
           o = preuzmi()
           df = obradi(o)
           print("sati:", len(df), "|", df["Datum"].min().date(), df["Cas"].iloc[0], "–", df["Datum"].max().date(), df["Cas"].iloc[-1])

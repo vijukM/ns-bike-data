@@ -3,8 +3,8 @@ __pycache__/
 .pytest_cache/
 .venv/
 istrazi/
-podaci/satno.parquet
-podaci/satno.csv
-podaci/master_novo.parquet
+podaci/biciklisti/satno.parquet
+podaci/biciklisti/satno.csv
+podaci/biciklisti/master_novo.parquet
 model_podaci/
 model/

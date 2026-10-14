@@ -12,7 +12,7 @@ pytestmark = pytest.mark.skipif(not (MODEL / "referenca.parquet").exists(), reas
 
 @pytest.fixture(scope="module")
 def osnova():
-    from prognoza.obelezja import Paket, napravi
+    from prognoza_biciklista.obelezja import Paket, napravi
     P = Paket.ucitaj(MODEL)
     df = napravi(pd.read_parquet(MODEL / "istorija.parquet"), pd.read_parquet(MODEL / "meteo_istorija.parquet"), P)
     return P, df, pd.read_parquet(MODEL / "referenca.parquet")
@@ -20,7 +20,7 @@ def osnova():
 
 def test_xgb_obelezja_i_predikcija(osnova):
     pytest.importorskip("xgboost")
-    from prognoza.model import predvidi_xgb
+    from prognoza_biciklista.model import predvidi_xgb
     P, df, ref = osnova
     x = df.merge(ref, on=["stanica_id", "ts"], suffixes=("", "_ref"))
     assert len(x) == len(ref)
@@ -35,8 +35,8 @@ def test_xgb_obelezja_i_predikcija(osnova):
 
 def test_tft_ulazi_i_predikcija_i_ansambl(osnova):
     pytest.importorskip("pytorch_forecasting")
-    from prognoza.model import ansambl, predvidi_tft, predvidi_xgb
-    from prognoza.obelezja import pripremi_tft
+    from prognoza_biciklista.model import ansambl, predvidi_tft, predvidi_xgb
+    from prognoza_biciklista.obelezja import pripremi_tft
     P, df, ref = osnova
     tf = pripremi_tft(df, P)
     x = tf.merge(ref, on=["stanica_id", "ts"], suffixes=("", "_ref"))
@@ -54,7 +54,7 @@ def test_tft_ulazi_i_predikcija_i_ansambl(osnova):
 
 
 def test_praznici_kao_u_treningu():
-    from prognoza.praznici import praznici
+    from prognoza_biciklista.praznici import praznici
     trening = set(pd.to_datetime(pd.read_csv(MODEL / "praznici.csv").iloc[:, 0]).dt.date)
     nase = {d for g in range(2021, 2027) for d in praznici(g) if d <= max(trening)}
     assert nase == trening

@@ -26,7 +26,7 @@ jobs:
         run: |
           python - <<'PY'
           import pandas as pd, requests
-          from prognoza.meteo import PROMENLJIVE
+          from vremenska_prognoza.open_meteo import PROMENLJIVE
           r = requests.get("https://historical-forecast-api.open-meteo.com/v1/forecast", params={
               "latitude": 45.33, "longitude": 19.85, "timezone": "Europe/Belgrade", "start_date": "2026-08-01",
               "end_date": "2026-08-31", "hourly": ",".join(PROMENLJIVE.values())}, timeout=60).json()

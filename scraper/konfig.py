@@ -20,7 +20,8 @@ POKUSAJI_U = (0, 180, 360)
 TZ = ZoneInfo("Europe/Belgrade")
 
 KOREN = Path(__file__).resolve().parent.parent
-PODACI = Path(os.environ.get("NS_BIKE_PODACI", KOREN / "podaci"))
+# Podaci sa brojača biciklista (scraper). Vremenska prognoza je odvojeno u podaci/vremenska_prognoza/.
+PODACI = Path(os.environ.get("NS_BIKE_PODACI", KOREN / "podaci" / "biciklisti"))
 GRESKE_LOG = PODACI / "greske.log"
 
 
