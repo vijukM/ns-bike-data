@@ -49,7 +49,8 @@ POCETAK_TRENDA = pd.Timestamp("2021-01-01")
 KISA_MM = 0.1
 
 
-def preuzmi(past_days: int = 8, forecast_days: int = 2) -> dict:
+def preuzmi(past_days: int = 8, forecast_days: int = 3) -> dict:
+    # forecast_days=3: za „sutra“ treba i Cas 24:00 = 00:00 prekosutra (sa 2 dana poslednji sat je sutra 23:00)
     params = {
         "latitude": LAT, "longitude": LON, "timezone": "Europe/Belgrade",
         "hourly": ",".join(PROMENLJIVE.values()), "past_days": past_days, "forecast_days": forecast_days,

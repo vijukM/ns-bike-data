@@ -246,7 +246,7 @@ za ~1 MB dnevno. Potrebni su `model/istorija.parquet` i `model/p90.parquet` iz p
 ## Vremenska prognoza (`prognoza/meteo.py`) i praznici (`prognoza/praznici.py`)
 
 `python -m prognoza.meteo` preuzima Open-Meteo Forecast API (bez ključa; lat 45.33, lon 19.85,
-`timezone=Europe/Belgrade`, `past_days=8`, `forecast_days=2`, satno), čuva sirov odgovor u
+`timezone=Europe/Belgrade`, `past_days=8`, `forecast_days=3` — sa 2 dana fali Cas 24:00 za sutra, satno), čuva sirov odgovor u
 `meteo/YYYY/MM/DD/HHMM.json` (da se zna koja prognoza je korišćena) i pravi `model_podaci/meteo.parquet` u
 formatu treninga: `Datum` + `Cas` 01:00–24:00 (kraj sata; vrednost za vreme T → Cas T, 00:00 → 24:00
 prethodnog dana), DST: prolećna rupa interpolirana, jesenji duplikat usrednjen. Promenljive: temperatura ←
