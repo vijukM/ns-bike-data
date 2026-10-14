@@ -47,6 +47,7 @@ function mapaKartica(s, a) {
     podlogaEl: document.getElementById("podloga"), stazeEl: document.getElementById("staze-cip"),
   });
   MAPA.legenda(document.getElementById("legenda-mape"), s);
+  MAPA.stanjeGrafik(document.getElementById("krofna"), s, (k) => { location.href = "stanice.html#" + k; });
   // najprometnija mesta (kao „Site visits“): prosek 12 m, traka u odnosu na najveći
   const top = s.serije.filter((r) => r.prosek_12m != null && r.stanje !== "neispravan")
     .sort((x, y) => y.prosek_12m - x.prosek_12m).slice(0, 4);

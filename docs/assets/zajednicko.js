@@ -15,7 +15,7 @@ const NS = (() => {
   const MESECI_KRATKO = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "avg", "sep", "okt", "nov", "dec"];
   const SEZONE = { ukupno: "cela godina", zima: "zima", prolece: "proleće", leto: "leto", jesen: "jesen" };
   const TIPOVI = { radni: "radni dan", subota: "subota", nedelja_praznik: "nedelja i praznik" };
-  const STANJA = { radi: "radi", delimicno: "delimično", ne_radi: "ne radi", neispravan: "neispravan" };
+  const STANJA = { radi: "radi", delimicno: "delimično radi", ne_radi: "ne radi", neispravan: "neispravan" };
 
   // ---------------------------------------------------------------- formati i vreme
   const broj = (x) => (x == null || Number.isNaN(x) ? "—" : fBroj.format(x));

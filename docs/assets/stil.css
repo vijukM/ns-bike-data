@@ -33,6 +33,7 @@
   --g-god-0: #475569; --g-god-1: #256abf; --g-god-2: #3987e5; --g-god-3: #6da7ec; --g-god-4: #9ec5f4; --g-god-5: #cde2fb;
   --g-top-0: #1A2237; --g-top-1: #184f95; --g-top-2: #256abf; --g-top-3: #3987e5; --g-top-4: #86b6ef; --g-top-5: #cde2fb;
   /* staze (kao bikemap: žuto-zelena sredina, zeleni obod) */
+  --pin-radi: #4282F5; --pin-delimicno: #FF9800; --pin-ne_radi: #E5484D; --pin-neispravan: #94A3B8;
   --staza-obod: #14532d; --staza: #c6f432; --traka: #ffd60a; --zajednicka: #86efac;
 }
 :root[data-theme="light"] {
@@ -65,6 +66,7 @@
   --g-tip-1: #2563EB; --g-tip-2: #DB2777; --g-tip-3: #7C3AED;
   --g-god-0: #CBD5E1; --g-god-1: #86b6ef; --g-god-2: #5598e7; --g-god-3: #2a78d6; --g-god-4: #1c5cab; --g-god-5: #104281;
   --g-top-0: #F1F5F9; --g-top-1: #cde2fb; --g-top-2: #86b6ef; --g-top-3: #3987e5; --g-top-4: #1c5cab; --g-top-5: #0d366b;
+  --pin-radi: #4282F5; --pin-delimicno: #FF9800; --pin-ne_radi: #E5484D; --pin-neispravan: #1E293B;
   --staza-obod: #15803d; --staza: #a3e635; --traka: #facc15; --zajednicka: #4ade80;
 }
 
@@ -312,10 +314,21 @@ table.tabela { border-collapse: collapse; width: 100%; font-size: 13px; }
 .leaflet-tooltip-top::before { border-top-color: var(--bg-card); }
 .leaflet-bar a { background: var(--bg-card); color: var(--t-base); border-color: var(--border); }
 .leaflet-control-attribution { background: color-mix(in srgb, var(--bg-card) 80%, transparent) !important; color: var(--t-muted); }
-.pin { position: relative; width: 34px; height: 34px; filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.45)); transition: transform .15s; }
-.pin:hover, .pin.izabran { transform: scale(1.18); z-index: 5; }
+.pin { position: relative; width: 34px; height: 34px; filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.45)); transition: transform .18s; transform-origin: 50% 100%; }
+.pin:hover { transform: scale(1.15); }
+.pin.izabran { transform: scale(1.4); }
 .pin img { width: 34px; height: 34px; display: block; }
-:root[data-theme="dark"] .pin.svetli-obod img,
+.pin .telo img.h { display: none; }
+.pin:hover .telo img.n, .pin.izabran .telo img.n { display: none; }
+.pin:hover .telo img.h, .pin.izabran .telo img.h { display: block; }
+.pin.skok .telo { animation: skok 1.15s cubic-bezier(.3, .6, .4, 1); }
+@keyframes skok {
+  0% { transform: translateY(0); } 18% { transform: translateY(-30px); } 34% { transform: translateY(0) scaleY(.9); }
+  46% { transform: translateY(-14px); } 58% { transform: translateY(0) scaleY(.95); } 68% { transform: translateY(-6px); }
+  77% { transform: translateY(0); } 85% { transform: translateY(-2px); } 100% { transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .pin.skok .telo { animation: none; } }
+:root[data-theme="dark"] .pin.svetli-obod img.n,
 :root[data-theme="dark"] img[src$="neispravan.png"], :root[data-theme="dark"] img[src$="nije_postavljen.png"] { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); }
 .pin .pin-broj {
   position: absolute; left: 50%; bottom: 33px; transform: translateX(-50%); font-family: "JetBrains Mono", monospace; font-size: 10.5px;
@@ -409,3 +422,35 @@ footer.podnozje { color: var(--t-light); font-size: 12px; padding: 8px 28px 32px
   .grafik.visok { height: 420px; }
   .panel { position: fixed; left: 12px; right: 12px; top: 64px; width: auto; }
 }
+
+/* mapa: grupe kontrola, štikla, savet za zum, info, legenda, spisak */
+.mapa { position: relative; }
+.mapa-savet { position: absolute; inset: 0; z-index: 900; display: grid; place-items: center; pointer-events: none; opacity: 0;
+  transition: opacity .25s; background: rgb(0 0 0 / 0.38); color: #fff; font-weight: 600; font-size: 15px; text-align: center; padding: 20px; }
+.mapa-savet.vidljiv { opacity: 1; }
+.grupa-kontrola { display: flex; flex-direction: column; gap: 6px; }
+.grupa-kontrola > .eyebrow { padding-left: 2px; }
+.mapa-alat { align-items: flex-end; gap: 14px 22px; }
+.stikla { display: inline-flex; align-items: center; gap: 9px; height: 38px; padding: 0 14px 0 10px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--bg-muted); cursor: pointer; font-weight: 600; font-size: 12.5px; user-select: none; }
+.stikla input { position: absolute; opacity: 0; width: 0; height: 0; }
+.stikla .kvacica { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--t-light); display: grid; place-items: center; transition: background .15s, border-color .15s; }
+.stikla input:checked + .kvacica { background: var(--primary); border-color: var(--primary); }
+.stikla input:checked + .kvacica::after { content: ""; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.stikla input:focus-visible + .kvacica { outline: 2px solid var(--primary-ring); outline-offset: 2px; }
+.stikla .linija { display: inline-block; width: 22px; height: 6px; border-radius: 3px; background: var(--staza-obod); position: relative; }
+.stikla .linija::after { content: ""; position: absolute; left: 2px; right: 2px; top: 2px; height: 2px; border-radius: 1px; background: var(--b); }
+.info { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 5px; border-radius: 50%; border: 1px solid var(--t-light);
+  color: var(--t-muted); font: 600 10px/1 "JetBrains Mono", monospace; cursor: help; position: relative; vertical-align: 1px; }
+.info:hover::after, .info:focus::after { content: attr(data-info); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  width: max-content; max-width: 260px; white-space: normal; padding: 8px 10px; border-radius: 8px; background: var(--bg-card); color: var(--t-base);
+  border: 1px solid var(--border); box-shadow: var(--shadow-lg); font: 400 12px/1.4 Inter, system-ui, sans-serif; z-index: 1500; text-align: left; }
+.legenda-pinova { gap: 8px 18px; }
+.legenda-pinova img { width: 28px; height: 28px; vertical-align: -8px; margin-right: 6px; }
+.legenda-pinova > .eyebrow { margin-right: -6px; }
+.cip img { width: 22px; height: 22px; margin: 0 -2px 0 -6px; }
+.tt-red { margin-top: 5px; }
+.tt-red small { font-size: 11px; color: var(--t-muted); }
+.leaflet-tooltip { max-width: 280px; white-space: normal; }
+.spisak-glava { display: flex; justify-content: space-between; align-items: center; padding: 4px 10px 8px; color: var(--t-light); }
+.krofna { height: 260px; }

@@ -62,8 +62,13 @@ SEZONE = {"zima": (12, 1, 2), "prolece": (3, 4, 5), "leto": (6, 7, 8), "jesen": 
 TIPOVI_DANA = ["radni", "subota", "nedelja_praznik"]
 MIN_DANA_MESEC = 10                                    # mesečni prosek tek uz ≥ 10 kompletnih dana
 # stanje brojača na kraju istorije (poslednjih 30 dana) → ikonica na mapi
-STANJA = {"radi": "radi", "delimicno": "delimično (nepotpuni dani)", "ne_radi": "ne radi (nema podataka)",
-          "neispravan": "brojač neispravan"}
+STANJA = {"radi": "radi", "delimicno": "delimično radi", "ne_radi": "ne radi", "neispravan": "neispravan"}
+STANJA_OPIS = {
+    "radi": "bar 90 % kompletnih dana u poslednjih 30 dana istorije",
+    "delimicno": "ima podataka, ali manje od 90 % kompletnih dana (nepotpuni dani)",
+    "ne_radi": "nijedan validan sat u poslednjih 30 dana (nema podataka)",
+    "neispravan": "brojač proglašen neispravnim (npr. 28 od 04/2026: jedan smer ne broji); ne ulazi u gradske zbirove",
+}
 DANA_STANJE, PRAG_RADI = 30, 0.9
 
 
@@ -412,7 +417,7 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> 
         "generisano_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
         "period": {"od": OD.isoformat(), "do": DO.isoformat()},
         "izvor": "UGZINS / Mikrobit brojači (očišćeno, master_v4_E3); vreme: Open-Meteo",
-        "razlozi": [{"kod": k, "opis": o} for k, o in RAZLOZI], "stanja": STANJA,
+        "razlozi": [{"kod": k, "opis": o} for k, o in RAZLOZI], "stanja": STANJA, "stanja_opis": STANJA_OPIS,
         "stanje_period": f"{datum_sr(date.fromordinal(DO.toordinal() - DANA_STANJE + 1))} – {datum_sr(DO)}", "dani_bez_24h": dst, "serije": redovi,
         "meseci": [str(p) for p in pd.period_range(OD, DO, freq="M")],
     })

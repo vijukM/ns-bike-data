@@ -1,5 +1,6 @@
-/* Mapa brojača (Leaflet): pinovi po stanju brojača, a/b razmaknuti u pikselima, biciklističke staze iz OSM-a
-   (kao na bikemap-u: žuto-zelena sredina, zeleni obod), podloge CARTO / OpenStreetMap / „Nacrtana“ (u razvoju). */
+/* Mapa brojača (Leaflet): pinovi po stanju brojača (hover menja ikonicu, klik fokusira pin uz „odskakivanje“),
+   a/b razmaknuti u pikselima, biciklističke staze iz OSM-a (kao na bikemap-u), podloge CARTO / OpenStreetMap /
+   „Nacrtana“ (u razvoju), Ctrl + točkić za zum, filtriranje pinova, „danas do Xh“ iz docs/data/uzivo.json. */
 "use strict";
 
 const MAPA = (() => {
@@ -10,7 +11,21 @@ const MAPA = (() => {
     osm: () => L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: OSM }),
   };
   const TIPOVI_STAZA = { s: "izdvojena staza", t: "traka na kolovozu", z: "zajednička sa pešacima" };
+  const REDOSLED = ["radi", "delimicno", "ne_radi", "neispravan"];
   const css = (ime) => getComputedStyle(document.documentElement).getPropertyValue(ime).trim();
+  const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}">i</span>`;
+  const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+
+  // „danas do Xh“ (poslednje čitanje scraper-a)
+  const uzivo = NS.json("uzivo.json", "data/").catch(() => null);
+  const danasIso = () => new Intl.DateTimeFormat("sv-SE", { timeZone: NS.TZ }).format(new Date());
+  async function danasTekst(serija) {
+    const u = await uzivo;
+    if (!u || !u.serije[serija]) return "";
+    const [v, h] = u.serije[serija];
+    const kad = u.datum === danasIso() ? "danas" : `${NS.datum(u.datum).slice(0, -5)}.`;
+    return `<div class="tt-red">${kad} <b>${v == null ? "—" : NS.broj(v)}</b> <small>do ${h}h</small></div>`;
+  }
 
   function duzinaKm(koord) {
     let m = 0;
@@ -22,12 +37,28 @@ const MAPA = (() => {
     return m / 1000;
   }
 
-  /** opcije: {podlogaEl, stazeEl, naKlik(serija), zum} → kontroler */
+  /** opcije: {podlogaEl, stazeEl, naFokus(serija)} → kontroler */
   function napravi(el, s, opcije = {}) {
-    const m = L.map(el, { scrollWheelZoom: false, zoomSnap: 0.5, preferCanvas: true });
-    const r0 = s.serije.map((r) => [r.lat, r.lon]);
-    m.fitBounds(L.latLngBounds(r0).pad(0.06));
-    if (opcije.zum) m.setZoom(opcije.zum);
+    const m = L.map(el, { scrollWheelZoom: false, zoomSnap: 0.5, zoomDelta: 0.5, preferCanvas: true });
+    m.fitBounds(L.latLngBounds(s.serije.map((r) => [r.lat, r.lon])).pad(0.06));
+
+    // Ctrl (⌘) + točkić = zum; bez Ctrl-a strana se normalno skroluje, uz kratku napomenu
+    const savet = document.createElement("div");
+    savet.className = "mapa-savet";
+    savet.textContent = `Drži ${mac ? "⌘" : "Ctrl"} i skroluj točkićem da uvećaš ili smanjiš mapu`;
+    el.appendChild(savet);
+    let savetTajmer;
+    el.addEventListener("wheel", (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        m.setZoomAround(m.mouseEventToContainerPoint(e), m.getZoom() + (e.deltaY < 0 ? 0.5 : -0.5));
+        savet.classList.remove("vidljiv");
+      } else {
+        savet.classList.add("vidljiv");
+        clearTimeout(savetTajmer);
+        savetTajmer = setTimeout(() => savet.classList.remove("vidljiv"), 1400);
+      }
+    }, { passive: false });
 
     // podloga
     let izbor = "carto";
@@ -56,11 +87,12 @@ const MAPA = (() => {
     // staze
     const okvir = L.canvas({ padding: 0.3 });
     let staze = null, stazePodaci = null;
-    const stilStaze = () => ({ obod: css("--staza-obod"), s: css("--staza"), t: css("--traka"), z: css("--zajednicka") });
+    let stazeUkljucene = true;
+    try { stazeUkljucene = localStorage.getItem("ns-staze") !== "0"; } catch (e) { /* */ }
     function crtajStaze() {
       if (!stazePodaci) return;
       if (staze) m.removeLayer(staze);
-      const b = stilStaze();
+      const b = { obod: css("--staza-obod"), s: css("--staza"), t: css("--traka"), z: css("--zajednicka") };
       const zum = m.getZoom();
       const sirina = zum >= 15 ? 1.6 : zum >= 13.5 ? 1.2 : 0.9;
       staze = L.layerGroup([
@@ -71,8 +103,6 @@ const MAPA = (() => {
       ]);
       if (stazeUkljucene) staze.addTo(m);
     }
-    let stazeUkljucene = true;
-    try { stazeUkljucene = localStorage.getItem("ns-staze") !== "0"; } catch (e) { /* */ }
     const stazeSpremne = NS.json("staze.geojson", "data/").then((g) => {
       stazePodaci = g;
       crtajStaze();
@@ -81,12 +111,13 @@ const MAPA = (() => {
       return km;
     }).catch(() => null);
     if (opcije.stazeEl) {
-      NS.cipovi(opcije.stazeEl, [["staze", "Biciklističke staze", css("--staza"), stazeUkljucene]], (sk) => {
-        stazeUkljucene = sk.has("staze");
-        try { localStorage.setItem("ns-staze", stazeUkljucene ? "1" : "0"); } catch (e) { /* */ }
+      opcije.stazeEl.innerHTML = `<label class="stikla"><input type="checkbox" ${stazeUkljucene ? "checked" : ""}>
+        <span class="kvacica" aria-hidden="true"></span><i class="linija" style="--b:var(--staza)"></i>Biciklističke staze</label>`;
+      opcije.stazeEl.querySelector("input").addEventListener("change", (e) => {
+        stazeUkljucene = e.target.checked;
+        try { localStorage.setItem("ns-staze", stazeUkljucene ? "1" : "0"); } catch (x) { /* */ }
         if (staze) { if (stazeUkljucene) staze.addTo(m); else m.removeLayer(staze); }
       });
-      stazeSpremne.then((km) => { if (!km) opcije.stazeEl.title = "staze još nisu preuzete (workflow sajt_istorija, sta=staze)"; });
     }
     m.on("zoomend", crtajStaze);
 
@@ -106,38 +137,49 @@ const MAPA = (() => {
       return [lat0 + dy * pomak, lon0 + dx * pomak / kos];
     }
     const pinovi = {};
-    let izabrana = null;
     const stanjePina = {};
+    let izabrana = null, skok = false, vidljive = null;
     function ikona(serija, stanje, brojTekst) {
       const sv = stanje === "nije_postavljen" || stanje === "neispravan" ? " svetli-obod" : "";
-      const slika = serija === izabrana ? "izabrana" : stanje;
+      const izab = serija === izabrana;
       return L.divIcon({
-        className: "", iconSize: [34, 34], iconAnchor: [17, 33], tooltipAnchor: [0, -30],
-        html: `<div class="pin${sv}${brojTekst == null ? " bez-broja" : ""}${serija === izabrana ? " izabran" : ""}">
-          <img src="${NS.pin(slika)}" alt=""><span class="pin-broj">${brojTekst ?? ""}</span></div>`,
+        className: "", iconSize: [34, 34], iconAnchor: [17, 33], tooltipAnchor: [0, -30], popupAnchor: [0, -34],
+        html: `<div class="pin${sv}${brojTekst == null ? " bez-broja" : ""}${izab ? " izabran" : ""}${izab && skok ? " skok" : ""}">
+          <div class="telo"><img class="n" src="${NS.pin(stanje)}" alt=""><img class="h" src="${NS.pin("izabrana")}" alt=""></div>
+          <span class="pin-broj">${brojTekst ?? ""}</span></div>`,
       });
     }
+    const rPo = Object.fromEntries(s.serije.map((r) => [r.serija, r]));
     for (const r of s.serije) {
       const p = L.marker(polozaj(r), { icon: ikona(r.serija, r.stanje), riseOnHover: true, keyboard: true, title: `${r.serija} ${r.naziv}` }).addTo(m);
-      p.on("click", () => (opcije.naKlik ? opcije.naKlik(r.serija) : (location.href = `stanica.html?id=${encodeURIComponent(r.serija)}`)));
+      p.on("click", () => fokus(r.serija, { leti: true }));
       pinovi[r.serija] = p;
       stanjePina[r.serija] = { stanje: r.stanje, broj: null };
     }
     m.on("zoomend", () => { for (const r of s.serije) pinovi[r.serija].setLatLng(polozaj(r)); });
     const opis = (r) => `<b>${r.serija}</b> · ${r.naziv}<br><span class="sitno">${r.smerovi.join("<br>")}</span>`;
 
+    function osveziPin(serija) {
+      const st = stanjePina[serija];
+      const p = pinovi[serija];
+      const sakriven = st.stanje === "sakriven" || (vidljive && !vidljive.has(serija));
+      p.setIcon(ikona(serija, st.stanje === "sakriven" ? "nije_postavljen" : st.stanje, st.broj));
+      p.setZIndexOffset(serija === izabrana ? 1000 : 0);
+      if (sakriven) { if (m.hasLayer(p)) p.remove(); } else if (!m.hasLayer(p)) p.addTo(m);
+    }
     function postaviPin(serija, stanje, brojTekst, tekst) {
       stanjePina[serija] = { stanje, broj: brojTekst, tekst };
+      osveziPin(serija);
       const p = pinovi[serija];
-      p.setIcon(ikona(serija, stanje === "sakriven" ? "nije_postavljen" : stanje, brojTekst));
-      p.setOpacity(stanje === "sakriven" ? 0 : 1);
       if (tekst) p.bindTooltip(tekst, { direction: "top", offset: [0, -2] }); else p.unbindTooltip();
     }
-    function prikaziStanje() {
+    async function prikaziStanje() {
       for (const r of s.serije) {
-        postaviPin(r.serija, r.stanje, null, `${opis(r)}<br><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span>
-          ${r.prosek_12m != null && r.stanje !== "neispravan" ? ` &nbsp;prosek <b>${NS.broj(r.prosek_12m)}</b>/dan` : ""}
-          ${r.napomena ? `<br><span class="sitno">${r.napomena}</span>` : ""}`);
+        const danas = await danasTekst(r.serija);
+        postaviPin(r.serija, r.stanje, null, `${opis(r)}<div class="tt-red"><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span></div>
+          ${r.prosek_12m != null && r.stanje !== "neispravan" ? `<div class="tt-red">prosek <b>${NS.broj(r.prosek_12m)}</b> / dan
+            <small>kompletni dani, 1. 9. 2025. – 31. 8. 2026.</small></div>` : ""}${danas}
+          ${r.napomena ? `<div class="tt-red sitno">${r.napomena}</div>` : ""}`);
       }
     }
     /** Prikaz jednog sata iz sati/<YYYY-MM>.json (indeks i u nizu). */
@@ -147,39 +189,77 @@ const MAPA = (() => {
         const kod = niz ? NS.razlogSata(mes.r[r.serija], i) : 9;
         if (kod === 9) { postaviPin(r.serija, "sakriven", null, null); continue; }
         const v = niz[i];
-        if (v == null) {
-          postaviPin(r.serija, kod === 8 ? "neispravan" : "ne_radi", null, `${opis(r)}<br><b>nema podataka</b>: ${NS.razlog(kod)}`);
-        } else {
-          postaviPin(r.serija, "radi", NS.broj(v), `${opis(r)}<br><b>${NS.broj(v)}</b> biciklista, ${oznaka}`);
-        }
+        if (v == null) postaviPin(r.serija, kod === 8 ? "neispravan" : "ne_radi", null, `${opis(r)}<br><b>nema podataka</b>: ${NS.razlog(kod)}`);
+        else postaviPin(r.serija, "radi", NS.broj(v), `${opis(r)}<br><b>${NS.broj(v)}</b> biciklista, ${oznaka}`);
       }
     }
-    function izaberi(serija, leti = true) {
+    /** Fokus: pin se uveća i „odskoči“, mapa ga centrira, otvara se kartica sa linkom na stanicu. */
+    async function fokus(serija, { leti = true, popup = true } = {}) {
       const pret = izabrana;
       izabrana = serija;
-      for (const x of [pret, serija]) {
-        if (!x || !pinovi[x]) continue;
-        const st = stanjePina[x];
-        pinovi[x].setIcon(ikona(x, st.stanje === "sakriven" ? "nije_postavljen" : st.stanje, st.broj));
+      skok = true;
+      if (pret && pret !== serija) osveziPin(pret);
+      if (serija) {
+        osveziPin(serija);
+        setTimeout(() => { skok = false; }, 50);
+        if (leti) m.flyTo(pinovi[serija].getLatLng(), Math.max(m.getZoom(), 15), { duration: 0.7 });
+        if (popup) {
+          const r = rPo[serija];
+          const danas = await danasTekst(serija);
+          pinovi[serija].unbindPopup().bindPopup(`${opis(r)}<div class="tt-red"><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span></div>
+            ${r.prosek_12m != null && r.stanje !== "neispravan" ? `<div class="tt-red">prosek <b>${NS.broj(r.prosek_12m)}</b> / dan <small>12 meseci</small></div>` : ""}${danas}
+            <div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`, { closeButton: true, autoPan: false });
+          setTimeout(() => pinovi[serija].openPopup(), leti ? 750 : 0);
+        }
+        if (opcije.naFokus) opcije.naFokus(serija);
       }
-      if (serija && leti) m.flyTo(pinovi[serija].getLatLng(), Math.max(m.getZoom(), 15), { duration: 0.8 });
+    }
+    /** Prikazuje samo zadate serije (null = sve). */
+    function filtriraj(skup) {
+      vidljive = skup;
+      for (const r of s.serije) osveziPin(r.serija);
     }
     document.addEventListener("tema", () => { postaviPodlogu(); crtajStaze(); });
     prikaziStanje();
-    return { mapa: m, prikaziStanje, prikaziSat, izaberi, stazeSpremne, TIPOVI_STAZA };
+    return { mapa: m, prikaziStanje, prikaziSat, fokus, izaberi: (x, leti) => fokus(x, { leti }), filtriraj, stazeSpremne, TIPOVI_STAZA };
   }
 
-  /** Legenda: pinovi po stanju + staze. */
+  /** Legenda „Stanje brojača“ sa info-oblačićima + staze. */
   function legenda(el, s, saStazama = true) {
     const brojevi = {};
     for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
+    const opis = s.stanja_opis || {};
     el.className = "legenda-pinova";
-    el.innerHTML = ["radi", "delimicno", "ne_radi", "neispravan"].map((k) =>
-      `<span><img src="${NS.pin(k)}" alt="">${s.stanja[k]} <b class="mono">${brojevi[k] || 0}</b></span>`).join("") +
-      `<span><img src="${NS.pin("izabrana")}" alt="">izabrana</span>` +
-      (saStazama ? `<span><i class="linija" style="--b:var(--staza)"></i>staza</span><span><i class="linija" style="--b:var(--traka)"></i>traka</span>
+    el.innerHTML = `<span class="eyebrow">Stanje brojača</span>` + REDOSLED.map((k) =>
+      `<span><img src="${NS.pin(k)}" alt="" class="${k === "neispravan" ? "svetli" : ""}">${s.stanja[k]} <b class="mono">${brojevi[k] || 0}</b>${info(opis[k] || "")}</span>`).join("") +
+      `<span><img src="${NS.pin("izabrana")}" alt="">izabrana${info("stanica u fokusu: pređi mišem preko pina ili klikni na njega (ili u spisku)")}</span>` +
+      (saStazama ? `<span class="eyebrow" style="margin-left:6px">Staze</span><span><i class="linija" style="--b:var(--staza)"></i>staza</span><span><i class="linija" style="--b:var(--traka)"></i>traka</span>
         <span><i class="linija" style="--b:var(--zajednicka)"></i>zajednička</span>` : "");
   }
 
-  return { napravi, legenda, duzinaKm, TIPOVI_STAZA };
+  /** Krofna: koliko brojača je u kom stanju (boje kao pinovi), animira se kad dođe na ekran. */
+  function stanjeGrafik(el, s, naKlik) {
+    const brojevi = {};
+    for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
+    const g = NS.grafik(el, (b) => {
+      const boje = Object.fromEntries(REDOSLED.map((k) => [k, css(`--pin-${k}`)]));
+      return {
+        animationType: "expansion", animationDuration: 1300, animationEasing: "cubicOut",
+        textStyle: { fontFamily: "Inter, system-ui, sans-serif" },
+        tooltip: { trigger: "item", backgroundColor: b.povrsina, borderColor: b.osa, textStyle: { color: b.ink },
+          formatter: (q) => `<b>${q.name}</b><br>${q.value} brojača (${NS.dec(q.percent)} %)<br><span style="color:${b["ink-2"]}">${(s.stanja_opis || {})[q.data.k] || ""}</span>` },
+        legend: { orient: "vertical", left: "64%", top: "middle", icon: "circle", itemWidth: 10, itemHeight: 10, itemGap: 14,
+          textStyle: { color: b["ink-2"], fontSize: 13 }, formatter: (ime) => { const k = REDOSLED.find((x) => s.stanja[x] === ime); return `${ime}  ${brojevi[k] || 0}`; } },
+        title: { text: String(s.serije.length), subtext: "brojača", left: "34%", top: "40%", textAlign: "center",
+          textStyle: { color: b.ink, fontSize: 28, fontWeight: 700, fontFamily: "Inter Tight, Inter, sans-serif" }, subtextStyle: { color: b["ink-3"], fontSize: 12 } },
+        series: [{ type: "pie", radius: ["52%", "78%"], center: ["35%", "50%"], padAngle: 2, itemStyle: { borderRadius: 6, borderColor: b.povrsina, borderWidth: 2 },
+          label: { show: false }, emphasis: { scaleSize: 6, label: { show: false } },
+          data: REDOSLED.filter((k) => brojevi[k]).map((k) => ({ name: s.stanja[k], value: brojevi[k], k, itemStyle: { color: boje[k] } })) }],
+      };
+    });
+    if (naKlik) g.spreman.then(() => g.ec.on("click", (q) => naKlik(q.data.k)));
+    return g;
+  }
+
+  return { napravi, legenda, stanjeGrafik, duzinaKm, TIPOVI_STAZA, REDOSLED, info };
 })();
