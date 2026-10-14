@@ -224,6 +224,25 @@ A (samo bicikli). `YYYY/MM/master_YYYY-MM.parquet` je isto na punoj naivnoj satn
 - provera (`satno_provera.csv`): zbir sati ≠ „juče" (`zbir_sati_razlicit_od_juce`) i smerovi koji su ceo
   dan 0 (`nula_ceo_dan` — moguće neispravan senzor; odluka o seriji je na korisniku).
 
+## Priprema podataka za model (`prognoza/priprema.py`)
+
+`python -m prognoza.priprema` → `model_podaci/istorija.parquet` = `model/istorija.parquet` (očišćena istorija
+iz paketa modela, 01.06–31.08.2026) + novi sati iz `podaci/YYYY/MM/master_YYYY-MM.parquet`, na punoj satnoj
+mreži (rupa 01.09–08.10.2026 = `nema_reda`). Novi sati se čiste istim pravilima kao istorijski master
+(`docs/MODEL_KONTEKST.md`, tačka 5); vrednost postaje NaN uz razlog:
+
+| `razlog_A` | pravilo |
+|---|---|
+| `outlier` | y > 400 |
+| `niz_nula` | ≥ 168 uzastopnih sati sa 0 |
+| `nula_dan` | serija sa jednim smerom ceo dan 0, a inače (medijana 28 prethodnih dana) ima ≥ 50 dnevno |
+| `skok`, `skok_okolina` | y > max(50, 4 × p90[stanica, sat, mesec]); okolina ±3 h ako y > max(30, 2 × p90); dan sa skokom na ≥ 3 stanice (gradski događaj) se ne dira |
+| `otkaz_smera` | stari dvosmerni: slabiji smer < 2 % dnevnog zbira ≥ 3 dana zaredom **i** zbir serije < 60 % očekivanog (isti dan u nedelji, poslednje 4 nedelje) |
+| `ok_jedan_smer` | isto, ali zbir je normalan (npr. 28: smer 11 broji oba smera) — vrednost je **validna** |
+
+Fajl se ne commit-uje (pravi se iznova pre svake prognoze, za nekoliko sekundi), da repozitorijum ne raste
+za ~1 MB dnevno. Potrebni su `model/istorija.parquet` i `model/p90.parquet` iz paketa modela.
+
 ## Ograničenja
 
 - Granice sati određuju vremena brojača, ne pun sat. Sajt osvežava fajl na ~5 min i ponekad kasni do
