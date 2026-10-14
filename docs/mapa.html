@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="sr-Latn" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mapa brojača · Biciklisti Novog Sada</title>
+  <meta name="description" content="Mapa 46 brojača biciklista u Novom Sadu sa stanjem brojača, biciklističkim stazama i prikazom jednog dana sat po sat.">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <link rel="icon" href="assets/slike/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/stil.css">
+</head>
+<body data-strana="mapa" data-putanja="Mapa|Mapa brojača">
+  <script>if (/rezim=dan/.test(location.search)) { document.body.dataset.strana = "dan"; document.body.dataset.putanja = "Mapa|Dan na mapi"; }</script>
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Mapa · 46 brojača · 27 mesta</span>
+        <h1>Mapa brojača</h1>
+        <p class="uvod" id="uvod">Stanje svakog brojača, biciklističke staze iz OpenStreetMap-a i — u režimu
+          <b>dan na mapi</b> — broj biciklista na svakom brojaču sat po sat.</p>
+      </div>
+      <div class="akcije"><div id="rezim"></div></div>
+    </header>
+
+    <section class="kpi-mreza" id="kpi"></section>
+
+    <section class="kartica pojava">
+      <div class="mapa-alat">
+        <div class="kontrole"><div id="podloga"></div><div id="staze-cip"></div></div>
+        <div id="legenda-mape"></div>
+      </div>
+      <div class="mapa-raspored">
+        <div>
+          <div class="mapa velika" id="mapa" role="region" aria-label="Mapa brojača"></div>
+          <div class="dan-panel skriveno" id="dan-panel">
+            <div>
+              <div class="kontrole">
+                <input type="date" id="dan-datum" min="2021-01-01" max="2026-08-31" aria-label="Dan">
+                <button class="dugme malo" type="button" id="dan-pre" aria-label="Prethodni dan">‹</button>
+                <button class="dugme malo" type="button" id="dan-posle" aria-label="Sledeći dan">›</button>
+                <button class="dugme malo primarno" type="button" id="dan-pusti"></button>
+              </div>
+              <div class="kontrole" style="margin-top:12px"><span class="eyebrow">Sat</span><input type="range" id="dan-sat" min="0" max="23" value="7" aria-label="Sat"></div>
+              <p class="stanje-dana" id="dan-stanje" aria-live="polite"></p>
+            </div>
+            <div><div class="grafik nizak" id="dan-grafik"></div></div>
+          </div>
+        </div>
+        <aside>
+          <div class="alat-tabele" style="margin-bottom:10px">
+            <div class="pretraga" style="max-width:none"><svg class="ik" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" id="spisak-pretraga" placeholder="Stanica ili ulica…" aria-label="Pretraga stanica"></div>
+          </div>
+          <div id="spisak-filter" style="margin-bottom:10px"></div>
+          <div class="spisak" id="spisak" role="list"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
+          integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
+  <script src="assets/zajednicko.js"></script>
+  <script src="assets/ljuska.js"></script>
+  <script src="assets/mapa-modul.js"></script>
+  <script src="assets/mapa.js"></script>
+</body>
+</html>
