@@ -1,9 +1,18 @@
-# SAJT — istorija 2021-01 … 2026-08 za prikaz (docs/data/istorija/). Pokreće se ručno, kad se promeni
-# Release istorija-v1 ili sajt/pripremi_istoriju.py. Parquet fajlovi se ne čuvaju u git-u, samo izvedeni JSON.
+# SAJT — podaci za prikaz. Pokreće se ručno:
+#   sta=istorija  istorija 2021-01 … 2026-08 (docs/data/istorija/) iz Release-a istorija-v1 (parquet ne ide u git)
+#   sta=staze     biciklističke staze iz OpenStreetMap-a (docs/data/staze.geojson), Overpass API
+#   sta=sve       oba
 name: sajt_istorija
 
 on:
   workflow_dispatch:
+    inputs:
+      sta:
+        description: "sve | istorija | staze"
+        required: true
+        default: sve
+        type: choice
+        options: [sve, istorija, staze]
 
 permissions:
   contents: write
@@ -30,28 +39,35 @@ jobs:
 
       - name: Keš istorije
         id: kes
+        if: inputs.sta != 'staze'
         uses: actions/cache@v4
         with:
           path: istorija
           key: istorija-v1
 
       - name: Istorija iz GitHub Release-a (samo ako nije u kešu)
-        if: steps.kes.outputs.cache-hit != 'true'
+        if: inputs.sta != 'staze' && steps.kes.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release download istorija-v1 -D istorija
 
       - name: Priprema JSON-a za sajt
+        if: inputs.sta != 'staze'
         run: python -m sajt.pripremi_istoriju
 
       - name: Testovi pripreme
+        if: inputs.sta != 'staze'
         run: python -m pytest -q tests/test_sajt_istorija.py
+
+      - name: Biciklističke staze (OpenStreetMap, Overpass)
+        if: inputs.sta != 'istorija'
+        run: python -m sajt.staze
 
       - name: Commit i push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/istorija
+          for f in docs/data/istorija docs/data/staze.geojson; do [ -e "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then echo "nema promena"; exit 0; fi
-          git commit -m "sajt: istorija (docs/data/istorija)"
+          git commit -m "sajt: podaci (${{ inputs.sta }})"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}" && break; sleep 5; done

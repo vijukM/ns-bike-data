@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="sr-Latn" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grafici · Biciklisti Novog Sada</title>
+  <meta name="description" content="Gradski grafici brojanja biciklista u Novom Sadu: dnevni zbir, vreme, poređenje godina, temperatura, dani u nedelji, meseci.">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <link rel="icon" href="assets/slike/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/stil.css">
+</head>
+<body data-strana="grafici" data-putanja="Podaci|Grafici">
+  <script>if (location.hash === "#godine") document.body.dataset.strana = "godine";</script>
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Podaci · grad · 2021–2026</span>
+        <h1>Grafici</h1>
+        <p class="uvod">Ceo grad dan po dan, uz vreme. Izaberi šta želiš da vidiš; gde podaci fale, linija je
+          <b>isprekidana i siva</b>. Poređenja godina idu samo preko brojača koji imaju podatke u oba perioda.</p>
+      </div>
+      <div class="akcije"><button class="dugme" type="button" id="izvoz"><svg class="ik" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>Preuzmi PNG</button></div>
+    </header>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava">
+        <div><span class="eyebrow">Grad · po danu</span><h2>Biciklisti, broj brojača i vreme</h2>
+          <p class="opis">Zbir preko brojača koji su radili ceo dan. Za nedelju i mesec prikazuje se prosečan dan.</p></div>
+        <div id="gustina"></div>
+      </div>
+      <div id="serije" style="margin-bottom:12px"></div>
+      <div class="grafik visok" id="grad-grafik"></div>
+      <div class="legenda" style="margin-top:6px"><span><i class="isprekidano" style="--boja:var(--g-nema)"></i>nema podataka (premošćeno)</span></div>
+      <div class="kartica-noga" id="noga"></div>
+    </section>
+
+    <section class="kartica pojava" id="godine">
+      <div class="kartica-glava">
+        <div><span class="eyebrow">Poređenje</span><h2>Godine po mesecima</h2>
+          <p class="opis">Prosečan dan, zbir preko zajedničkih brojača; ispod meseca je broj zajedničkih brojača.</p></div>
+        <div class="kontrole"><select id="god-a" aria-label="Godina"></select><span class="sitno">prema</span><select id="god-b" aria-label="Godina za poređenje"></select></div>
+      </div>
+      <div class="grafik" id="godine-grafik"></div>
+    </section>
+
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Vreme</span><h2>Temperatura i biciklisti</h2>
+          <p class="opis">Radni dani; tačka = dan, prosek po brojaču. Kišni dani (≥ 1 mm) su posebno označeni.</p></div></div>
+        <div class="grafik" id="temp-grafik"></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Nedelja</span><h2>Dani u nedelji</h2>
+          <p class="opis">Prosečan dan po brojaču, bez praznika.</p></div></div>
+        <div class="grafik" id="dani-grafik"></div>
+      </section>
+    </div>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava"><div><span class="eyebrow">Sezona</span><h2>Mesec × godina</h2>
+        <p class="opis">Prosečan dan po brojaču u svakom mesecu; tamnije = više biciklista.</p></div></div>
+      <div class="grafik" id="toplota-grafik" style="height:300px"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
+          integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
+  <script src="assets/zajednicko.js"></script>
+  <script src="assets/ljuska.js"></script>
+  <script src="assets/grafici.js"></script>
+</body>
+</html>

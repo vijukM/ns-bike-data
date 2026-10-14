@@ -288,14 +288,28 @@ pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Pro
 ## Sajt — istorija 2021–2026 (faza 7a, `docs/`)
 
 Statički sajt (GitHub Pages iz `docs/`, bez build koraka; Leaflet 1.9.4 i ECharts 5.5.1 sa jsDelivr-a, sa SRI
-proverom), srpski latinicom, svetla/tamna tema po sistemu. Za sada samo istorija 01.01.2021 – 31.08.2026, bez
-prognoza i bez podataka koje scraper skuplja uživo (grafici su spremni da ih dobiju kao nove serije).
+proverom; fontovi Inter / Inter Tight / JetBrains Mono), srpski latinicom. Izgled po uzoru na Adminator (MIT):
+levi meni, gornja traka (putanja, pretraga stanica `Ctrl K` ili `/`, jezik SR/EN — engleski za sada samo poruka
+„uskoro“, obaveštenja o brojačima koji ne rade, tema), **podrazumevana tamna tema** (izbor se pamti). Za sada samo
+istorija 01.01.2021 – 31.08.2026, bez prognoza i bez podataka uživo (grafici su spremni da ih dobiju kao nove serije).
 
-- `index.html`: činjenice, mapa (prosek dnevno / „dan na mapi“ sa klizačem sata i ▶), gradski dnevni grafik
-  (dan/nedelja/mesec) sa brojem uključenih brojača, temperaturom i padavinama, poređenje godina na zajedničkim
-  brojačima, tabela stanica;
-- `stanica.html?id=23a`: dnevno za ceo period (sivo = nema kompletnih podataka), satni profil (radni dan /
-  subota / nedelja i praznik, po godišnjem dobu), toplotna mapa sat × dan, meseci po godinama, izabrani dan.
+| strana | sadržaj |
+|---|---|
+| `index.html` | kontrolna tabla: KPI kartice, mapa brojača i staza, najprometnija mesta, prstenovi, **priča koja se otkriva skrolovanjem** (6 koraka, grafik ostaje fiksiran), najprometnije stanice, brojači koji traže pažnju |
+| `mapa.html` | velika mapa (podloge CARTO / OpenStreetMap / „Nacrtana“ u razvoju), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
+| `grafici.html` | grad po danu sa čipovima (biciklisti, prosek 7 dana, broj brojača, temperatura, padavine), poređenje godina, temperatura × biciklisti, dani u nedelji, mesec × godina; izvoz PNG |
+| `stanice.html` | tabela: pretraga, filter po stanju, sortiranje, straničenje, izvoz CSV |
+| `stanica.html?id=23a` | KPI, dnevno za ceo period, satni profil, toplotna mapa sat × dan, meseci po godinama, izabrani dan |
+| `o-projektu.html`, `prognoza.html`, `404.html` | izvori i pravila, prognoza (uskoro), strana za nepostojeće adrese |
+
+Ikonice pinova (`docs/assets/slike/pinovi/`) pokazuju stanje brojača u poslednjih 30 dana istorije: plava = radi
+(≥ 90 % kompletnih dana), narandžasta = delimično, crvena = ne radi, crna = neispravan (28), obris = još nije
+postavljen (dan na mapi), svetloplava = izabrana. Grafici se crtaju i animiraju tek kad dođu na ekran; gde podaci
+fale, linija je isprekidana i siva (nikad 0).
+
+Biciklističke staze: `python -m sajt.staze` (Overpass API, OpenStreetMap) → `docs/data/staze.geojson`
+(izdvojena staza / traka na kolovozu / zajednička sa pešacima); pokreće se workflow-om `sajt_istorija` sa
+`sta=staze` (kontejner za razvoj nema pristup Overpass-u).
 
 Podaci (`docs/data/istorija/`, ~7,4 MB, ~2 MB komprimovano) se prave iz Release-a `istorija-v1` (parquet ne ide u git):
 

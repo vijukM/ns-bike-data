@@ -61,6 +61,18 @@ NEISPRAVNE = {"28": (date(2026, 4, 18), "neispravan_brojac", "brojač neispravan
 SEZONE = {"zima": (12, 1, 2), "prolece": (3, 4, 5), "leto": (6, 7, 8), "jesen": (9, 10, 11)}
 TIPOVI_DANA = ["radni", "subota", "nedelja_praznik"]
 MIN_DANA_MESEC = 10                                    # mesečni prosek tek uz ≥ 10 kompletnih dana
+# stanje brojača na kraju istorije (poslednjih 30 dana) → ikonica na mapi
+STANJA = {"radi": "radi", "delimicno": "delimično (nepotpuni dani)", "ne_radi": "ne radi (nema podataka)",
+          "neispravan": "brojač neispravan"}
+DANA_STANJE, PRAG_RADI = 30, 0.9
+
+
+def stanje_brojaca(serija: str, kompletnih: int, validnih_sati: int, dana: int = DANA_STANJE) -> str:
+    if serija in NEISPRAVNE:
+        return "neispravan"
+    if kompletnih >= PRAG_RADI * dana:
+        return "radi"
+    return "delimicno" if validnih_sati > 0 else "ne_radi"
 
 log = logging.getLogger(__name__)
 
@@ -377,6 +389,9 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> 
         ukupno_dana = (DO - prvi_dan).days + 1
         kompl = ds[ds["kompletan"]]
         p12 = kompl[kompl["datum"] >= poslednji_12m]["zbir"]
+        od30 = date.fromordinal(DO.toordinal() - DANA_STANJE + 1)
+        d30 = ds[ds["datum"] >= od30]
+        k30, v30 = int(d30["kompletan"].sum()), int(d30["validnih"].sum())
         napomena = None
         if s in NEISPRAVNE:
             napomena = NEISPRAVNE[s][2]
@@ -390,13 +405,15 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> 
             "prosek_12m": _i(p12.mean()) if len(p12) >= 30 else None,
             "udeo_validnih_dana": round(len(kompl) / ukupno_dana, 3),
             "napomena": napomena,
+            "stanje": stanje_brojaca(s, k30, v30), "kompletnih_30d": k30,
         })
     dst = {r.datum.isoformat(): int(r.sati) for r in dani.itertuples() if r.sati != 24}
     velicine["stanice.json"] = _pisi(izlaz / "stanice.json", {
         "generisano_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
         "period": {"od": OD.isoformat(), "do": DO.isoformat()},
         "izvor": "UGZINS / Mikrobit brojači (očišćeno, master_v4_E3); vreme: Open-Meteo",
-        "razlozi": [{"kod": k, "opis": o} for k, o in RAZLOZI], "dani_bez_24h": dst, "serije": redovi,
+        "razlozi": [{"kod": k, "opis": o} for k, o in RAZLOZI], "stanja": STANJA,
+        "stanje_period": f"{datum_sr(date.fromordinal(DO.toordinal() - DANA_STANJE + 1))} – {datum_sr(DO)}", "dani_bez_24h": dst, "serije": redovi,
         "meseci": [str(p) for p in pd.period_range(OD, DO, freq="M")],
     })
     return velicine
