@@ -57,9 +57,9 @@ def preuzmi_stvarno(d: date) -> dict | None:
     if (date.today() - d).days >= 5:
         pokusaji.append(("era5", "https://archive-api.open-meteo.com/v1/archive",
                          {**zajednicko, "start_date": d.isoformat(), "end_date": (d + timedelta(days=1)).isoformat()}))
-    if (date.today() - d).days <= 80:
+    if (date.today() - d).days <= 80:                       # analiza modela za tačno taj dan (+ ponoć)
         pokusaji.append(("analiza", "https://api.open-meteo.com/v1/forecast",
-                         {**zajednicko, "past_days": min(92, (date.today() - d).days + 1), "forecast_days": 1}))
+                         {**zajednicko, "start_date": d.isoformat(), "end_date": (d + timedelta(days=1)).isoformat()}))
     for ime, url, params in pokusaji:
         try:
             r = requests.get(url, params=params, timeout=konfig.TIMEOUT_S)
@@ -92,6 +92,11 @@ def _sve_prognoze() -> list[tuple[str, str, Path]]:
 
 
 def uporedi_dan(d: date) -> pd.DataFrame:
+    kraj_dana = pd.Timestamp(d) + pd.Timedelta(days=1)
+    prognoze = [x for x in _sve_prognoze()
+                if pd.Timestamp(x[1]).tz_convert(konfig.TZ).tz_localize(None) < kraj_dana]
+    if not prognoze:                                       # nema prognoze za taj dan → ne preuzima se ni stvarno
+        return pd.DataFrame()
     s = preuzmi_stvarno(d)
     if s is None:
         return pd.DataFrame()
@@ -100,7 +105,7 @@ def uporedi_dan(d: date) -> pd.DataFrame:
     stv = stv[(stv["vreme_lokalno"] >= od) & (stv["vreme_lokalno"] <= do)]
     stv = stv.melt(id_vars="vreme_lokalno", var_name="promenljiva", value_name="stvarno").dropna()
     delovi = []
-    for izvor, izdato, f in _sve_prognoze():
+    for izvor, izdato, f in prognoze:
         izdato_lok = pd.Timestamp(izdato).tz_convert(konfig.TZ).tz_localize(None)
         if izdato_lok >= do:
             continue

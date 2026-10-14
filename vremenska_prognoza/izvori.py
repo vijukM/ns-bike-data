@@ -58,7 +58,8 @@ def preuzmi_sve(sada_utc: datetime) -> dict[str, Path]:
         try:
             r = requests.get("https://api.open-meteo.com/v1/forecast", timeout=konfig.TIMEOUT_S, params={
                 "latitude": 45.33, "longitude": 19.85, "timezone": "Europe/Belgrade", "models": model,
-                "hourly": ",".join(OM_PROMENLJIVE.values()), "forecast_days": 3, "wind_speed_unit": "kmh"})
+                "hourly": ",".join(OM_PROMENLJIVE.values()), "wind_speed_unit": "kmh",
+                "forecast_days": 2 if model == "icon_d2" else 3})        # ICON-D2 ide najviše 48 h unapred
             r.raise_for_status()
             sacuvano[f"open_meteo_{model}"] = _sacuvaj(f"open_meteo_{model}", sada_utc, r.json())
         except Exception as e:  # noqa: BLE001
