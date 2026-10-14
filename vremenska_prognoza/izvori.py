@@ -97,5 +97,8 @@ def u_tabelu(izvor: str, odgovor: dict) -> pd.DataFrame:
         return df[["vreme_lokalno", *UPOREDIVE]]
     h = odgovor["hourly"]
     df = pd.DataFrame({k: h.get(v) for k, v in OM_PROMENLJIVE.items()})
-    df.insert(0, "vreme_lokalno", pd.to_datetime(h["time"]))
+    vreme = pd.to_datetime(pd.Series(h["time"]))
+    if odgovor.get("timezone") in ("GMT", "UTC"):                         # za_model/ se od 10/2026 čuva u UTC
+        vreme = vreme.dt.tz_localize("UTC").dt.tz_convert(konfig.TZ).dt.tz_localize(None)
+    df.insert(0, "vreme_lokalno", vreme)
     return df.groupby("vreme_lokalno", as_index=False).mean(numeric_only=True)

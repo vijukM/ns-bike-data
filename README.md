@@ -270,10 +270,12 @@ za ~1 MB dnevno. Potrebni su `model/istorija.parquet` i `model/p90.parquet` iz p
 ## Vremenska prognoza (`vremenska_prognoza/open_meteo.py`) i praznici (`prognoza_biciklista/praznici.py`)
 
 `python -m vremenska_prognoza.open_meteo` preuzima Open-Meteo Forecast API (bez ključa; lat 45.33, lon 19.85,
-`timezone=Europe/Belgrade`, `past_days=8`, `forecast_days=3` — sa 2 dana fali Cas 24:00 za sutra, satno), čuva sirov odgovor u
-`meteo/YYYY/MM/DD/HHMM.json` (da se zna koja prognoza je korišćena) i pravi `model_podaci/meteo.parquet` u
-formatu treninga: `Datum` + `Cas` 01:00–24:00 (kraj sata; vrednost za vreme T → Cas T, 00:00 → 24:00
-prethodnog dana), DST: prolećna rupa interpolirana, jesenji duplikat usrednjen. Promenljive: temperatura ←
+`timezone=GMT` — sirov odgovor se čuva **u UTC**, `past_days=8`, `forecast_days=3` — sa 2 dana fali Cas 24:00 za
+sutra, satno), čuva ga u `podaci/vremenska_prognoza/za_model/YYYY/MM/DD/HHMM.json` (stariji fajlovi su u
+Europe/Belgrade i čitaju se isto) i pravi tabelu u formatu treninga: `Datum` + `Cas` 01:00–24:00 (kraj sata).
+Sat modela bira **jedna** funkcija, `oznaka_modela(df, meteo_vreme)`:
+`"lokalno"` (podrazumevano, model-v1: lokalno vreme T → Cas T + 1 h; DST: prolećna rupa interpolirana, jesenji
+duplikat usrednjen) ili `"utc1"` (kandidat za model-v2: isti trenutak na satu UTC+1, bez DST rupa i duplikata). Promenljive: temperatura ←
 temperature_2m, vlaznost ← relative_humidity_2m, brzina_vetra ← wind_speed_10m (km/h), insolacija ←
 shortwave_radiation, oblacnost ← cloud_cover, padavine ← precipitation, sneg_U ← snow_depth (m),
 vlaznost_zemljista ← soil_moisture_0_to_7cm (od pre 24 h). Izvedeno: padavine_pre_1h, padavine_3h,
@@ -282,6 +284,40 @@ padavine_dan, sati_kise_dan (> 0,1 mm), sat/dan/doy sin-cos, is_weekend, is_holi
 `is_holiday`: državni praznici Srbije po zakonu (Nova godina, Božić, Sretenje, Praznik rada, Dan primirja,
 pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Provera prema trening listi:
 `python -m prognoza_biciklista.praznici --proveri model/praznici.csv` (razlike se prijavljuju, lista se ne menja).
+
+## Sajt — istorija 2021–2026 (faza 7a, `docs/`)
+
+Statički sajt (GitHub Pages iz `docs/`, bez build koraka; Leaflet 1.9.4 i ECharts 5.5.1 sa jsDelivr-a, sa SRI
+proverom), srpski latinicom, svetla/tamna tema po sistemu. Za sada samo istorija 01.01.2021 – 31.08.2026, bez
+prognoza i bez podataka koje scraper skuplja uživo (grafici su spremni da ih dobiju kao nove serije).
+
+- `index.html`: činjenice, mapa (prosek dnevno / „dan na mapi“ sa klizačem sata i ▶), gradski dnevni grafik
+  (dan/nedelja/mesec) sa brojem uključenih brojača, temperaturom i padavinama, poređenje godina na zajedničkim
+  brojačima, tabela stanica;
+- `stanica.html?id=23a`: dnevno za ceo period (sivo = nema kompletnih podataka), satni profil (radni dan /
+  subota / nedelja i praznik, po godišnjem dobu), toplotna mapa sat × dan, meseci po godinama, izabrani dan.
+
+Podaci (`docs/data/istorija/`, ~7,4 MB, ~2 MB komprimovano) se prave iz Release-a `istorija-v1` (parquet ne ide u git):
+
+```bash
+gh release download istorija-v1 -D istorija      # ili workflow „sajt_istorija“ (ručno)
+python -m sajt.pripremi_istoriju                   # → docs/data/istorija/
+cd docs && python -m http.server 8000              # http://localhost:8000
+```
+
+Pravila prikaza: master `ts` je kraj sata u fiksnom UTC+1 → `ts − 2 h` = početak u UTC → Europe/Belgrade
+(dani promene vremena imaju 23/25 sati); meteo (`Datum`/`Cas`, lokalno) se spaja po lokalnom času. NaN se nikad
+ne prikazuje kao 0; dnevni zbir postoji samo za kompletan lokalni dan; serija 28 je od 18.04.2026 neispravna i
+van gradskih zbirova; gradski zbir ide uz broj uključenih brojača. Fajlovi:
+
+| fajl | sadržaj |
+|---|---|
+| `stanice.json` | serije, naziv, smerovi, lat/lon (+ razmaknute za mapu), period rada, prosek 12 m, udeo kompletnih dana, napomena, šifre razloga |
+| `grad_dnevno.json` | gradski zbir i broj serija po danu, dnevno vreme, praznici, mesečni proseci po seriji, činjenice |
+| `dnevno/<serija>.json` | `v` dnevni zbir (null = nepotpun dan), `h` broj validnih sati, `r` [[dan, šifra razloga]] |
+| `profili/<serija>.json` | profil po satu (godišnje doba × tip dana), toplotna mapa, meseci po godinama, godine |
+| `sati/<YYYY-MM>.json` | satne vrednosti svih serija od `pocetak_utc` (UTC sati), `dani` [[datum, indeks, sati]], `r` razlozi (RLE) |
+| `meteo_sati/<YYYY-MM>.json` | temperatura, padavine, novi sneg na istoj satnoj mreži |
 
 ## Ograničenja
 

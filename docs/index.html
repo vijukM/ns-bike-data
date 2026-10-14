@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biciklisti Novog Sada</title>
+  <meta name="description" content="Istorija automatskog brojanja biciklista u Novom Sadu, 2021–2026: mapa, gradski dnevni zbir, vreme i poređenje godina.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%232a78d6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/stil.css">
+</head>
+<body>
+  <div class="zaglavlje">
+    <div class="unutra">
+      <a class="logo" href="./"><span class="tacka"></span><span><b>Biciklisti Novog Sada</b>
+        <small>automatsko brojanje · istorija 1. 1. 2021. – 31. 8. 2026.</small></span></a>
+      <select id="izbor-stanice" aria-label="Izaberi stanicu"></select>
+    </div>
+  </div>
+
+  <main id="sadrzaj">
+    <section class="plocice" id="plocice" aria-label="Činjenice"></section>
+
+    <section class="kartica">
+      <header>
+        <div>
+          <h2>Mapa brojača</h2>
+          <p class="opis" id="mapa-opis">Veličina kruga = prosečan broj biciklista dnevno (poslednjih 12 meseci). Klik otvara stanicu.</p>
+        </div>
+        <div class="kontrole">
+          <div class="prekidac" id="mapa-podloga" role="group" aria-label="Vrsta mape"></div>
+          <div class="prekidac" id="mapa-rezim" role="group" aria-label="Prikaz na mapi"></div>
+        </div>
+      </header>
+      <div class="red-2">
+        <div id="mapa" role="region" aria-label="Mapa brojača"></div>
+        <div>
+          <div id="dan-kontrole" class="skriveno">
+            <div class="kontrole">
+              <label class="sitno" for="dan-datum">Dan</label>
+              <input type="date" id="dan-datum" min="2021-01-01" max="2026-08-31">
+              <button type="button" id="dan-pusti" aria-label="Pusti kroz 24 sata">▶ Pusti dan</button>
+            </div>
+            <div class="kontrole" style="margin-top:8px">
+              <label class="sitno" for="dan-sat">Sat</label>
+              <input type="range" id="dan-sat" min="0" max="23" value="7" step="1">
+            </div>
+            <p class="stanje-dana" id="dan-stanje" aria-live="polite"></p>
+            <div class="grafik nizak" id="dan-grafik"></div>
+            <div class="legenda"><span><i style="background:var(--bicikl)"></i>broj biciklista u satu</span>
+              <span><i style="background:var(--nema)"></i>nema podataka</span></div>
+          </div>
+          <div id="prosek-panel">
+            <div class="legenda" style="margin-bottom:8px">
+              <span><i style="background:var(--bicikl)"></i>radi</span>
+              <span><i style="background:var(--nema)"></i>brojač neispravan / bez novijih podataka</span>
+            </div>
+            <div class="uskoro">
+              <div><strong>Prognoza za sutra</strong><br><span class="sitno">Model E28 · satna prognoza po stanici sa intervalom 10–90 %</span></div>
+              <span class="znacka">uskoro</span>
+            </div>
+            <p class="sitno" style="margin-top:12px">Na nekim mestima postoje dva brojača (a i b, po jedan za svaki smer);
+              na mapi su malo razmaknuti da bi se oba videla.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kartica">
+      <header>
+        <div>
+          <h2>Grad: biciklisti po danu</h2>
+          <p class="opis">Zbir preko brojača koji su radili ceo dan; broj uključenih brojača je ispod, jer se menjao kroz godine
+            (nove stanice, kvarovi), pa visina zbira zavisi i od toga.</p>
+        </div>
+        <div class="prekidac" id="grad-gustina" role="group" aria-label="Gustina prikaza"></div>
+      </header>
+      <div class="grafik visok" id="grad-grafik"></div>
+      <div class="legenda">
+        <span><i class="crta" style="background:var(--bicikl)"></i>biciklisti (zbir dana)</span>
+        <span><i class="crta" style="background:var(--ink-3)"></i>broj uključenih brojača</span>
+        <span><i class="crta" style="background:var(--temp)"></i>temperatura (prosek; senka min–maks)</span>
+        <span><i style="background:var(--kisa);border-radius:2px"></i>padavine</span>
+        <span><i style="background:var(--nema);border-radius:2px"></i>nema podataka</span>
+      </div>
+    </section>
+
+    <section class="kartica">
+      <header>
+        <div>
+          <h2>Poređenje godina po mesecima</h2>
+          <p class="opis">Porede se samo brojači koji imaju podatke u oba meseca (prosečan dan, zbir preko zajedničkih brojača);
+            broj zajedničkih brojača je ispod meseca.</p>
+        </div>
+        <div class="kontrole">
+          <select id="god-a" aria-label="Godina"></select><span class="sitno">prema</span>
+          <select id="god-b" aria-label="Godina za poređenje"></select>
+        </div>
+      </header>
+      <div class="grafik" id="godine-grafik"></div>
+    </section>
+
+    <section class="kartica">
+      <header><h2>Sve stanice</h2><span class="sitno">klik na naslov kolone sortira</span></header>
+      <div class="tabela-omot"><table id="tabela-stanica"></table></div>
+    </section>
+  </main>
+
+  <footer>
+    Izvor: UGZINS / Mikrobit brojači biciklista (očišćeni satni podaci iz master rada, FTN Novi Sad); vreme: Open-Meteo.
+    Sati su po lokalnom vremenu (Europe/Belgrade). Mapa © OpenStreetMap saradnici, © CARTO.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
+          integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
+  <script src="assets/zajednicko.js"></script>
+  <script src="assets/pocetna.js"></script>
+</body>
+</html>
