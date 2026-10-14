@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="sr-Latn" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Strana nije pronađena · Biciklisti Novog Sada</title>
+  <meta name="robots" content="noindex">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    /* samostalna strana (GitHub Pages je vraća za bilo koju putanju, pa ne zavisi od relativnih putanja) */
+    :root, :root[data-theme="dark"] { color-scheme: dark; --bg: #0B1120; --kartica: #141B2D; --t: #F1F5F9; --m: #94A3B8; --l: #64748B; --b: #222C42; --p: #60A5FA; --pt: #0B1120; }
+    :root[data-theme="light"] { color-scheme: light; --bg: #F0F4F8; --kartica: #FFFFFF; --t: #1E293B; --m: #64748B; --l: #94A3B8; --b: #E4E8EF; --p: #2563EB; --pt: #fff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--t); font: 15px/1.6 Inter, system-ui, sans-serif; padding: 24px 16px; }
+    main { max-width: 560px; text-align: center; }
+    .eyebrow { font: 500 11px "JetBrains Mono", monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--l); }
+    .broj { font: 700 clamp(96px, 22vw, 168px)/1 "Inter Tight", Inter, sans-serif; letter-spacing: -.05em; margin: 8px 0;
+      background: linear-gradient(135deg, var(--p), #A78BFA); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    h1 { font: 700 28px/1.2 "Inter Tight", Inter, sans-serif; margin: 0 0 10px; }
+    p { color: var(--m); margin: 0 auto 26px; max-width: 440px; }
+    svg.bicikl { width: 120px; height: 60px; color: var(--p); }
+    .akcije { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    a.dugme, button.dugme { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 10px; font: 600 14px Inter, sans-serif; text-decoration: none; border: 1px solid var(--b); background: var(--kartica); color: var(--t); cursor: pointer; }
+    a.dugme.primarno { background: var(--p); border-color: var(--p); color: var(--pt); }
+    .tehnicki { margin-top: 34px; display: inline-flex; gap: 22px; flex-wrap: wrap; justify-content: center; padding: 12px 18px; border: 1px dashed var(--b); border-radius: 12px; font: 11px "JetBrains Mono", monospace; color: var(--l); }
+    .tehnicki b { color: var(--t); font-weight: 500; }
+    @media (prefers-reduced-motion: no-preference) { svg.bicikl .tocak { animation: okret 1.6s linear infinite; transform-box: fill-box; transform-origin: center; } }
+    @keyframes okret { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main>
+    <svg class="bicikl" viewBox="0 0 120 60" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <g class="tocak"><circle cx="26" cy="40" r="15"/><path d="M26 25v30M11 40h30" stroke-width="1.5" opacity=".5"/></g>
+      <g class="tocak"><circle cx="94" cy="40" r="15"/><path d="M94 25v30M79 40h30" stroke-width="1.5" opacity=".5"/></g>
+      <path d="M26 40 46 16h30l18 24M46 16l14 24h-34M60 40l16-24M40 10h12M74 10h8"/>
+    </svg>
+    <div class="eyebrow">Greška · nije pronađeno</div>
+    <div class="broj">404</div>
+    <h1>Ova strana je skrenula sa staze</h1>
+    <p>Link je možda zastareo, ili je strana premeštena. Vrati se na kontrolnu tablu ili potraži stanicu na mapi.</p>
+    <div class="akcije">
+      <a class="dugme primarno" id="pocetna" href="/">Na kontrolnu tablu</a>
+      <a class="dugme" id="mapa" href="/mapa.html">Mapa brojača</a>
+      <button class="dugme" type="button" onclick="history.back()">Nazad</button>
+    </div>
+    <div class="tehnicki"><span>STATUS <b>404</b></span><span>KOD <b>NIJE_PRONADJENO</b></span><span>PUTANJA <b id="putanja">—</b></span></div>
+  </main>
+  <script>
+    // na github.io je sajt u podfolderu (/ns-bike-data/), na sopstvenom domenu u korenu
+    const koren = location.hostname.endsWith("github.io") ? "/" + (location.pathname.split("/")[1] || "") + "/" : "/";
+    document.getElementById("pocetna").href = koren;
+    document.getElementById("mapa").href = koren + "mapa.html";
+    document.getElementById("putanja").textContent = location.pathname.length > 40 ? "…" + location.pathname.slice(-38) : location.pathname;
+  </script>
+</body>
+</html>

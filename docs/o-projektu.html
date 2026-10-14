@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="sr-Latn" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>O projektu · Biciklisti Novog Sada</title>
+  <meta name="description" content="O projektu: izvori podataka, čišćenje, šifre nedostajućih podataka, stanja brojača i kako se računaju zbirovi.">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <link rel="icon" href="assets/slike/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/stil.css">
+</head>
+<body data-strana="o-projektu" data-putanja="Projekat|O projektu">
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Projekat · master rad · FTN Novi Sad</span>
+        <h1>O projektu</h1>
+        <p class="uvod">Prognoza satnog broja biciklista na brojačima u Novom Sadu. Sajt za sada prikazuje <b>istoriju
+          brojanja 2021–2026</b>; prognoza i podaci uživo stižu kasnije, na istim graficima.</p>
+      </div>
+      <div class="akcije"><a class="dugme" href="https://github.com/vijukM/ns-bike-data" target="_blank" rel="noopener">
+        <svg class="ik" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Izvorni kod</a></div>
+    </header>
+
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Izvori</span><h2>Odakle su podaci</h2></div></div>
+        <div class="tabela-omot"><table class="tabela prugasta">
+          <thead><tr><th>Podatak</th><th>Izvor</th><th>Period</th></tr></thead>
+          <tbody>
+            <tr><td><b>Brojači biciklista</b><small class="sitno" style="display:block">satni, 46 serija na 27 mesta</small></td><td>UGZINS / Mikrobit (očišćeno u master radu)</td><td class="mono">2021–2026</td></tr>
+            <tr><td><b>Vreme</b><small class="sitno" style="display:block">temperatura, padavine, sneg</small></td><td>Open-Meteo (istorija)</td><td class="mono">2021–2026</td></tr>
+            <tr><td><b>Biciklističke staze</b></td><td>© OpenStreetMap saradnici (ODbL), Overpass API</td><td class="mono" id="staze-datum">—</td></tr>
+            <tr><td><b>Podloga mape</b></td><td>CARTO / OpenStreetMap</td><td class="mono">uživo</td></tr>
+            <tr><td><b>Praznici</b></td><td>zakon o državnim praznicima Srbije</td><td class="mono">2021–2026</td></tr>
+          </tbody></table></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Pravila</span><h2>Kako se računa</h2></div></div>
+        <ul style="margin:0;padding-left:18px;display:grid;gap:8px" class="muted">
+          <li>Sati su po lokalnom vremenu (Europe/Belgrade); dani promene vremena imaju 23 ili 25 sati.</li>
+          <li>Sat bez podatka se <b>nikad</b> ne prikazuje kao 0 — na graficima je isprekidan ili siv, uz razlog.</li>
+          <li>Dnevni zbir postoji samo ako su svi sati tog dana validni.</li>
+          <li>Gradski zbir = zbir brojača koji su radili ceo dan, uz broj tih brojača.</li>
+          <li>Poređenja godina idu samo preko brojača koji imaju podatke u oba perioda.</li>
+          <li>Brojač 28 je od 18. 4. 2026. neispravan i ne ulazi u gradske zbirove.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Šifre</span><h2>Zašto podatak nedostaje</h2></div></div>
+        <div class="tabela-omot"><table class="tabela" id="razlozi"></table></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Stanje · <span id="period">poslednjih 30 dana</span></span><h2>Stanja brojača</h2></div></div>
+        <div class="tabela-omot"><table class="tabela" id="stanja"></table></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/zajednicko.js"></script>
+  <script src="assets/ljuska.js"></script>
+  <script>
+    (async () => {
+      const s = await NS.stanice();
+      document.getElementById("period").textContent = s.stanje_period;
+      document.getElementById("razlozi").innerHTML = "<thead><tr><th>Šifra</th><th>Značenje</th></tr></thead><tbody>" +
+        s.razlozi.map((r) => `<tr><td class="mono">${r.kod}</td><td>${r.opis}</td></tr>`).join("") + "</tbody>";
+      const brojevi = {};
+      for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
+      const opis = { radi: "≥ 90 % kompletnih dana u poslednjih 30 dana", delimicno: "ima podataka, ali manje od 90 % kompletnih dana",
+        ne_radi: "nijedan validan sat u poslednjih 30 dana", neispravan: "brojač proglašen neispravnim (ne ulazi u zbirove)" };
+      document.getElementById("stanja").innerHTML = "<thead><tr><th>Ikonica</th><th>Stanje</th><th class='broj'>Brojača</th></tr></thead><tbody>" +
+        Object.keys(opis).map((k) => `<tr><td><img src="${NS.pin(k)}" alt="" style="width:30px;height:30px"></td><td><span class="znacka tacka z-${k}">${s.stanja[k]}</span>
+          <small class="sitno" style="display:block;margin-top:4px">${opis[k]}</small></td><td class="broj mono">${brojevi[k] || 0}</td></tr>`).join("") +
+        `<tr><td><img src="${NS.pin("izabrana")}" alt="" style="width:30px;height:30px"></td><td>izabrana stanica<small class="sitno" style="display:block">na mapi i u spisku</small></td><td></td></tr>` +
+        `<tr><td><img src="${NS.pin("nije_postavljen")}" alt="" style="width:30px;height:30px"></td><td>brojač još nije postavljen<small class="sitno" style="display:block">dan na mapi, pre prvog dana rada</small></td><td></td></tr></tbody>`;
+      NS.json("staze.geojson", "data/").then((g) => { document.getElementById("staze-datum").textContent = g.preuzeto_utc.slice(0, 10); }).catch(() => {});
+    })();
+  </script>
+</body>
+</html>
