@@ -40,11 +40,31 @@ function plocice(s, g) {
 function mapa(s, g) {
   const b0 = NS.boje();
   const m = L.map("mapa", { scrollWheelZoom: false, zoomSnap: 0.5 });
-  const sloj = () => L.tileLayer(`https://{s}.basemaps.cartocdn.com/${NS.tamna() ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`, {
-    maxZoom: 19, subdomains: "abcd",
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · © <a href="https://carto.com/">CARTO</a>',
-  });
+  // podloge: CARTO (svetla/tamna po temi) i OpenStreetMap; „nacrtana“ je u razvoju (samo poruka)
+  const OSM = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+  const PODLOGE = {
+    carto: () => L.tileLayer(`https://{s}.basemaps.cartocdn.com/${NS.tamna() ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`,
+      { maxZoom: 19, subdomains: "abcd", attribution: `${OSM} · © <a href="https://carto.com/">CARTO</a>` }),
+    osm: () => L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: OSM }),
+  };
+  let izborPodloge = "carto";
+  try { if (PODLOGE[localStorage.getItem("ns-podloga")]) izborPodloge = localStorage.getItem("ns-podloga"); } catch (e) { /* bez memorije */ }
+  const sloj = () => PODLOGE[izborPodloge]();
   let podloga = sloj().addTo(m);
+  NS.prekidac(document.getElementById("mapa-podloga"), [["carto", "CARTO"], ["osm", "OpenStreetMap"], ["nacrtana", "Nacrtana"]],
+    izborPodloge, (v) => {
+      if (v === "nacrtana") {
+        L.popup({ closeButton: true, autoClose: true }).setLatLng(m.getCenter())
+          .setContent("<b>Nacrtana mapa</b><br>Trenutno je u razvoju — uskoro.").openOn(m);
+        document.querySelectorAll("#mapa-podloga button")
+          .forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.v === izborPodloge)));
+        return;
+      }
+      izborPodloge = v;
+      try { localStorage.setItem("ns-podloga", v); } catch (e) { /* bez memorije */ }
+      m.removeLayer(podloga);
+      podloga = sloj().addTo(m);
+    });
   m.fitBounds(L.latLngBounds(s.serije.map((r) => [r.lat_mapa, r.lon_mapa])).pad(0.08));
 
   const maks = Math.max(...s.serije.map((r) => r.prosek_12m || 0));
