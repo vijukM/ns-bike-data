@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from prognoza_biciklista.obelezja import ucitaj_meteo
-from vremenska_prognoza.open_meteo import PROMENLJIVE, u_format_treninga
+from vremenska_prognoza.open_meteo import PROMENLJIVE, oznaka_modela, u_format_treninga, u_utc
 from prognoza_biciklista.praznici import is_holiday, pravoslavni_uskrs, praznici
 
 
@@ -80,3 +80,32 @@ def test_arhiva_i_excel(tmp_path):
     assert r["izdato_utc"] == "2026-10-14T05:15:00Z"
     r = x[(x["Datum"] == "2026-10-14") & (x["Cas"] == "05:00")].iloc[0]
     assert r["izdato_utc"] == "2026-10-13T23:15:00Z"
+
+
+def _isti_odgovor_u_utc(lokalna_vremena, vrednost):
+    """Isti podaci kao da su traženi sa timezone=GMT (kako se čuvaju od 10/2026)."""
+    lok = odgovor(lokalna_vremena, vrednost)
+    utc = u_utc(lok)
+    o = odgovor([t.strftime("%Y-%m-%dT%H:%M") for t in utc["ts_utc"]], vrednost)
+    o["timezone"] = "GMT"
+    return lok, o
+
+
+@pytest.mark.parametrize("dan", ["2026-10-25", "2027-03-28", "2026-10-14"])
+def test_utc_cuvanje_daje_isti_format_treninga(dan):
+    t = [str(x)[:16].replace(" ", "T") for x in pd.date_range(f"{dan} 00:00", periods=30, freq="h", tz="Europe/Belgrade")
+         .tz_localize(None)]
+    lok, utc = _isti_odgovor_u_utc(t, lambda i: float(i))
+    pd.testing.assert_frame_equal(u_format_treninga(lok), u_format_treninga(utc))
+
+
+def test_meteo_vreme_utc1_bez_dst_rupa():
+    t = [f"2026-10-24T{h:02d}:00" for h in range(22, 24)] + [f"2026-10-25T{h:02d}:00" for h in range(0, 6)]
+    o = odgovor(t)
+    o["timezone"] = "GMT"
+    df = oznaka_modela(u_utc(o), "utc1")
+    # UTC 22:00 → UTC+1 23:00 → Cas = 24:00 (kraj sata); svaki sat tačno jednom
+    assert df.iloc[0][["Datum", "Cas"]].tolist() == ["2026-10-24", "24:00"]
+    assert len(df) == len(t) and df["temperatura"].tolist() == [float(i) for i in range(len(t))]
+    with pytest.raises(ValueError):
+        oznaka_modela(u_utc(o), "utc")

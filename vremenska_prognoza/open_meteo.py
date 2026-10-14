@@ -9,10 +9,17 @@ Svako preuzimanje se čuva (ništa se ne briše):
         izdanja za isti sat ostaju u sirovim JSON fajlovima (Excel se ne pravi od svih, da repo ne raste)
   model_podaci/vremenska_prognoza.parquet                   tabela za model (ne čuva se u git-u)
 
+Vreme: preuzima se i čuva u UTC (`timezone=GMT`); stariji sačuvani odgovori su u Europe/Belgrade i čitaju se
+isto (u_utc prepoznaje zonu). Prevod na oznaku sata modela je JEDNA funkcija, oznaka_modela(df, meteo_vreme):
+  "lokalno" — model-v1: vrednost Open-Meteo za lokalno vreme T nosi oznaku Cas = T + 1 h, kao u treningu
+              (provereno poređenjem model/meteo_istorija.parquet sa Open-Meteo za avgust 2026: sa +1 h prosečna
+              razlika insolacije 15 W/m², sa 0 h 72 W/m²). DST: prolećna rupa se interpolira, jesenji duplikat
+              usrednjava.
+  "utc1"    — kandidat za model-v2 (E30): isti trenutak, ali na satu UTC+1 bez letnjeg računanja
+              (Cas = T_utc + 1 h zone + 1 h pomak iz treninga); nema DST rupa ni duplikata. Zakucava se tek
+              kad stigne model-v2 i njegova referenca.
 Format kao meteo fajl iz treninga: Datum (dan D) + Cas 01:00–24:00 + 8 promenljivih + dan_u_nedelji (pon = 1),
-is_weekend, is_holiday. Vrednost Open-Meteo za lokalno vreme T nosi oznaku Cas = T + 1 h, kao u treningu
-(provereno poređenjem model/meteo_istorija.parquet sa Open-Meteo za avgust 2026: sa +1 h prosečna razlika
-insolacije 15 W/m², sa 0 h 72 W/m²). DST: prolećna rupa se interpolira, jesenji duplikat usrednjava.
+is_weekend, is_holiday.
 Izvedena obeležja (kiša, kašnjenje vlažnosti zemljišta, kalendar) računa SAMO prognoza_biciklista.obelezja.ucitaj_meteo
 (prenos koda iz treninga).
 """
@@ -24,6 +31,7 @@ import logging
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 import requests
@@ -54,7 +62,7 @@ ZA_MODEL = konfig.KOREN / "model_podaci" / "vremenska_prognoza.parquet"
 def preuzmi(past_days: int = 8, forecast_days: int = 3) -> dict:
     """forecast_days=3: za „sutra“ treba i Cas 24:00 (sa 2 dana poslednji sat je sutra 23:00)."""
     params = {
-        "latitude": LAT, "longitude": LON, "timezone": "Europe/Belgrade",
+        "latitude": LAT, "longitude": LON, "timezone": "GMT",                 # čuva se u UTC
         "hourly": ",".join(PROMENLJIVE.values()), "past_days": past_days, "forecast_days": forecast_days,
         "wind_speed_unit": "kmh", "precipitation_unit": "mm",
     }
@@ -72,10 +80,38 @@ def sacuvaj_sirovo(odgovor: dict, sada_utc: datetime, folder: Path = FOLDER) -> 
     return put
 
 
-def u_format_treninga(odgovor: dict) -> pd.DataFrame:
+MeteoVreme = Literal["lokalno", "utc1"]
+
+
+def u_utc(odgovor: dict) -> pd.DataFrame:
+    """Sirov odgovor → ts_utc (naivno UTC, trenutak T iz Open-Meteo) + PROMENLJIVE.
+
+    Odgovor u GMT/UTC se samo čita; stariji odgovori u Europe/Belgrade (i oni bez polja timezone) se prevode:
+    jesenji ponovljeni sat je prvo letnje (CEST), pa zimsko vreme."""
     h = odgovor["hourly"]
     df = pd.DataFrame({nase: h[om] for nase, om in PROMENLJIVE.items()})
-    df["ts"] = pd.to_datetime(h["time"]) + pd.Timedelta(hours=1)          # Cas = T + 1 h (kao trening)
+    t = pd.to_datetime(pd.Series(h["time"]))
+    if odgovor.get("timezone", "Europe/Belgrade") in ("GMT", "UTC"):
+        df.insert(0, "ts_utc", t)
+    else:
+        letnje = ~t.duplicated(keep="first").to_numpy()
+        lok = t.dt.tz_localize(konfig.TZ, ambiguous=letnje, nonexistent="NaT")
+        df.insert(0, "ts_utc", lok.dt.tz_convert("UTC").dt.tz_localize(None))
+        df = df[df["ts_utc"].notna()]
+    return df.reset_index(drop=True)
+
+
+def oznaka_modela(df_utc: pd.DataFrame, meteo_vreme: MeteoVreme = "lokalno") -> pd.DataFrame:
+    """ts_utc + promenljive → format treninga (Datum, Cas 01:00–24:00, …). Jedino mesto gde se bira sat modela."""
+    t = pd.to_datetime(df_utc["ts_utc"])
+    if meteo_vreme == "lokalno":
+        sat = t.dt.tz_localize("UTC").dt.tz_convert(konfig.TZ).dt.tz_localize(None)
+    elif meteo_vreme == "utc1":
+        sat = t + pd.Timedelta(hours=1)
+    else:
+        raise ValueError(f"meteo_vreme mora biti 'lokalno' ili 'utc1', a ne {meteo_vreme!r}")
+    df = df_utc.drop(columns="ts_utc").copy()
+    df["ts"] = sat.to_numpy() + pd.Timedelta(hours=1)                     # Cas = T + 1 h (kao trening)
     df = df.groupby("ts", as_index=False).mean(numeric_only=True)        # jesenji duplikat → prosek
     mreza = pd.date_range(df["ts"].min(), df["ts"].max(), freq="h")
     df = df.set_index("ts").reindex(mreza).interpolate(method="linear", limit_area="inside")  # prolećna rupa
@@ -88,6 +124,10 @@ def u_format_treninga(odgovor: dict) -> pd.DataFrame:
     df["is_weekend"] = (datum.dt.dayofweek >= 5).astype(int)
     df["is_holiday"] = datum.map(lambda d: int(is_holiday(d.date())))
     return df.drop(columns="ts")
+
+
+def u_format_treninga(odgovor: dict, meteo_vreme: MeteoVreme = "lokalno") -> pd.DataFrame:
+    return oznaka_modela(u_utc(odgovor), meteo_vreme)
 
 
 # ---------------------------------------------------------------- arhiva i Excel
