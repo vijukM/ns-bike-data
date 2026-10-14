@@ -46,7 +46,8 @@ Isto radi ručni workflow **istrazi** (Actions → istrazi → Run workflow) sa 
 
 - jedno preuzimanje po čitanju, **jedno čitanje na sat**;
 - običan User-Agent pregledača (Chrome); menja se promenljivom okruženja `NS_BIKE_USER_AGENT`;
-- timeout 30 s, najviše 2 ponovna pokušaja sa pauzom 30–60 s.
+- timeout 30 s; ako preuzimanje ne uspe, isto pokretanje pokušava ponovo posle 3 i posle 6 min (brza
+  varijanta, pa Playwright) — najviše 3 preuzimanja na sat.
 
 ## Lokalno pokretanje
 
@@ -62,7 +63,8 @@ pip install playwright && python -m playwright install chromium
 python -m scraper.citaj --metod pregledac
 ```
 
-Opcije `citaj.py`: `--metod auto|brza|pregledac`, `--ponavljanja N`, `--samo-ako-nema` (preskoči ako za
+Opcije `citaj.py`: `--metod auto|brza|pregledac`, `--pokusaji-u 0,180,360` (trenuci pokušaja u sekundama od
+početka pokretanja, env `NS_BIKE_POCETAK`), `--samo-ako-nema` (preskoči ako za
 tekući sat već postoji čitanje), `--iz-fajla X.xml` (obrada lokalnog fajla, bez preuzimanja).
 Izlazni kod je `2` ako preuzimanje ne uspe (zapis u `podaci/greske.log`).
 
@@ -208,7 +210,8 @@ A (samo bicikli). `YYYY/MM/master_YYYY-MM.parquet` je isto na punoj naivnoj satn
 - bez interpolacije; ispravan sat ima `razlog_A = ok`, inače je `y_A` prazno (NaN) uz razlog:
   - `nema_citanja` — čitanje u tom satu nije uspelo / ne postoji;
   - `nema_smera` — čitanje postoji, ali u njemu nema tog smera;
-  - `zastarelo` — vreme brojača je više od 6 min pre punog sata ili je starije od 15 min od čitanja;
+  - `zastarelo` — vreme brojača je više od 10 min pre punog sata ili je starije od 20 min od čitanja;
+    od više ispravnih čitanja u istom satu uzima se ono čije je vreme brojača najbliže punom satu;
   - `nema_podataka` — `state = 0` („Nema podataka“) u nekom od dva čitanja koja omeđuju sat; brojač tada
     i dalje javlja sveže vreme, ali `danas` je zamrznut (često 0), pa to NIJE nula;
   - `negativna_razlika` — npr. reset brojača;
@@ -223,8 +226,10 @@ A (samo bicikli). `YYYY/MM/master_YYYY-MM.parquet` je isto na punoj naivnoj satn
 
 ## Ograničenja
 
-- Granice sati određuju vremena brojača (sajt osvežava na ~5 min, čitanje u XX:02), pa svaki sat može biti
-  pomeren do nekoliko minuta; zbir sati dana je ipak tačno „juče“.
+- Granice sati određuju vremena brojača, ne pun sat. Sajt osvežava fajl na ~5 min i ponekad kasni do
+  ~10 min, pa je pri čitanju u XX:02 vreme brojača od ~XX:52 do ~XX:02 (10.–13.10.: medijana XX:58,6,
+  najranije XX:52). Svaki sat je zato približno (h−1):58 → h:58, a pri kašnjenju sajta do (h−1):52 → h:52;
+  zbir sati dana je ipak tačno „juče“.
 - Rezolucija je ograničena tačnošću pokretanja: ako čitanje kasni više od 15 min posle vremena brojača
   ili pređe u sledeći sat, pogođeni sati su NaN.
 - Prvi (nepotpun) dan prikupljanja ima NaN za sate pre prvog čitanja.

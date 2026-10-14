@@ -5,8 +5,8 @@ Konvencija (kao istorijski podaci): oznaka sata = KRAJ sata, 01:00–24:00 lokal
     sat 00–01 = danas@R(1)
     sat (h−1)–h = danas@R(h) − danas@R(h−1)
     sat 23–24 = juče@(prvo ispravno čitanje posle ponoći) − danas@R(23)
-Čitanje važi ako vreme brojača nije više od 6 min pre punog sata (sajt osvežava na ~5 min, čitanje je
-u XX:02) i nije starije od 15 min od čitanja; „juče“ se uzima samo iz čitanja sa datumom brojača D+1.
+Čitanje važi ako vreme brojača nije više od 10 min pre punog sata (sajt osvežava na ~5 min i ponekad
+kasni do ~10 min, čitanje je u XX:02) i nije starije od 20 min od čitanja; „juče“ se uzima samo iz čitanja sa datumom brojača D+1.
 Kolone datum (dan D) i sat (1–24) jednoznačno označavaju sat; ts = kraj sata (24:00 = 00:00 dana D+1).
 Dan prelaska na letnje vreme ima 23 sata, na zimsko 25 (oznaka 02:00 se tada javlja dva puta —
 jednoznačno je ts_utc). Računaju se samo završeni dani (za koje je počeo sledeći dan).
@@ -38,10 +38,12 @@ from .excel import napravi_mesec as napravi_excel
 
 log = logging.getLogger(__name__)
 
-MAKS_STAROST = timedelta(minutes=15)
-# Čitanje je u XX:02, a sajt osvežava fajl na ~5 min, pa poslednje osvežavanje može biti i do ~5 min
-# PRE punog sata (npr. 16:59). Takvo čitanje se prihvata kao stanje „na kraju sata“.
-TOLERANCIJA_PRE_SATA = timedelta(minutes=6)
+# Sajt ponekad kasni 8–10 min (npr. 12. i 13.10. fajl osvežen u XX:52–54 pri čitanju u XX:02), a ponovni
+# pokušaj u XX:08 može tada da vidi brojač od XX:52 → 16 min. „Nema podataka“ (> 30 min) je state 0.
+MAKS_STAROST = timedelta(minutes=20)
+# Čitanje je u XX:02; sajt osvežava fajl na ~5 min i ponekad kasni do ~10 min, pa vreme brojača bude
+# od ~XX:52 do ~XX:02 (medijana XX:58,6 za 10.–13.10.). Takvo čitanje se prihvata kao stanje „na kraju sata“.
+TOLERANCIJA_PRE_SATA = timedelta(minutes=10)
 # Razmak vremena brojača dva čitanja koja omeđuju sat (≈ 60 min ± kašnjenje osvežavanja).
 RAZMAK_SATA = (timedelta(minutes=50), timedelta(minutes=70))
 KLJUC = ["locationID", "direction", "directionDesc"]
@@ -165,8 +167,8 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
     prvi, poslednji = lok_dan.min(), lok_dan.max()
     do_dana = do_dana or poslednji  # isključivo: dan D se računa samo ako je počeo D+1
     # prvo čitanje u svakom UTC satu (svaki lokalni sat je tačno jedan UTC sat)
-    # sva čitanja po UTC satu, redom po vremenu — za svaki smer se uzima prvo ISPRAVNO čitanje u satu
-    # (npr. zakasnela rezervna pokretanja u XX:00 sa brojačem od XX:53 se preskaču)
+    # sva čitanja po UTC satu, redom po vremenu — za svaki smer se uzima ISPRAVNO čitanje u satu čije je
+    # vreme brojača najbliže punom satu (npr. zakasnela rezerva u XX:00 sa brojačem od XX:53 se preskače)
     po_satu = {_sat(s): g.sort_values("t_citanja").set_index(KLJUC).sort_index(kind="mergesort")
                for s, g in df.groupby("sat_utc")}
 
@@ -188,14 +190,12 @@ def satno_po_smeru(df: pd.DataFrame, do_dana: date | None = None) -> tuple[pd.Da
                 g = po_satu.get(_sat(s))
                 if g is None or k not in g.index:
                     return _ocitaj(None, g is not None, s)
-                redovi_k = g.loc[[k]]
-                prvo = None
-                for _, red in redovi_k.iterrows():
-                    c = _ocitaj(red, True, s)
-                    if c.razlog is None:
-                        return c
-                    prvo = prvo or c
-                return prvo
+                # od ispravnih čitanja u satu uzima se ono čije je vreme brojača najbliže punom satu
+                citanja = [_ocitaj(red, True, s) for _, red in g.loc[[k]].iterrows()]
+                ispravna = [c for c in citanja if c.razlog is None]
+                if ispravna:
+                    return min(ispravna, key=lambda c: abs(c.t - s))
+                return citanja[0]
 
             # „juče" iz prvog ispravnog čitanja posle ponoći
             kand = sledeci[(sledeci[KLJUC] == list(k)).all(axis=1)].sort_values("t_citanja")

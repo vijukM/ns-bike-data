@@ -22,6 +22,9 @@ jobs:
     env:
       SAMO_AKO_NEMA: ${{ github.event_name == 'schedule' && '--samo-ako-nema' || '' }}
     steps:
+      - name: Početak pokretanja (za pokušaje u +3 i +6 min)
+        run: echo "NS_BIKE_POCETAK=$(date +%s)" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -35,15 +38,15 @@ jobs:
       - name: Čitanje (brza varijanta, bez pregledača)
         id: brza
         continue-on-error: true
-        run: python -m scraper.citaj --metod brza --ponavljanja 1 $SAMO_AKO_NEMA
+        run: python -m scraper.citaj --metod brza --pokusaji-u 0 $SAMO_AKO_NEMA
 
-      - name: Čitanje (rezerva, Playwright) — samo ako brza varijanta ne uspe
+      - name: Ponovni pokušaji posle 3 i 6 min (brza, pa Playwright) — samo ako prvi pokušaj ne uspe
         id: pregledac
         if: steps.brza.outcome == 'failure'
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
-          python -m scraper.citaj --metod pregledac $SAMO_AKO_NEMA
+          python -m scraper.citaj --metod auto --pokusaji-u 180,360 $SAMO_AKO_NEMA
 
       - name: Satne vrednosti i Excel za juče (prvo čitanje dana i čitanje u 01:xx)
         if: steps.brza.outputs.obracunaj == 'true' || steps.pregledac.outputs.obracunaj == 'true'

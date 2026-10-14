@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import random
 import re
 import sys
 import time
@@ -25,7 +24,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from .konfig import BASE_URL, PAUZA_S, PONAVLJANJA, TIMEOUT_S, USER_AGENT
+from .konfig import BASE_URL, POKUSAJI_U, TIMEOUT_S, USER_AGENT
 
 log = logging.getLogger(__name__)
 
@@ -314,29 +313,31 @@ def _playwright_dostupan() -> bool:
     return True
 
 
-def preuzmi_bicikliste(metod: str = "auto", ponavljanja: int = PONAVLJANJA) -> bytes:
+def preuzmi_bicikliste(metod: str = "auto", pokusaji_u=POKUSAJI_U, pocetak: float | None = None) -> bytes:
     """Preuzima fajl sa biciklistima i proverava sadržaj.
 
     metod: "auto" (brza, pa Playwright ako je instaliran), "brza" ili "pregledac".
-    Najviše `ponavljanja` ponovnih pokušaja sa pauzom 30–60 s.
+    pokusaji_u: trenuci pokušaja u sekundama od `pocetak` (unix vreme; podrazumevano sada), npr. (0, 180, 360)
+    = odmah, posle 3 i posle 6 min. Svaki pokušaj je jedno preuzimanje (brza, pa po potrebi Playwright).
     """
+    pocetak = time.time() if pocetak is None else pocetak
     greske = []
-    for pokusaj in range(ponavljanja + 1):
-        if pokusaj:
-            pauza = random.uniform(*PAUZA_S)
-            log.info("ponovni pokušaj %d za %.0f s", pokusaj, pauza)
-            time.sleep(pauza)
+    for u in pokusaji_u:
+        cekanje = pocetak + u - time.time()
+        if cekanje > 0:
+            log.info("pokušaj u +%d s — čekam %.0f s", u, cekanje)
+            time.sleep(cekanje)
         if metod in ("auto", "brza"):
             try:
                 return preuzmi_brzo()
             except Exception as e:  # noqa: BLE001
-                greske.append(f"brza: {type(e).__name__}: {e}")
+                greske.append(f"brza (+{u:.0f} s): {type(e).__name__}: {e}")
                 log.warning(greske[-1])
         if metod == "pregledac" or (metod == "auto" and _playwright_dostupan()):
             try:
                 return preuzmi_pregledacem()
             except Exception as e:  # noqa: BLE001
-                greske.append(f"pregledac: {type(e).__name__}: {e}")
+                greske.append(f"pregledac (+{u:.0f} s): {type(e).__name__}: {e}")
                 log.warning(greske[-1])
     raise GreskaPreuzimanja(" | ".join(greske))
 
@@ -351,7 +352,7 @@ def main(argv=None) -> int:
     if a.istrazi:
         _Brza(a.istrazi).istrazi()
         return 0
-    data = preuzmi_bicikliste(a.metod, ponavljanja=0)
+    data = preuzmi_bicikliste(a.metod, pokusaji_u=(0,))
     if a.izlaz:
         a.izlaz.write_bytes(data)
     sys.stdout.write(data[:1500].decode("utf-8", "replace") + "\n")

@@ -83,7 +83,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--samo-ako-nema", action="store_true", help="preskoči ako za tekući sat već postoji čitanje")
     ap.add_argument("--metod", choices=["auto", "brza", "pregledac"], default="auto")
-    ap.add_argument("--ponavljanja", type=int, default=konfig.PONAVLJANJA)
+    ap.add_argument("--pokusaji-u", default=",".join(str(x) for x in konfig.POKUSAJI_U),
+                    help="trenuci pokušaja u sekundama od početka pokretanja (env NS_BIKE_POCETAK), npr. 0,180,360")
     ap.add_argument("--iz-fajla", type=Path, help="umesto preuzimanja koristi lokalni XML (za proveru)")
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
@@ -100,7 +101,8 @@ def main(argv=None) -> int:
             data = a.iz_fajla.read_bytes()
             proveri_sadrzaj(data)
         else:
-            data = preuzmi_bicikliste(a.metod, a.ponavljanja)
+            pocetak = float(os.environ["NS_BIKE_POCETAK"]) if os.environ.get("NS_BIKE_POCETAK") else None
+            data = preuzmi_bicikliste(a.metod, [float(x) for x in a.pokusaji_u.split(",")], pocetak)
         sada = datetime.now(timezone.utc).replace(microsecond=0)
         csv_put, n, prvo = sacuvaj(data, sada)
     except Exception as e:  # noqa: BLE001

@@ -12,8 +12,10 @@ USER_AGENT = os.environ.get(
     "Chrome/154.0.0.0 Safari/537.36",
 )
 TIMEOUT_S = 30
-PONAVLJANJA = 2  # najviše 2 ponovna pokušaja
-PAUZA_S = (30, 60)  # pauza pre ponovnog pokušaja (nasumično u opsegu)
+# Pokušaji preuzimanja u jednom pokretanju: odmah, posle 3 i posle 6 min (sekunde od početka pokretanja,
+# NS_BIKE_POCETAK = unix vreme početka; podrazumevano trenutak poziva). U XX:08 je vreme brojača i dalje
+# u okviru provere svežine satnog obračuna.
+POKUSAJI_U = (0, 180, 360)
 
 TZ = ZoneInfo("Europe/Belgrade")
 

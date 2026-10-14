@@ -119,7 +119,7 @@ def test_reset_brojaca():
 
 def test_zastarelo():
     satni = [satni_profil(24, 10), satni_profil(24, 1)]
-    _, serije, _ = izracunaj(napravi(D, satni, izmene={(12, 0): {"vreme_brojaca": "11:50:00"}}))
+    _, serije, _ = izracunaj(napravi(D, satni, izmene={(12, 0): {"vreme_brojaca": "11:45:00"}}))
     nan = serije[serije["y_A"].isna()]
     assert nan["ts"].dt.hour.tolist() == [12, 13]
     assert set(nan["razlog_A"]) == {"zastarelo"}
@@ -236,3 +236,11 @@ def test_state_0_nema_podataka():
     nan = serije[serije["y_A"].isna()]
     assert nan["sat"].tolist() == [11, 12] and set(nan["razlog_A"]) == {"nema_podataka"}
     assert set(serije.loc[serije["y_A"].notna(), "razlog_A"]) == {"ok"}
+
+
+def test_sajt_kasni_8_min_prihvata_se():
+    # 12. i 13.10. sajt je kasnio 8–10 min: čitanje u XX:01 vidi brojač od XX:52–XX:54
+    satni = [satni_profil(24, 10), satni_profil(24, 1)]
+    izmene = {(i, j): {"vreme_brojaca": f"{i - 1:02d}:52:30"} for i in (5, 6, 14) for j in (0, 1)}
+    _, serije, _ = izracunaj(napravi(D, satni, izmene=izmene))
+    assert serije["y_A"].notna().all()
