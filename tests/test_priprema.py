@@ -109,22 +109,46 @@ def smerovi_za(novo, st, udeo_smera2, od_dana=None):
     return pd.DataFrame(redovi)
 
 
-def test_otkaz_smera_zbir_normalan_ok_jedan_smer():
-    # 28 od septembra: smer 21 = 0, smer 11 broji oba smera → zbir normalan → ok_jedan_smer
-    ist, novo = osnovno(("28",))
-    df, izv = pokreni(ist, novo, smerovi_za(novo, "28", 0.0), stanice=("28",))
+def test_ok_jedan_smer_neodobren_daje_otkaz():
+    # pravilo ok_jedan_smer postoji, ali nije odobreno → zbir normalan, a ipak otkaz_smera (NaN)
+    ist, novo = osnovno(("26",))
+    df, izv = pokreni(ist, novo, smerovi_za(novo, "26", 0.0), stanice=("26",))
     novi = df[df["ts"] >= "2026-10-09 01:00"]
-    assert set(novi["razlog_A"]) == {"ok_jedan_smer"} and novi["y_A"].notna().all()
+    assert set(novi["razlog_A"]) == {"otkaz_smera"} and izv["ok_jedan_smer"] == 0
+
+
+def test_ok_jedan_smer_kad_je_odobren(monkeypatch):
+    import prognoza_biciklista.priprema as pr
+    monkeypatch.setattr(pr, "OK_JEDAN_SMER_ODOBRENO", True)
+    ist, novo = osnovno(("26",))
+    df, izv = pokreni(ist, novo, smerovi_za(novo, "26", 0.0), stanice=("26",))
+    assert set(df.loc[df["ts"] >= "2026-10-09 01:00", "razlog_A"]) == {"ok_jedan_smer"}
+
+
+def test_serija_28_iskljucena_i_povratak(monkeypatch, tmp_path):
+    import prognoza_biciklista.priprema as pr
+    monkeypatch.setattr(pr, "LOG", tmp_path / "log")
+    ist, novo = osnovno(("28",))
+    # bez povratka: sve novo je NaN otkaz_smera
+    df, _ = pr.pripremi(ist, novo, smerovi_za(novo, "28", 0.0), p90_konst(("28",)))
+    assert set(df.loc[df["ts"] >= "2026-10-09 01:00", "razlog_A"]) == {"otkaz_smera"}
+    # smer 21 ponovo broji 45 % od 12.10. (≥ 3 dana) → od 12.10. serija je ponovo validna
+    sm = smerovi_za(novo, "28", 0.45, od_dana="2026-10-12")
+    sm.loc[pd.to_datetime(sm["datum"]) < "2026-10-12", "y_A"] *= (sm["direction"] == "11") * 2
+    df, _ = pr.pripremi(ist, novo, sm, p90_konst(("28",)))
+    d = df.set_index("ts")["razlog_A"]
+    assert d["2026-10-11 12:00"] == "otkaz_smera" and d["2026-10-12 12:00"] == "ok"
+    assert "ponovo uključena od 2026-10-12" in (tmp_path / "log").read_text(encoding="utf-8")
 
 
 def test_otkaz_smera_zbir_pao_nan():
     # smer 21 otkazao od 11.10, zbir pao na pola → ti dani NaN otkaz_smera
-    ist, novo = osnovno(("28",))
+    ist, novo = osnovno(("26",))
     pola = novo["ts"] > "2026-10-11 00:00"
     novo.loc[pola, "y_A"] = novo.loc[pola, "y_A"] * 0.5
-    sm = smerovi_za(novo, "28", 0.5)
+    sm = smerovi_za(novo, "26", 0.5)
     sm.loc[pd.to_datetime(sm["datum"]) >= "2026-10-11", "y_A"] = sm["y_A"] * (sm["direction"] == "11") * 2
-    df, izv = pokreni(ist, novo, sm, stanice=("28",))
+    df, izv = pokreni(ist, novo, sm, stanice=("26",))
     d = df.set_index("ts")["razlog_A"]
     assert d["2026-10-10 12:00"] == "ok"
     assert d["2026-10-12 12:00"] == "otkaz_smera" and izv["otkaz_smera"] >= 3 * 24

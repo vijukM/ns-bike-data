@@ -51,6 +51,9 @@ def test_excel_mesec(tmp_path, monkeypatch):
     assert wb.sheetnames == ["26", "Info"]
     ws = wb["26"]
     redovi = list(ws.values)
-    assert redovi[0] == ("Date", "Time", "A01", "A02", "Sum", "razlog_A", "oznaka")
+    assert redovi[0][:7] == ("Date", "Time", "A01", "A02", "Sum", "razlog_A", "oznaka")
+    assert redovi[0][7].startswith("Lokacija 26")                       # opis lokacije samo u zaglavlju
+    assert all(r[7] is None for r in redovi[1:])
+    assert any(r and r[0] == "SPISAK BROJAČA" for r in wb["Info"].values)
     assert redovi[1][1] == "01:00" and redovi[-1][1] == "24:00" and len(redovi) == 25
     assert redovi[1][2:6] == (10, 1, 11, "ok")

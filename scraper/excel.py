@@ -53,6 +53,27 @@ def _vreme(ts: pd.Timestamp) -> str:
     return f"{ts.hour or 24:02d}:00"
 
 
+_LOKACIJA_FILL = PatternFill("solid", fgColor="C00000")   # tamnocrveno — opis lokacije, nije podatak o biciklistima
+_LOKACIJA_FONT = Font(bold=True, color="FFFFFF")
+
+
+def opis_stanica(koren: Path | None = None) -> pd.DataFrame:
+    """Iz poslednjeg čitanja: serija, broj mesta, naziv (ulica), smerovi sa opisom, koordinate."""
+    fajlovi = sorted((koren or konfig.PODACI).glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/[0-9]*.csv"))
+    if not fajlovi:
+        return pd.DataFrame(columns=["serija", "mesto", "naziv", "smerovi", "lat", "lon"])
+    c = pd.read_csv(fajlovi[-1], dtype=str)
+    redovi = []
+    for serija, g in c.groupby("serija"):
+        g = g.sort_values("direction")
+        naziv = g["locationID"].iloc[0].split(" ", 1)[1] if " " in g["locationID"].iloc[0] else g["locationID"].iloc[0]
+        redovi.append({"serija": serija, "mesto": g["location"].iloc[0], "naziv": naziv.strip(),
+                       "smerovi": "; ".join(f"smer {d}: {o}" for d, o in zip(g["direction"], g["directionDesc"])),
+                       "lat": float(g["lat"].iloc[0]), "lon": float(g["lon"].iloc[0])})
+    redosled = {s: i for i, s in enumerate(OCEKIVANE_SERIJE)}
+    return pd.DataFrame(redovi).sort_values("serija", key=lambda x: x.map(redosled).fillna(99)).reset_index(drop=True)
+
+
 def _ucitaj(folder_meseca: Path, ime: str) -> pd.DataFrame:
     fajlovi = sorted(folder_meseca.glob(f"[0-9][0-9]/{ime}"))
     if not fajlovi:
@@ -71,6 +92,7 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
     if serije.empty:
         return None
 
+    opisi = opis_stanica(koren).set_index("serija")
     wb = Workbook()
     wb.remove(wb.active)
     redosled = [s for s in OCEKIVANE_SERIJE if s in set(serije["stanica_id"])]
@@ -91,6 +113,11 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
         zaglavlje = ["Date", "Time"] + vrednosne + ["razlog_A", "oznaka"]
         ws = wb.create_sheet(serija)
         ws.append(zaglavlje)
+        if serija in opisi.index:                       # opis lokacije — samo u zaglavlju, drugom bojom
+            o = opisi.loc[serija]
+            c = ws.cell(row=1, column=len(zaglavlje) + 1,
+                        value=f"Lokacija {serija} (mesto {o['mesto']}): {o['naziv']} — {o['smerovi']}")
+            c.fill, c.font = _LOKACIJA_FILL, _LOKACIJA_FONT
         for _, r in sr.iterrows():
             oznake = {s: oznake_smera[s].get(r["ts_utc"]) for s in smerovi_serije}
             oznake = {s: o for s, o in oznake.items() if isinstance(o, str)}
@@ -110,7 +137,7 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
                 elif o:
                     c.fill = _OZNAKA_FILL[o]
 
-        for c in ws[1]:
+        for c in ws[1][:len(zaglavlje)]:
             c.fill, c.font, c.alignment = _ZAGLAVLJE_FILL, _ZAGLAVLJE_FONT, Alignment(horizontal="center")
         for c in ws["A"][1:]:
             c.number_format = "yyyy-mm-dd"
@@ -142,10 +169,21 @@ def napravi_mesec(d: date, koren: Path | None = None) -> Path | None:
         ["Narandžasto: nula_niz", anomalije.OPIS["nula_niz"]],
         ["Žuto: skok", anomalije.OPIS["skok"]],
         ["Napomena", "markirane vrednosti NISU menjane — markiranje samo upozorava; odluka je na korisniku"],
+        ["Tamnocrveno", "opis lokacije u zaglavlju sheeta (nije podatak o biciklistima)"],
     ]:
         info.append(red)
-    info.column_dimensions["A"].width = 20
-    info.column_dimensions["B"].width = 90
+    info.append([])
+    info.append(["SPISAK BROJAČA"])
+    info.cell(row=info.max_row, column=1).font = Font(bold=True)
+    info.append(["serija (sheet)", "mesto", "naziv (ulica)", "smerovi", "lat", "lon"])
+    for c in info[info.max_row]:
+        c.fill, c.font = _LOKACIJA_FILL, _LOKACIJA_FONT
+    for _, o in opisi.reset_index().iterrows():
+        info.append([o["serija"], o["mesto"], o["naziv"], o["smerovi"], o["lat"], o["lon"]])
+    info.column_dimensions["A"].width = 22
+    info.column_dimensions["B"].width = 60
+    info.column_dimensions["C"].width = 32
+    info.column_dimensions["D"].width = 110
 
     izlaz = folder_excel(koren) / f"bicikli_{d:%Y-%m}.xlsx"
     izlaz.parent.mkdir(parents=True, exist_ok=True)

@@ -131,7 +131,8 @@ def za_sajt(p: pd.DataFrame, vrsta: str, izdato: datetime, paket: Paket, sajt: P
     sajt.parent.mkdir(parents=True, exist_ok=True)
     sajt.write_text(json.dumps({"izdato_utc": izdato.strftime("%Y-%m-%dT%H:%M:%SZ"), "vrsta": vrsta,
                                 "verzija_modela": paket.ob["verzija_modela"], "dani": sorted(p["datum"].unique()),
-                                "stanice": stanice}, ensure_ascii=False), encoding="utf-8")
+                                "stanice": stanice, "iskljucene": p.attrs.get("iskljucene", {})},
+                               ensure_ascii=False), encoding="utf-8")
 
 
 def izdaj(vrsta: str, sada: datetime, paket: Paket, preuzmi_vreme: bool = True) -> pd.DataFrame:
@@ -151,7 +152,19 @@ def izdaj(vrsta: str, sada: datetime, paket: Paket, preuzmi_vreme: bool = True) 
     master = produzi_do(master, dani[-1] + pd.Timedelta(days=1))
     df = napravi(master, meteo_tabela(paket), paket)
     tf = pripremi_tft(df, paket)
-    return pd.concat([prognoza_za_dan(df, tf, d, paket) for d in dani], ignore_index=True)
+    p = pd.concat([prognoza_za_dan(df, tf, d, paket) for d in dani], ignore_index=True)
+    # isključene serije (npr. 28, brojač neispravan): nema prognoze za ocenu; za sajt opis + sirovo po smeru
+    iskljucene = {}
+    for st, pod in priprema.ISKLJUCENE.items():
+        poslednji = master[(master["stanica_id"] == st) & (master["ts"] <= danas)]
+        if not poslednji.empty and poslednji["razlog_A"].iloc[-1] == pod["razlog"]:
+            juce = (danas - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+            sm = smerovi[(smerovi["serija"] == st) & (smerovi["datum"] == juce)] if not smerovi.empty else smerovi
+            iskljucene[st] = {"opis": pod["opis"], "datum_sirovo": juce,
+                              "sirovo_po_smeru": {str(d): float(g["y_A"].sum()) for d, g in sm.groupby("direction")}}
+    p = p[~p["stanica_id"].isin(iskljucene)].reset_index(drop=True)
+    p.attrs["iskljucene"] = iskljucene
+    return p
 
 
 def main(argv=None) -> int:
@@ -170,7 +183,10 @@ def main(argv=None) -> int:
         p = izdaj(a.vrsta, sada, paket)
         for put in sacuvaj(p, a.vrsta, sada, paket):
             log.info("sačuvano: %s", put.relative_to(konfig.KOREN))
+        iskljucene = p.attrs.get("iskljucene", {})
         za_sajt(p, a.vrsta, sada, paket)
+        if iskljucene:
+            log.info("isključene serije (bez prognoze za ocenu): %s", ", ".join(iskljucene))
         log.info("prognoza biciklista: %d serija × %d dana; nepouzdanih serija: %d", p["stanica_id"].nunique(),
                  p["datum"].nunique(), int(p.groupby("stanica_id")["nepouzdano"].first().sum()))
         return 0

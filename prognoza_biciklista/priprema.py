@@ -12,9 +12,11 @@ Pravila (redosled primene; vrednost → NaN uz razlog):
   nula_dan       serija sa jednim smerom ceo dan 0, a inače (medijana 28 prethodnih dana) ima ≥ 50 dnevno
   skok           y > max(50, 4 × p90[stanica, sat, mesec]); skok_okolina: ±3 h ako y > max(30, 2 × p90);
                  dan sa skokom na ≥ 3 stanice = gradski događaj → ne dira se
-  otkaz_smera    stari dvosmerni: slabiji smer < 2 % dnevnog zbira, ≥ 3 dana zaredom (zbir ≥ 50/dan). Dan je NaN
-                 samo ako je zbir serije < 60 % očekivanog (prosek iste stanice i istog dana u nedelji, poslednje
-                 4 nedelje sa podacima); inače ostaje validan sa razlogom ok_jedan_smer
+  otkaz_smera    stari dvosmerni: slabiji smer < 2 % dnevnog zbira, ≥ 3 dana zaredom (zbir ≥ 50/dan) → NaN.
+                 (Pravilo ok_jedan_smer — zbir ≥ 60 % očekivanog → validno — postoji, ali je isključeno dok ga
+                 korisnik ne odobri: OK_JEDAN_SMER_ODOBRENO.)
+  iskljucene     ISKLJUCENE: serija 28 NaN (otkaz_smera) od 18.04.2026; automatski povratak kad smer 21 ≥ 3 dana
+                 zaredom ima 35–60 % dnevnog zbira (zapis u podaci/prognoza_biciklista/iskljucene_serije.log)
 """
 from __future__ import annotations
 
@@ -46,6 +48,17 @@ OKOLINA_MIN, OKOLINA_PUTA, OKOLINA_SATI = 30, 2, 3
 DOGADJAJ_STANICA = 3
 OTKAZ_UDEO, OTKAZ_DANA, OTKAZ_MIN_DNEVNO = 0.02, 3, 50
 OTKAZ_PRAG_OCEKIVANO, OTKAZ_NEDELJA = 0.60, 4
+# ok_jedan_smer: pravilo postoji, ali se NE primenjuje dok ga korisnik ne odobri (otkaz → uvek NaN otkaz_smera)
+OK_JEDAN_SMER_ODOBRENO = False
+
+# Isključene serije (odluka korisnika). Serija je NaN sa datim razlogom, osim ako se brojač automatski vrati:
+# smer `smer_povratak` ≥ 3 uzastopna dana sa udelom 35–60 % dnevnog zbira → od prvog takvog dana ponovo uključena.
+ISKLJUCENE = {
+    "28": {"od": "2026-04-18", "razlog": "otkaz_smera", "opis": "brojač neispravan od 04/2026 (smer 21 ne broji, "
+           "smer 11 broji samo svoj smer)", "smer_povratak": "21"},
+}
+POVRATAK_UDEO, POVRATAK_DANA = (0.35, 0.60), 3
+LOG = konfig.KOREN / "podaci" / "prognoza_biciklista" / "iskljucene_serije.log"
 
 
 # ---------------------------------------------------------------- pomoćno
@@ -171,13 +184,54 @@ def pravilo_otkaz_smera(df: pd.DataFrame, smerovi: pd.DataFrame) -> int:
                 continue
             ocekivano = _ocekivano_po_satu(g[g["razlog_A"] != "otkaz_smera"], dan)
             stvarno = df.loc[u_danu]
-            if ocekivano is not None:
+            if OK_JEDAN_SMER_ODOBRENO and ocekivano is not None:
                 oc = stvarno["sat"].map(ocekivano).sum()
                 if oc > 0 and stvarno["y_A"].sum() >= OTKAZ_PRAG_OCEKIVANO * oc:
                     df.loc[u_danu, "razlog_A"] = "ok_jedan_smer"
                     continue
             n += _postavi(df, u_danu, "otkaz_smera")
             g = df[df["stanica_id"] == st]
+    return n
+
+
+def povratak_serije(smerovi: pd.DataFrame, serija: str, smer: str) -> pd.Timestamp | None:
+    """Prvi dan niza od ≥ 3 uzastopna dana u kojima smer ima 35–60 % dnevnog zbira serije (brojač ponovo radi)."""
+    if smerovi.empty:
+        return None
+    g = smerovi[smerovi["serija"] == serija].copy()
+    if g.empty:
+        return None
+    g["dan"] = pd.to_datetime(g["datum"])
+    siroko = g.pivot_table(index=["dan", "sat"], columns="direction", values="y_A", aggfunc="first").dropna()
+    if smer not in siroko.columns or siroko.shape[1] < 2:
+        return None
+    po_danu = siroko.groupby(level="dan").sum()
+    udeo = po_danu[smer] / po_danu.sum(axis=1)
+    ok = udeo.between(*POVRATAK_UDEO).reindex(pd.date_range(po_danu.index.min(), po_danu.index.max(), freq="D"),
+                                               fill_value=False)
+    grupa = (ok != ok.shift()).cumsum()
+    duzina = ok.groupby(grupa).transform("size")
+    dani = ok[ok & (duzina >= POVRATAK_DANA)].index
+    return dani.min() if len(dani) else None
+
+
+def pravilo_iskljucene(df: pd.DataFrame, smerovi: pd.DataFrame) -> int:
+    n = 0
+    log_fajl = LOG
+    for st, pod in ISKLJUCENE.items():
+        povratak = povratak_serije(smerovi, st, pod["smer_povratak"])
+        maska = (df["stanica_id"] == st) & (df["ts"] > pd.Timestamp(pod["od"]))
+        if povratak is not None:
+            maska &= df["dan"] < povratak
+            poruka = f"serija {st} ponovo uključena od {povratak.date()} (smer {pod['smer_povratak']} broji 35–60 %)"
+            log.warning(poruka)
+            if log_fajl is not None:
+                log_fajl.parent.mkdir(parents=True, exist_ok=True)
+                stari = log_fajl.read_text(encoding="utf-8") if log_fajl.exists() else ""
+                if poruka not in stari:
+                    with open(log_fajl, "a", encoding="utf-8") as f:
+                        f.write(f"{pd.Timestamp.now(tz=konfig.TZ):%Y-%m-%d %H:%M}\t{poruka}\n")
+        n += _postavi(df, maska, pod["razlog"])
     return n
 
 
@@ -205,6 +259,7 @@ def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
         "nula_dan": pravilo_nula_dan(df),
         "skok": pravilo_skok(df, p90),
         "otkaz_smera": pravilo_otkaz_smera(df, smerovi),
+        "iskljucene": pravilo_iskljucene(df, smerovi),
     }
     izvestaj["ok_jedan_smer"] = int((df["novo"] & df["razlog_A"].eq("ok_jedan_smer")).sum())
     df["y_A"] = df["y_A"].astype("float64")
