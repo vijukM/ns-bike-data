@@ -1,0 +1,151 @@
+"""Priprema istorije za sajt (sajt/pripremi_istoriju.py): vreme, kompletan dan, NaN ≠ 0, serija 28, zbirovi."""
+import json
+from datetime import date
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from sajt import pripremi_istoriju as pi
+
+KOREN = Path(__file__).resolve().parents[1]
+
+
+def test_dani_promene_vremena_23_i_25_sati():
+    assert pi.sati_u_danu(date(2025, 3, 30)) == 23
+    assert pi.sati_u_danu(date(2025, 10, 26)) == 25
+    assert pi.sati_u_danu(date(2025, 10, 27)) == 24
+    d = pi.lokalni_dani(date(2025, 10, 25), date(2025, 10, 27))
+    assert d["sati"].tolist() == [24, 25, 24]
+    assert str(d["pocetak_utc"].iloc[0]) == "2025-10-24 22:00:00"      # ponoć CEST
+
+
+def test_master_utc1_u_lokalno():
+    # ts = kraj sata u fiksnom UTC+1; leti je lokalni sat za 1 veći, zimi isti
+    leto = pi.master_u_lokalno(pd.Series(pd.to_datetime(["2025-07-01 08:00"])))
+    assert str(leto["pocetak_utc"].iloc[0]) == "2025-07-01 06:00:00" and leto["sat"].iloc[0] == 8
+    zima = pi.master_u_lokalno(pd.Series(pd.to_datetime(["2025-01-15 08:00"])))
+    assert zima["sat"].iloc[0] == 7
+    # prvi sat istorije (01.01.2021 01:00 u UTC+1) je lokalno 00–01 h 1. januara
+    prvi = pi.master_u_lokalno(pd.Series(pd.to_datetime(["2021-01-01 01:00"])))
+    assert prvi["datum"].iloc[0] == date(2021, 1, 1) and prvi["sat"].iloc[0] == 0
+
+
+def test_meteo_jesenji_sat_dva_puta_prolecni_nikad():
+    w = pd.DataFrame({"Datum": ["2025-10-26"] * 4, "Cas": ["02:00", "03:00", "04:00", "05:00"],
+                      "temperatura": [1.0, 2.0, 3.0, 4.0]})
+    w = pd.concat([w, pi.meteo_u_utc(w["Datum"], w["Cas"])], axis=1).set_index("lok_pocetak")
+    mreza = pd.date_range("2025-10-25 23:00", periods=5, freq="h")        # lokalno 01, 02 CEST, 02 CET, 03, 04
+    assert pi.meteo_na_mrezi(w, mreza)["temperatura"].tolist() == [1.0, 2.0, 2.0, 3.0, 4.0]
+    w = pd.DataFrame({"Datum": ["2025-03-30"] * 4, "Cas": ["02:00", "03:00", "04:00", "05:00"],
+                      "temperatura": [1.0, 2.0, 3.0, 4.0]})                 # 03:00 = početak 02:00, ne postoji
+    w = pd.concat([w, pi.meteo_u_utc(w["Datum"], w["Cas"])], axis=1).set_index("lok_pocetak")
+    mreza = pd.date_range("2025-03-30 00:00", periods=3, freq="h")        # lokalno 01, 03, 04
+    assert pi.meteo_na_mrezi(w, mreza)["temperatura"].tolist() == [1.0, 3.0, 4.0]
+
+
+def _master(serija, od_lok, do_lok, vrednost=1.0):
+    """Sintetički master: pune lokalne dane od_lok..do_lok, ts = kraj sata u UTC+1."""
+    dani = pi.lokalni_dani(od_lok, do_lok)
+    pocetak = pd.date_range(dani["pocetak_utc"].iloc[0], periods=int(dani["sati"].sum()), freq="h")
+    return pd.DataFrame({"stanica_id": serija, "ts": pocetak + pd.Timedelta(hours=2),
+                         "y_A": vrednost, "razlog_A": "ok"})
+
+
+@pytest.fixture
+def sinteticki(tmp_path):
+    m = pd.concat([_master("20a", date(2025, 10, 25), date(2025, 10, 27), 2.0),
+                   _master("28", date(2026, 4, 16), date(2026, 4, 19), 3.0),
+                   _master("15a", date(2026, 4, 16), date(2026, 4, 19), 1.0)], ignore_index=True)
+    # 27.10.2025: jedan sat NaN (kvar) → nepotpun dan; 0 je validna nula
+    i = m.index[(m["stanica_id"] == "20a") & (m["ts"] == pd.Timestamp("2025-10-27 12:00"))][0]
+    m.loc[i, ["y_A", "razlog_A"]] = [np.nan, "status_prazan"]
+    j = m.index[(m["stanica_id"] == "20a") & (m["ts"] == pd.Timestamp("2025-10-25 05:00"))][0]
+    m.loc[j, "y_A"] = 0.0
+    m.to_parquet(tmp_path / "master.parquet")
+    dani = pd.date_range("2025-10-24", "2026-04-20", freq="D")
+    w = pd.DataFrame([(d.strftime("%Y-%m-%d"), f"{h:02d}:00") for d in dani for h in range(1, 25)],
+                     columns=["Datum", "Cas"])
+    w["temperatura"], w["padavine"], w["sneg_N"], w["is_holiday"] = 10.0, 0.0, 0.0, 0
+    w.to_parquet(tmp_path / "meteo.parquet")
+    pd.DataFrame({"serija": ["20a", "28", "28", "15a"], "locationID": ["20NSa S.Jovanovica", "28NS Bul", "28NS Bul",
+                                                                         "15NSaPS Vojvodjanska"],
+                  "direction": [13, 11, 21, 14], "directionDesc": ["A-B (b)", "X-Y", "Y-X", "C-D (b)"],
+                  "lat": [45.25, 45.256, 45.256, 45.246], "lon": [19.80, 19.83, 19.83, 19.84]}
+                 ).to_csv(tmp_path / "feed.csv", index=False)
+    izlaz = tmp_path / "istorija"
+    pi.pripremi(tmp_path / "master.parquet", tmp_path / "meteo.parquet", tmp_path / "feed.csv", izlaz)
+    return izlaz
+
+
+def _dan(izlaz, serija, d):
+    j = json.loads((izlaz / "dnevno" / f"{serija}.json").read_text())
+    i = (d - date.fromisoformat(j["od"])).days
+    return j["v"][i], j["h"][i], dict(j["r"]).get(i)
+
+
+def test_kompletan_dan_i_nan_nije_nula(sinteticki):
+    assert _dan(sinteticki, "20a", date(2025, 10, 26)) == (50, 25, None)          # 25 sati × 2
+    assert _dan(sinteticki, "20a", date(2025, 10, 25)) == (46, 24, None)          # validna nula ulazi u zbir
+    v, h, r = _dan(sinteticki, "20a", date(2025, 10, 27))
+    assert v is None and h == 23 and r == pi.KOD["status_prazan"]
+    s = json.loads((sinteticki / "sati" / "2025-10.json").read_text())
+    dan = {d: (i, n) for d, i, n in s["dani"]}
+    i, n = dan["2025-10-27"]
+    sati = s["v"]["20a"][i:i + n]
+    assert n == 24 and sati.count(None) == 1 and 0 not in sati                    # NaN ostaje null
+    i25, n25 = dan["2025-10-25"]
+    assert s["v"]["20a"][i25:i25 + n25].count(0) == 1                            # prava nula ostaje 0
+    assert dan["2025-10-26"][1] == 25 and len(s["v"]["20a"]) == s["n"] == 745
+    rle = {(a, b): c for a, b, c in s["r"]["20a"]}
+    assert rle[(i + 11, 1)] == pi.KOD["status_prazan"]                           # 27.10. 11–12 h lokalno
+    assert set(rle.values()) == {pi.KOD["status_prazan"], pi.KOD["nije_postavljen"]}
+
+
+def test_28_posle_18_aprila_neispravan_i_van_gradskog_zbira(sinteticki):
+    assert _dan(sinteticki, "28", date(2026, 4, 17))[0] == 72
+    v, h, r = _dan(sinteticki, "28", date(2026, 4, 18))
+    assert v is None and h == 0 and r == pi.KOD["neispravan_brojac"]
+    g = json.loads((sinteticki / "grad_dnevno.json").read_text())
+    i17 = (date(2026, 4, 17) - date.fromisoformat(g["od"])).days
+    assert (g["v"][i17], g["n"][i17]) == (72 + 24, 2)
+    assert (g["v"][i17 + 1], g["n"][i17 + 1]) == (24, 1)                         # samo 15a
+    st = {s["serija"]: s for s in json.loads((sinteticki / "stanice.json").read_text())["serije"]}
+    assert st["28"]["napomena"] == "brojač neispravan od 04/2026" and st["28"]["do"] == "2026-04-17"
+    assert st["15a"]["naziv"] == "Vojvodjanska" and st["20a"]["smerovi"] == ["A-B"]
+
+
+def test_meseci_bez_serije_i_razmak_parova():
+    st = pd.DataFrame({"serija": ["1a", "1b"], "mesto": [1, 1], "lat": [45.25, 45.25], "lon": [19.8, 19.8]})
+    r = pi.razmakni_parove(st, 90)
+    m_lon = 111_320 * np.cos(np.radians(45.25))
+    assert abs((r["lon_mapa"].iloc[1] - r["lon_mapa"].iloc[0]) * m_lon - 90) < 0.5
+    assert r["lat"].tolist() == [45.25, 45.25]                                   # prave koordinate ostaju
+
+
+ISTORIJA = KOREN / "istorija" / "master_v4_E3.parquet"
+JSON = KOREN / "docs" / "data" / "istorija"
+
+
+@pytest.mark.skipif(not ISTORIJA.exists() or not (JSON / "stanice.json").exists(),
+                    reason="nema istorija/ (gh release download istorija-v1) ili generisanog docs/data/istorija")
+@pytest.mark.parametrize("serija, mesec", [("15a", "2024-03"), ("34a", "2025-10"), ("28", "2026-04"),
+                                           ("49a", "2023-11"), ("40b", "2022-07")])
+def test_zbir_json_jednak_zbiru_mastera(serija, mesec):
+    m = pi.ucitaj_master(ISTORIJA)
+    m = m[m["stanica_id"] == serija]
+    lok_mesec = pd.to_datetime(m["datum"]).dt.strftime("%Y-%m")
+    ocekivano = m.loc[lok_mesec == mesec, "y_A"].sum()
+    s = json.loads((JSON / "sati" / f"{mesec}.json").read_text())
+    assert sum(x for x in s["v"][serija] if x is not None) == pytest.approx(ocekivano)
+    # dnevni zbirovi = zbir satnih vrednosti istog lokalnog dana (samo kompletni dani)
+    d = json.loads((JSON / "dnevno" / f"{serija}.json").read_text())
+    od = date.fromisoformat(d["od"])
+    for dan, i, n in s["dani"]:
+        k = (date.fromisoformat(dan) - od).days
+        sati = s["v"][serija][i:i + n]
+        if 0 <= k < len(d["v"]) and d["v"][k] is not None:
+            assert None not in sati and d["v"][k] == sum(sati)
+        elif 0 <= k < len(d["v"]):
+            assert d["h"][k] == n - sati.count(None)
