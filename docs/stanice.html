@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="sr-Latn" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stanice · Biciklisti Novog Sada</title>
+  <meta name="description" content="Tabela svih 46 brojača biciklista u Novom Sadu: stanje, prosek, kompletnost podataka, period rada.">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <link rel="icon" href="assets/slike/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/stil.css">
+</head>
+<body data-strana="stanice" data-putanja="Podaci|Stanice">
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Podaci · tabela</span>
+        <h1>Stanice</h1>
+        <p class="uvod">Svih 46 serija brojača na 27 mesta. Pretraga po stanici ili ulici, filter po stanju, sortiranje klikom
+          na naslov kolone. Stanje se odnosi na <b id="period">poslednjih 30 dana istorije</b>.</p>
+      </div>
+      <div class="akcije">
+        <button class="dugme" type="button" id="izvoz"><svg class="ik" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>Preuzmi CSV</button>
+        <a class="dugme primarno" href="mapa.html"><svg class="ik" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>Na mapi</a>
+      </div>
+    </header>
+
+    <section class="kartica pojava">
+      <div class="alat-tabele">
+        <div class="pretraga"><svg class="ik" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="pretraga" placeholder="Pretraži po stanici, ulici ili smeru…" aria-label="Pretraga"></div>
+        <div class="kontrole">
+          <div id="filter"></div>
+          <select id="po-strani" aria-label="Redova po strani"><option>10</option><option selected>25</option><option>50</option></select>
+        </div>
+      </div>
+      <div class="tabela-omot"><table class="tabela" id="tabela"></table></div>
+      <div class="stranicenje" id="stranicenje"></div>
+    </section>
+  </main>
+
+  <script src="assets/zajednicko.js"></script>
+  <script src="assets/ljuska.js"></script>
+  <script src="assets/stanice.js"></script>
+</body>
+</html>
