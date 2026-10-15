@@ -474,3 +474,13 @@ footer.podnozje { color: var(--t-light); font-size: 12px; padding: 8px 28px 32px
 @media (max-width: 1180px) { .mapa-raspored aside .spisak { height: 320px; } }
 
 .leaflet-popup.bez-vrha .leaflet-popup-tip-container { display: none; }
+
+/* padajući izbor stanica (Dani u nedelji) */
+.panel.izbor-stanica { left: 0; right: auto; width: 320px; max-width: calc(100vw - 32px); }
+.panel.izbor-stanica input[type="search"] { width: 100%; margin-bottom: 6px; }
+.spisak-izbora { max-height: 280px; overflow-y: auto; border-top: 1px solid var(--border-soft); margin-top: 4px; padding-top: 4px; }
+.red-izbora { display: flex; align-items: center; gap: 8px; padding: 6px 6px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+.red-izbora:hover { background: var(--bg-hover); }
+.red-izbora input { accent-color: var(--primary); width: 16px; height: 16px; flex: none; }
+.red-izbora img { width: 22px; height: 22px; flex: none; }
+#dani-dugme { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

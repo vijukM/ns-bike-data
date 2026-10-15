@@ -152,7 +152,7 @@ const MAPA = (() => {
     const rPo = Object.fromEntries(s.serije.map((r) => [r.serija, r]));
     for (const r of s.serije) {
       const p = L.marker(polozaj(r), { icon: ikona(r.serija, r.stanje), riseOnHover: true, keyboard: true, title: `${r.serija} ${r.naziv}` }).addTo(m);
-      p.on("click", () => fokus(r.serija, { leti: false }));
+      p.on("click", () => fokus(r.serija, { leti: true }));
       p.on("mouseover", () => naHover(r.serija));
       p.on("mouseout", () => {
         if (r.serija === izabrana) return;
@@ -201,10 +201,17 @@ const MAPA = (() => {
       const pt = m.latLngToContainerPoint(p.getLatLng());
       const vel = m.getSize();
       const w = el.offsetWidth, h = el.offsetHeight;
-      const dx = pt.x < vel.x / 2 ? w / 2 + 14 : -(w / 2 + 14);
-      const dy = pt.y < vel.y / 2 ? h + 34 + 12 : -4;
-      pop.options.offset = L.point(dx, dy);
-      el.classList.add("bez-vrha");
+      // prvo: iznad pina (kao ranije), ako cela kartica staje u mapu
+      const iznad = pt.y - 34 - h - 12 >= 0 && pt.x - w / 2 >= 4 && pt.x + w / 2 <= vel.x - 4;
+      if (iznad) {
+        pop.options.offset = L.point(0, -2);
+        el.classList.remove("bez-vrha");
+      } else {                                   // inače ukoso, na suprotnu stranu od pina
+        const dx = pt.x < vel.x / 2 ? w / 2 + 14 : -(w / 2 + 14);
+        const dy = pt.y < vel.y / 2 ? h + 34 + 12 : -4;
+        pop.options.offset = L.point(dx, dy);
+        el.classList.add("bez-vrha");
+      }
       pop.update();
     }
     function skoci(serija) {
