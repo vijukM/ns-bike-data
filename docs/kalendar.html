@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="sr-Latn" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kalendar · Biciklisti Novog Sada</title>
+  <meta name="description" content="Kalendar biciklista u Novom Sadu: svaki dan od 2021. do 2026. kao jedno polje — za ceo grad ili za jednu stanicu, sa detaljima izabranog dana.">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <link rel="icon" href="assets/slike/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/stil.css?v=202610151430">
+</head>
+<body data-strana="kalendar" data-putanja="Podaci|Kalendar">
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Podaci · kalendar · 2021–2026</span>
+        <h1>Kalendar <em>biciklista</em></h1>
+        <p class="uvod">Svaki dan od 1. 1. 2021. do 31. 8. 2026. kao jedno polje — što svetlije, to više biciklista. Za ceo grad ili za
+          jednu stanicu. Klik na dan otvara detalje ispod.</p>
+      </div>
+    </header>
+
+    <section class="kpi-mreza" id="kpi"></section>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava">
+        <div><span class="eyebrow">Svaki dan</span><h2>Kalendar po godinama<span id="kal-info"></span></h2></div>
+        <div class="kontrole kal-kontrole">
+          <div class="grupa-kontrola"><span class="eyebrow">Brojač</span><select id="izbor" aria-label="Grad ili stanica"></select></div>
+          <div class="grupa-kontrola"><span class="eyebrow">Boja polja</span><div id="mera"></div></div>
+        </div>
+      </div>
+      <div class="grafik" id="kalendar" style="height:930px"></div>
+      <div class="legenda kal-legenda" id="kal-legenda"></div>
+    </section>
+
+    <section class="kartica pojava" id="izabrani-dan">
+      <div class="kartica-glava">
+        <div><span class="eyebrow">Izabrani dan</span><h2 id="dan-naslov">Dan</h2><p class="opis" id="dan-opis"></p></div>
+        <div class="kontrole">
+          <button class="dugme malo" type="button" id="dan-pre" aria-label="Prethodni dan">‹</button>
+          <input type="date" id="dan-datum" min="2021-01-01" max="2026-08-31" aria-label="Datum">
+          <button class="dugme malo" type="button" id="dan-posle" aria-label="Sledeći dan">›</button>
+        </div>
+      </div>
+      <div class="dan-detalji">
+        <div>
+          <dl class="cinjenice" id="dan-cinjenice"></dl>
+          <div class="kontrole" style="margin-top:14px" id="dan-linkovi"></div>
+        </div>
+        <div><div class="grafik" id="dan-grafik" style="height:300px"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
+          integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
+  <script src="assets/zajednicko.js?v=202610151430"></script>
+  <script src="assets/ljuska.js?v=202610151430"></script>
+  <script src="assets/kalendar.js?v=202610151430"></script>
+</body>
+</html>

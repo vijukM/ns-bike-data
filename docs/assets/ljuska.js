@@ -40,22 +40,51 @@ const LJ = (() => {
     thermo: '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
     collapse: '<path d="m11 17-5-5 5-5M18 17l-5-5 5-5"/>',
+    flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    compare: '<path d="M16 3h5v5M8 21H3v-5M21 3l-7 7M3 21l7-7"/>',
+    star: '<path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>',
+    pulse: '<path d="M3 12h4l3 8 4-16 3 8h4"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    cpu: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   };
   const ik = (ime, klasa = "") => `<svg class="ik ${klasa}" viewBox="0 0 24 24" aria-hidden="true">${IK[ime] || ""}</svg>`;
+  /** Mala „i“ ikonica: objašnjenje se vidi na prelaz mišem ili fokus. */
+  const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>`;
 
+  // uskoro: strana je u izradi — u meniju dobija oznaku USKORO, a strana prikazuje skicu kako će izgledati
   const MENI = [
-    { grupa: "Pregled", stavke: [{ id: "kontrolna", t: "Kontrolna tabla", href: "index.html", ik: "home" }] },
+    { grupa: "Pregled", stavke: [
+      { id: "kontrolna", t: "Kontrolna tabla", href: "index.html", ik: "home" },
+      { id: "danas", t: "Danas uživo", href: "danas.html", ik: "activity", uskoro: true }] },
     { grupa: "Mapa", stavke: [
       { id: "mapa", t: "Mapa brojača", href: "mapa.html", ik: "map" },
-      { id: "dan", t: "Dan na mapi", href: "mapa.html?rezim=dan", ik: "clock" }] },
+      { id: "dan", t: "Dan na mapi", href: "mapa.html?rezim=dan", ik: "clock" },
+      { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna.html", ik: "flame", uskoro: true },
+      { id: "staze", t: "Biciklističke staze", href: "staze.html", ik: "route", uskoro: true }] },
     { grupa: "Podaci", stavke: [
-      { id: "grafici", t: "Grafici", href: "grafici.html", ik: "chart", oznaka: "NOVO" },
+      { id: "grafici", t: "Grafici", href: "grafici.html", ik: "chart" },
       { id: "stanice", t: "Stanice", href: "stanice.html", ik: "table", oznaka: "46", klasa: "plava" },
-      { id: "godine", t: "Poređenje godina", href: "grafici.html#godine", ik: "bars" }] },
-    { grupa: "Prognoza", stavke: [{ id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", oznaka: "USKORO", klasa: "siva" }] },
+      { id: "poredjenje", t: "Poređenje stanica", href: "poredjenje.html", ik: "compare", uskoro: true },
+      { id: "godine", t: "Poređenje godina", href: "grafici.html#godine", ik: "bars" },
+      { id: "kalendar", t: "Kalendar", href: "kalendar.html", ik: "calendar", oznaka: "NOVO" },
+      { id: "rekordi", t: "Rekordi i zanimljivosti", href: "rekordi.html", ik: "trophy", uskoro: true }] },
+    { grupa: "Analize", stavke: [
+      { id: "vreme", t: "Vreme i biciklisti", href: "vreme.html", ik: "rain", uskoro: true },
+      { id: "praznici", t: "Praznici i događaji", href: "praznici.html", ik: "star", uskoro: true },
+      { id: "ritam", t: "Ritam grada", href: "ritam.html", ik: "pulse", uskoro: true },
+      { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet.html", ik: "shield", uskoro: true }] },
+    { grupa: "Prognoza", stavke: [
+      { id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", uskoro: true },
+      { id: "tacnost", t: "Tačnost prognoze", href: "tacnost.html", ik: "target", uskoro: true },
+      { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", uskoro: true }] },
     { grupa: "Projekat", stavke: [
-      { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" }] },
+      { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" },
+      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", uskoro: true },
+      { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", uskoro: true }] },
   ];
+  for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
 
   // ---------------------------------------------------------------- tema
   const tema = () => (document.documentElement.dataset.theme === "light" ? "light" : "dark");
@@ -126,7 +155,7 @@ const LJ = (() => {
     if (paleta) return;
     const s = await NS.stanice().catch(() => ({ serije: [] }));
     const stavke = [
-      ...MENI.flatMap((g) => g.stavke.map((x) => ({ grupa: "Strane", t: x.t, opis: g.grupa, href: x.href, ik: x.ik }))),
+      ...MENI.flatMap((g) => g.stavke.map((x) => ({ grupa: "Strane", t: x.t, opis: g.grupa + (x.uskoro ? " · uskoro" : ""), href: x.href, ik: x.ik }))),
       ...s.serije.map((r) => ({ grupa: "Stanice", t: `${r.serija} · ${r.naziv}`, opis: r.smerovi.join(" · "),
         href: `stanica.html?id=${encodeURIComponent(r.serija)}`, pin: r.stanje })),
     ];
@@ -273,5 +302,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { ik, IK, tema, postaviTemu, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { MENI, ik, IK, info, tema, postaviTemu, tost, kadVidljivo, pojave, brojanje, prsten };
 })();
