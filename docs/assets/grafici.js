@@ -384,7 +384,7 @@ async function temperatura(g, a) {
   NS.prekidac(document.getElementById("temp-dani"), [["radni", "Radni dan"], ["vikend", "Vikend"], ["svi", "Svaki dan"]], dani, (v) => {
     dani = v;
     document.getElementById("temp-vikend").classList.toggle("skriveno", v !== "vikend");
-    poravnajVikend();
+    requestAnimationFrame(poravnajVikend);
     osvezi();
   });
   // Sub / Ned (spojeni, oba uključena; bar jedan ostaje)
@@ -393,8 +393,11 @@ async function temperatura(g, a) {
   function poravnajVikend() {                       // tačno ispod dugmeta „Vikend“, iste širine
     const v = document.querySelector('#temp-dani button[data-v="vikend"]');
     if (!v) return;
-    vikEl.style.marginLeft = `${v.offsetLeft - 4}px`;
+    // tačno iznad dugmeta „Vikend“ (apsolutno, da se ostatak ne pomera)
+    const seg = document.getElementById("temp-dani");
+    vikEl.style.left = `${seg.offsetLeft + v.offsetLeft - 4}px`;
     vikEl.style.width = `${v.offsetWidth + 8}px`;
+    vikEl.style.top = `${seg.offsetTop - vikEl.offsetHeight + 4}px`;
   }
   window.addEventListener("resize", poravnajVikend);
   vikEl.innerHTML = [[6, "Sub"], [0, "Ned"]].map(([w, t]) => `<button type="button" data-w="${w}" aria-pressed="true">${t}</button>`).join("");
