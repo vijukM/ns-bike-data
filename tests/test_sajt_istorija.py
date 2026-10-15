@@ -205,3 +205,26 @@ def test_najduzi_niz_i_rekordi_ritam(sinteticki):
     t = json.loads((sinteticki / "ritam.json").read_text())
     assert len(t["toplotna_mapa"]) == 7 and all(len(x) == 24 for x in t["toplotna_mapa"])
     assert len(t["po_mesecu"]) == 12 and abs(sum(t["udeo_po_satu"]) - 100) < 0.5
+
+
+def test_osnova_mape_prstenovi_visine_klase():
+    from sajt import osnova_mape as om
+    a, b, c, d = [0, 0], [1, 0], [1, 1], [0, 1]
+    # tri dela jednog prstena, jedan obrnut
+    assert om.spoji_prstenove([[a, b], [c, b], [c, d, a]]) == [[a, b, c, d, a]]
+    assert om.spoji_prstenove([[a, b, c]]) == []                                   # otvoren ostatak se odbacuje
+    g = lambda pts: [{"lon": x, "lat": y} for x, y in pts]
+    rel = {"type": "relation", "members": [
+        {"type": "way", "role": "outer", "geometry": g([(0, 0), (4, 0), (4, 4)])},
+        {"type": "way", "role": "outer", "geometry": g([(4, 4), (0, 4), (0, 0)])},
+        {"type": "way", "role": "inner", "geometry": g([(1, 1), (2, 1), (2, 2), (1, 1)])}]}
+    p = om.poligoni(rel)
+    assert len(p) == 1 and len(p[0]) == 2                                          # spoljni + rupa
+    assert om.visina({"height": "12,5 m"}) == 12 and om.visina({"building:levels": "4"}) == 13
+    assert om.visina({"building": "house"}) == 6 and om.visina({"building": "yes"}) == 7
+    s = om.napravi({"putevi": {"elements": [
+        {"type": "way", "tags": {"highway": "primary"}, "geometry": g([(19.8, 45.25), (19.81, 45.25)])},
+        {"type": "way", "tags": {"highway": "footway"}, "geometry": g([(19.8, 45.25), (19.81, 45.26)])}]},
+        "pruga": {"elements": []}, "voda": {"elements": []}, "zelenilo": {"elements": []}, "zgrade": {"elements": []}})
+    assert [f["properties"]["k"] for f in s["putevi"]["features"]] == ["g"]
+    assert "relation" in om.upiti()["voda"] and "building" in om.upiti()["zgrade"]
