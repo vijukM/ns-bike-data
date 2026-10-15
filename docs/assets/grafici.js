@@ -221,64 +221,157 @@ function polinom(xs, ys, k = 3) {
   return { f, mse };
 }
 
-function temperatura(g, a) {
-  let dani = "radni", vreme = "svi";
+// ---------------------------------------------------------------- izbor stanica (padajući meni sa štiklama)
+const BOJE_STANICA = { light: ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"],
+  dark: ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#2fa52f"] };
+const bojeStanica = () => BOJE_STANICA[NS.tamna() ? "dark" : "light"];
+
+/** Dugme „Svi brojači (prosek) ▾“ + panel sa pretragom i štiklama; promena(izabrane[]) */
+function izborStanica(omot, s, promena, maks = 6) {
+  let izabrane = [];
+  omot.innerHTML = `<button type="button" class="dugme malo izbor-dugme" aria-haspopup="true"></button>`;
+  const dugme = omot.querySelector("button");
+  const natpis = () => { dugme.textContent = `${izabrane.length ? `${izabrane.length === 1 ? "Stanica" : "Stanice"}: ${izabrane.join(", ")}` : "Svi brojači (prosek)"} ▾`; };
+  natpis();
+  const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
+  dugme.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const stari = omot.querySelector(".panel");
+    if (stari) { stari.remove(); return; }
+    const p = document.createElement("div");
+    p.className = "panel izbor-stanica";
+    p.innerHTML = `<input type="search" placeholder="Pretraži stanice…" aria-label="Pretraga stanica">
+      <label class="red-izbora"><input type="checkbox" data-s="" ${izabrane.length ? "" : "checked"}><b>Svi brojači (prosek po brojaču)</b></label>
+      <div class="spisak-izbora">${s.serije.map((r) => `<label class="red-izbora" data-t="${bez(`${r.serija} ${r.naziv}`)}">
+        <input type="checkbox" data-s="${r.serija}" ${izabrane.includes(r.serija) ? "checked" : ""}><img src="${NS.pin(r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}</span></label>`).join("")}</div>
+      <p class="sitno" style="margin:6px 4px 2px">najviše ${maks} stanica odjednom</p>`;
+    omot.appendChild(p);
+    p.querySelector("input[type=search]").addEventListener("input", (ev) => {
+      const q = bez(ev.target.value);
+      p.querySelectorAll(".spisak-izbora .red-izbora").forEach((l) => { l.style.display = !q || l.dataset.t.includes(q) ? "" : "none"; });
+    });
+    p.addEventListener("change", (ev) => {
+      const k = ev.target.dataset.s;
+      if (k === undefined) return;
+      if (k === "") izabrane = [];
+      else if (ev.target.checked) { if (izabrane.length >= maks) { ev.target.checked = false; LJ.tost(`Najviše ${maks} stanica odjednom.`, "info"); return; } izabrane.push(k); }
+      else izabrane = izabrane.filter((x) => x !== k);
+      p.querySelector('input[data-s=""]').checked = !izabrane.length;
+      p.querySelectorAll(".spisak-izbora input").forEach((x) => { x.checked = izabrane.includes(x.dataset.s); });
+      natpis(); promena(izabrane.slice());
+    });
+  });
+}
+const dnevnoKes = {};
+const dnevnoStanice = (serija) => (dnevnoKes[serija] = dnevnoKes[serija] || NS.json(`dnevno/${serija}.json`));
+
+// ---------------------------------------------------------------- uticaj temperature (po danu)
+async function temperatura(g, a) {
+  const s = await NS.stanice();
+  let dani = "radni", vreme = "svi", krivaUkljucena = true, vikend = new Set([6, 0]), izabrane = [];
   const NAZIV_DANA = { radni: "radnim danom", vikend: "vikendom", svi: "svakog dana" };
   const NAZIV_VREMENA = { svi: "", suvo: " (suvi dani)", kisa: " (kišni dani, ≥ 1 mm)" };
-  const tacke = [];
-  a.po.forEach((x, i) => {
-    if (x == null || g.tsr[i] == null) return;
-    const d = NS.dodajDane(g.od, i);
-    const neradni = a.praznik.has(i) || NS.danUNedelji(d) % 6 === 0;
-    tacke.push({ t: g.tsr[i], v: Math.round(x), d, pad: g.pad[i] ?? 0, neradni });
-  });
+  const praznik = new Set(g.praznik);
+  const idx = (d) => NS.razlikaDana(g.od, d);
+  // dan prolazi filter: radni = pon–pet bez praznika; vikend = izabrani dani (sub/ned) bez praznika; svi = svi dani
+  const prolazi = (d, i, pad) => {
+    const w = NS.danUNedelji(d);
+    const okDan = dani === "svi" || (!praznik.has(i) && (dani === "radni" ? w >= 1 && w <= 5 : vikend.has(w)));
+    return okDan && (vreme === "svi" || (vreme === "kisa") === (pad >= 1));
+  };
+  async function tackeSerije() {
+    if (!izabrane.length) {
+      const t = [];
+      a.po.forEach((x, i) => { if (x == null || g.tsr[i] == null) return; const d = NS.dodajDane(g.od, i);
+        if (prolazi(d, i, g.pad[i] ?? 0)) t.push([g.tsr[i], Math.round(x), d, g.pad[i] ?? 0]); });
+      return [{ ime: "svi brojači (prosek po brojaču)", t }];
+    }
+    return Promise.all(izabrane.map(async (k) => {
+      const dd = await dnevnoStanice(k);
+      const t = [];
+      dd.v.forEach((v, j) => { if (v == null) return; const d = NS.dodajDane(dd.od, j); const i = idx(d);
+        if (i < 0 || i >= g.tsr.length || g.tsr[i] == null) return;
+        if (prolazi(d, i, g.pad[i] ?? 0)) t.push([g.tsr[i], v, d, g.pad[i] ?? 0]); });
+      return { ime: k, t };
+    }));
+  }
+  let skupovi = [];
   const graf = NS.grafik(document.getElementById("temp-grafik"), (b) => {
-    const izbor = tacke.filter((p) => (dani === "svi" || (dani === "vikend") === p.neradni)
-      && (vreme === "svi" || (vreme === "kisa") === (p.pad >= 1)));
-    const fit = polinom(izbor.map((p) => p.t), izbor.map((p) => p.v), 3);
-    const tMin = Math.min(...izbor.map((p) => p.t)), tMax = Math.max(...izbor.map((p) => p.t));
-    const kriva = fit ? Array.from({ length: 81 }, (_, i) => { const x = tMin + (tMax - tMin) * i / 80; return [Math.round(x * 10) / 10, Math.max(0, Math.round(fit.f(x)))]; }) : [];
-    document.getElementById("temp-naslov").textContent = `Uticaj temperature ${NAZIV_DANA[dani]} na broj biciklista${NAZIV_VREMENA[vreme]}`;
-    document.getElementById("temp-napomena").textContent = `${NS.broj(izbor.length)} dana · tačka = dan, prosek po brojaču · ` +
-      (fit ? `kriva 3. stepena sa najmanjom srednjom kvadratnom greškom (RMSE ${NS.broj(Math.round(Math.sqrt(fit.mse)))} biciklista)` : "premalo dana za krivu") +
-      (dani !== "radni" ? " · vikend = subota, nedelja i praznici" : "");
-    const tacka = (p) => [p.t, p.v, p.d, p.pad];
-    const serije = vreme === "svi"
-      ? [{ name: "suv dan", type: "scatter", data: izbor.filter((p) => p.pad < 1).map(tacka), symbolSize: 5, itemStyle: { color: b.bicikl, opacity: 0.5 } },
-        { name: "kišni dan (≥ 1 mm)", type: "scatter", data: izbor.filter((p) => p.pad >= 1).map(tacka), symbolSize: 6, itemStyle: { color: b.kisa, opacity: 0.85 } }]
-      : [{ name: vreme === "kisa" ? "kišni dan (≥ 1 mm)" : "suv dan", type: "scatter", data: izbor.map(tacka), symbolSize: 6,
-        itemStyle: { color: vreme === "kisa" ? b.kisa : b.bicikl, opacity: 0.6 } }];
-    serije.forEach((x) => { x.animationDuration = 500; });
-    serije.push({ name: "kriva (3. stepen, najmanji MSE)", type: "line", data: kriva, showSymbol: false, smooth: false, z: 5,
-      lineStyle: { width: 3, color: b.temp }, itemStyle: { color: b.temp }, animationDuration: 1500, animationEasing: "cubicInOut", animationDelay: 300 });
+    const boje = bojeStanica();
+    const jedan = !izabrane.length;
+    const serije = [];
+    skupovi.forEach((sk, j) => {
+      if (jedan) {
+        serije.push({ name: "suv dan", type: "scatter", data: sk.t.filter((p) => p[3] < 1), symbolSize: 5, itemStyle: { color: b.bicikl, opacity: 0.5 }, animationDuration: 500 });
+        serije.push({ name: "kišni dan (≥ 1 mm)", type: "scatter", data: sk.t.filter((p) => p[3] >= 1), symbolSize: 6, itemStyle: { color: b.kisa, opacity: 0.85 }, animationDuration: 500 });
+      } else {
+        serije.push({ name: sk.ime, type: "scatter", data: sk.t, symbolSize: 4, itemStyle: { color: boje[j], opacity: 0.45 }, animationDuration: 500 });
+      }
+      if (krivaUkljucena) {
+        const fit = polinom(sk.t.map((p) => p[0]), sk.t.map((p) => p[1]), 3);
+        if (fit) {
+          const xs = sk.t.map((p) => p[0]); const lo = Math.min(...xs), hi = Math.max(...xs);
+          serije.push({ name: jedan ? "kriva (3. stepen, najmanji MSE)" : `${sk.ime} · kriva`, type: "line", showSymbol: false, z: 5,
+            data: Array.from({ length: 81 }, (_, i) => { const x = lo + (hi - lo) * i / 80; return [Math.round(x * 10) / 10, Math.max(0, Math.round(fit.f(x)))]; }),
+            lineStyle: { width: 3, color: jedan ? b.temp : boje[j] }, itemStyle: { color: jedan ? b.temp : boje[j] },
+            animationDuration: 3500, animationEasing: "linear", animationDelay: 400 });
+        }
+      }
+    });
     return {
       ...NS.osnova(b),
-      legend: { bottom: 0, textStyle: { color: b["ink-2"] }, itemWidth: 14, itemHeight: 10, itemStyle: { opacity: 1 } },
+      legend: { bottom: 0, textStyle: { color: b["ink-2"] }, itemWidth: 14, itemHeight: 10, itemStyle: { opacity: 1 },
+        data: serije.filter((x) => jedan || x.type === "scatter").map((x) => x.name) },
       grid: { left: 58, right: 16, top: 30, bottom: 60 },
       xAxis: { type: "value", name: "°C (prosek dana)", nameLocation: "middle", nameGap: 26, ...NS.osaY(b, { splitLine: { show: false }, axisLabel: { color: b["ink-3"] } }) },
-      yAxis: { type: "value", name: "biciklista po brojaču", min: 0, ...NS.osaY(b) },
+      yAxis: { type: "value", name: jedan ? "biciklista po brojaču, dnevno" : "biciklista dnevno (stanica)", min: 0, ...NS.osaY(b) },
       tooltip: { trigger: "item", backgroundColor: b.povrsina, borderColor: b.osa, textStyle: { color: b.ink },
-        formatter: (q) => (q.seriesType === "line" ? `kriva: ${NS.dec(q.value[0])} °C → <b>${NS.broj(q.value[1])}</b> po brojaču`
-          : `<b>${NS.datumDug(q.value[2])}</b><br>${NS.dec(q.value[0])} °C · ${NS.dec(q.value[3])} mm<br>${NS.broj(q.value[1])} po brojaču`) },
+        formatter: (q) => (q.seriesType === "line" ? `${q.seriesName}: ${NS.dec(q.value[0])} °C → <b>${NS.broj(q.value[1])}</b>`
+          : `<b>${NS.datumDug(q.value[2])}</b>${jedan ? "" : ` · ${q.seriesName}`}<br>${NS.dec(q.value[0])} °C · ${NS.dec(q.value[3])} mm<br>${NS.broj(q.value[1])} ${jedan ? "po brojaču" : "biciklista"}`) },
       series: serije,
     };
   });
-  NS.prekidac(document.getElementById("temp-dani"), [["radni", "Radni dan"], ["vikend", "Vikend"], ["svi", "Svaki dan"]], dani, (v) => { dani = v; graf.osvezi(); });
-  NS.prekidac(document.getElementById("temp-vreme"), [["svi", "Svi"], ["suvo", "Suvo"], ["kisa", "Kiša"]], vreme, (v) => { vreme = v; graf.osvezi(); });
+  async function osvezi() {
+    skupovi = await tackeSerije();
+    const vik = dani === "vikend" && vikend.size === 1 ? (vikend.has(6) ? " (subotom)" : " (nedeljom)") : "";
+    document.getElementById("temp-naslov").textContent = `Uticaj temperature ${NAZIV_DANA[dani]}${vik} na broj biciklista${NAZIV_VREMENA[vreme]}`;
+    graf.osvezi();
+  }
+  NS.prekidac(document.getElementById("temp-dani"), [["radni", "Radni dan"], ["vikend", "Vikend"], ["svi", "Svaki dan"]], dani, (v) => {
+    dani = v;
+    document.getElementById("temp-vikend").classList.toggle("skriveno", v !== "vikend");
+    osvezi();
+  });
+  // Sub / Ned (spojeni, oba uključena; bar jedan ostaje)
+  const vikEl = document.getElementById("temp-vikend");
+  vikEl.className = "segment skriveno";
+  vikEl.style.marginTop = "6px";
+  vikEl.innerHTML = [[6, "Sub"], [0, "Ned"]].map(([w, t]) => `<button type="button" data-w="${w}" aria-pressed="true">${t}</button>`).join("");
+  vikEl.addEventListener("click", (e) => {
+    const d = e.target.closest("button"); if (!d) return;
+    const w = +d.dataset.w;
+    if (vikend.has(w) && vikend.size === 1) return;
+    if (vikend.has(w)) vikend.delete(w); else vikend.add(w);
+    d.setAttribute("aria-pressed", String(vikend.has(w)));
+    osvezi();
+  });
+  NS.prekidac(document.getElementById("temp-vreme"), [["svi", "Svi"], ["suvo", "Suvo"], ["kisa", "Kiša"]], vreme, (v) => { vreme = v; osvezi(); });
+  const kEl = document.getElementById("temp-kriva");
+  kEl.innerHTML = `<label class="prekidac-ui"><input type="checkbox" checked><span class="klizac" aria-hidden="true"></span><span>prikaži</span></label>`;
+  kEl.querySelector("input").addEventListener("change", (e) => { krivaUkljucena = e.target.checked; graf.osvezi(); });
+  izborStanica(document.getElementById("temp-izbor"), s, (iz) => { izabrane = iz; osvezi(); });
+  osvezi();
 }
 
-/** Dani u nedelji: svi brojači (prosek po brojaču) ili izabrane stanice (štiklira se u padajućem meniju, do 6). */
+/** Dani u nedelji: svi brojači (prosek po brojaču) ili izabrane stanice (do 6). */
 async function daniUNedelji(a, g) {
   const s = await NS.stanice();
-  const MAKS = 6;
-  const BOJE = { light: ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"],
-    dark: ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#2fa52f"] };
   const praznik = new Set(g.praznik.map((i) => NS.dodajDane(g.od, i)));
-  let izabrane = [];                                          // prazno = svi brojači (prosek po brojaču)
+  let izabrane = [];
   const kes = {};
   async function poDanima(serija) {
     if (kes[serija]) return kes[serija];
-    const d = await NS.json(`dnevno/${serija}.json`);
+    const d = await dnevnoStanice(serija);
     const z = Array.from({ length: 7 }, () => [0, 0]);
     d.v.forEach((v, i) => {
       if (v == null) return;
@@ -289,48 +382,11 @@ async function daniUNedelji(a, g) {
     });
     return (kes[serija] = z.map(([x, n]) => (n ? x / n : null)));
   }
-
-  // padajući meni sa štiklama
-  const omot = document.getElementById("dani-izbor");
-  omot.innerHTML = `<button type="button" class="dugme malo" id="dani-dugme" aria-haspopup="true"></button>`;
-  const dugme = document.getElementById("dani-dugme");
-  const natpis = () => { dugme.innerHTML = `${izabrane.length ? `${izabrane.length} ${izabrane.length === 1 ? "stanica" : "stanice"}: ${izabrane.join(", ")}` : "Svi brojači (prosek)"} ▾`; };
-  natpis();
-  const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
-  function otvori() {
-    const p = document.createElement("div");
-    p.className = "panel izbor-stanica";
-    p.innerHTML = `<input type="search" placeholder="Pretraži stanice…" aria-label="Pretraga stanica">
-      <label class="red-izbora"><input type="checkbox" data-s="" ${izabrane.length ? "" : "checked"}><b>Svi brojači (prosek po brojaču)</b></label>
-      <div class="spisak-izbora">${s.serije.map((r) => `<label class="red-izbora" data-t="${bez(`${r.serija} ${r.naziv}`)}">
-        <input type="checkbox" data-s="${r.serija}" ${izabrane.includes(r.serija) ? "checked" : ""}><img src="${NS.pin(r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}</span></label>`).join("")}</div>
-      <p class="sitno" style="margin:6px 4px 2px">najviše ${MAKS} stanica odjednom</p>`;
-    omot.appendChild(p);
-    p.querySelector("input[type=search]").addEventListener("input", (e) => {
-      const q = bez(e.target.value);
-      p.querySelectorAll(".spisak-izbora .red-izbora").forEach((l) => { l.style.display = !q || l.dataset.t.includes(q) ? "" : "none"; });
-    });
-    p.addEventListener("change", (e) => {
-      const k = e.target.dataset.s;
-      if (k === "") izabrane = [];
-      else if (e.target.checked) { if (izabrane.length >= MAKS) { e.target.checked = false; LJ.tost(`Najviše ${MAKS} stanica odjednom.`, "info"); return; } izabrane.push(k); }
-      else izabrane = izabrane.filter((x) => x !== k);
-      p.querySelector('input[data-s=""]').checked = !izabrane.length;
-      p.querySelectorAll(".spisak-izbora input").forEach((x) => { x.checked = izabrane.includes(x.dataset.s); });
-      natpis(); crtaj();
-    });
-  }
-  dugme.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const p = omot.querySelector(".panel");
-    if (p) p.remove(); else otvori();
-  });
-
   let podaci = null;
   const graf = NS.grafik(document.getElementById("dani-grafik"), (b) => {
     if (!podaci) return {};
     const jedna = podaci.length === 1;
-    const boje = BOJE[NS.tamna() ? "dark" : "light"];
+    const boje = bojeStanica();
     return {
       ...NS.osnova(b),
       legend: jedna ? undefined : { bottom: 0, textStyle: { color: b["ink-2"] }, icon: "roundRect", itemWidth: 10, itemHeight: 10 },
@@ -353,14 +409,12 @@ async function daniUNedelji(a, g) {
     };
   });
   async function crtaj() {
-    podaci = izabrane.length
-      ? await Promise.all(izabrane.map(async (k) => ({ ime: k, v: await poDanima(k) })))
-      : [{ ime: "svi brojači", v: a.dani }];
+    podaci = izabrane.length ? await Promise.all(izabrane.map(async (k) => ({ ime: k, v: await poDanima(k) }))) : [{ ime: "svi brojači", v: a.dani }];
     document.getElementById("dani-opis").textContent = izabrane.length
-      ? "Prosečan dan na izabranim stanicama (kompletni dani), bez praznika."
-      : "Prosečan dan po brojaču (svi brojači), bez praznika.";
+      ? "Prosečan dan na izabranim stanicama (kompletni dani), bez praznika." : "Prosečan dan po brojaču (svi brojači), bez praznika.";
     graf.osvezi();
   }
+  izborStanica(document.getElementById("dani-izbor"), s, (iz) => { izabrane = iz; crtaj(); });
   crtaj();
 }
 

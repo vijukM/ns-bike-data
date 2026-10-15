@@ -484,3 +484,27 @@ footer.podnozje { color: var(--t-light); font-size: 12px; padding: 8px 28px 32px
 .red-izbora input { accent-color: var(--primary); width: 16px; height: 16px; flex: none; }
 .red-izbora img { width: 22px; height: 22px; flex: none; }
 #dani-dugme { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* prekidač (toggle) i izbor u desnom uglu kartice */
+.prekidac-ui { display: inline-flex; align-items: center; gap: 9px; height: 38px; cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--t-muted); user-select: none; }
+.prekidac-ui input { position: absolute; opacity: 0; width: 0; height: 0; }
+.prekidac-ui .klizac { width: 38px; height: 22px; border-radius: 999px; background: var(--bg-muted); border: 1px solid var(--border); position: relative; transition: background .2s; }
+.prekidac-ui .klizac::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--t-light); transition: transform .2s, background .2s; }
+.prekidac-ui input:checked + .klizac { background: var(--primary); border-color: var(--primary); }
+.prekidac-ui input:checked + .klizac::after { transform: translateX(16px); background: #fff; }
+.prekidac-ui input:focus-visible + .klizac { outline: 2px solid var(--primary-ring); outline-offset: 2px; }
+.kartica-glava > .grupa-kontrola { align-items: flex-end; }
+.kartica-glava .padajuce .panel.izbor-stanica { left: auto; right: 0; }
+.izbor-dugme { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; line-height: 30px; }
+/* šire strane, manji razmaci */
+.sadrzaj { max-width: 1680px; padding: 22px 22px 40px; gap: 16px; }
+.mreza-2, .mreza-3-2 { gap: 16px; }
+.kpi-mreza { gap: 14px; }
+.kartica { padding: 18px; }
+footer.podnozje { max-width: 1680px; padding: 8px 22px 28px; }
+@media (max-width: 640px) { .sadrzaj { padding: 16px 12px 32px; gap: 12px; } }
+.kartica-glava { flex-wrap: nowrap; }
+.kartica-glava > div:first-child { flex: 1 1 auto; min-width: 0; }
+.kartica-glava > .grupa-kontrola, .kartica-glava > .segment, .kartica-glava > a.vise, .kartica-glava > .kontrole { flex: none; }
+.grupa-kontrola { align-items: flex-start; }
+@media (max-width: 640px) { .kartica-glava { flex-wrap: wrap; } }
