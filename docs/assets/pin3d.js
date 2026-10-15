@@ -1,7 +1,8 @@
 /* 3D pin izabrane stanice (Three.js, učitava se tek kad zatreba): telo „kapi“ sa debljinom i zaobljenom tamnoplavom
    ivicom, lice nacrtano kao ikonica izabrane stanice (svetloplavo, prsten, žuti disk, bicikl) sa obe strane,
-   reljefni prsten oko diska i tri svetla. Rotira se oko svoje vertikalne ose; pokreće ga mapa kad se završi
-   „odskakivanje“ pina. Ako WebGL nije dostupan ili korisnik ne želi animacije, ostaje obična slika. */
+   reljefni prsten oko diska i tri svetla. Ikonica „izabrana“ na celom sajtu je snimak ovog modela (pripremi()),
+   pa su slika i 3D pin identični. Izabrani pin je živ 3D model (pokreni), koji odskoči pa se okreće oko svoje
+   vertikalne ose (rotiraj). Ako WebGL nije dostupan, ostaje obična slika; uz „manje animacija“ nema okretanja. */
 "use strict";
 
 const PIN3D = (() => {
@@ -11,7 +12,7 @@ const PIN3D = (() => {
   const OBRT = 3.2;                                  // sekundi za jedan krug
   const manjeKretanja = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  let ucitavanje = null, scena = null, telo = null, aktivan = false, rad = null, ugao = 0, t0 = 0, poslednji = 0, senka = null;
+  let ucitavanje = null, scena = null, telo = null, aktivan = false, rotira = false, rad = null, ugao = 0, t0 = 0, poslednji = 0, senka = null, priprema = null;
 
   function ucitajThree() {
     if (window.THREE) return Promise.resolve(true);
@@ -106,7 +107,7 @@ const PIN3D = (() => {
     renderer.toneMapping = T.NoToneMapping;           // boje ostaju kao na ikonici
     const sc = new T.Scene();
     const kamera = new T.PerspectiveCamera(22, 1, 0.1, 50);
-    kamera.position.set(0, 0, 6.17);
+    kamera.position.set(0, 0, 5.66);             // ceo pin staje u kvadrat kao na ikonici
     kamera.lookAt(0, 0, 0);
     sc.add(new T.HemisphereLight(0xffffff, 0x2a3b5c, 1.35));
     const kljuc = new T.DirectionalLight(0xffffff, 1.9); kljuc.position.set(2.5, 3, 4); sc.add(kljuc);
@@ -150,8 +151,10 @@ const PIN3D = (() => {
     if (!aktivan || !scena) return;
     const dt = Math.min(0.05, (t - (poslednji || t)) / 1000);
     poslednji = t;
-    const ubrzanje = Math.min(1, (t - t0) / 900);   // blag polazak
-    ugao += dt * (2 * Math.PI / OBRT) * (ubrzanje * ubrzanje * (3 - 2 * ubrzanje));
+    if (rotira) {
+      const ubrzanje = Math.min(1, (t - t0) / 900);   // blag polazak
+      ugao += dt * (2 * Math.PI / OBRT) * (ubrzanje * ubrzanje * (3 - 2 * ubrzanje));
+    }
     scena.pin.rotation.y = ugao;
     if (senka) senka.style.transform = `translateX(-50%) scaleX(${(0.45 + 0.55 * Math.abs(Math.cos(ugao))).toFixed(3)})`;
     scena.renderer.render(scena.sc, scena.kamera);
@@ -169,22 +172,40 @@ const PIN3D = (() => {
     velicina(el);
   }
 
-  /** Pokreće 3D pin u datom .telo elementu (posle odskakivanja). */
+  /** Učita Three.js i sliku „izabrana“ zameni snimkom modela spreda (identično 3D pinu). */
+  function pripremi() {
+    if (priprema) return priprema;
+    priprema = ucitajThree().then((ok) => {
+      if (!ok) return false;
+      if (!scena) scena = napraviScenu(window.THREE);
+      if (!scena) return false;
+      scena.pin.rotation.y = 0;
+      scena.renderer.setSize(192, 192, false);
+      scena.renderer.render(scena.sc, scena.kamera);
+      const url = scena.canvas.toDataURL("image/png");
+      if (typeof NS !== "undefined") NS.zameniPin("izabrana", url);
+      return true;
+    });
+    return priprema;
+  }
+  /** Izabrani pin postaje živ 3D model u .telo elementu (stoji spreda dok se ne pozove rotiraj()). */
   async function pokreni(el) {
-    if (manjeKretanja()) return;
     zaustavi();
     aktivan = true;
     const cilj = el;
-    if (!(await ucitajThree()) || !aktivan) { aktivan = false; return; }
-    if (!scena) scena = napraviScenu(window.THREE);
-    if (!scena) { aktivan = false; return; }
-    ugao = 0; t0 = performance.now(); poslednji = 0;
+    if (!(await pripremi()) || !aktivan) { aktivan = false; return; }
+    ugao = 0; rotira = false; poslednji = 0;
     prikaci(cilj.isConnected ? cilj : telo);
     scena.renderer.render(scena.sc, scena.kamera);
     rad = requestAnimationFrame(petlja);
   }
+  /** Počni okretanje oko vertikalne ose (posle odskakivanja). */
+  function rotiraj() {
+    if (!aktivan || rotira || manjeKretanja()) return;
+    rotira = true; t0 = performance.now();
+  }
   function zaustavi() {
-    aktivan = false;
+    aktivan = false; rotira = false;
     if (rad) cancelAnimationFrame(rad);
     rad = null;
     if (scena && scena.canvas.parentElement) scena.canvas.remove();
@@ -195,5 +216,5 @@ const PIN3D = (() => {
     }
     telo = null; senka = null;
   }
-  return { pokreni, zaustavi, prikaci, aktivan: () => aktivan };
+  return { pripremi, pokreni, rotiraj, zaustavi, prikaci, aktivan: () => aktivan };
 })();
