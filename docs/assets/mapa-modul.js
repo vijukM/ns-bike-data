@@ -203,6 +203,7 @@ const MAPA = (() => {
       else vidljiv("zgrade-3d", false);
     });
 
+    if (typeof PIN3D !== "undefined") PIN3D.pripremi();      // ikonica „izabrana“ = snimak 3D modela
     const spremna = new Promise((ok) => m.on("load", ok)).then(async () => {
       osnovniSlojevi();
       boje();
@@ -285,6 +286,7 @@ const MAPA = (() => {
       if (!t || !naMapi[serija]) return;
       menjam = true;
       kartica.setOffset(serija === izabrana ? POMAK_IZABRAN : POMAK);
+      kartica.options.anchor = serija === izabrana ? "bottom" : undefined;      // izabrani: kartica uvek iznad pina
       kartica.setLngLat(pinovi[serija].getLngLat())
         .setHTML(`${t}<div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`);
       if (!kartica.isOpen()) kartica.addTo(m);
@@ -311,15 +313,16 @@ const MAPA = (() => {
       const e = pinovi[serija].getElement().querySelector(".pin");
       if (e) { e.classList.remove("skok"); void e.offsetWidth; e.classList.add("skok"); }
     }
-    /** 3D pin koji se okreće — tek kad se skok završi (ili odmah ako skoka nema). */
+    /** Izabrani pin je odmah 3D model; okretanje kreće posle skoka (ili odmah ako skoka nema). */
     let tajmer3d = null;
-    function pokreni3D(serija, posle) {
+    function pokreni3D(serija) {
       clearTimeout(tajmer3d);
-      if (typeof PIN3D === "undefined") return;
-      tajmer3d = setTimeout(() => {
-        if (izabrana !== serija || !naMapi[serija]) return;
-        PIN3D.pokreni(pinovi[serija].getElement().querySelector(".telo"));
-      }, posle);
+      if (typeof PIN3D === "undefined" || !naMapi[serija]) return;
+      PIN3D.pokreni(pinovi[serija].getElement().querySelector(".telo"));
+    }
+    function rotiraj3D(posle) {
+      clearTimeout(tajmer3d);
+      if (typeof PIN3D !== "undefined") tajmer3d = setTimeout(() => PIN3D.rotiraj(), posle);
     }
     function zaustavi3D() { clearTimeout(tajmer3d); if (typeof PIN3D !== "undefined") PIN3D.zaustavi(); }
     function odznaci() {
@@ -363,11 +366,14 @@ const MAPA = (() => {
       if (pret && pret !== serija) osveziPin(pret);
       if (!serija) return;
       osveziPin(serija);
+      if (pret !== serija || typeof PIN3D === "undefined" || !PIN3D.aktivan()) pokreni3D(serija);
+      if (!skok) rotiraj3D(0);
       const posle = () => {
         otvoriKarticu(serija);
-        if (skok) { zaustavi3D(); skoci(serija); pokreni3D(serija, 1200); } else if (!(typeof PIN3D !== "undefined" && PIN3D.aktivan())) pokreni3D(serija, 150);
+        if (skok) { skoci(serija); rotiraj3D(1200); }      // 3D model odskoči, pa se okreće
       };
-      if (leti) { m.flyTo({ center: pinovi[serija].getLngLat(), zoom: Math.max(m.getZoom(), 15), duration: 700 }); m.once("moveend", posle); } else posle();
+      // pin malo ispod sredine mape, da kartica uvek stane iznad njega
+      if (leti) { m.flyTo({ center: pinovi[serija].getLngLat(), zoom: Math.max(m.getZoom(), 15), duration: 700, offset: [0, Math.round(el.clientHeight * 0.24)] }); m.once("moveend", posle); } else posle();
       if (opcije.naFokus) opcije.naFokus(serija);
     }
     /** Prikazuje samo zadate serije (null = sve). */

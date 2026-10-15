@@ -69,7 +69,13 @@ const NS = (() => {
     for (const [a, n, k] of rle || []) { if (i >= a && i < a + n) return k; if (a > i) break; }
     return 0;
   }
-  const pin = (stanje) => `assets/slike/pinovi/${stanje}.png`;
+  const zamenePinova = {};
+  const pin = (stanje) => zamenePinova[stanje] || `assets/slike/pinovi/${stanje}.png`;
+  /** Zamena ikonice (npr. „izabrana“ = snimak 3D modela) — i na slikama koje su već na strani. */
+  function zameniPin(stanje, url) {
+    zamenePinova[stanje] = url;
+    document.querySelectorAll(`img[src$="pinovi/${stanje}.png"]`).forEach((i) => { i.src = url; });
+  }
 
   // ---------------------------------------------------------------- boje i ECharts
   const css = (ime) => getComputedStyle(document.documentElement).getPropertyValue(ime).trim();
@@ -244,7 +250,7 @@ const NS = (() => {
   return {
     TZ, DANI, DANI_KRATKO, MESECI, MESECI_KRATKO, SEZONE, TIPOVI, STANJA,
     broj, dec, datum, datumDug, dodajDane, razlikaDana, danUNedelji, mesecNaziv, dvaMesta, utcDan, procenat,
-    satneOznake, json, stanice, razlog, razlogSata, pin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
+    satneOznake, json, stanice, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
     grupisi, oznakaPerioda, kljucPerioda, rupe, premosti, greska, analizaGrada,
   };
 })();
