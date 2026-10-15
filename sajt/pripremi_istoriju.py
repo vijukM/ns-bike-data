@@ -257,6 +257,157 @@ def profil_serije(m_s: pd.DataFrame, praznici: set) -> dict:
     return {"profil": profili, "toplotna_mapa": [[_r1(x) for x in red] for red in tm.to_numpy()]}
 
 
+def najduzi_niz(datumi) -> tuple[int, date | None, date | None]:
+    """Najduži niz uzastopnih datuma (npr. kompletnih dana): (dužina, od, do)."""
+    naj, od, do_, poc, pret, duz = 0, None, None, None, None, 0
+    for d in sorted(datumi):
+        if pret is not None and (d - pret).days == 1:
+            duz += 1
+        else:
+            poc, duz = d, 1
+        if duz > naj:
+            naj, od, do_ = duz, poc, d
+        pret = d
+    return naj, od, do_
+
+
+def _sat_tekst(sat: int) -> str:
+    return f"{sat:02d}–{(sat + 1) % 24:02d} h"
+
+
+def ritam(m: pd.DataFrame, praznici: set) -> dict:
+    """Ritam grada: prosečan brojač po satu (lokalno) — sat × dan u nedelji, godišnja doba, meseci, godine."""
+    v = m[m["y_A"].notna()].copy()
+    v["tip"] = tip_dana(v["datum"], praznici).to_numpy()
+    obicni = v[~v["datum"].isin(praznici)]
+    tm = obicni.groupby(["dan_u_nedelji", "sat"])["y_A"].mean().unstack().reindex(index=range(7), columns=range(24))
+    profili = {}
+    for sezona, meseci in [("ukupno", tuple(range(1, 13))), *SEZONE.items()]:
+        s = v[v["mesec"].isin(meseci)]
+        profili[sezona] = {t: [_r1(x) for x in s[s["tip"] == t].groupby("sat")["y_A"].mean().reindex(range(24))]
+                           for t in TIPOVI_DANA}
+    radni = v[v["tip"] == "radni"]
+    po_mesecu = []
+    for mes in range(1, 13):
+        p = radni[radni["mesec"] == mes].groupby("sat")["y_A"].mean().reindex(range(24)).to_numpy()
+        if np.isnan(p[5:10]).all() or np.isnan(p[13:20]).all():
+            po_mesecu.append({"mesec": mes, "jutarnji_vrh": None, "popodnevni_vrh": None, "ustaje": None,
+                              "udeo_noci": None, "profil": [_r1(x) for x in p]})
+            continue
+        jutro = 5 + int(np.nanargmax(p[5:10]))            # jutarnja špica: 05–10 h
+        popodne = 13 + int(np.nanargmax(p[13:20]))
+        pola = p[jutro] / 2                                   # kad promet pređe pola jutarnjeg vrha (sredina sata = h + 0.5)
+        ustaje = None
+        for h in range(3, jutro + 1):
+            if p[h] >= pola:
+                a, b = p[h - 1], p[h]
+                ustaje = round(h - 0.5 + (pola - a) / (b - a), 2) if b > a else float(h) + 0.5
+                break
+        po_mesecu.append({"mesec": mes, "jutarnji_vrh": jutro, "popodnevni_vrh": popodne, "ustaje": ustaje,
+                          "udeo_noci": _r1(100 * np.nansum(p[[22, 23, 0, 1, 2, 3, 4, 5]]) / np.nansum(p)),
+                          "profil": [_r1(x) for x in p]})
+    po_godini = {}
+    for god, gg in radni.groupby("godina"):
+        p = gg.groupby("sat")["y_A"].mean().reindex(range(24))
+        po_godini[str(god)] = [_r1(100 * x / p.sum()) for x in p]
+    ukupno_sat = v.groupby("sat")["y_A"].sum().reindex(range(24))
+    return {"toplotna_mapa": [[_r1(x) for x in red] for red in tm.to_numpy()], "profili": profili,
+            "po_mesecu": po_mesecu, "radni_po_godini": po_godini,
+            "udeo_po_satu": [_r1(100 * x / ukupno_sat.sum()) for x in ukupno_sat],
+            "opis": "prosečan broj biciklista po brojaču u satu (validni sati, lokalno vreme); praznici su nedelja"}
+
+
+def rekordi(m: pd.DataFrame, d: pd.DataFrame, grad: pd.DataFrame, w_dan: pd.DataFrame, dani: pd.DataFrame,
+            praznici: set, serije: list) -> dict:
+    """Rekordi i zanimljivosti: dani, sati, godine, vreme, po stanici."""
+    v = m[m["y_A"].notna()]
+    g = pd.DataFrame({"datum": dani["datum"].to_numpy(), "zbir": grad["sum"].to_numpy(), "n": grad["size"].to_numpy(),
+                      "tmin": w_dan["tmin"].to_numpy(), "tmax": w_dan["tmax"].to_numpy(), "tsr": w_dan["tsr"].to_numpy(),
+                      "pad": w_dan["pad"].to_numpy(), "sneg": w_dan["sneg"].to_numpy()})
+    g = g[g["zbir"].notna() & (g["n"] > 0)].copy()
+    g["po"] = g["zbir"] / g["n"]
+    g["tip"] = tip_dana(g["datum"], praznici).to_numpy()
+    g["ym"] = pd.to_datetime(g["datum"]).dt.strftime("%Y-%m")
+    g["uob"] = g.groupby(["ym", "tip"])["po"].transform("median")
+
+    def dan(r) -> dict:
+        return {"datum": r["datum"].isoformat(), "zbir": _i(r["zbir"]), "n": _i(r["n"]), "po": _i(r["po"]),
+                "odst": _i(100 * (r["po"] / r["uob"] - 1)) if r["uob"] else None,
+                "tmin": _r1(r["tmin"]), "tmax": _r1(r["tmax"]), "pad": _r1(r["pad"]), "sneg": _r1(r["sneg"]), "tip": r["tip"]}
+
+    sat = v.groupby("pocetak_utc").agg(zbir=("y_A", "sum"), n=("y_A", "size"), datum=("datum", "first"), sat=("sat", "first"))
+    ns = sat.loc[sat["zbir"].idxmax()]
+    x = v.loc[v["y_A"].idxmax()]
+    godine = v.groupby("godina").agg(ukupno=("y_A", "sum"), brojaca=("stanica_id", "nunique"))
+    gm = g.groupby("ym")["po"].agg(["mean", "size"])
+    gm = gm[gm["size"] >= 20]
+    gn = g.assign(ned=pd.to_datetime(g["datum"]).dt.to_period("W-SUN").astype(str)).groupby("ned")["zbir"].agg(["sum", "size"])
+    gn = gn[gn["size"] == 7]
+    pn = gn["sum"].idxmax() if len(gn) else None
+    radni = g[g["tip"] == "radni"]
+    vikend = g[g["tip"].isin(["subota", "nedelja_praznik"])]
+    kalendarski = g.assign(mes=pd.to_datetime(g["datum"]).dt.month).groupby("mes")["po"].mean()
+    noc = v[v["sat"].isin([22, 23, 0, 1, 2, 3, 4])]["y_A"].sum() / v["y_A"].sum()
+    profil = v[tip_dana(v["datum"], praznici).to_numpy() == "radni"].groupby("sat")["y_A"].mean()
+    profil = profil.reindex(range(24))
+    jutro = int(profil.loc[5:9].idxmax()) if profil.loc[5:9].notna().any() else None
+    popodne = int(profil.loc[13:19].idxmax()) if profil.loc[13:19].notna().any() else None
+
+    po_stanici, nizovi = [], []
+    for s in serije:
+        ds = d[(d["stanica_id"] == s) & d["kompletan"]]
+        vs = v[v["stanica_id"] == s]
+        if vs.empty:
+            continue
+        hm = vs.loc[vs["y_A"].idxmax()]
+        duz, od, do_ = najduzi_niz(ds["datum"])
+        r = {"serija": s, "ukupno": _i(vs["y_A"].sum()), "kompletnih": int(len(ds)),
+             "sat": {"datum": hm["datum"].isoformat(), "sat": int(hm["sat"]), "v": _i(hm["y_A"])},
+             "niz": {"dana": duz, "od": od.isoformat() if od else None, "do": do_.isoformat() if do_ else None}}
+        if len(ds):
+            dm = ds.loc[ds["zbir"].idxmax()]
+            r["dan"] = {"datum": dm["datum"].isoformat(), "v": _i(dm["zbir"])}
+        po_stanici.append(r)
+        nizovi.append((duz, s))
+    naj_niz = max(nizovi)
+    meseci_imena = ["januar", "februar", "mart", "april", "maj", "jun", "jul", "avgust", "septembar", "oktobar",
+                    "novembar", "decembar"]
+    zanimljivosti = [
+        {"ik": "bike", "naslov": "Ukupno izbrojano", "vrednost": _i(v["y_A"].sum()),
+         "opis": f"prolazaka biciklista pored brojača od {datum_sr(OD)} do {datum_sr(DO)}"},
+        {"ik": "clock", "naslov": "Najprometniji sat u gradu", "vrednost": _i(ns["zbir"]),
+         "opis": f"{datum_sr(ns['datum'])}, {_sat_tekst(int(ns['sat']))}, zbir {int(ns['n'])} brojača", "datum": ns["datum"].isoformat()},
+        {"ik": "trophy", "naslov": "Rekord jednog brojača u satu", "vrednost": _i(x["y_A"]),
+         "opis": f"brojač {x['stanica_id']}, {datum_sr(x['datum'])}, {_sat_tekst(int(x['sat']))}"
+                 + (" (gornja granica čišćenja je 400 / h)" if x["y_A"] >= 400 else ""), "serija": x["stanica_id"],
+         "datum": x["datum"].isoformat()},
+        *([] if pn is None else [{"ik": "calendar", "naslov": "Najprometnija nedelja", "vrednost": _i(gn.loc[pn, "sum"]),
+         "opis": f"od {datum_sr(date.fromisoformat(pn[:10]))} do {datum_sr(date.fromisoformat(pn[-10:]))} (zbir svih brojača)",
+         "datum": pn[:10]}]),
+        *([] if profil.loc[5:9].isna().all() else [{"ik": "activity", "naslov": "Jutarnja špica", "vrednost": _sat_tekst(jutro),
+         "opis": f"najprometniji jutarnji sat radnim danom; popodne {_sat_tekst(popodne) if popodne is not None else '—'}"}]),
+        {"ik": "sun", "naslov": "Najprometniji mesec", "vrednost": meseci_imena[int(kalendarski.idxmax()) - 1],
+         "opis": f"prosečan dan po brojaču {_i(kalendarski.max())}; najmirniji {meseci_imena[int(kalendarski.idxmin()) - 1]} ({_i(kalendarski.min())})"},
+        {"ik": "moon", "naslov": "Noćna vožnja", "vrednost": _r1(100 * noc), "jed": "%",
+         "opis": "biciklista vozi između 22 i 05 h"},
+        {"ik": "pulse", "naslov": "Vikend prema radnom danu", "vrednost": _i(100 * (vikend['po'].mean() / radni['po'].mean() - 1)), "jed": "%", "znak": True,
+         "opis": "prosečan dan po brojaču (subota, nedelja i praznici prema radnim danima)"},
+        {"ik": "check", "naslov": "Najduži rad bez prekida", "vrednost": naj_niz[0], "jed": "dana",
+         "opis": f"brojač {naj_niz[1]} — kompletni dani jedan za drugim", "serija": naj_niz[1]},
+    ]
+    return {
+        "top_dani": [dan(r) for _, r in g.nlargest(10, "zbir").iterrows()],
+        "top_po_brojacu": [dan(r) for _, r in g.nlargest(10, "po").iterrows()],
+        "najmirniji_radni": [dan(r) for _, r in radni.nsmallest(5, "po").iterrows()],
+        "vreme": {"najtopliji": dan(g.loc[g["tmax"].idxmax()]), "najhladniji": dan(g.loc[g["tmin"].idxmin()]),
+                  "najkisniji": dan(g.loc[g["pad"].idxmax()]), "najsnezniji": dan(g.loc[g["sneg"].idxmax()])},
+        "godine": [{"godina": int(k), "ukupno": _i(r["ukupno"]), "brojaca": int(r["brojaca"])} for k, r in godine.iterrows()],
+        "najprometniji_mesec": {"mesec": gm["mean"].idxmax(), "po": _i(gm["mean"].max())} if len(gm) else None,
+        "zanimljivosti": zanimljivosti,
+        "po_stanici": po_stanici,
+    }
+
+
 def razlozi_rle(kodovi: np.ndarray) -> list[list[int]]:
     """[[početak, dužina, šifra], …] za uzastopne nevalidne sate (šifra ≠ 0)."""
     out, i, n = [], 0, len(kodovi)
@@ -363,6 +514,9 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> 
                     "prosek": [[_i(x) for x in red] for red in tab.to_numpy()]},
         "cinjenice": cinjenice,
     })
+
+    velicine["rekordi.json"] = _pisi(izlaz / "rekordi.json", rekordi(m, d, grad, w_dan, dani, praznici, serije))
+    velicine["ritam.json"] = _pisi(izlaz / "ritam.json", ritam(m, praznici))
 
     # profili po seriji
     for s in serije:

@@ -69,11 +69,11 @@ const LJ = (() => {
       { id: "poredjenje", t: "Poređenje stanica", href: "poredjenje.html", ik: "compare", uskoro: true },
       { id: "godine", t: "Poređenje godina", href: "grafici.html#godine", ik: "bars" },
       { id: "kalendar", t: "Kalendar", href: "kalendar.html", ik: "calendar", oznaka: "NOVO" },
-      { id: "rekordi", t: "Rekordi i zanimljivosti", href: "rekordi.html", ik: "trophy", uskoro: true }] },
+      { id: "rekordi", t: "Rekordi i zanimljivosti", href: "rekordi.html", ik: "trophy", oznaka: "NOVO" }] },
     { grupa: "Analize", stavke: [
       { id: "vreme", t: "Vreme i biciklisti", href: "vreme.html", ik: "rain", uskoro: true },
       { id: "praznici", t: "Praznici i događaji", href: "praznici.html", ik: "star", uskoro: true },
-      { id: "ritam", t: "Ritam grada", href: "ritam.html", ik: "pulse", uskoro: true },
+      { id: "ritam", t: "Ritam grada", href: "ritam.html", ik: "pulse", oznaka: "NOVO" },
       { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet.html", ik: "shield", uskoro: true }] },
     { grupa: "Prognoza", stavke: [
       { id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", uskoro: true },

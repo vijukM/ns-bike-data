@@ -4,21 +4,62 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rekordi i zanimljivosti · Biciklisti Novog Sada</title>
-  <meta name="description" content="Rekordi i zanimljivosti iz brojanja biciklista u Novom Sadu — uskoro.">
+  <meta name="description" content="Rekordi brojanja biciklista u Novom Sadu 2021–2026: najprometniji dani i sati, vremenski rekordi, rekordi po stanici i zanimljivosti.">
   <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
   <link rel="icon" href="assets/slike/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/stil.css?v=202610151430">
+  <link rel="stylesheet" href="assets/stil.css?v=202610151615">
 </head>
 <body data-strana="rekordi" data-putanja="Podaci|Rekordi i zanimljivosti">
-  <!-- strana u izradi: sadržaj (skicu i plan) crta assets/uskoro.js -->
-  <main class="sadrzaj" id="sadrzaj"></main>
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Podaci · rekordi · 2021–2026</span>
+        <h1>Rekordi i <em>zanimljivosti</em></h1>
+        <p class="uvod">Najprometniji dani i sati, dani kada je vreme bilo najgore, brojači koji najduže rade bez prekida — i
+          nekoliko činjenica iz pet i po godina brojanja. Klik na dan otvara ga u kalendaru.</p>
+      </div>
+    </header>
+
+    <section class="kpi-mreza" id="kpi"></section>
+
+    <div class="mreza-3-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow">Top 10</span><h2>Najprometniji dani<span id="top-info"></span></h2></div>
+          <div id="top-mera"></div>
+        </div>
+        <div class="grafik" id="top-grafik" style="height:380px"></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Godine</span><h2>Izbrojano po godini<span id="god-info"></span></h2></div></div>
+        <div class="grafik" id="god-grafik" style="height:380px"></div>
+      </section>
+    </div>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava"><div><span class="eyebrow">Vreme</span><h2>Vremenski rekordi — i koliko je tada bilo biciklista</h2></div></div>
+      <div class="rekordi-vreme" id="vreme"></div>
+    </section>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava"><div><span class="eyebrow">Činjenice</span><h2>Zanimljivosti</h2></div></div>
+      <div class="zanimljivosti" id="zanimljivosti"></div>
+    </section>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava">
+        <div><span class="eyebrow">Po stanici</span><h2>Rekordi svakog brojača</h2><p class="opis">Klik na naslov kolone sortira; klik na dan ga otvara u kalendaru te stanice.</p></div>
+      </div>
+      <div class="tabela-omot"><table class="tabela" id="tabela"></table></div>
+    </section>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610151430"></script>
-  <script src="assets/ljuska.js?v=202610151430"></script>
-  <script src="assets/uskoro.js?v=202610151430"></script>
+  <script src="assets/zajednicko.js?v=202610151615"></script>
+  <script src="assets/ljuska.js?v=202610151615"></script>
+  <script src="assets/rekordi.js?v=202610151615"></script>
 </body>
 </html>

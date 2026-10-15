@@ -4,21 +4,58 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ritam grada · Biciklisti Novog Sada</title>
-  <meta name="description" content="Ritam biciklista Novog Sada po satu i danu u nedelji — uskoro.">
+  <meta name="description" content="Ritam biciklista Novog Sada: sat × dan u nedelji, jutarnja i popodnevna špica, godišnja doba i kako se ritam menja kroz godine.">
   <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
   <link rel="icon" href="assets/slike/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/stil.css?v=202610151430">
+  <link rel="stylesheet" href="assets/stil.css?v=202610151615">
 </head>
 <body data-strana="ritam" data-putanja="Analize|Ritam grada">
-  <!-- strana u izradi: sadržaj (skicu i plan) crta assets/uskoro.js -->
-  <main class="sadrzaj" id="sadrzaj"></main>
+  <main class="sadrzaj" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow">Analize · ritam · 2021–2026</span>
+        <h1>Ritam <em>grada</em></h1>
+        <p class="uvod">Kad Novi Sad sedne na bicikl: sat po sat, dan po dan, kroz godišnja doba i godine. Sve je prosečan brojač u
+          jednom satu (lokalno vreme), pa se grafici mogu porediti bez obzira na to koliko je brojača tada radilo.</p>
+      </div>
+    </header>
+
+    <section class="kpi-mreza" id="kpi"></section>
+
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Sat × dan u nedelji</span><h2>Nedelja jednog grada<span id="tm-info"></span></h2></div></div>
+        <div class="grafik" id="tm-grafik" style="height:360px"></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">24 sata</span><h2>Dan kao brojčanik</h2></div><div id="bc-sezona"></div></div>
+        <div class="grafik" id="bc-grafik" style="height:360px"></div>
+      </section>
+    </div>
+
+    <section class="kartica pojava">
+      <div class="kartica-glava"><div><span class="eyebrow">Godišnja doba</span><h2>Isti dan, četiri godišnja doba<span id="gd-info"></span></h2></div><div id="gd-tip"></div></div>
+      <div class="grafik" id="gd-grafik" style="height:340px"></div>
+    </section>
+
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Meseci · radni dan</span><h2>Kad grad ustaje, a kad se vraća<span id="us-info"></span></h2></div></div>
+        <div class="grafik" id="us-grafik" style="height:340px"></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Godine · radni dan</span><h2>Da li se ritam menja kroz godine<span id="gg-info"></span></h2></div></div>
+        <div class="grafik" id="gg-grafik" style="height:340px"></div>
+      </section>
+    </div>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610151430"></script>
-  <script src="assets/ljuska.js?v=202610151430"></script>
-  <script src="assets/uskoro.js?v=202610151430"></script>
+  <script src="assets/zajednicko.js?v=202610151615"></script>
+  <script src="assets/ljuska.js?v=202610151615"></script>
+  <script src="assets/ritam.js?v=202610151615"></script>
 </body>
 </html>
