@@ -834,3 +834,44 @@ html.bez-skrola { overflow: hidden; }
 @media (max-width: 640px) { .opcije.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .uzorci { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { .prilagodi, .prilagodi-pozadina, .ljuska { transition: none; } #prilagodi-dugme .tacka-novo { animation: none; } }
 @media (max-width: 640px) { .kartica-glava > .kal-kontrole { flex: 1 1 100%; } .kal-kontrole select { max-width: 100%; width: 100%; } }
+
+/* ================================================================ UŽIVO: odašiljač koji pulsira */
+.uzivo-znak { --uz-boja: #EF4444; display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 8px 0 5px; border-radius: 999px; flex: none;
+  background: color-mix(in srgb, var(--uz-boja) 14%, transparent); color: var(--uz-boja); border: 1px solid color-mix(in srgb, var(--uz-boja) 35%, transparent);
+  font: 700 9.5px/1 "JetBrains Mono", monospace; letter-spacing: 0.1em; white-space: nowrap; }
+:root[data-theme="light"] .uzivo-znak { --uz-boja: #DC2626; }
+.meni .uzivo-znak, .gm-panel .uzivo-znak { margin-left: auto; }
+[dir="rtl"] .meni .uzivo-znak, [dir="rtl"] .gm-panel .uzivo-znak { margin-left: 0; margin-right: auto; }
+.uzivo-znak .odasiljac { width: 18px; height: 12px; overflow: visible; }
+.odasiljac .talas { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; opacity: 0; }
+.odasiljac .srce { fill: currentColor; }
+.odasiljac .krug-puls { fill: currentColor; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.uzivo-znak.sveze b { animation: uzivo-treperi 1.4s ease-in-out infinite; }
+.uzivo-znak.sveze .t1 { animation: uzivo-talas 1.8s ease-out infinite; }
+.uzivo-znak.sveze .t2 { animation: uzivo-talas 1.8s ease-out 0.35s infinite; }
+.uzivo-znak.sveze .krug-puls { animation: uzivo-puls 1.8s ease-out infinite; }
+.uzivo-znak.sveze .srce { animation: uzivo-srce 1.8s ease-in-out infinite; }
+@keyframes uzivo-treperi { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes uzivo-talas { 0% { opacity: 0; } 25% { opacity: 1; } 70%, 100% { opacity: 0; } }
+@keyframes uzivo-puls { 0% { opacity: 0.55; transform: scale(1); } 80%, 100% { opacity: 0; transform: scale(2.8); } }
+@keyframes uzivo-srce { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+.uzivo-znak.staro { --uz-boja: var(--t-muted); }
+.uzivo-znak.staro .talas { opacity: 0.35; }
+/* mala varijanta (u kartici pina, ispred „danas …“) */
+.uzivo-znak.mala { height: 16px; padding: 0 3px; gap: 0; margin-right: 6px; vertical-align: -3px; }
+.uzivo-znak.mala .odasiljac { width: 16px; height: 11px; }
+.tt-uzivo { display: flex; align-items: center; flex-wrap: wrap; gap: 0 4px; }
+/* zaglavlje strane Danas */
+.zaglavlje-strane .akcije .uzivo-znak { height: 28px; padding: 0 12px 0 8px; font-size: 11px; gap: 7px; }
+.zaglavlje-strane .akcije .uzivo-znak .odasiljac { width: 24px; height: 16px; }
+.zaglavlje-strane .akcije { display: flex; gap: 10px; align-items: center; }
+/* uzak meni: crvena tačka koja pulsira na ikonici */
+.ljuska.uzak .meni a.stavka.uzivo-sveze { position: relative; }
+.ljuska.uzak .meni a.stavka.uzivo-sveze::after { content: ""; position: absolute; top: 7px; right: 9px; width: 8px; height: 8px; border-radius: 50%;
+  background: #EF4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); animation: uzivo-tacka 1.8s ease-out infinite; }
+@keyframes uzivo-tacka { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); } 80%, 100% { box-shadow: 0 0 0 9px rgba(239, 68, 68, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .uzivo-znak.sveze b, .uzivo-znak.sveze .talas, .uzivo-znak.sveze .krug-puls, .uzivo-znak.sveze .srce, .ljuska.uzak .meni a.stavka.uzivo-sveze::after { animation: none; }
+  .uzivo-znak.sveze .talas { opacity: 1; }
+}
+@media (min-width: 961px) { .ljuska.uzak .meni .uzivo-znak { display: none; } }

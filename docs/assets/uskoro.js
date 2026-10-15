@@ -26,7 +26,7 @@
   // ---------------------------------------------------------------- strane
   const STRANE = {
     danas: {
-      ik: "activity", prioritet: 1, naslov: "Danas <em>uživo</em>",
+      ik: "activity", prioritet: 1, uzivo: true, naslov: "Danas <em>uživo</em>",
       uvod: "Koliko je biciklista izbrojano od ponoći do poslednjeg čitanja — za ceo grad i za svaki brojač, uz poređenje sa prosečnim istim danom.",
       kpi: [["activity", "Danas do 13 h", "23.480", "izbrojano na <b>45</b> brojača", "plava"],
         ["chart", "Prema prosečnom četvrtku", "+8<sup>%</sup>", "isti dan u nedelji, isti mesec", "zelena"],
@@ -382,7 +382,7 @@
     main.innerHTML = `
       <header class="zaglavlje-strane pojava">
         <div><span class="eyebrow">${c.eyebrow || grupa} · u izradi</span><h1>${c.naslov}</h1><p class="uvod">${c.uvod}</p></div>
-        <div class="akcije"><span class="znacka z-uskoro uskoro-znacka">USKORO</span></div>
+        <div class="akcije">${c.uzivo ? LJ.uzivoZnak() : ""}<span class="znacka z-uskoro uskoro-znacka">USKORO</span></div>
       </header>
       <section class="kartica pojava"><div class="uskoro">
         <span class="ikona-velika">${LJ.ik(c.ik)}</span>
@@ -406,6 +406,7 @@
       NS.grafik(document.getElementById(`skica-${i}`), (b) => k.opcija(b, seme(17 + i * 31), s));
     });
     LJ.pojave(main);
+    LJ.osveziUzivo();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
 })();
