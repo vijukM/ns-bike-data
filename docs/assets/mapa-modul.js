@@ -36,8 +36,9 @@ const MAPA = (() => {
     const u = await uzivo;
     if (!u || !u.serije[serija]) return "";
     const [v, h] = u.serije[serija];
-    const kad = u.datum === danasIso() ? "danas" : `${NS.datum(u.datum).slice(0, -5)}.`;
-    return `<div class="tt-red">${kad} <b>${v == null ? "—" : NS.broj(v)}</b> <small>do ${h}h</small></div>`;
+    const danas = u.datum === danasIso();
+    const kad = danas ? "danas" : `${NS.datum(u.datum).slice(0, -5)}.`;
+    return `<div class="tt-red tt-uzivo">${danas ? LJ.uzivoZnak(true) : ""}${kad} <b>${v == null ? "—" : NS.broj(v)}</b> <small>do ${h}h</small></div>`;
   }
 
   function duzinaKm(koord) {
@@ -289,6 +290,7 @@ const MAPA = (() => {
       kartica.options.anchor = serija === izabrana ? "bottom" : undefined;      // izabrani: kartica uvek iznad pina
       kartica.setLngLat(pinovi[serija].getLngLat())
         .setHTML(`${t}<div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`);
+      LJ.osveziUzivo();
       if (!kartica.isOpen()) kartica.addTo(m);
       prikazana = serija;
       menjam = false;

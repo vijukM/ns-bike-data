@@ -59,7 +59,7 @@ const LJ = (() => {
   const MENI = [
     { grupa: "Pregled", stavke: [
       { id: "kontrolna", t: "Kontrolna tabla", href: "index.html", ik: "home" },
-      { id: "danas", t: "Danas uživo", href: "danas.html", ik: "activity", uskoro: true }] },
+      { id: "danas", t: "Danas uživo", href: "danas.html", ik: "activity", uzivo: true }] },
     { grupa: "Mapa", stavke: [
       { id: "mapa", t: "Mapa brojača", href: "mapa.html", ik: "map" },
       { id: "dan", t: "Dan na mapi", href: "mapa.html?rezim=dan", ik: "clock" },
@@ -248,6 +248,40 @@ const LJ = (() => {
     if (okidac && okidac.focus) okidac.focus();
   }
 
+  // ---------------------------------------------------------------- UŽIVO (odašiljač koji pulsira)
+  // Crveno i treperi samo kad je poslednje čitanje brojača sveže (≤ 150 min); inače sivo, uz vreme poslednjeg čitanja.
+  const ODASILJAC = `<svg class="odasiljac" viewBox="0 0 24 16" aria-hidden="true">
+    <path class="talas t2" d="M4.2 2.2a8.5 8.5 0 0 0 0 11.6M19.8 2.2a8.5 8.5 0 0 1 0 11.6"/>
+    <path class="talas t1" d="M7.4 4.6a5 5 0 0 0 0 6.8M16.6 4.6a5 5 0 0 1 0 6.8"/>
+    <circle class="krug-puls" cx="12" cy="8" r="2.4"/><circle class="srce" cx="12" cy="8" r="2.4"/></svg>`;
+  /** Oznaka „UŽIVO“ (mala = samo odašiljač, za tekst u karticama). */
+  const uzivoZnak = (mala = false) => `<span class="uzivo-znak${mala ? " mala" : ""}" data-uzivo role="status" title="Podaci uživo">${ODASILJAC}${mala ? "" : "<b>UŽIVO</b>"}</span>`;
+  const SVEZE_MIN = 150;
+  let uzivoStanje = null;
+  function osveziUzivo() {
+    if (!uzivoStanje) return;
+    const min = Math.round((Date.now() - Date.parse(uzivoStanje.citanje_utc)) / 60000);
+    const sveze = min <= SVEZE_MIN;
+    const sat = new Intl.DateTimeFormat("sr-Latn-RS", { timeZone: "Europe/Belgrade", hour: "2-digit", minute: "2-digit" }).format(new Date(uzivoStanje.citanje_utc));
+    const kad = min < 60 ? `pre ${Math.max(1, min)} min` : `pre ${Math.floor(min / 60)} h ${min % 60} min`;
+    const naslov = sveze ? `Uživo — podaci sa brojača, poslednje čitanje u ${sat} (${kad}); osvežava se svakog sata`
+      : `Nema svežeg čitanja — poslednje u ${sat} (${kad})`;
+    document.querySelectorAll("[data-uzivo]").forEach((el) => {
+      el.classList.toggle("sveze", sveze);
+      el.classList.toggle("staro", !sveze);
+      el.title = naslov;
+      el.setAttribute("aria-label", naslov);
+    });
+    document.querySelectorAll("[data-uzivo-stavka]").forEach((el) => el.classList.toggle("uzivo-sveze", sveze));
+  }
+  async function proveriUzivo(svezePreuzmi = false) {
+    try {
+      const r = await fetch(`data/uzivo.json?t=${svezePreuzmi ? Date.now() : Math.floor(Date.now() / 600000)}`, { cache: "no-cache" });
+      if (r.ok) uzivoStanje = await r.json();
+    } catch (e) { /* bez mreže: ostaje poslednje stanje */ }
+    osveziUzivo();
+  }
+
   // ---------------------------------------------------------------- gornji meni (raspored „Gornji“)
   function gornjiMeni(strana) {
     const nav = document.createElement("nav");
@@ -258,7 +292,7 @@ const LJ = (() => {
       return `<div class="gm-grupa"><button type="button" class="gm-dugme${aktivna ? " aktivna" : ""}" aria-expanded="false" data-i="${i}">
         ${ik(g.stavke[0].ik)}<span>${g.grupa}</span>${ik("chevron", "strelica")}</button>
         <div class="gm-panel" role="menu">${g.stavke.map((x) => `<a role="menuitem" class="${x.id === strana ? "aktivna" : ""}" href="${x.href}">${ik(x.ik)}<span>${x.t}</span>
-          ${x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</div></div>`;
+          ${x.uzivo ? uzivoZnak() : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</div></div>`;
     }).join("");
     const zatvori = () => nav.querySelectorAll(".gm-grupa.otvorena").forEach((g) => { g.classList.remove("otvorena"); g.querySelector(".gm-dugme").setAttribute("aria-expanded", "false"); });
     const otvori = (g) => { zatvori(); g.classList.add("otvorena"); g.querySelector(".gm-dugme").setAttribute("aria-expanded", "true"); };
@@ -409,8 +443,8 @@ const LJ = (() => {
         <span><b>Biciklisti NS</b><small>istorija · 2021–2026</small></span></a>` +
       MENI.map((g) => `<nav class="grupa"><span class="eyebrow">${g.grupa}</span>${g.stavke.map((x) =>
         `<a class="stavka ${x.id === strana ? "aktivna" : ""}" href="${x.href}" ${x.spolja ? 'target="_blank" rel="noopener"' : ""}
-          ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}">${ik(x.ik)}<span class="tekst">${x.t}</span>
-          ${x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</nav>`).join("") +
+          ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}>${ik(x.ik)}<span class="tekst">${x.t}</span>
+          ${x.uzivo ? uzivoZnak() : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</nav>`).join("") +
       `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad</span></div></div>`;
 
     const glavno = document.createElement("div");
@@ -448,6 +482,9 @@ const LJ = (() => {
     document.getElementById("tema-dugme").addEventListener("click", () => postaviTemu(tema() === "dark" ? "light" : "dark"));
     document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
     primeniIzgled({}, { sacuvaj: false });
+    proveriUzivo();
+    setInterval(osveziUzivo, 60000);                 // „pre X min“ i prelazak u sivo
+    setInterval(() => proveriUzivo(true), 10 * 60000); // novo čitanje stiže svakog sata
     document.getElementById("pretraga-dugme").addEventListener("click", otvoriPretragu);
     document.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); otvoriPretragu(); }
@@ -481,5 +518,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { MENI, ik, IK, info, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { MENI, ik, IK, info, uzivoZnak, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();
