@@ -472,3 +472,5 @@ footer.podnozje { color: var(--t-light); font-size: 12px; padding: 8px 28px 32px
 .krofna-okvir { border-top: 1px solid var(--border-soft); margin-top: 10px; padding-top: 10px; }
 .krofna-okvir .krofna { height: 250px; cursor: pointer; }
 @media (max-width: 1180px) { .mapa-raspored aside .spisak { height: 320px; } }
+
+.leaflet-popup.bez-vrha .leaflet-popup-tip-container { display: none; }
