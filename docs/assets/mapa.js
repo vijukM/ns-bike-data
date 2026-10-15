@@ -73,7 +73,7 @@
       document.getElementById("dan-panel").classList.toggle("skriveno", v !== "dan");
       if (v === "dan") dan.ukljuci(q.get("dan"), q.get("sat"));
       else { dan.iskljuci(); vrednostiSata = null; ctl.prikaziStanje().then(crtajSpisak); }
-      setTimeout(() => ctl.mapa.invalidateSize(), 50);
+      setTimeout(() => ctl.mapa.resize(), 50);
     }
     postaviRezim(q.get("rezim") === "dan" ? "dan" : "stanje");
   } catch (e) {
