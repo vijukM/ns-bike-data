@@ -515,3 +515,5 @@ footer.podnozje { max-width: 1680px; padding: 8px 22px 28px; }
 .segment.pod-vikend.skriveno { display: none !important; }
 #temp-dani .segment, #temp-dani.segment { position: relative; z-index: 1; }
 .red-izbora .info { margin-left: auto; }
+
+h2 .info { vertical-align: 2px; }
