@@ -196,28 +196,75 @@ function godine(g) {
   for (const sel of [selA, selB]) sel.addEventListener("change", () => graf.osvezi());
 }
 
+/** Polinom stepena k sa najmanjom srednjom kvadratnom greškom (najmanji kvadrati, x se standardizuje). */
+function polinom(xs, ys, k = 3) {
+  const n = xs.length;
+  if (n <= k + 1) return null;
+  const sr = xs.reduce((a, x) => a + x, 0) / n;
+  const sd = Math.sqrt(xs.reduce((a, x) => a + (x - sr) ** 2, 0) / n) || 1;
+  const u = xs.map((x) => (x - sr) / sd);
+  const m = k + 1;
+  const A = Array.from({ length: m }, () => Array(m + 1).fill(0));
+  for (let i = 0; i < n; i++) {
+    const st = Array.from({ length: m }, (_, p) => u[i] ** p);
+    for (let r = 0; r < m; r++) { for (let c = 0; c < m; c++) A[r][c] += st[r] * st[c]; A[r][m] += st[r] * ys[i]; }
+  }
+  for (let c = 0; c < m; c++) {                      // Gausova eliminacija sa izborom pivota
+    let p = c;
+    for (let r = c + 1; r < m; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+    [A[c], A[p]] = [A[p], A[c]];
+    for (let r = 0; r < m; r++) if (r !== c) { const f = A[r][c] / A[c][c]; for (let q = c; q <= m; q++) A[r][q] -= f * A[c][q]; }
+  }
+  const koef = A.map((red, r) => red[m] / red[r]);
+  const f = (x) => { const z = (x - sr) / sd; return koef.reduce((a, c, p) => a + c * z ** p, 0); };
+  const mse = xs.reduce((a, x, i) => a + (f(x) - ys[i]) ** 2, 0) / n;
+  return { f, mse };
+}
+
 function temperatura(g, a) {
-  NS.grafik(document.getElementById("temp-grafik"), (b) => {
-    const suvi = [], kisni = [];
-    a.po.forEach((x, i) => {
-      const d = NS.dodajDane(g.od, i);
-      if (x == null || g.tsr[i] == null || a.praznik.has(i) || NS.danUNedelji(d) % 6 === 0) return;
-      (g.pad[i] >= 1 ? kisni : suvi).push([g.tsr[i], Math.round(x), d, g.pad[i]]);
-    });
+  let dani = "radni", vreme = "svi";
+  const NAZIV_DANA = { radni: "radnim danom", vikend: "vikendom", svi: "svakog dana" };
+  const NAZIV_VREMENA = { svi: "", suvo: " (suvi dani)", kisa: " (kišni dani, ≥ 1 mm)" };
+  const tacke = [];
+  a.po.forEach((x, i) => {
+    if (x == null || g.tsr[i] == null) return;
+    const d = NS.dodajDane(g.od, i);
+    const neradni = a.praznik.has(i) || NS.danUNedelji(d) % 6 === 0;
+    tacke.push({ t: g.tsr[i], v: Math.round(x), d, pad: g.pad[i] ?? 0, neradni });
+  });
+  const graf = NS.grafik(document.getElementById("temp-grafik"), (b) => {
+    const izbor = tacke.filter((p) => (dani === "svi" || (dani === "vikend") === p.neradni)
+      && (vreme === "svi" || (vreme === "kisa") === (p.pad >= 1)));
+    const fit = polinom(izbor.map((p) => p.t), izbor.map((p) => p.v), 3);
+    const tMin = Math.min(...izbor.map((p) => p.t)), tMax = Math.max(...izbor.map((p) => p.t));
+    const kriva = fit ? Array.from({ length: 81 }, (_, i) => { const x = tMin + (tMax - tMin) * i / 80; return [Math.round(x * 10) / 10, Math.max(0, Math.round(fit.f(x)))]; }) : [];
+    document.getElementById("temp-naslov").textContent = `Uticaj temperature ${NAZIV_DANA[dani]} na broj biciklista${NAZIV_VREMENA[vreme]}`;
+    document.getElementById("temp-napomena").textContent = `${NS.broj(izbor.length)} dana · tačka = dan, prosek po brojaču · ` +
+      (fit ? `kriva 3. stepena sa najmanjom srednjom kvadratnom greškom (RMSE ${NS.broj(Math.round(Math.sqrt(fit.mse)))} biciklista)` : "premalo dana za krivu") +
+      (dani !== "radni" ? " · vikend = subota, nedelja i praznici" : "");
+    const tacka = (p) => [p.t, p.v, p.d, p.pad];
+    const serije = vreme === "svi"
+      ? [{ name: "suv dan", type: "scatter", data: izbor.filter((p) => p.pad < 1).map(tacka), symbolSize: 5, itemStyle: { color: b.bicikl, opacity: 0.5 } },
+        { name: "kišni dan (≥ 1 mm)", type: "scatter", data: izbor.filter((p) => p.pad >= 1).map(tacka), symbolSize: 6, itemStyle: { color: b.kisa, opacity: 0.85 } }]
+      : [{ name: vreme === "kisa" ? "kišni dan (≥ 1 mm)" : "suv dan", type: "scatter", data: izbor.map(tacka), symbolSize: 6,
+        itemStyle: { color: vreme === "kisa" ? b.kisa : b.bicikl, opacity: 0.6 } }];
+    serije.forEach((x) => { x.animationDuration = 500; });
+    serije.push({ name: "kriva (3. stepen, najmanji MSE)", type: "line", data: kriva, showSymbol: false, smooth: false, z: 5,
+      lineStyle: { width: 3, color: b.temp }, itemStyle: { color: b.temp }, animationDuration: 1500, animationEasing: "cubicInOut", animationDelay: 300 });
     return {
       ...NS.osnova(b),
-      legend: { bottom: 0, textStyle: { color: b["ink-2"] }, itemWidth: 10, itemHeight: 10 },
-      grid: { left: 58, right: 16, top: 30, bottom: 56 },
+      legend: { bottom: 0, textStyle: { color: b["ink-2"] }, itemWidth: 14, itemHeight: 10, itemStyle: { opacity: 1 } },
+      grid: { left: 58, right: 16, top: 30, bottom: 60 },
       xAxis: { type: "value", name: "°C (prosek dana)", nameLocation: "middle", nameGap: 26, ...NS.osaY(b, { splitLine: { show: false }, axisLabel: { color: b["ink-3"] } }) },
-      yAxis: { type: "value", name: "biciklista po brojaču", ...NS.osaY(b) },
+      yAxis: { type: "value", name: "biciklista po brojaču", min: 0, ...NS.osaY(b) },
       tooltip: { trigger: "item", backgroundColor: b.povrsina, borderColor: b.osa, textStyle: { color: b.ink },
-        formatter: (q) => `<b>${NS.datumDug(q.value[2])}</b><br>${NS.dec(q.value[0])} °C · ${NS.dec(q.value[3])} mm<br>${NS.broj(q.value[1])} po brojaču` },
-      series: [
-        { name: "suv dan", type: "scatter", data: suvi, symbolSize: 5, itemStyle: { color: b.bicikl, opacity: 0.45 } },
-        { name: "kišni dan (≥ 1 mm)", type: "scatter", data: kisni, symbolSize: 6, itemStyle: { color: b.kisa, opacity: 0.85 } },
-      ],
+        formatter: (q) => (q.seriesType === "line" ? `kriva: ${NS.dec(q.value[0])} °C → <b>${NS.broj(q.value[1])}</b> po brojaču`
+          : `<b>${NS.datumDug(q.value[2])}</b><br>${NS.dec(q.value[0])} °C · ${NS.dec(q.value[3])} mm<br>${NS.broj(q.value[1])} po brojaču`) },
+      series: serije,
     };
   });
+  NS.prekidac(document.getElementById("temp-dani"), [["radni", "Radni dan"], ["vikend", "Vikend"], ["svi", "Svaki dan"]], dani, (v) => { dani = v; graf.osvezi(); });
+  NS.prekidac(document.getElementById("temp-vreme"), [["svi", "Svi"], ["suvo", "Suvo"], ["kisa", "Kiša"]], vreme, (v) => { vreme = v; graf.osvezi(); });
 }
 
 function daniUNedelji(a) {

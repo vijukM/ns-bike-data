@@ -138,7 +138,7 @@ const MAPA = (() => {
     }
     const pinovi = {};
     const stanjePina = {};
-    let izabrana = null, vidljive = null;
+    let izabrana = null, vidljive = null, menjam = false;
     function ikona(serija, stanje, brojTekst) {
       const sv = stanje === "nije_postavljen" || stanje === "neispravan" ? " svetli-obod" : "";
       const izab = serija === izabrana;
@@ -152,13 +152,18 @@ const MAPA = (() => {
     const rPo = Object.fromEntries(s.serije.map((r) => [r.serija, r]));
     for (const r of s.serije) {
       const p = L.marker(polozaj(r), { icon: ikona(r.serija, r.stanje), riseOnHover: true, keyboard: true, title: `${r.serija} ${r.naziv}` }).addTo(m);
-      p.on("click", () => fokus(r.serija, { leti: true }));
+      p.on("click", () => fokus(r.serija, { leti: false }));
       p.on("mouseover", () => naHover(r.serija));
       p.on("mouseout", () => {
         if (r.serija === izabrana) return;
+        menjam = true;
         p.closePopup();
         if (izabrana && pinovi[izabrana]) pinovi[izabrana].openPopup();      // vrati karticu izabranog pina
+        menjam = false;
       });
+      p.on("popupopen", () => poravnaj(p));
+      // X na kartici (ili klik na mapu) skida fokus sa pina
+      p.on("popupclose", () => { if (!menjam && r.serija === izabrana) odznaci(); });
       pinovi[r.serija] = p;
       stanjePina[r.serija] = { stanje: r.stanje, broj: null };
     }
@@ -180,13 +185,37 @@ const MAPA = (() => {
       p.unbindPopup();
       if (tekst) p.bindPopup(`${tekst}<div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`,
         { closeButton: true, autoPan: false, offset: [0, -2] });
+      if (tekst) p.off("click", p._openPopup, p);          // klik ne „prebacuje“ karticu; to radi fokus()
     }
-    /** Prelazak mišem: pin odskoči i otvori se ista kartica kao na klik. */
+    /** Prelazak mišem: otvori se ista kartica kao na klik (bez skoka). */
     function naHover(serija) {
-      const p = pinovi[serija];
-      const el = p.getElement() && p.getElement().querySelector(".pin");
+      menjam = true;
+      pinovi[serija].openPopup();
+      menjam = false;
+    }
+    /** Kartica se otvara na suprotnu stranu od položaja pina (pin gore levo → kartica dole desno). */
+    function poravnaj(p) {
+      const pop = p.getPopup();
+      const el = pop && pop.getElement();
+      if (!el) return;
+      const pt = m.latLngToContainerPoint(p.getLatLng());
+      const vel = m.getSize();
+      const w = el.offsetWidth, h = el.offsetHeight;
+      const dx = pt.x < vel.x / 2 ? w / 2 + 14 : -(w / 2 + 14);
+      const dy = pt.y < vel.y / 2 ? h + 34 + 12 : -4;
+      pop.options.offset = L.point(dx, dy);
+      el.classList.add("bez-vrha");
+      pop.update();
+    }
+    function skoci(serija) {
+      const el = pinovi[serija].getElement() && pinovi[serija].getElement().querySelector(".pin");
       if (el) { el.classList.remove("skok"); void el.offsetWidth; el.classList.add("skok"); }
-      p.openPopup();
+    }
+    function odznaci() {
+      const pret = izabrana;
+      izabrana = null;
+      if (pret) osveziPin(pret);
+      if (opcije.naFokus) opcije.naFokus(null);
     }
     async function prikaziStanje() {
       for (const r of s.serije) {
@@ -208,15 +237,16 @@ const MAPA = (() => {
         else postaviPin(r.serija, "radi", NS.broj(v), `${opis(r)}<br><b>${NS.broj(v)}</b> biciklista, ${oznaka}`);
       }
     }
-    /** Fokus (klik): pin ostaje uvećan, mapa ga centrira, otvara se ista kartica kao na hover. */
-    function fokus(serija, { leti = true } = {}) {
+    /** Fokus: pin ostaje uvećan, mapa ga centrira, otvara se ista kartica kao na hover.
+        skok = true samo kad se bira iz spiska/pretrage (pin tada odskoči kad mapa stigne do njega). */
+    function fokus(serija, { leti = true, skok = false } = {}) {
       const pret = izabrana;
       izabrana = serija;
-      if (pret && pret !== serija) { osveziPin(pret); pinovi[pret].closePopup(); }
+      if (pret && pret !== serija) { osveziPin(pret); menjam = true; pinovi[pret].closePopup(); menjam = false; }
       if (!serija) return;
       osveziPin(serija);
-      if (leti) m.flyTo(pinovi[serija].getLatLng(), Math.max(m.getZoom(), 15), { duration: 0.7 });
-      setTimeout(() => pinovi[serija].openPopup(), leti ? 750 : 0);
+      const posle = () => { menjam = true; pinovi[serija].openPopup(); menjam = false; if (skok) skoci(serija); };
+      if (leti) { m.flyTo(pinovi[serija].getLatLng(), Math.max(m.getZoom(), 15), { duration: 0.7 }); setTimeout(posle, 750); } else posle();
       if (opcije.naFokus) opcije.naFokus(serija);
     }
     /** Prikazuje samo zadate serije (null = sve). */
@@ -226,7 +256,7 @@ const MAPA = (() => {
     }
     document.addEventListener("tema", () => { postaviPodlogu(); crtajStaze(); });
     prikaziStanje();
-    return { mapa: m, prikaziStanje, prikaziSat, fokus, izaberi: (x, leti) => fokus(x, { leti }), filtriraj, stazeSpremne, TIPOVI_STAZA };
+    return { mapa: m, prikaziStanje, prikaziSat, fokus, izaberi: (x, leti) => fokus(x, { leti, skok: true }), filtriraj, stazeSpremne, TIPOVI_STAZA };
   }
 
   /** Legenda „Stanje brojača“ sa info-oblačićima + staze. */

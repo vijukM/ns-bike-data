@@ -10,7 +10,7 @@
     let izabrana = null;
     const ctl = MAPA.napravi(document.getElementById("mapa"), s, {
       podlogaEl: document.getElementById("podloga"), stazeEl: document.getElementById("staze-cip"),
-      naFokus: (serija) => { izabrana = serija; crtajSpisak(); skrolujDo(serija); },
+      naFokus: (serija) => { izabrana = serija; crtajSpisak(); if (serija) skrolujDo(serija); },
     });
     MAPA.legenda(document.getElementById("legenda-mape"), s);
     kpi(s, ctl);
@@ -56,14 +56,14 @@
     document.getElementById("spisak").addEventListener("click", (e) => {
       const d = e.target.closest("button[data-s]"); if (!d) return;
       if (izabrana === d.dataset.s) location.href = `stanica.html?id=${encodeURIComponent(d.dataset.s)}`;
-      else ctl.fokus(d.dataset.s, { leti: true });
+      else ctl.fokus(d.dataset.s, { leti: true, skok: true });
     });
     crtajSpisak();
     MAPA.stanjeGrafik(document.getElementById("krofna"), s, (k) => {
       postaviFilter(k);
       document.getElementById("mapa").scrollIntoView({ behavior: "smooth", block: "center" });
     });
-    if (q.get("id") && s.serije.some((r) => r.serija === q.get("id"))) setTimeout(() => ctl.fokus(q.get("id"), { leti: true }), 400);
+    if (q.get("id") && s.serije.some((r) => r.serija === q.get("id"))) setTimeout(() => ctl.fokus(q.get("id"), { leti: true, skok: true }), 400);
 
     // dan na mapi
     const dan = danNaMapi(s, g, ctl, (vrednosti) => { vrednostiSata = vrednosti; crtajSpisak(); });
