@@ -1,0 +1,2 @@
+datum,prozor,n,RMSE,MAE,bias,WAPE_%,pokrivenost_%,RMSE_naive,MAE_naive,neobicne_stanice,gradski_dogadjaj
+2026-10-15,pre_ocene,1078,15.956,9.669,-3.274,23.421,66.141,,,15a 30b 31b 34a 34b 36a 36b 37a 38b 40a 40b 41 42a 42b 44b 46b 49b 50a,True
