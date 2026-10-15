@@ -81,7 +81,7 @@ const NS = (() => {
   const css = (ime) => getComputedStyle(document.documentElement).getPropertyValue(ime).trim();
   function boje() {
     const b = {};
-    for (const k of ["bicikl", "bicikl-blago", "temp", "kisa", "nema", "mreza", "osa", "tip-1", "tip-2", "tip-3",
+    for (const k of ["bicikl", "bicikl-blago", "prosek", "temp", "kisa", "nema", "mreza", "osa", "tip-1", "tip-2", "tip-3",
       "god-0", "god-1", "god-2", "god-3", "god-4", "god-5", "top-0", "top-1", "top-2", "top-3", "top-4", "top-5"]) b[k] = css("--g-" + k);
     Object.assign(b, { ink: css("--t-base"), "ink-2": css("--t-muted"), "ink-3": css("--t-light"), povrsina: css("--bg-card"),
       primary: css("--primary"), warning: css("--warning") });

@@ -89,7 +89,7 @@ function dnevniGrafik(s, d, izaberiDan) {
         lineStyle: { width: 1.5, type: [4, 4], color: b.nema }, itemStyle: { color: b.nema } });
     }
     if (ukljuceno.has("p7") && p.p7) serije.push({ name: "prosek 7 dana", type: "line", data: p.p7, showSymbol: false,
-      lineStyle: { width: 2.2, color: b.primary }, itemStyle: { color: b.primary } });
+      lineStyle: { width: 2.2, color: b.prosek }, itemStyle: { color: b.prosek } });
     // mesto za kasnije: prognoza (linija) i interval 10–90 % (senka)
     return {
       ...NS.osnova(b),
