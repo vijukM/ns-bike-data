@@ -296,7 +296,7 @@ istorija 01.01.2021 – 31.08.2026, bez prognoza i bez podataka uživo (grafici 
 | strana | sadržaj |
 |---|---|
 | `index.html` | kontrolna tabla: KPI kartice, mapa brojača i staza, najprometnija mesta, prstenovi, **priča koja se otkriva skrolovanjem** (6 koraka, grafik ostaje fiksiran), najprometnije stanice, brojači koji traže pažnju |
-| `mapa.html` | velika mapa (MapLibre: pomeranje, rotacija, nagib, dugme 3D sa zgradama; podloge CARTO / OpenStreetMap / poster mape tamno plava, siva, bela), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
+| `mapa.html` | velika mapa (MapLibre: pomeranje, rotacija, nagib, dugme 3D sa zgradama; izabrani pin postaje 3D model (Three.js, `assets/pin3d.js`, učitava se tek tada) koji se okreće posle odskakivanja; podloge CARTO / OpenStreetMap / poster mape tamno plava, siva, bela), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
 | `grafici.html` | grad po danu sa čipovima (biciklisti, prosek 7 dana, broj brojača, temperatura, padavine), poređenje godina, temperatura × biciklisti, dani u nedelji, mesec × godina; izvoz PNG |
 | `stanice.html` | tabela: pretraga, filter po stanju, sortiranje, straničenje, izvoz CSV |
 | `stanica.html?id=23a` | KPI, dnevno za ceo period, satni profil, toplotna mapa sat × dan, meseci po godinama, izabrani dan |

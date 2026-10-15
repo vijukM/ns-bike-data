@@ -249,15 +249,17 @@ const MAPA = (() => {
     }
     const pinovi = {}, naMapi = {}, stanjePina = {}, tekstovi = {};
     let izabrana = null, vidljive = null, menjam = false, prikazana = null, postavljeni = false;
-    const kartica = new maplibregl.Popup({ closeButton: true, closeOnClick: false, maxWidth: "300px", focusAfterOpen: false,
-      offset: { top: [0, 4], "top-left": [6, 0], "top-right": [-6, 0], bottom: [0, -36], "bottom-left": [10, -30], "bottom-right": [-10, -30], left: [18, -17], right: [-18, -17] } });
+    // kartica običnog pina odmah iznad njega; kod izabranog (uvećan 1,4×, odskače ~30 px) dovoljno visoko da se skok vidi
+    const POMAK = { top: [0, 4], "top-left": [6, 0], "top-right": [-6, 0], bottom: [0, -38], "bottom-left": [10, -32], "bottom-right": [-10, -32], left: [18, -17], right: [-18, -17] };
+    const POMAK_IZABRAN = { top: [0, 6], "top-left": [8, 2], "top-right": [-8, 2], bottom: [0, -88], "bottom-left": [14, -80], "bottom-right": [-14, -80], left: [28, -30], right: [-28, -30] };
+    const kartica = new maplibregl.Popup({ closeButton: true, closeOnClick: false, maxWidth: "300px", focusAfterOpen: false, offset: POMAK });
     kartica.on("close", () => { prikazana = null; if (!menjam && izabrana) odznaci(); });
 
     function html(serija, stanje, brojTekst) {
       const sv = stanje === "nije_postavljen" || stanje === "neispravan" ? " svetli-obod" : "";
       return `<div class="pin${sv}${brojTekst == null ? " bez-broja" : ""}${serija === izabrana ? " izabran" : ""}">
         <div class="telo"><img class="n" src="${NS.pin(stanje)}" alt=""><img class="h" src="${NS.pin("izabrana")}" alt=""></div>
-        <span class="pin-broj">${brojTekst ?? ""}</span></div>`;
+        <span class="pin-broj">${brojTekst ?? ""}</span><span class="senka"></span></div>`;
     }
     for (const r of s.serije) {
       const e = document.createElement("div");
@@ -282,6 +284,7 @@ const MAPA = (() => {
       const t = tekstovi[serija];
       if (!t || !naMapi[serija]) return;
       menjam = true;
+      kartica.setOffset(serija === izabrana ? POMAK_IZABRAN : POMAK);
       kartica.setLngLat(pinovi[serija].getLngLat())
         .setHTML(`${t}<div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`);
       if (!kartica.isOpen()) kartica.addTo(m);
@@ -294,6 +297,7 @@ const MAPA = (() => {
       const sakriven = st.stanje === "sakriven" || (vidljive && !vidljive.has(serija));
       p.getElement().innerHTML = html(serija, st.stanje === "sakriven" ? "nije_postavljen" : st.stanje, st.broj);
       p.getElement().style.zIndex = serija === izabrana ? 5 : "";
+      if (serija === izabrana && typeof PIN3D !== "undefined" && PIN3D.aktivan()) PIN3D.prikaci(p.getElement().querySelector(".telo"));
       if (sakriven && naMapi[serija]) { p.remove(); naMapi[serija] = false; if (prikazana === serija) { menjam = true; kartica.remove(); menjam = false; } }
       else if (!sakriven && !naMapi[serija] && postavljeni) { p.addTo(m); naMapi[serija] = true; }
     }
@@ -307,7 +311,19 @@ const MAPA = (() => {
       const e = pinovi[serija].getElement().querySelector(".pin");
       if (e) { e.classList.remove("skok"); void e.offsetWidth; e.classList.add("skok"); }
     }
+    /** 3D pin koji se okreće — tek kad se skok završi (ili odmah ako skoka nema). */
+    let tajmer3d = null;
+    function pokreni3D(serija, posle) {
+      clearTimeout(tajmer3d);
+      if (typeof PIN3D === "undefined") return;
+      tajmer3d = setTimeout(() => {
+        if (izabrana !== serija || !naMapi[serija]) return;
+        PIN3D.pokreni(pinovi[serija].getElement().querySelector(".telo"));
+      }, posle);
+    }
+    function zaustavi3D() { clearTimeout(tajmer3d); if (typeof PIN3D !== "undefined") PIN3D.zaustavi(); }
     function odznaci() {
+      zaustavi3D();
       const pret = izabrana;
       izabrana = null;
       if (pret) osveziPin(pret);
@@ -342,11 +358,15 @@ const MAPA = (() => {
         skok = true samo kad se bira iz spiska/pretrage (pin tada odskoči kad mapa stigne do njega). */
     function fokus(serija, { leti = true, skok = false } = {}) {
       const pret = izabrana;
+      if (pret !== serija) zaustavi3D();
       izabrana = serija;
       if (pret && pret !== serija) osveziPin(pret);
       if (!serija) return;
       osveziPin(serija);
-      const posle = () => { otvoriKarticu(serija); if (skok) skoci(serija); };
+      const posle = () => {
+        otvoriKarticu(serija);
+        if (skok) { zaustavi3D(); skoci(serija); pokreni3D(serija, 1200); } else if (!(typeof PIN3D !== "undefined" && PIN3D.aktivan())) pokreni3D(serija, 150);
+      };
       if (leti) { m.flyTo({ center: pinovi[serija].getLngLat(), zoom: Math.max(m.getZoom(), 15), duration: 700 }); m.once("moveend", posle); } else posle();
       if (opcije.naFokus) opcije.naFokus(serija);
     }
