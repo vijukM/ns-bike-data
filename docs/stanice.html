@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stanice · Biciklisti Novog Sada</title>
   <meta name="description" content="Tabela svih 46 brojača biciklista u Novom Sadu: stanje, prosek, kompletnost podataka, period rada.">
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem("ns-tema")||"dark"}catch(e){}</script>
+  <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark",z=JSON.parse(localStorage.getItem("ns-izgled")||"{}")||{};if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(!z.raspored&&localStorage.getItem("ns-meni-uzak")==="1")z.raspored="uzak";["boja","gustina","raspored","sirina"].forEach(function(k){if(z[k])d.dataset[k]=z[k]});if(z.smer)d.dir=z.smer}catch(e){}</script>
   <link rel="icon" href="assets/slike/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/stil.css?v=202610152000">
+  <link rel="stylesheet" href="assets/stil.css?v=202610152130">
 </head>
 <body data-strana="stanice" data-putanja="Podaci|Stanice">
   <main class="sadrzaj" id="sadrzaj">
@@ -40,8 +40,8 @@
     </section>
   </main>
 
-  <script src="assets/zajednicko.js?v=202610152000"></script>
-  <script src="assets/ljuska.js?v=202610152000"></script>
-  <script src="assets/stanice.js?v=202610152000"></script>
+  <script src="assets/zajednicko.js?v=202610152130"></script>
+  <script src="assets/ljuska.js?v=202610152130"></script>
+  <script src="assets/stanice.js?v=202610152130"></script>
 </body>
 </html>

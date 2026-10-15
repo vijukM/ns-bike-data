@@ -47,6 +47,8 @@ const LJ = (() => {
     shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
     target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
     cpu: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>',
+    palette: '<circle cx="13.5" cy="6.5" r="1.2"/><circle cx="17.5" cy="10.5" r="1.2"/><circle cx="8.5" cy="7.5" r="1.2"/><circle cx="6.5" cy="12.5" r="1.2"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2Z"/>',
+    reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
     lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   };
   const ik = (ime, klasa = "") => `<svg class="ik ${klasa}" viewBox="0 0 24 24" aria-hidden="true">${IK[ime] || ""}</svg>`;
@@ -86,14 +88,189 @@ const LJ = (() => {
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
 
-  // ---------------------------------------------------------------- tema
+  // ---------------------------------------------------------------- izgled (tema, boja, gustina, raspored, širina, smer)
+  // Sve se primenjuje kao data-* atributi na <html> (rani skript u <head> to radi i pre crtanja strane) i pamti
+  // u ovom pregledaču: ns-tema (dark | light | sistem) i ns-izgled (JSON ostalih podešavanja).
+  const PODRAZUMEVANO = { tema: "dark", boja: "plava", gustina: "obicna", raspored: "bocni", sirina: "puna", smer: "ltr" };
+  const IZBORI = {
+    tema: [["light", "Svetla"], ["dark", "Tamna"], ["sistem", "Sistemska"]],
+    boja: [["plava", "Plava", "#3B82F6"], ["ljubicasta", "Ljubičasta", "#8B5CF6"], ["zelena", "Zelena", "#10B981"],
+      ["narandzasta", "Narandžasta", "#F97316"], ["roze", "Roze", "#EC4899"], ["grafit", "Grafit", "#64748B"]],
+    gustina: [["zbijeno", "Zbijeno"], ["obicna", "Uobičajeno"], ["prozracno", "Prozračno"]],
+    raspored: [["bocni", "Bočni"], ["uzak", "Uzak"], ["plutajuci", "Plutajući"], ["gornji", "Gornji"]],
+    sirina: [["puna", "Puna širina"], ["uokvirena", "Uokvirena"]],
+    smer: [["ltr", "Sleva nadesno"], ["rtl", "Zdesna nalevo"]],
+  };
+  const sistemTamna = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+  function citajIzgled() {
+    let z = {}, t = null, uzak = null;
+    try { z = JSON.parse(localStorage.getItem("ns-izgled") || "{}") || {}; t = localStorage.getItem("ns-tema"); uzak = localStorage.getItem("ns-meni-uzak"); } catch (e) { /* bez memorije */ }
+    const iz = { ...PODRAZUMEVANO };
+    for (const k of Object.keys(IZBORI)) if (k !== "tema" && IZBORI[k].some(([v]) => v === z[k])) iz[k] = z[k];
+    if (IZBORI.tema.some(([v]) => v === t)) iz.tema = t;
+    if (!z.raspored && uzak === "1") iz.raspored = "uzak";          // ranije zapamćen uzak meni
+    return iz;
+  }
+  let izgled = citajIzgled();
   const tema = () => (document.documentElement.dataset.theme === "light" ? "light" : "dark");
-  function postaviTemu(t) {
-    document.documentElement.dataset.theme = t;
-    try { localStorage.setItem("ns-tema", t); } catch (e) { /* bez memorije */ }
-    const d = document.getElementById("tema-dugme");
-    if (d) d.innerHTML = ik(t === "dark" ? "sun" : "moon");
-    document.dispatchEvent(new Event("tema"));
+  function primeniIzgled(novo, { sacuvaj = true } = {}) {
+    const d = document.documentElement;
+    const pre = { ...izgled, temaStvarna: tema() };
+    izgled = { ...izgled, ...novo };
+    const stvarna = izgled.tema === "sistem" ? (sistemTamna() ? "dark" : "light") : izgled.tema;
+    d.dataset.theme = stvarna;
+    d.dataset.boja = izgled.boja;
+    d.dataset.gustina = izgled.gustina;
+    d.dataset.raspored = izgled.raspored;
+    d.dataset.sirina = izgled.sirina;
+    d.dir = izgled.smer;
+    const lj = document.querySelector(".ljuska");
+    if (lj) lj.classList.toggle("uzak", izgled.raspored === "uzak");
+    if (sacuvaj) {
+      try {
+        localStorage.setItem("ns-tema", izgled.tema);
+        const { tema: _, ...ostalo } = izgled;
+        localStorage.setItem("ns-izgled", JSON.stringify(ostalo));
+        localStorage.setItem("ns-meni-uzak", izgled.raspored === "uzak" ? "1" : "0");
+      } catch (e) { /* bez memorije */ }
+    }
+    const td = document.getElementById("tema-dugme");
+    if (td) td.innerHTML = ik(stvarna === "dark" ? "sun" : "moon");
+    if (stvarna !== pre.temaStvarna || izgled.boja !== pre.boja) document.dispatchEvent(new Event("tema"));
+    if (["gustina", "raspored", "sirina", "smer"].some((k) => izgled[k] !== pre[k])) {
+      [60, 320].forEach((ms) => setTimeout(() => window.dispatchEvent(new Event("resize")), ms));   // grafici i mape
+    }
+    osveziPrilagodi();
+  }
+  /** Prečica u gornjoj traci: jedan klik menja svetlu ↔ tamnu temu. */
+  function postaviTemu(t) { primeniIzgled({ tema: t }); }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { if (izgled.tema === "sistem") primeniIzgled({}, { sacuvaj: false }); });
+
+  // ---------------------------------------------------------------- panel „Prilagodi“
+  const SEKCIJE = [
+    ["tema", "Tema", "Svetla, tamna ili kao u sistemu (prati podešavanje uređaja)."],
+    ["boja", "Boja naglaska", "Dugmad, linkovi i istaknuti delovi. Boje podataka na graficima ostaju iste."],
+    ["gustina", "Gustina", "Koliko je prostora između kartica i unutar njih."],
+    ["raspored", "Raspored menija", "Bočni, uzak (samo ikonice), plutajući ili gornji meni."],
+    ["sirina", "Širina sadržaja", "Preko celog ekrana ili u užem okviru na sredini."],
+    ["smer", "Smer teksta", "Za jezike koji se pišu zdesna nalevo (prikaz rasporeda)."],
+  ];
+  const kvacica = '<span class="kvacica-o" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>';
+  /** Male skice za svaku opciju (crtaju se CSS-om, naglasak prati izabranu boju). */
+  function skica(k, v) {
+    if (k === "tema") return `<span class="slicica sl-tema sl-${v}"><i class="m"></i><i class="t"></i><i class="k k1"></i><i class="k k2"></i><i class="k k3"></i></span>`;
+    if (k === "gustina") return `<span class="slicica sl-gustina sl-${v}">${"<i></i>".repeat(v === "zbijeno" ? 5 : v === "obicna" ? 4 : 3)}</span>`;
+    if (k === "raspored") return `<span class="slicica sl-raspored sl-${v}"><i class="m"></i><i class="t"></i><i class="k k1"></i><i class="k k2"></i></span>`;
+    if (k === "sirina") return `<span class="slicica sl-sirina sl-${v}"><i class="m"></i><i class="t"></i><i class="k"></i></span>`;
+    if (k === "smer") return `<span class="slicica sl-smer sl-${v}"><i class="m"></i><i class="r r1"></i><i class="r r2"></i><i class="r r3"></i><b>${v === "ltr" ? "→" : "←"}</b></span>`;
+    return "";
+  }
+  let fioka = null, pozadinaFioke = null, okidac = null;
+  function napraviPrilagodi() {
+    pozadinaFioke = document.createElement("div");
+    pozadinaFioke.className = "prilagodi-pozadina";
+    fioka = document.createElement("aside");
+    fioka.className = "prilagodi";
+    fioka.setAttribute("role", "dialog");
+    fioka.setAttribute("aria-modal", "true");
+    fioka.setAttribute("aria-labelledby", "prilagodi-naslov");
+    fioka.innerHTML = `
+      <header class="prilagodi-glava"><span class="kvadrat">${ik("palette")}</span>
+        <div><h2 id="prilagodi-naslov">Prilagodi</h2><p>Podesi izgled sajta po svom ukusu — promene se vide odmah.</p></div>
+        <button class="ikonica-dugme" type="button" data-zatvori aria-label="Zatvori">${ik("x")}</button></header>
+      <div class="prilagodi-telo">${SEKCIJE.map(([k, t, o]) => `<section class="prilagodi-sekcija" data-sekcija="${k}">
+        <div class="sekcija-glava"><span class="eyebrow">${t}</span><span class="vrednost" data-vrednost="${k}"></span></div>
+        <p class="sitno">${o}</p>
+        ${k === "boja" ? `<div class="uzorci" role="radiogroup" aria-label="${t}">${IZBORI.boja.map(([v, n, c]) =>
+    `<button type="button" class="uzorak" data-k="boja" data-v="${v}" style="--uz:${c}" title="${n}" aria-label="${n}"><i></i></button>`).join("")}</div>`
+    : `<div class="opcije n${IZBORI[k].length}" role="radiogroup" aria-label="${t}">${IZBORI[k].map(([v, n]) =>
+      `<button type="button" class="opcija" data-k="${k}" data-v="${v}">${skica(k, v)}<span class="ime">${n}</span>${kvacica}</button>`).join("")}</div>`}
+      </section>`).join("")}</div>
+      <footer class="prilagodi-dno">
+        <button class="dugme" type="button" data-vrati>${ik("reset")}Vrati podrazumevano</button>
+        <button class="dugme primarno" type="button" data-zatvori>Gotovo</button>
+        <p class="sitno">Podešavanja se pamte u ovom pregledaču. Za brzu promenu svetle i tamne teme ostaje dugme pored ove palete.</p>
+      </footer>`;
+    document.body.append(pozadinaFioke, fioka);
+    fioka.addEventListener("click", (e) => {
+      const o = e.target.closest("[data-k]");
+      if (o) { primeniIzgled({ [o.dataset.k]: o.dataset.v }); return; }
+      if (e.target.closest("[data-vrati]")) { primeniIzgled({ ...PODRAZUMEVANO }); tost("Vraćen je podrazumevani izgled.", "reset"); return; }
+      if (e.target.closest("[data-zatvori]")) zatvoriPrilagodi();
+    });
+    pozadinaFioke.addEventListener("click", zatvoriPrilagodi);
+    fioka.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") { e.stopPropagation(); zatvoriPrilagodi(); return; }
+      if (e.key === "Tab") {                              // fokus ostaje u panelu
+        const f = [...fioka.querySelectorAll("button")];
+        if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+      }
+      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key) && e.target.matches("[data-k]")) {   // strelice unutar grupe
+        const grupa = [...e.target.parentElement.querySelectorAll("[data-k]")];
+        const i = grupa.indexOf(e.target) + (["ArrowRight", "ArrowDown"].includes(e.key) ? 1 : -1) * (izgled.smer === "rtl" && e.key.startsWith("Arrow") && /Left|Right/.test(e.key) ? -1 : 1);
+        const n = grupa[(i + grupa.length) % grupa.length];
+        e.preventDefault(); n.focus(); n.click();
+      }
+    });
+    osveziPrilagodi();
+  }
+  function osveziPrilagodi() {
+    if (!fioka) return;
+    fioka.querySelectorAll("[data-k]").forEach((o) => {
+      const da = izgled[o.dataset.k] === o.dataset.v;
+      o.setAttribute("aria-pressed", String(da));
+      o.setAttribute("role", "radio");
+      o.setAttribute("aria-checked", String(da));
+      o.tabIndex = da ? 0 : -1;
+    });
+    for (const k of Object.keys(IZBORI)) {
+      const el = fioka.querySelector(`[data-vrednost="${k}"]`);
+      const izbor = IZBORI[k].find(([v]) => v === izgled[k]);
+      if (el && izbor) el.textContent = izbor[1] + (k === "tema" && izgled.tema === "sistem" ? ` · sada ${tema() === "dark" ? "tamna" : "svetla"}` : "");
+    }
+  }
+  function otvoriPrilagodi() {
+    if (!fioka) napraviPrilagodi();
+    okidac = document.activeElement;
+    pozadinaFioke.classList.add("otvoren");
+    fioka.classList.add("otvoren");
+    document.documentElement.classList.add("bez-skrola");
+    const tacka = document.querySelector("#prilagodi-dugme .tacka-novo");
+    if (tacka) { tacka.remove(); try { localStorage.setItem("ns-prilagodi-videno", "1"); } catch (e) { /* */ } }
+    setTimeout(() => (fioka.querySelector('[data-k][aria-pressed="true"]') || fioka.querySelector("button")).focus(), 60);
+  }
+  function zatvoriPrilagodi() {
+    if (!fioka) return;
+    pozadinaFioke.classList.remove("otvoren");
+    fioka.classList.remove("otvoren");
+    document.documentElement.classList.remove("bez-skrola");
+    if (okidac && okidac.focus) okidac.focus();
+  }
+
+  // ---------------------------------------------------------------- gornji meni (raspored „Gornji“)
+  function gornjiMeni(strana) {
+    const nav = document.createElement("nav");
+    nav.className = "gornji-meni";
+    nav.setAttribute("aria-label", "Glavni meni");
+    nav.innerHTML = MENI.map((g, i) => {
+      const aktivna = g.stavke.some((x) => x.id === strana);
+      return `<div class="gm-grupa"><button type="button" class="gm-dugme${aktivna ? " aktivna" : ""}" aria-expanded="false" data-i="${i}">
+        ${ik(g.stavke[0].ik)}<span>${g.grupa}</span>${ik("chevron", "strelica")}</button>
+        <div class="gm-panel" role="menu">${g.stavke.map((x) => `<a role="menuitem" class="${x.id === strana ? "aktivna" : ""}" href="${x.href}">${ik(x.ik)}<span>${x.t}</span>
+          ${x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</div></div>`;
+    }).join("");
+    const zatvori = () => nav.querySelectorAll(".gm-grupa.otvorena").forEach((g) => { g.classList.remove("otvorena"); g.querySelector(".gm-dugme").setAttribute("aria-expanded", "false"); });
+    const otvori = (g) => { zatvori(); g.classList.add("otvorena"); g.querySelector(".gm-dugme").setAttribute("aria-expanded", "true"); };
+    let tajmer;
+    nav.querySelectorAll(".gm-grupa").forEach((g) => {
+      g.querySelector(".gm-dugme").addEventListener("click", (e) => { e.stopPropagation(); if (g.classList.contains("otvorena")) zatvori(); else otvori(g); });
+      g.addEventListener("mouseenter", () => { clearTimeout(tajmer); if (window.matchMedia("(hover: hover)").matches) otvori(g); });
+      g.addEventListener("mouseleave", () => { tajmer = setTimeout(zatvori, 180); });
+    });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".gornji-meni")) zatvori(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") zatvori(); });
+    return nav;
   }
 
   // ---------------------------------------------------------------- tost
@@ -215,6 +392,7 @@ const LJ = (() => {
   });
 
   // ---------------------------------------------------------------- postavljanje
+  const videno = () => { try { return localStorage.getItem("ns-prilagodi-videno") === "1"; } catch (e) { return true; } };
   function postavi() {
     const body = document.body;
     const strana = body.dataset.strana || "";
@@ -222,7 +400,7 @@ const LJ = (() => {
     const main = document.querySelector("main.sadrzaj");
     const ljuska = document.createElement("div");
     ljuska.className = "ljuska";
-    try { if (localStorage.getItem("ns-meni-uzak") === "1") ljuska.classList.add("uzak"); } catch (e) { /* bez memorije */ }
+    if (izgled.raspored === "uzak") ljuska.classList.add("uzak");
 
     const meni = document.createElement("aside");
     meni.className = "meni";
@@ -241,13 +419,15 @@ const LJ = (() => {
     gornja.className = "gornja";
     gornja.innerHTML = `
       <button class="ikonica-dugme" id="meni-dugme" aria-label="Meni">${ik("menu")}</button>
+      <a class="brend-gornji" href="index.html"><img src="assets/slike/logo.png" alt=""><b>Biciklisti NS</b></a>
       <nav class="putanja" aria-label="Putanja">${putanja.map((p, i) => i === putanja.length - 1 ? `<b>${p}</b>`
         : `<span class="${i ? "srednje" : ""}">${p}</span>${ik("chevron", i ? "srednje" : "")}`).join("")}</nav>
       <span class="razmak"></span>
       <button class="pretraga-dugme" id="pretraga-dugme" aria-label="Pretraga">${ik("search")}<span>Pretraži stanice…</span><kbd>Ctrl K</kbd></button>
       <div class="padajuce"><button class="ikonica-dugme jezik" id="jezik-dugme" aria-label="Jezik">SR</button></div>
       <div class="padajuce"><button class="ikonica-dugme" id="obavestenja-dugme" aria-label="Obaveštenja">${ik("bell")}<span class="brojac skriveno"></span></button></div>
-      <button class="ikonica-dugme" id="tema-dugme" aria-label="Promeni temu">${ik(tema() === "dark" ? "sun" : "moon")}</button>`;
+      <button class="ikonica-dugme" id="tema-dugme" aria-label="Svetla ili tamna tema" title="Svetla / tamna tema">${ik(tema() === "dark" ? "sun" : "moon")}</button>
+      <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>`;
     const podnozje = document.createElement("footer");
     podnozje.className = "podnozje";
     podnozje.innerHTML = `Brojači: UGZINS / Mikrobit (očišćeni satni podaci iz master rada, FTN Novi Sad) · vreme: Open-Meteo ·
@@ -255,20 +435,19 @@ const LJ = (() => {
       izgled po uzoru na Adminator (MIT). Sati su po lokalnom vremenu (Europe/Belgrade).`;
 
     main.parentNode.insertBefore(ljuska, main);
-    glavno.append(gornja, main, podnozje);
+    glavno.append(gornja, gornjiMeni(strana), main, podnozje);
     ljuska.append(meni, glavno);
 
     // događaji
     document.getElementById("meni-dugme").addEventListener("click", () => {
       if (window.matchMedia("(max-width: 960px)").matches) ljuska.classList.toggle("otvoren");
-      else {
-        ljuska.classList.toggle("uzak");
-        try { localStorage.setItem("ns-meni-uzak", ljuska.classList.contains("uzak") ? "1" : "0"); } catch (e) { /* */ }
-        setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
-      }
+      else if (izgled.raspored === "bocni" || izgled.raspored === "uzak") primeniIzgled({ raspored: izgled.raspored === "uzak" ? "bocni" : "uzak" });
+      else { ljuska.classList.toggle("uzak"); [60, 320].forEach((ms) => setTimeout(() => window.dispatchEvent(new Event("resize")), ms)); }
     });
     ljuska.addEventListener("click", (e) => { if (ljuska.classList.contains("otvoren") && !e.target.closest(".meni") && !e.target.closest("#meni-dugme")) ljuska.classList.remove("otvoren"); });
     document.getElementById("tema-dugme").addEventListener("click", () => postaviTemu(tema() === "dark" ? "light" : "dark"));
+    document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
+    primeniIzgled({}, { sacuvaj: false });
     document.getElementById("pretraga-dugme").addEventListener("click", otvoriPretragu);
     document.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); otvoriPretragu(); }
@@ -302,5 +481,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { MENI, ik, IK, info, tema, postaviTemu, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { MENI, ik, IK, info, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();

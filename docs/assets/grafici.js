@@ -83,7 +83,7 @@ function gradGrafik(g) {
     }
     if (ukljuceno.has("p7") && d.p7) {
       serije.push({ name: "prosek 7 dana", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: d.p7, showSymbol: false,
-        lineStyle: { width: 2.2, color: b.primary }, itemStyle: { color: b.primary } });
+        lineStyle: { width: 2.2, color: b.prosek }, itemStyle: { color: b.prosek } });
     }
     // mesto za kasnije: prognoza i interval 10–90 % idu ovde kao nove serije na xAxisIndex 0
     dodatni.forEach((k, j) => {

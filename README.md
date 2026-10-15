@@ -290,7 +290,7 @@ pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Pro
 Statički sajt (GitHub Pages iz `docs/`, bez build koraka; MapLibre GL 4.7.1 i ECharts 5.5.1 sa jsDelivr-a, sa SRI
 proverom; fontovi Inter / Inter Tight / JetBrains Mono), srpski latinicom. Izgled po uzoru na Adminator (MIT):
 levi meni, gornja traka (putanja, pretraga stanica `Ctrl K` ili `/`, jezik SR/EN — engleski za sada samo poruka
-„uskoro“, obaveštenja o brojačima koji ne rade, tema), **podrazumevana tamna tema** (izbor se pamti). Za sada samo
+„uskoro“, obaveštenja o brojačima koji ne rade, prečica za svetlu/tamnu temu i panel **Prilagodi** — tema (svetla, tamna, sistemska), boja naglaska (6), gustina, raspored menija (bočni, uzak, plutajući, gornji), širina sadržaja, smer teksta; `data-*` atributi na `<html>`, pamti se u localStorage (`ns-tema`, `ns-izgled`)), **podrazumevana tamna tema**. Za sada samo
 istorija 01.01.2021 – 31.08.2026, bez prognoza i bez podataka uživo (grafici su spremni da ih dobiju kao nove serije).
 
 | strana | sadržaj |

@@ -223,7 +223,7 @@
     } else {
       html += red(izbor === "grad" ? "Prosek po brojaču" : "Biciklista", `<b>${NS.broj(d.v)}</b>` +
         (izbor === "grad" ? `<small>zbir ${NS.broj(d.zbir)} na ${d.n} od ${d.post} brojača</small>` : ""));
-      if (d.odst != null) html += red("Prema uobičajenom", `<b style="color:${d.odst >= 0 ? "var(--primary)" : "var(--orange)"}">${procenat(d.odst)}</b><small>uobičajeni ${TIP_OPIS[tip]} u mesecu: ${NS.broj(d.osnova)}</small>`);
+      if (d.odst != null) html += red("Prema uobičajenom", `<b style="color:${d.odst >= 0 ? "var(--g-bicikl)" : "var(--g-temp)"}">${procenat(d.odst)}</b><small>uobičajeni ${TIP_OPIS[tip]} u mesecu: ${NS.broj(d.osnova)}</small>`);
       html += red("Rang", `<b>${NS.broj(d.rang)}.</b><small>od ${NS.broj(sortirano.length)} dana sa podacima</small>`);
     }
     html += red("Dan", TIP_OPIS[tip]);
