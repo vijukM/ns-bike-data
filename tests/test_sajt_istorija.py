@@ -191,3 +191,17 @@ def test_lepi_nazivi_smerova():
     assert pi.lep_smer("Maksima Gorkog - Bul. M. Pupina", d) == "Maksima Gorkog – Bulevar Mihajla Pupina"
     assert pi.lep_smer("Bul.Evrope-Rumenacka (u oba smera)", d) == "Bulevar Evrope – Rumenačka (u oba smera)"
     assert pi.lep_smer("X - Y", d) == "X – Y"
+
+
+def test_najduzi_niz_i_rekordi_ritam(sinteticki):
+    d = [date(2025, 1, 1), date(2025, 1, 2), date(2025, 1, 4), date(2025, 1, 5), date(2025, 1, 6)]
+    assert pi.najduzi_niz(d) == (3, date(2025, 1, 4), date(2025, 1, 6))
+    assert pi.najduzi_niz([]) == (0, None, None)
+    r = json.loads((sinteticki / "rekordi.json").read_text())
+    assert r["top_dani"][0]["zbir"] == 72 + 24 and r["top_dani"][0]["n"] == 2     # 28 do 17. 4. + 15a
+    st = {x["serija"]: x for x in r["po_stanici"]}
+    assert st["20a"]["dan"]["v"] == 50 and st["20a"]["niz"]["dana"] == 2           # 25. i 26. 10. kompletni
+    assert st["28"]["sat"]["v"] == 3 and "dan" in st["15a"]
+    t = json.loads((sinteticki / "ritam.json").read_text())
+    assert len(t["toplotna_mapa"]) == 7 and all(len(x) == 24 for x in t["toplotna_mapa"])
+    assert len(t["po_mesecu"]) == 12 and abs(sum(t["udeo_po_satu"]) - 100) < 0.5

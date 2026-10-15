@@ -147,24 +147,6 @@
       izvor: "dnevni i satni podaci iz istorije, isti kao na strani stanice",
     },
 
-    rekordi: {
-      ik: "trophy", prioritet: 1, naslov: "Rekordi i <em>zanimljivosti</em>",
-      uvod: "Najprometniji dani, sati i stanice, najduži nizovi, najveći padovi — i kratke zanimljivosti iz pet godina brojanja.",
-      kpi: [["trophy", "Najprometniji dan", "66.562", "5. 9. 2025. · 45 brojača", "narandzasta"], ["bike", "Ukupno izbrojano", "56,0<sup>mil.</sup>", "2021–2026", "plava"],
-        ["pin", "Najprometnija stanica", "34a", "<b>2.833</b> dnevno", "ljubicasta"], ["rain", "Kišni radni dan", "−29,5<sup>%</sup>", "prema suvom", "teal"]],
-      skice: [
-        { sirina: "cela", eyebrow: "Top 10", naslov: "Najprometniji dani svih vremena", opcija: (b, r) => {
-          const d = Array.from({ length: 10 }, (_, i) => [`${5 + i}. 9. 2025.`, Math.round(66500 * Math.pow(0.985, i) * (0.99 + r() * 0.01))]);
-          return { ...NS.osnova(b), tooltip: { ...tt(b), axisPointer: { type: "shadow" } }, grid: { left: 92, right: 20, top: 6, bottom: 20 },
-            xAxis: { type: "value", ...NS.osaY(b) }, yAxis: { type: "category", inverse: true, data: d.map((x) => x[0]), ...NS.osaX(b) },
-            series: [{ type: "bar", data: d.map((x, i) => ({ value: x[1], itemStyle: { color: i ? b.bicikl : b.warning } })), barWidth: 14, itemStyle: { borderRadius: 7 } }] };
-        } },
-      ],
-      plan: [["Kartice rekorda", "najprometniji dan, sat, nedelja i mesec — za grad i za svaku stanicu"], ["Top 10 dana", "sa vremenom i danom u nedelji"],
-        ["Nizovi", "najduži niz dana iznad proseka, najduži rad bez prekida"], ["Zanimljivosti", "kratke činjenice: najranija „jutarnja špica“, najkišniji dan…"]],
-      izvor: "istorija brojanja 2021–2026",
-    },
-
     vreme: {
       ik: "rain", prioritet: 2, naslov: "Vreme i <em>biciklisti</em>",
       uvod: "Koliko kiša, hladnoća, vrućina i sneg menjaju broj biciklista — po danu i po satu.",
@@ -216,29 +198,6 @@
       plan: [["Državni i verski praznici", "svaki praznik prema običnom istom danu"], ["Školski raspust", "kako se menja jutarnja špica leti i zimi"],
         ["Događaji u gradu", "festivali, maraton, zatvorene ulice — sa datumima koje dodajemo ručno"], ["Kalendar događaja", "spisak sa linkom na „dan na mapi“"]],
       izvor: "istorija brojanja + kalendar praznika i događaja",
-    },
-
-    ritam: {
-      ik: "pulse", prioritet: 1, naslov: "Ritam <em>grada</em>",
-      uvod: "Kad Novi Sad sedne na bicikl: sat × dan u nedelji za ceo grad, jutarnja i popodnevna špica, i kako se ritam menja kroz godišnja doba.",
-      skice: [
-        { sirina: "pola", eyebrow: "Sat × dan", naslov: "Nedelja jednog grada", visina: 300, opcija: (b) => {
-          const d = [];
-          for (let w = 0; w < 7; w++) for (let h = 0; h < 24; h++) d.push([h, w, Math.round(w < 5 ? radniDan(h) : vikendDan(h))]);
-          return { ...NS.osnova(b), tooltip: { trigger: "item" }, grid: { left: 40, right: 8, top: 8, bottom: 26 },
-            xAxis: { type: "category", data: SATI, ...NS.osaX(b) }, yAxis: { type: "category", data: NS.DANI_KRATKO, inverse: true, ...NS.osaX(b) },
-            visualMap: { show: false, min: 0, max: 110, inRange: { color: [b["top-0"], b["top-2"], b["top-3"], b["top-5"]] } },
-            series: [{ type: "heatmap", data: d, itemStyle: { borderColor: b.povrsina, borderWidth: 1.5, borderRadius: 3 } }] };
-        } },
-        { sirina: "pola", eyebrow: "24 sata", naslov: "Sat kao brojčanik", visina: 300, opcija: (b) => ({
-          ...NS.osnova(b), tooltip: { trigger: "item" },
-          angleAxis: { type: "category", data: SATI, axisLine: { lineStyle: { color: b.osa } }, axisLabel: { color: b["ink-3"], fontSize: 10 }, startAngle: 90 },
-          radiusAxis: { show: false }, polar: { radius: ["12%", "78%"] },
-          series: [{ type: "bar", coordinateSystem: "polar", data: SATI.map((_, h) => Math.round(radniDan(h))), itemStyle: { color: b.bicikl, borderRadius: 3 } }] }) },
-      ],
-      plan: [["Sat × dan u nedelji", "toplotna tabela za ceo grad"], ["Brojčanik", "24 sata u krugu — radni dan i vikend"],
-        ["Kad grad „ustaje“", "sat kada promet pređe pola dnevnog vrha, po godišnjem dobu"], ["Špice", "kako se jutarnja i popodnevna špica pomeraju kroz godinu"]],
-      izvor: "satni profili svih brojača iz istorije",
     },
 
     kvalitet: {
