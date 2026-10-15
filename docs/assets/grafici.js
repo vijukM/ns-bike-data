@@ -176,24 +176,60 @@ function godine(g) {
   const selA = document.getElementById("god-a"), selB = document.getElementById("god-b");
   for (const sel of [selA, selB]) sel.innerHTML = godineSve.map((y) => `<option>${y}</option>`).join("");
   selA.value = "2025"; selB.value = "2024";
+  const boje = (b, A, B) => { const stariji = +A < +B ? A : B; return (y) => (y === stariji ? b["god-1"] : b["god-4"]); };
+
+  // levo: horizontalni stubići (kao „headcount by age“), zaobljeni, rastu sleva uz kašnjenje po mesecu
   const graf = NS.grafik(document.getElementById("godine-grafik"), (b) => {
     const A = selA.value, B = selB.value;
     const red = godisnjiZbir(g, A, B);
-    const stariji = +A < +B ? A : B;
+    const boja = boje(b, A, B);
+    const kat = red.map((r) => `${NS.MESECI_KRATKO[r.m - 1]} (${r.n})`);
     return {
       ...NS.osnova(b),
-      legend: { bottom: 0, textStyle: { color: b["ink-2"] }, icon: "roundRect", itemWidth: 10, itemHeight: 10 },
-      grid: { left: 58, right: 12, top: 30, bottom: 70 },
-      xAxis: { type: "category", data: red.map((r) => `${NS.MESECI_KRATKO[r.m - 1]}\n(${r.n})`), ...NS.osaX(b, { axisLabel: { color: b["ink-3"], interval: 0, fontSize: 11 } }) },
-      yAxis: { type: "value", name: "prosečan dan, zbir", ...NS.osaY(b) },
+      legend: { top: 0, right: 0, textStyle: { color: b["ink-2"] }, icon: "roundRect", itemWidth: 12, itemHeight: 12 },
+      grid: { left: 70, right: 92, top: 34, bottom: 20 },
+      yAxis: { type: "category", data: kat, inverse: true, ...NS.osaX(b, { axisLine: { show: false }, axisLabel: { color: b["ink-2"], fontSize: 12 } }) },
+      xAxis: { type: "value", ...NS.osaY(b), splitLine: { lineStyle: { color: b.mreza, type: [3, 4] } } },
       tooltip: { ...NS.osnova(b).tooltip, axisPointer: { type: "shadow", shadowStyle: { color: b.mreza, opacity: 0.5 } },
         formatter: (q) => { const r = red[q[0].dataIndex]; if (!r.n) return `${NS.MESECI[r.m - 1]}: nema zajedničkih brojača`;
           return `<b>${NS.MESECI[r.m - 1]}</b> · ${r.n} zajedničkih brojača<br>${A}: <b>${NS.broj(r.a)}</b><br>${B}: <b>${NS.broj(r.b)}</b><br>razlika: ${NS.procenat(100 * (r.a / r.b - 1))}`; } },
-      series: [B, A].map((y) => ({ name: y, type: "bar", barGap: "12%", barCategoryGap: "30%", data: red.map((r) => (y === A ? r.a : r.b)),
-        itemStyle: { color: y === stariji ? b["god-1"] : b["god-4"], borderRadius: [4, 4, 0, 0] }, animationDelay: (i) => i * 40 })),
+      series: [B, A].map((y, j) => ({
+        name: y, type: "bar", barGap: "18%", barCategoryGap: "26%",
+        data: red.map((r) => (y === A ? r.a : r.b)),
+        itemStyle: { borderRadius: [0, 8, 8, 0], color: new echarts.graphic.LinearGradient(0, 0, 1, 0,
+          [{ offset: 0, color: boja(y) + "66" }, { offset: 1, color: boja(y) }]) },
+        label: y === A ? { show: true, position: "right", color: b["ink-2"], fontSize: 11, fontFamily: "JetBrains Mono, monospace",
+          formatter: (q) => { const r = red[q.dataIndex]; return r.n ? NS.procenat(100 * (r.a / r.b - 1)) : ""; } } : { show: false },
+        emphasis: { focus: "series" },
+        animationDuration: 1200, animationEasing: "cubicOut", animationDelay: (i) => i * 70 + j * 120,
+      })),
     };
   });
-  for (const sel of [selA, selB]) sel.addEventListener("change", () => graf.osvezi());
+
+  // desno: radar sa 12 meseci (kao „skills assessment“)
+  const radar = NS.grafik(document.getElementById("radar-grafik"), (b) => {
+    const A = selA.value, B = selB.value;
+    const red = godisnjiZbir(g, A, B);
+    const boja = boje(b, A, B);
+    const maks = Math.max(...red.flatMap((r) => [r.a || 0, r.b || 0])) * 1.08 || 1;
+    return {
+      ...NS.osnova(b),
+      legend: { bottom: 0, textStyle: { color: b["ink-2"] }, icon: "roundRect", itemWidth: 12, itemHeight: 12 },
+      tooltip: { trigger: "item", backgroundColor: b.povrsina, borderColor: b.osa, textStyle: { color: b.ink },
+        formatter: (q) => `<b>${q.name}</b><br>` + red.map((r, i) => `${NS.MESECI_KRATKO[i]}: ${NS.broj(q.value[i])}`).join("<br>") },
+      radar: {
+        center: ["50%", "48%"], radius: "68%", splitNumber: 4, shape: "polygon",
+        indicator: NS.MESECI_KRATKO.map((m) => ({ name: m, max: maks })),
+        axisName: { color: b["ink-2"], fontSize: 12 },
+        splitLine: { lineStyle: { color: b.mreza } }, splitArea: { areaStyle: { color: ["transparent", b.mreza + "55"] } },
+        axisLine: { lineStyle: { color: b.mreza } },
+      },
+      series: [{ type: "radar", symbolSize: 5, animationDuration: 1600, animationEasing: "elasticOut",
+        data: [B, A].map((y) => ({ name: y, value: red.map((r) => Math.round((y === A ? r.a : r.b) || 0)),
+          lineStyle: { width: 2.5, color: boja(y) }, itemStyle: { color: boja(y) }, areaStyle: { color: boja(y), opacity: y === A ? 0.28 : 0.18 } })) }],
+    };
+  });
+  for (const sel of [selA, selB]) sel.addEventListener("change", () => { graf.osvezi(); radar.osvezi(); });
 }
 
 /** Polinom stepena k sa najmanjom srednjom kvadratnom greškom (najmanji kvadrati, x se standardizuje). */
@@ -222,16 +258,20 @@ function polinom(xs, ys, k = 3) {
 }
 
 // ---------------------------------------------------------------- izbor stanica (padajući meni sa štiklama)
+// info ikonica (isti izgled kao na mapi)
+const MAPA_INFO = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>`;
 const BOJE_STANICA = { light: ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"],
   dark: ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#2fa52f"] };
 const bojeStanica = () => BOJE_STANICA[NS.tamna() ? "dark" : "light"];
 
 /** Dugme „Svi brojači (prosek) ▾“ + panel sa pretragom i štiklama; promena(izabrane[]) */
+const REKREATIVNE = ["25a", "26"];                 // Kej žrtava racije, Štrand
 function izborStanica(omot, s, promena, maks = 6) {
   let izabrane = [];
+  const jesuRekreativne = () => izabrane.length === REKREATIVNE.length && REKREATIVNE.every((k) => izabrane.includes(k));
   omot.innerHTML = `<button type="button" class="dugme malo izbor-dugme" aria-haspopup="true"></button>`;
   const dugme = omot.querySelector("button");
-  const natpis = () => { dugme.textContent = `${izabrane.length ? `${izabrane.length === 1 ? "Stanica" : "Stanice"}: ${izabrane.join(", ")}` : "Svi brojači (prosek)"} ▾`; };
+  const natpis = () => { dugme.textContent = `${izabrane.length ? `${izabrane.length === 1 ? "Stanica" : "Stanice"}: ${izabrane.join(", ")}${jesuRekreativne() ? " — rekreativne" : ""}` : "Svi brojači (prosek)"} ▾`; };
   natpis();
   const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
   dugme.addEventListener("click", (e) => {
@@ -242,6 +282,8 @@ function izborStanica(omot, s, promena, maks = 6) {
     p.className = "panel izbor-stanica";
     p.innerHTML = `<input type="search" placeholder="Pretraži stanice…" aria-label="Pretraga stanica">
       <label class="red-izbora"><input type="checkbox" data-s="" ${izabrane.length ? "" : "checked"}><b>Svi brojači (prosek po brojaču)</b></label>
+      <label class="red-izbora"><input type="checkbox" data-rek="1" ${jesuRekreativne() ? "checked" : ""}><b>Rekreativne staze</b>
+        ${MAPA_INFO(`rekreativne staze: ${REKREATIVNE.map((k) => { const r = s.serije.find((x) => x.serija === k); return `${k} · ${r ? r.naziv : ""}`; }).join(", ")}`)}</label>
       <div class="spisak-izbora">${s.serije.map((r) => `<label class="red-izbora" data-t="${bez(`${r.serija} ${r.naziv}`)}">
         <input type="checkbox" data-s="${r.serija}" ${izabrane.includes(r.serija) ? "checked" : ""}><img src="${NS.pin(r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}</span></label>`).join("")}</div>
       <p class="sitno" style="margin:6px 4px 2px">najviše ${maks} stanica odjednom</p>`;
@@ -252,11 +294,13 @@ function izborStanica(omot, s, promena, maks = 6) {
     });
     p.addEventListener("change", (ev) => {
       const k = ev.target.dataset.s;
-      if (k === undefined) return;
-      if (k === "") izabrane = [];
+      if (ev.target.dataset.rek) izabrane = ev.target.checked ? REKREATIVNE.slice() : [];
+      else if (k === undefined) return;
+      else if (k === "") izabrane = [];
       else if (ev.target.checked) { if (izabrane.length >= maks) { ev.target.checked = false; LJ.tost(`Najviše ${maks} stanica odjednom.`, "info"); return; } izabrane.push(k); }
       else izabrane = izabrane.filter((x) => x !== k);
       p.querySelector('input[data-s=""]').checked = !izabrane.length;
+      p.querySelector("input[data-rek]").checked = jesuRekreativne();
       p.querySelectorAll(".spisak-izbora input").forEach((x) => { x.checked = izabrane.includes(x.dataset.s); });
       natpis(); promena(izabrane.slice());
     });
@@ -314,7 +358,7 @@ async function temperatura(g, a) {
           serije.push({ name: jedan ? "kriva (3. stepen, najmanji MSE)" : `${sk.ime} · kriva`, type: "line", showSymbol: false, z: 5,
             data: Array.from({ length: 81 }, (_, i) => { const x = lo + (hi - lo) * i / 80; return [Math.round(x * 10) / 10, Math.max(0, Math.round(fit.f(x)))]; }),
             lineStyle: { width: 3, color: jedan ? b.temp : boje[j] }, itemStyle: { color: jedan ? b.temp : boje[j] },
-            animationDuration: 3500, animationEasing: "linear", animationDelay: 400 });
+            animationDuration: 1750, animationEasing: "linear", animationDelay: 300 });
         }
       }
     });
@@ -340,12 +384,19 @@ async function temperatura(g, a) {
   NS.prekidac(document.getElementById("temp-dani"), [["radni", "Radni dan"], ["vikend", "Vikend"], ["svi", "Svaki dan"]], dani, (v) => {
     dani = v;
     document.getElementById("temp-vikend").classList.toggle("skriveno", v !== "vikend");
+    poravnajVikend();
     osvezi();
   });
   // Sub / Ned (spojeni, oba uključena; bar jedan ostaje)
   const vikEl = document.getElementById("temp-vikend");
-  vikEl.className = "segment skriveno";
-  vikEl.style.marginTop = "6px";
+  vikEl.className = "segment pod-vikend skriveno";
+  function poravnajVikend() {                       // tačno ispod dugmeta „Vikend“, iste širine
+    const v = document.querySelector('#temp-dani button[data-v="vikend"]');
+    if (!v) return;
+    vikEl.style.marginLeft = `${v.offsetLeft - 4}px`;
+    vikEl.style.width = `${v.offsetWidth + 8}px`;
+  }
+  window.addEventListener("resize", poravnajVikend);
   vikEl.innerHTML = [[6, "Sub"], [0, "Ned"]].map(([w, t]) => `<button type="button" data-w="${w}" aria-pressed="true">${t}</button>`).join("");
   vikEl.addEventListener("click", (e) => {
     const d = e.target.closest("button"); if (!d) return;
@@ -361,6 +412,12 @@ async function temperatura(g, a) {
   kEl.querySelector("input").addEventListener("change", (e) => { krivaUkljucena = e.target.checked; graf.osvezi(); });
   izborStanica(document.getElementById("temp-izbor"), s, (iz) => { izabrane = iz; osvezi(); });
   osvezi();
+}
+
+/** Pomak centra j-tog stubića od sredine kategorije (ECharts: barGap 30 %, širina kategorije 1). */
+function pomakStubica(n, j, razmakKat) {
+  const ukupno = 1 - razmakKat, bw = ukupno / (n + 0.3 * (n - 1));
+  return -ukupno / 2 + bw * (j + 0.5) + 0.3 * bw * j;
 }
 
 /** Dani u nedelji: svi brojači (prosek po brojaču) ili izabrane stanice (do 6). */
@@ -382,7 +439,10 @@ async function daniUNedelji(a, g) {
     });
     return (kes[serija] = z.map(([x, n]) => (n ? x / n : null)));
   }
-  let podaci = null;
+  let podaci = null, linija = true;
+  const lEl = document.getElementById("dani-linija");
+  lEl.innerHTML = `<label class="prekidac-ui"><input type="checkbox" checked><span class="klizac" aria-hidden="true"></span><span>linija</span></label>`;
+  lEl.querySelector("input").addEventListener("change", (e) => { linija = e.target.checked; graf.osvezi(); });
   const graf = NS.grafik(document.getElementById("dani-grafik"), (b) => {
     if (!podaci) return {};
     const jedna = podaci.length === 1;
@@ -391,10 +451,11 @@ async function daniUNedelji(a, g) {
       ...NS.osnova(b),
       legend: jedna ? undefined : { bottom: 0, textStyle: { color: b["ink-2"] }, icon: "roundRect", itemWidth: 10, itemHeight: 10 },
       grid: { left: 58, right: 12, top: 30, bottom: jedna ? 30 : 56 },
-      xAxis: { type: "category", data: NS.DANI_KRATKO, ...NS.osaX(b, { axisLabel: { color: b["ink-3"], interval: 0 } }) },
+      xAxis: [{ type: "category", data: NS.DANI_KRATKO, ...NS.osaX(b, { axisLabel: { color: b["ink-3"], interval: 0 } }) },
+        { type: "value", min: -0.5, max: 6.5, show: false }],
       yAxis: { type: "value", name: izabrane.length ? "biciklista dnevno" : "biciklista po brojaču", ...NS.osaY(b) },
       tooltip: { ...NS.osnova(b).tooltip, axisPointer: { type: "shadow", shadowStyle: { color: b.mreza, opacity: 0.5 } },
-        formatter: (q) => `<b>${NS.DANI[(q[0].dataIndex + 1) % 7]}</b><br>` + q.map((x) => {
+        formatter: (q) => `<b>${NS.DANI[(q[0].dataIndex + 1) % 7]}</b><br>` + q.filter((x) => x.seriesType === "bar").map((x) => {
           const ser = podaci[x.seriesIndex];
           const radni = ser.v.slice(0, 5).reduce((u, y) => u + (y || 0), 0) / 5;
           return `${x.marker}${ser.ime}: <b>${NS.broj(Math.round(x.value))}</b> <span style="color:${b["ink-3"]}">(${NS.procenat(100 * (x.value / radni - 1))} prema radnom danu)</span>`;
@@ -405,7 +466,14 @@ async function daniUNedelji(a, g) {
         data: ser.v.map((v, i) => ({ value: v == null ? null : Math.round(v),
           itemStyle: { color: jedna ? (i < 5 ? b.bicikl : b["bicikl-blago"]) : boje[j], borderRadius: [4, 4, 0, 0] } })),
         label: { show: jedna, position: "top", color: b["ink-2"], fontSize: 11, formatter: (q) => NS.broj(q.value) },
-      })),
+      })).concat(linija ? podaci.map((ser, j) => ({
+        // tačke tačno na vrhu stubića te serije (pomak unutar kategorije kao kod stubića)
+        name: ser.ime, type: "line", xAxisIndex: 1, z: 5, smooth: 0.25,
+        data: ser.v.map((v, i) => [i + pomakStubica(podaci.length, j, jedna ? 0.3 : 0.18), v == null ? null : Math.round(v)]),
+        symbol: "circle", symbolSize: 7, lineStyle: { width: 2.5, color: jedna ? b.temp : boje[j] },
+        itemStyle: { color: jedna ? b.temp : boje[j], borderColor: b.povrsina, borderWidth: 2 },
+        tooltip: { show: false }, animationDuration: 1400, animationDelay: 500,
+      })) : []),
     };
   });
   async function crtaj() {

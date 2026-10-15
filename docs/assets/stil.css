@@ -508,3 +508,10 @@ footer.podnozje { max-width: 1680px; padding: 8px 22px 28px; }
 .kartica-glava > .grupa-kontrola, .kartica-glava > .segment, .kartica-glava > a.vise, .kartica-glava > .kontrole { flex: none; }
 .grupa-kontrola { align-items: flex-start; }
 @media (max-width: 640px) { .kartica-glava { flex-wrap: wrap; } }
+
+/* Sub/Ned spojeni ispod dugmeta Vikend */
+.segment.pod-vikend { margin-top: -4px; border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0; padding-top: 4px; display: flex; }
+.segment.pod-vikend button { flex: 1; padding: 4px 6px; font-size: 11.5px; }
+.segment.pod-vikend.skriveno { display: none !important; }
+#temp-dani .segment, #temp-dani.segment { position: relative; z-index: 1; }
+.red-izbora .info { margin-left: auto; }
