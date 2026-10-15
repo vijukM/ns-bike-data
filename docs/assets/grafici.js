@@ -193,7 +193,7 @@ function godine(g) {
       tooltip: { ...NS.osnova(b).tooltip, axisPointer: { type: "shadow", shadowStyle: { color: b.mreza, opacity: 0.5 } },
         formatter: (q) => { const r = red[q[0].dataIndex]; if (!r.n) return `${NS.MESECI[r.m - 1]}: nema zajedničkih brojača`;
           return `<b>${NS.MESECI[r.m - 1]}</b> · ${r.n} zajedničkih brojača<br>${A}: <b>${NS.broj(r.a)}</b><br>${B}: <b>${NS.broj(r.b)}</b><br>razlika: ${NS.procenat(100 * (r.a / r.b - 1))}`; } },
-      series: [B, A].map((y, j) => ({
+      series: [A, B].map((y, j) => ({
         name: y, type: "bar", barGap: "18%", barCategoryGap: "26%",
         data: red.map((r) => (y === A ? r.a : r.b)),
         itemStyle: { borderRadius: [0, 8, 8, 0], color: new echarts.graphic.LinearGradient(0, 0, 1, 0,
@@ -225,7 +225,7 @@ function godine(g) {
         axisLine: { lineStyle: { color: b.mreza } },
       },
       series: [{ type: "radar", symbolSize: 5, animationDuration: 1600, animationEasing: "elasticOut",
-        data: [B, A].map((y) => ({ name: y, value: red.map((r) => Math.round((y === A ? r.a : r.b) || 0)),
+        data: [A, B].map((y) => ({ name: y, value: red.map((r) => Math.round((y === A ? r.a : r.b) || 0)),
           lineStyle: { width: 2.5, color: boja(y) }, itemStyle: { color: boja(y) }, areaStyle: { color: boja(y), opacity: y === A ? 0.28 : 0.18 } })) }],
     };
   });
@@ -424,24 +424,29 @@ function pomakStubica(n, j, razmakKat) {
 async function daniUNedelji(a, g) {
   const s = await NS.stanice();
   const praznik = new Set(g.praznik.map((i) => NS.dodajDane(g.od, i)));
-  let izabrane = [];
+  let izabrane = [], vreme = "svi";
   const kes = {};
-  async function poDanima(serija) {
-    if (kes[serija]) return kes[serija];
-    const d = await dnevnoStanice(serija);
+  const prolazi = (dan) => { if (vreme === "svi") return true; const i = NS.razlikaDana(g.od, dan); const p = g.pad[i] ?? 0; return (vreme === "kisa") === (p >= 1); };
+  function proseci(od, vrednosti) {
     const z = Array.from({ length: 7 }, () => [0, 0]);
-    d.v.forEach((v, i) => {
+    vrednosti.forEach((v, i) => {
       if (v == null) return;
-      const dan = NS.dodajDane(d.od, i);
-      if (praznik.has(dan)) return;
+      const dan = NS.dodajDane(od, i);
+      if (praznik.has(dan) || !prolazi(dan)) return;
       const w = (NS.danUNedelji(dan) + 6) % 7;
       z[w][0] += v; z[w][1]++;
     });
-    return (kes[serija] = z.map(([x, n]) => (n ? x / n : null)));
+    return z.map(([x, n]) => (n ? x / n : null));
+  }
+  async function poDanima(serija) {
+    const k = `${serija}|${vreme}`;
+    if (kes[k]) return kes[k];
+    const d = await dnevnoStanice(serija);
+    return (kes[k] = proseci(d.od, d.v));
   }
   let podaci = null, linija = true;
   const lEl = document.getElementById("dani-linija");
-  lEl.innerHTML = `<label class="prekidac-ui"><input type="checkbox" checked><span class="klizac" aria-hidden="true"></span><span>linija</span></label>`;
+  lEl.innerHTML = `<label class="prekidac-ui"><input type="checkbox" checked><span class="klizac" aria-hidden="true"></span><span>prikaži</span></label>`;
   lEl.querySelector("input").addEventListener("change", (e) => { linija = e.target.checked; graf.osvezi(); });
   const graf = NS.grafik(document.getElementById("dani-grafik"), (b) => {
     if (!podaci) return {};
@@ -477,12 +482,15 @@ async function daniUNedelji(a, g) {
     };
   });
   async function crtaj() {
-    podaci = izabrane.length ? await Promise.all(izabrane.map(async (k) => ({ ime: k, v: await poDanima(k) }))) : [{ ime: "svi brojači", v: a.dani }];
-    document.getElementById("dani-opis").textContent = izabrane.length
-      ? "Prosečan dan na izabranim stanicama (kompletni dani), bez praznika." : "Prosečan dan po brojaču (svi brojači), bez praznika.";
+    podaci = izabrane.length ? await Promise.all(izabrane.map(async (k) => ({ ime: k, v: await poDanima(k) })))
+      : [{ ime: "svi brojači", v: proseci(g.od, a.po) }];
+    const kad = { svi: "", suvo: ", samo suvi dani", kisa: ", samo kišni dani (≥ 1 mm)" }[vreme];
+    document.getElementById("dani-info").innerHTML = MAPA_INFO(izabrane.length
+      ? `Prosečan dan na izabranim stanicama (kompletni dani), bez praznika${kad}.` : `Prosečan dan po brojaču (svi brojači), bez praznika${kad}.`);
     graf.osvezi();
   }
   izborStanica(document.getElementById("dani-izbor"), s, (iz) => { izabrane = iz; crtaj(); });
+  NS.prekidac(document.getElementById("dani-vreme"), [["svi", "Svi"], ["suvo", "Suvo"], ["kisa", "Kiša"]], vreme, (v) => { vreme = v; crtaj(); });
   crtaj();
 }
 
