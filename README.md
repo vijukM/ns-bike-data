@@ -287,7 +287,7 @@ pravoslavni Vaskrs petak–ponedeljak; prenos sa nedelje na prvi radni dan). Pro
 
 ## Sajt — istorija 2021–2026 (faza 7a, `docs/`)
 
-Statički sajt (GitHub Pages iz `docs/`, bez build koraka; Leaflet 1.9.4 i ECharts 5.5.1 sa jsDelivr-a, sa SRI
+Statički sajt (GitHub Pages iz `docs/`, bez build koraka; MapLibre GL 4.7.1 i ECharts 5.5.1 sa jsDelivr-a, sa SRI
 proverom; fontovi Inter / Inter Tight / JetBrains Mono), srpski latinicom. Izgled po uzoru na Adminator (MIT):
 levi meni, gornja traka (putanja, pretraga stanica `Ctrl K` ili `/`, jezik SR/EN — engleski za sada samo poruka
 „uskoro“, obaveštenja o brojačima koji ne rade, tema), **podrazumevana tamna tema** (izbor se pamti). Za sada samo
@@ -296,11 +296,15 @@ istorija 01.01.2021 – 31.08.2026, bez prognoza i bez podataka uživo (grafici 
 | strana | sadržaj |
 |---|---|
 | `index.html` | kontrolna tabla: KPI kartice, mapa brojača i staza, najprometnija mesta, prstenovi, **priča koja se otkriva skrolovanjem** (6 koraka, grafik ostaje fiksiran), najprometnije stanice, brojači koji traže pažnju |
-| `mapa.html` | velika mapa (podloge CARTO / OpenStreetMap / „Nacrtana“ u razvoju), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
+| `mapa.html` | velika mapa (MapLibre: pomeranje, rotacija, nagib, dugme 3D sa zgradama; podloge CARTO / OpenStreetMap / poster mape tamno plava, siva, bela), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
 | `grafici.html` | grad po danu sa čipovima (biciklisti, prosek 7 dana, broj brojača, temperatura, padavine), poređenje godina, temperatura × biciklisti, dani u nedelji, mesec × godina; izvoz PNG |
 | `stanice.html` | tabela: pretraga, filter po stanju, sortiranje, straničenje, izvoz CSV |
 | `stanica.html?id=23a` | KPI, dnevno za ceo period, satni profil, toplotna mapa sat × dan, meseci po godinama, izabrani dan |
-| `o-projektu.html`, `prognoza.html`, `404.html` | izvori i pravila, prognoza (uskoro), strana za nepostojeće adrese |
+| `kalendar.html` | svaki dan 2021–2026 kao polje (grad po brojaču ili stanica; broj ili „prema uobičajenom“), detalji i satni grafik izabranog dana (`?id=34a&dan=…`) |
+| `rekordi.html` | top dani, izbrojano po godini, vremenski rekordi, zanimljivosti, rekordi po brojaču |
+| `ritam.html` | sat × dan u nedelji, brojčanik 24 h, godišnja doba, „kad grad ustaje“, radni dan kroz godine |
+| ostale strane iz menija | „uskoro“ — skica kako će strana izgledati (ilustrativni podaci) i plan (`assets/uskoro.js`) |
+| `o-projektu.html`, `404.html` | izvori i pravila, strana za nepostojeće adrese |
 
 Ikonice pinova (`docs/assets/slike/pinovi/`) pokazuju stanje brojača u poslednjih 30 dana istorije: plava = radi
 (≥ 90 % kompletnih dana), narandžasta = delimično, crvena = ne radi, crna = neispravan (28), obris = još nije
@@ -310,6 +314,11 @@ fale, linija je isprekidana i siva (nikad 0).
 Biciklističke staze: `python -m sajt.staze` (Overpass API, OpenStreetMap) → `docs/data/staze.geojson`
 (izdvojena staza / traka na kolovozu / zajednička sa pešacima); pokreće se workflow-om `sajt_istorija` sa
 `sta=staze` (kontejner za razvoj nema pristup Overpass-u).
+
+Poster mape (vektorske, oštre na svakom zumu): `python -m sajt.osnova_mape` (Overpass) → `docs/data/mapa/`
+(`putevi` sa klasom a/g/s/o, `voda`, `zelenilo`, `pruga`, `zgrade` sa visinom za 3D, samo uži centar); workflow
+`sajt_istorija` sa `sta=mapa`. Sajt ih crta u MapLibre-u u tri stila (tamno plava, siva, bela); učitavaju se tek kad
+se izabere poster podloga ili 3D.
 
 Podaci (`docs/data/istorija/`, ~7,4 MB, ~2 MB komprimovano) se prave iz Release-a `istorija-v1` (parquet ne ide u git):
 
@@ -332,6 +341,8 @@ van gradskih zbirova; gradski zbir ide uz broj uključenih brojača. Fajlovi:
 | `profili/<serija>.json` | profil po satu (godišnje doba × tip dana), toplotna mapa, meseci po godinama, godine |
 | `sati/<YYYY-MM>.json` | satne vrednosti svih serija od `pocetak_utc` (UTC sati), `dani` [[datum, indeks, sati]], `r` razlozi (RLE) |
 | `meteo_sati/<YYYY-MM>.json` | temperatura, padavine, novi sneg na istoj satnoj mreži |
+| `rekordi.json` | top dani (zbir i po brojaču), najprometniji sat i nedelja, vremenski rekordi, godine, rekordi po seriji, zanimljivosti |
+| `ritam.json` | prosečan brojač po satu: sat × dan u nedelji, godišnja doba × tip dana, meseci (špice, „ustaje“), radni dan po godini |
 
 ## Ograničenja
 

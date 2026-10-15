@@ -603,3 +603,33 @@ a.rekord:hover, a.cinjenica:hover { border-color: var(--kpi-boja, var(--primary)
 @media (max-width: 640px) { .rekordi-vreme, .zanimljivosti { grid-template-columns: minmax(0, 1fr); } }
 .rekordi-vreme { align-items: start; }
 .vise-redova { display: flex; justify-content: center; padding-top: 14px; }
+
+/* MapLibre: kartica (popup), kontrole, Ctrl + točkić, 3D */
+.maplibregl-map { font: inherit; }
+.pin-omot { cursor: pointer; }
+.maplibregl-popup { z-index: 6; }
+.maplibregl-popup-content { background: var(--bg-card); color: var(--t-base); border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+  border-radius: 12px; padding: 12px 30px 12px 14px; font-size: 13px; line-height: 1.45; }
+.maplibregl-popup-close-button { color: var(--t-muted); font-size: 18px; width: 26px; height: 26px; right: 2px; top: 2px; border-radius: 8px; }
+.maplibregl-popup-close-button:hover { background: var(--bg-hover); color: var(--t-base); }
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--bg-card); }
+.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--bg-card); }
+.maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--bg-card); }
+.maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--bg-card); }
+.maplibregl-popup-anchor-top-left .maplibregl-popup-tip, .maplibregl-popup-anchor-top-right .maplibregl-popup-tip,
+.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { display: none; }
+.maplibregl-ctrl-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px !important; box-shadow: var(--shadow-card) !important; overflow: hidden; }
+.maplibregl-ctrl-group button { width: 34px; height: 34px; }
+.maplibregl-ctrl-group button + button { border-top: 1px solid var(--border); }
+.maplibregl-ctrl-group button:hover { background-color: var(--bg-hover) !important; }
+:root[data-theme="dark"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon { filter: invert(1) brightness(0.9); }
+.dugme-3d button { font: 700 12px/1 "JetBrains Mono", monospace; color: var(--t-base); }
+.dugme-3d button.aktivno { color: var(--primary); background: var(--primary-soft) !important; }
+.maplibregl-ctrl-attrib { background: color-mix(in srgb, var(--bg-card) 85%, transparent) !important; color: var(--t-muted); font-size: 11px; }
+.maplibregl-ctrl-attrib a { color: var(--t-muted); }
+.maplibregl-ctrl-attrib-button { background-color: var(--bg-card) !important; }
+:root[data-theme="dark"] .maplibregl-ctrl-attrib-button { filter: invert(1); }
+.maplibregl-ctrl-scale { background: color-mix(in srgb, var(--bg-card) 80%, transparent); color: var(--t-muted); border-color: var(--t-light); font-size: 10.5px; }
+.maplibregl-cooperative-gesture-screen { background: rgb(0 0 0 / 0.42); color: #fff; font: 600 15px/1.4 Inter, system-ui, sans-serif; }
+.maplibregl-cooperative-gesture-screen .maplibregl-desktop-message, .maplibregl-cooperative-gesture-screen .maplibregl-mobile-message { padding: 12px 18px; border-radius: 12px; }
+.mapa[data-podloga="plava"], .mapa[data-podloga="siva"], .mapa[data-podloga="bela"] { background: transparent; }
