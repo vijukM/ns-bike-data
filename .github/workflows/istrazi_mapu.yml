@@ -1,0 +1,29 @@
+# Jednokratno istraživanje: koja mapa (pločice, biblioteka) je na sajtu UGZINS Traffic Agent.
+name: istrazi_mapu
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mapa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Playwright
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Snimanje mape
+        run: python alati/istrazi_mapu.py istrazi_mapu
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: istrazi_mapu
+          path: istrazi_mapu/
