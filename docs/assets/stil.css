@@ -937,7 +937,6 @@ html.bez-skrola { overflow: hidden; }
 .cip-strelica:hover { color: var(--t-base); }
 .parking-grupa:has(.cip-parking.aktivno) .cip-strelica { color: var(--t-base); border-color: #2f7de1; background: color-mix(in srgb, #2f7de1 12%, transparent); }
 .panel.tipovi-parkinga { left: 0; right: auto; top: calc(100% + 6px); width: 280px; padding: 10px; }
-.tipovi-parkinga > p { margin: 0 4px 8px; color: var(--t-muted); line-height: 1.4; }
 .tipovi-dno { display: flex; gap: 6px; justify-content: flex-end; padding: 8px 4px 0; margin-top: 6px; border-top: 1px solid var(--border); }
 [dir="rtl"] .panel.tipovi-parkinga { left: auto; right: 0; }
 @media (max-width: 960px) { .panel.tipovi-parkinga { position: absolute; left: 0; right: auto; top: calc(100% + 6px); width: min(300px, calc(100vw - 40px)); } }
@@ -954,7 +953,7 @@ html.bez-skrola { overflow: hidden; }
   color: var(--t-muted); background: var(--bg-muted); border: 1px dashed var(--border); }
 .uskoro-uzivo svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
 /* staze: čip sa tri linije (izdvojena staza, traka, zajednička) i legenda u padajućem panelu */
-.cip-staze .cip-naziv { font-weight: 600; margin: 0 4px 0 2px; }
+.cip-staze .cip-naziv { font-weight: 600; margin: 0 8px 0 2px; white-space: nowrap; }
 .linija-staze { display: inline-block; flex: none; width: 24px; height: 8px; border-radius: 4px; background: var(--staza-obod); position: relative; }
 .linija-staze::after { content: ""; position: absolute; left: 3px; right: 3px; top: 3px; height: 2px; border-radius: 1px; background: var(--b); }
 .linija-staze.isprekidana::after { background: repeating-linear-gradient(90deg, var(--b) 0 4px, transparent 4px 7px); }
