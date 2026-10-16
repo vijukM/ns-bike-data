@@ -953,3 +953,21 @@ html.bez-skrola { overflow: hidden; }
 .uskoro-uzivo { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
   color: var(--t-muted); background: var(--bg-muted); border: 1px dashed var(--border); }
 .uskoro-uzivo svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+/* staze: čip sa tri linije (izdvojena staza, traka, zajednička) i legenda u padajućem panelu */
+.cip-staze .cip-naziv { font-weight: 600; margin: 0 4px 0 2px; }
+.linija-staze { display: inline-block; flex: none; width: 24px; height: 8px; border-radius: 4px; background: var(--staza-obod); position: relative; }
+.linija-staze::after { content: ""; position: absolute; left: 3px; right: 3px; top: 3px; height: 2px; border-radius: 1px; background: var(--b); }
+.linija-staze.isprekidana::after { background: repeating-linear-gradient(90deg, var(--b) 0 4px, transparent 4px 7px); }
+.ikonica-staze { width: 34px; }
+.ikonica-staze .linija-staze { opacity: 0.35; filter: grayscale(1); transition: opacity .15s, filter .15s; }
+.ikonica-staze:hover .linija-staze { opacity: 0.7; }
+.ikonica-staze[aria-pressed="true"] .linija-staze { opacity: 1; filter: none; }
+.tipovi-staza .red-staze { align-items: flex-start; }
+.tipovi-staza .red-staze input { margin-top: 2px; }
+.tipovi-staza .red-staze .linija-staze { margin-top: 5px; }
+.tipovi-staza .red-staze small { display: block; color: var(--t-muted); font-size: 11.5px; line-height: 1.35; margin-top: 2px; }
+.panel.tipovi-staza { width: 300px; }
+.cip .linija-staze { width: 24px; height: 8px; border-radius: 4px; background: var(--staza-obod); }
+.cip .ikonica-staze .linija-staze { opacity: 0.35; filter: grayscale(1); }
+.cip .ikonica-staze:hover .linija-staze { opacity: 0.7; }
+.cip .ikonica-staze[aria-pressed="true"] .linija-staze { opacity: 1; filter: none; }
