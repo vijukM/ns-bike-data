@@ -473,7 +473,7 @@ footer.podnozje { color: var(--t-light); font-size: 12px; padding: 8px 28px 32px
 .cip-stikla:has(input:focus-visible) { outline: 2px solid var(--primary-ring); }
 .mapa-alat { justify-content: flex-start; gap: 14px 28px; }
 .mapa-raspored aside { display: flex; flex-direction: column; min-height: 0; }
-.mapa-raspored aside .spisak { max-height: none; min-height: 0; flex: 1 1 auto; height: calc(100vh / var(--z) - 290px - 300px); min-height: 220px; }
+.mapa-raspored aside .spisak { max-height: none; min-height: 0; flex: 1 1 auto; height: calc(100vh / var(--z) - 290px - 300px + 50px); min-height: 220px; }
 .krofna-okvir { border-top: 1px solid var(--border-soft); margin-top: 10px; padding-top: 10px; }
 .krofna-okvir .krofna { height: 250px; cursor: pointer; }
 @media (max-width: 1180px) { .mapa-raspored aside .spisak { height: 320px; } }
@@ -970,3 +970,5 @@ html.bez-skrola { overflow: hidden; }
 .cip .ikonica-staze .linija-staze { opacity: 0.35; filter: grayscale(1); }
 .cip .ikonica-staze:hover .linija-staze { opacity: 0.7; }
 .cip .ikonica-staze[aria-pressed="true"] .linija-staze { opacity: 1; filter: none; }
+.staze-grupa:has(.cip-staze.aktivno) .cip-strelica { color: var(--t-base); border-color: var(--staza); background: color-mix(in srgb, var(--staza) 12%, transparent); }
+.mapa-raspored aside .info::after { left: auto; right: -10px; transform: none; }
