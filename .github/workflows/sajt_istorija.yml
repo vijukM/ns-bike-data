@@ -2,6 +2,7 @@
 #   sta=istorija  istorija 2021-01 … 2026-08 (docs/data/istorija/) iz Release-a istorija-v1 (parquet ne ide u git)
 #   sta=staze     biciklističke staze iz OpenStreetMap-a (docs/data/staze.geojson), Overpass API
 #   sta=mapa      vektorska osnova mape (ulice, voda, zelenilo, pruga, zgrade) iz OpenStreetMap-a (docs/data/mapa/)
+#   sta=parkingns zvanični spisak parkirališta za bicikle (parkingns.rs) → istrazivanje/parkingns/ (za poređenje sa OSM-om)
 #   sta=sve       sve navedeno
 name: sajt_istorija
 
@@ -9,11 +10,11 @@ on:
   workflow_dispatch:
     inputs:
       sta:
-        description: "sve | istorija | staze | mapa"
+        description: "sve | istorija | staze | mapa | parkingns"
         required: true
         default: sve
         type: choice
-        options: [sve, istorija, staze, mapa]
+        options: [sve, istorija, staze, mapa, parkingns]
 
 permissions:
   contents: write
@@ -68,11 +69,46 @@ jobs:
         if: inputs.sta == 'sve' || inputs.sta == 'mapa'
         run: python -m sajt.osnova_mape
 
+      - name: Parkirališta za bicikle sa parkingns.rs (sirovo, za poređenje)
+        if: inputs.sta == 'parkingns'
+        run: |
+          mkdir -p istrazivanje/parkingns
+          python - <<'PY'
+          import re, json, pathlib, urllib.parse, requests
+          out = pathlib.Path("istrazivanje/parkingns")
+          H = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/141 Safari/537.36"}
+          strane = ["https://parkingns.rs/bicikl/parkiralista-za-bicikle/"]
+          vidjeno, linkovi = set(), []
+          for u in strane:
+              r = requests.get(u, headers=H, timeout=60)
+              print(u, r.status_code, len(r.content))
+              (out / "strana.html").write_bytes(r.content)
+              html = r.text
+              for m in re.finditer(r'(?:href|src|data-src)=["\']([^"\']+)["\']', html):
+                  l = urllib.parse.urljoin(u, m.group(1))
+                  if l not in vidjeno:
+                      vidjeno.add(l); linkovi.append(l)
+          (out / "linkovi.txt").write_text("\n".join(linkovi), encoding="utf-8")
+          for l in linkovi:
+              ll = l.lower()
+              ime = re.sub(r"[^A-Za-z0-9._-]+", "_", l.split("?")[0].rstrip("/").split("/")[-1])[:80] or "fajl"
+              try:
+                  if re.search(r"\.(pdf|kml|kmz|xlsx?|csv|json|geojson)(\?|$)", ll):
+                      r = requests.get(l, headers=H, timeout=60); print("fajl", l, r.status_code, len(r.content)); (out / ime).write_bytes(r.content)
+                  m = re.search(r"[?&]mid=([\w-]+)", l)
+                  if "google.com/maps/d/" in ll and m:
+                      k = f"https://www.google.com/maps/d/kml?mid={m.group(1)}&forcekml=1"
+                      r = requests.get(k, headers=H, timeout=60); print("kml", k, r.status_code, len(r.content)); (out / f"mymaps_{m.group(1)}.kml").write_bytes(r.content)
+              except Exception as e:  # noqa: BLE001
+                  print("greška", l, e)
+          PY
+          ls -la istrazivanje/parkingns
+
       - name: Commit i push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for f in docs/data/istorija docs/data/staze.geojson docs/data/mapa; do [ -e "$f" ] && git add "$f"; done
+          for f in docs/data/istorija docs/data/staze.geojson docs/data/mapa istrazivanje/parkingns; do [ -e "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then echo "nema promena"; exit 0; fi
           git commit -m "sajt: podaci (${{ inputs.sta }})"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}" && break; sleep 5; done
