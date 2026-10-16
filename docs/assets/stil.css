@@ -943,6 +943,9 @@ html.bez-skrola { overflow: hidden; }
 @media (max-width: 960px) { .panel.tipovi-parkinga { position: absolute; left: 0; right: auto; top: calc(100% + 6px); width: min(300px, calc(100vw - 40px)); } }
 /* kartica NS bike stanice */
 .maplibregl-popup .nsb-slika { display: block; width: 100%; max-width: 236px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; margin: 8px 0 2px; background: var(--bg-muted); }
+.nsb-uzivo .nsb-brojevi { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.nsb-uzivo .nsb-meta { display: flex; align-items: center; gap: 8px; }
+.nsb-uzivo .nsb-brojevi b { font-size: 15px; }
 .uskoro-uzivo { display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
   color: var(--t-muted); background: var(--bg-muted); border: 1px dashed var(--border); }
 .uskoro-uzivo svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
