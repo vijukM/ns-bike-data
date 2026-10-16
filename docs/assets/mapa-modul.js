@@ -32,7 +32,7 @@ const MAPA = (() => {
   // tačke za bicikliste iz OSM-a (docs/data/mapa/parking.geojson) i njihove ikonice (crtaju se na platnu, 2×)
   const TACKE = { p: "Parking za bicikle", i: "Iznajmljivanje bicikala", s: "Servis / prodavnica bicikala", r: "Stanica za popravku bicikla" };
   const VRSTE_PARKINGA = { stands: "stalci (obrnuto U)", wall_loops: "držači za točak", rack: "rešetka", bollard: "stubići", shed: "kućica / nadstrešnica",
-    building: "u zgradi", lockers: "ormarići", two_tier: "na dva nivoa", anchors: "ankeri u tlu", ground_slots: "žlebovi u tlu", informal: "neformalno" };
+    building: "u zgradi", lockers: "ormarići", two_tier: "na dva nivoa", "two-tier": "na dva nivoa", wheel_loops: "držači za točak", anchors: "ankeri u tlu", ground_slots: "žlebovi u tlu", informal: "neformalno" };
   function ikonaParkinga(t) {
     const c = document.createElement("canvas"); c.width = c.height = 48;
     const g = c.getContext("2d");

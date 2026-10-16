@@ -296,7 +296,7 @@ istorija 01.01.2021 – 31.08.2026, bez prognoza i bez podataka uživo (grafici 
 | strana | sadržaj |
 |---|---|
 | `index.html` | kontrolna tabla: KPI kartice, mapa brojača i staza, najprometnija mesta, prstenovi, **priča koja se otkriva skrolovanjem** (6 koraka, grafik ostaje fiksiran), najprometnije stanice, brojači koji traže pažnju |
-| `mapa.html` | velika mapa (MapLibre: pomeranje, rotacija, nagib, dugme 3D sa zgradama; izabrani pin postaje 3D model (Three.js, `assets/pin3d.js`, učitava se tek tada) koji se okreće posle odskakivanja; podloge Svetla (OSM pločice u originalnim bojama, kao na sajtu UGZINS; podrazumevana) / Tamna (iste pločice kroz filter boja) / poster mape tamno plava, siva, bela; dugme za prikaz preko celog ekrana), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
+| `mapa.html` | velika mapa (MapLibre: pomeranje, rotacija, nagib, dugme 3D sa zgradama; izabrani pin postaje 3D model (Three.js, `assets/pin3d.js`, učitava se tek tada) koji se okreće posle odskakivanja; podloge Svetla (OSM pločice u originalnim bojama, kao na sajtu UGZINS; podrazumevana) / Tamna (iste pločice kroz filter boja) / Vektor sa nijansama tamno plavo–belo, sivo–belo, belo–crno; sloj Parking za bicikle (OSM); dugme za prikaz preko celog ekrana), staze, spisak sa pretragom i filterom po stanju, **dan na mapi** (`?rezim=dan&dan=2025-09-05&sat=7`, `?id=23a`) |
 | `grafici.html` | grad po danu sa čipovima (biciklisti, prosek 7 dana, broj brojača, temperatura, padavine), poređenje godina, temperatura × biciklisti, dani u nedelji, mesec × godina; izvoz PNG |
 | `stanice.html` | tabela: pretraga, filter po stanju, sortiranje, straničenje, izvoz CSV |
 | `stanica.html?id=23a` | KPI, dnevno za ceo period, satni profil, toplotna mapa sat × dan, meseci po godinama, izabrani dan |
@@ -316,7 +316,7 @@ Biciklističke staze: `python -m sajt.staze` (Overpass API, OpenStreetMap) → `
 `sta=staze` (kontejner za razvoj nema pristup Overpass-u).
 
 Poster mape (vektorske, oštre na svakom zumu): `python -m sajt.osnova_mape` (Overpass) → `docs/data/mapa/`
-(`putevi` sa klasom a/g/s/o, `voda`, `zelenilo`, `pruga`, `zgrade` sa visinom za 3D, samo uži centar); workflow
+(`putevi` sa klasom a/g/s/o, `voda`, `zelenilo`, `pruga`, `zgrade` sa visinom za 3D, samo uži centar, `parking` — parking za bicikle, NS bike, servisi, stanice za popravku); workflow
 `sajt_istorija` sa `sta=mapa`. Sajt ih crta u MapLibre-u u tri stila (tamno plava, siva, bela); učitavaju se tek kad
 se izabere poster podloga ili 3D.
 
