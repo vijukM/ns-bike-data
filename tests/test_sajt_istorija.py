@@ -232,6 +232,10 @@ def test_osnova_mape_prstenovi_visine_klase():
         {"type": "node", "lat": 45.25, "lon": 19.84, "tags": {"amenity": "bicycle_parking", "capacity": "10", "covered": "yes", "bicycle_parking": "stands"}},
         {"type": "way", "center": {"lat": 45.26, "lon": 19.83}, "tags": {"shop": "bicycle", "name": "Servis"}},
         {"type": "node", "lat": 45.2, "lon": 19.8, "tags": {"amenity": "bench"}}]})["features"]
+    assert om.latinica("Булевар ослобођења") == "Bulevar oslobođenja"
+    assert om.svojstva_puta({"highway": "primary", "name": "Футошка"}) == {"k": "g", "n": "Futoška"}
+    assert om.svojstva_puta({"highway": "secondary", "name": "Футошка", "name:sr-Latn": "Futoška ulica"})["n"] == "Futoška ulica"
+    assert om.svojstva_puta({"highway": "service", "name": "Parking"}) == {"k": "o"}           # servisni bez naziva
     po_tipu = {f["properties"]["t"]: f for f in tk}
     assert sorted(po_tipu) == ["p", "s"]                                           # klupa se ne uzima
     assert po_tipu["p"]["properties"] == {"t": "p", "kap": 10, "pok": 1, "vrsta": "stands"}

@@ -6,7 +6,8 @@ Iz ovih slojeva sajt sam crta „poster“ mape (tamno plava, siva, bela) u MapL
 pruga i zgrade (za 3D prikaz, samo uži centar). Vektori ostaju oštri na svakom zumu i poklapaju se sa pinovima.
 
 Svojstva:
-  putevi.geojson   k — klasa: a autoput/magistrala, g glavna, s sporedna, o ostale (servisne, pešačke zone)
+  putevi.geojson   k — klasa: a autoput/magistrala, g glavna, s sporedna, o ostale (servisne, pešačke zone);
+                   n — naziv ulice latinicom (name:sr-Latn, inače name preslovljen), za a/g/s
   zgrade.geojson   h — visina u metrima (height, building:levels × 3 m ili procena po vrsti)
   parking.geojson  tačke za bicikliste; t — p parking za bicikle, i iznajmljivanje (NS bike), s servis / prodavnica,
                    r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime
@@ -167,6 +168,33 @@ def _fc(obelezja: list) -> dict:
             "preuzeto_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "features": obelezja}
 
 
+CIR = dict(zip("абвгдђежзијклљмнњопрстћуфхцчџшАБВГДЂЕЖЗИЈКЛЉМНЊОПРСТЋУФХЦЧЏШ",
+               ["a", "b", "v", "g", "d", "đ", "e", "ž", "z", "i", "j", "k", "l", "lj", "m", "n", "nj", "o", "p", "r", "s", "t", "ć",
+                "u", "f", "h", "c", "č", "dž", "š", "A", "B", "V", "G", "D", "Đ", "E", "Ž", "Z", "I", "J", "K", "L", "Lj", "M", "N", "Nj",
+                "O", "P", "R", "S", "T", "Ć", "U", "F", "H", "C", "Č", "Dž", "Š"]))
+
+
+def latinica(tekst: str) -> str:
+    """Srpska ćirilica → latinica (naziv ulice na mapi je latinicom, kao ceo sajt)."""
+    return "".join(CIR.get(c, c) for c in tekst)
+
+
+def naziv_ulice(t: dict) -> str | None:
+    n = t.get("name:sr-Latn") or t.get("name")
+    return latinica(n).strip() if n else None
+
+
+def svojstva_puta(t: dict) -> dict | None:
+    k = KLASA.get(t.get("highway"))
+    if k is None:
+        return None
+    sv = {"k": k}
+    n = naziv_ulice(t) if k != "o" else None
+    if n:
+        sv["n"] = n
+    return sv
+
+
 def linije(odgovor: dict, svojstva) -> dict:
     out = []
     for e in odgovor.get("elements", []):
@@ -218,7 +246,7 @@ def tacke_za_bicikliste(odgovor: dict) -> dict:
 
 def napravi(odgovori: dict) -> dict[str, dict]:
     return {
-        "putevi": linije(odgovori["putevi"], lambda t: {"k": KLASA[t["highway"]]} if t.get("highway") in KLASA else None),
+        "putevi": linije(odgovori["putevi"], svojstva_puta),
         "pruga": linije(odgovori["pruga"], lambda t: {}),
         "voda": povrsine(odgovori["voda"]),
         "zelenilo": povrsine(odgovori["zelenilo"]),
