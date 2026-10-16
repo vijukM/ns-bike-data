@@ -8,6 +8,8 @@ pruga i zgrade (za 3D prikaz, samo uži centar). Vektori ostaju oštri na svakom
 Svojstva:
   putevi.geojson   k — klasa: a autoput/magistrala, g glavna, s sporedna, o ostale (servisne, pešačke zone)
   zgrade.geojson   h — visina u metrima (height, building:levels × 3 m ili procena po vrsti)
+  parking.geojson  tačke za bicikliste; t — p parking za bicikle, i iznajmljivanje (NS bike), s servis / prodavnica,
+                   r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime
 Podaci: © OpenStreetMap saradnici, ODbL (navodi se na sajtu).
 """
 from __future__ import annotations
@@ -58,6 +60,8 @@ def upiti(okvir=OKVIR, okvir_zgrade=OKVIR_ZGRADE) -> dict[str, str]:
                      f'way["landuse"~"^(forest|grass|meadow|recreation_ground|cemetery)$"]({b});way["natural"="wood"]({b});'
                      f'relation["leisure"="park"]({b});relation["landuse"="forest"]({b});relation["natural"="wood"]({b}););out geom;'),
         "zgrade": f'[out:json][timeout:180];way["building"]({z});out geom;',
+        "parking": (f'[out:json][timeout:120];(nwr["amenity"="bicycle_parking"]({b});nwr["amenity"="bicycle_rental"]({b});'
+                    f'nwr["amenity"="bicycle_repair_station"]({b});nwr["shop"="bicycle"]({b}););out center tags;'),
     }
 
 
@@ -184,6 +188,34 @@ def povrsine(odgovor: dict, svojstva=lambda t: {}) -> dict:
     return _fc(out)
 
 
+TIP_TACKE = (("amenity", "bicycle_parking", "p"), ("amenity", "bicycle_rental", "i"),
+             ("amenity", "bicycle_repair_station", "r"), ("shop", "bicycle", "s"))
+
+
+def tacke_za_bicikliste(odgovor: dict) -> dict:
+    """Parking, iznajmljivanje, servisi: node → lat/lon, way/relation → centar (out center)."""
+    out = []
+    for e in odgovor.get("elements", []):
+        t = e.get("tags", {})
+        tip = next((k for kljuc, v, k in TIP_TACKE if t.get(kljuc) == v), None)
+        lat, lon = (e.get("lat"), e.get("lon")) if e.get("type") == "node" else ((e.get("center") or {}).get("lat"), (e.get("center") or {}).get("lon"))
+        if tip is None or lat is None:
+            continue
+        sv = {"t": tip}
+        try:
+            sv["kap"] = int(str(t["capacity"]).strip())
+        except (KeyError, ValueError):
+            pass
+        if t.get("covered") == "yes" or t.get("bicycle_parking") in ("shed", "building"):
+            sv["pok"] = 1
+        for kljuc, ime in (("bicycle_parking", "vrsta"), ("name", "ime"), ("operator", "op")):
+            if t.get(kljuc):
+                sv[ime] = t[kljuc]
+        out.append({"type": "Feature", "properties": sv, "geometry": {"type": "Point", "coordinates": [round(lon, 6), round(lat, 6)]}})
+    out.sort(key=lambda f: f["geometry"]["coordinates"])
+    return _fc(out)
+
+
 def napravi(odgovori: dict) -> dict[str, dict]:
     return {
         "putevi": linije(odgovori["putevi"], lambda t: {"k": KLASA[t["highway"]]} if t.get("highway") in KLASA else None),
@@ -191,10 +223,11 @@ def napravi(odgovori: dict) -> dict[str, dict]:
         "voda": povrsine(odgovori["voda"]),
         "zelenilo": povrsine(odgovori["zelenilo"]),
         "zgrade": povrsine(odgovori["zgrade"], lambda t: {"h": visina(t)}),
+        "parking": tacke_za_bicikliste(odgovori.get("parking", {})),
     }
 
 
-MINIMUM = {"putevi": 2000, "pruga": 5, "voda": 5, "zelenilo": 50, "zgrade": 1000}
+MINIMUM = {"putevi": 2000, "pruga": 5, "voda": 5, "zelenilo": 50, "zgrade": 1000, "parking": 20}
 
 
 def main(argv=None) -> int:

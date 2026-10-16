@@ -228,3 +228,11 @@ def test_osnova_mape_prstenovi_visine_klase():
         "pruga": {"elements": []}, "voda": {"elements": []}, "zelenilo": {"elements": []}, "zgrade": {"elements": []}})
     assert [f["properties"]["k"] for f in s["putevi"]["features"]] == ["g"]
     assert "relation" in om.upiti()["voda"] and "building" in om.upiti()["zgrade"]
+    tk = om.tacke_za_bicikliste({"elements": [
+        {"type": "node", "lat": 45.25, "lon": 19.84, "tags": {"amenity": "bicycle_parking", "capacity": "10", "covered": "yes", "bicycle_parking": "stands"}},
+        {"type": "way", "center": {"lat": 45.26, "lon": 19.83}, "tags": {"shop": "bicycle", "name": "Servis"}},
+        {"type": "node", "lat": 45.2, "lon": 19.8, "tags": {"amenity": "bench"}}]})["features"]
+    po_tipu = {f["properties"]["t"]: f for f in tk}
+    assert sorted(po_tipu) == ["p", "s"]                                           # klupa se ne uzima
+    assert po_tipu["p"]["properties"] == {"t": "p", "kap": 10, "pok": 1, "vrsta": "stands"}
+    assert po_tipu["s"]["properties"]["ime"] == "Servis" and po_tipu["s"]["geometry"]["coordinates"] == [19.83, 45.26]
