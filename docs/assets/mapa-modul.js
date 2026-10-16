@@ -675,11 +675,10 @@ const MAPA = (() => {
       if (da) await ucitajParking();
       vidljiv("parking", da);
     }
-    const NAPOMENA_PARKING = "Podaci su preuzeti sa javno dostupnih internet stranica.";
     function crtajTipoveParkinga() {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".grupa-tacaka .tipovi-parkinga");
       if (!lista) return;
-      lista.innerHTML = `<p class="sitno">${NAPOMENA_PARKING}</p>` + Object.entries(TACKE).map(([t, ime]) =>
+      lista.innerHTML = Object.entries(TACKE).map(([t, ime]) =>
         `<label class="red-izbora"><input type="checkbox" data-t="${t}" ${parkingTipovi.has(t) ? "checked" : ""}><img src="${ikonaParkinga(t).toDataURL()}" alt="">
           <span>${ime}</span></label>`).join("") +
         `<div class="tipovi-dno"><button type="button" class="dugme malo" data-svi="1">Sve</button><button type="button" class="dugme malo" data-svi="0">Ništa</button></div>`;
@@ -705,7 +704,7 @@ const MAPA = (() => {
     }
 
     if (opcije.stazeEl) {
-      // staze: glavna štikla pali ili gasi sve tri vrste, svaka linija posebno, strelica otvara legendu sa opisom i dužinama
+      // staze: glavna štikla pali ili gasi sve tri vrste; strelica otvara legendu sa izborom vrsta, opisom i dužinama
       const OPIS_STAZA = {
         s: ["Izdvojena staza", "Posebna staza samo za bicikle, odvojena od kolovoza i trotoara."],
         t: ["Traka na kolovozu", "Obeležena traka za bicikle na kolovozu, uz automobile."],
@@ -715,15 +714,14 @@ const MAPA = (() => {
       opcije.stazeEl.innerHTML = `<div class="parking-grupa staze-grupa">
           <div class="cip cip-parking cip-staze" style="--boja:var(--staza)">
             <label class="parking-sve" title="Sve biciklističke staze: uključi ili isključi"><input type="checkbox" aria-label="Sve biciklističke staze">
-              <span class="kvacica" aria-hidden="true"></span></label><span class="cip-naziv">Staze</span>
-            ${VRSTE_STAZA.map((t) => `<button type="button" class="ikonica-parkinga ikonica-staze" data-s="${t}" aria-pressed="false" title="${OPIS_STAZA[t][0]}" aria-label="${OPIS_STAZA[t][0]}">${linijaStaze(t)}</button>`).join("")}</div>
+              <span class="kvacica" aria-hidden="true"></span></label><span class="cip-naziv">Biciklističke staze</span></div>
           <button type="button" class="cip cip-strelica" aria-expanded="false" aria-label="Vrste staza i legenda" title="Vrste staza i legenda">${LJ.ik("chevron")}</button>
           <div class="panel tipovi-parkinga tipovi-staza skriveno" role="group" aria-label="Vrste staza"></div></div>`;
       const sGrupa = opcije.stazeEl.querySelector(".staze-grupa");
       const sPanel = sGrupa.querySelector(".tipovi-staza"), sStrelica = sGrupa.querySelector(".cip-strelica");
       let kmStaza = null;
       const crtajStaze = () => {
-        sPanel.innerHTML = `<p class="sitno">Podaci su preuzeti sa javno dostupnih internet stranica (OpenStreetMap).</p>` + VRSTE_STAZA.map((t) =>
+        sPanel.innerHTML = VRSTE_STAZA.map((t) =>
           `<label class="red-izbora red-staze"><input type="checkbox" data-s="${t}" ${stazeTipovi.has(t) ? "checked" : ""}>${linijaStaze(t)}
             <span><b>${OPIS_STAZA[t][0]}</b>${kmStaza ? ` <span class="mono sitno">${NS.broj(Math.round(kmStaza[t]))} km</span>` : ""}<small>${OPIS_STAZA[t][1]}</small></span></label>`).join("") +
           `<div class="tipovi-dno"><button type="button" class="dugme malo" data-svi="1">Sve</button><button type="button" class="dugme malo" data-svi="0">Ništa</button></div>`;
@@ -737,7 +735,6 @@ const MAPA = (() => {
         spremna.then(primeniStaze);
         crtajStaze();
         const cip = sGrupa.querySelector(".cip-staze");
-        for (const d of cip.querySelectorAll("[data-s]")) d.setAttribute("aria-pressed", String(skup.has(d.dataset.s)));
         const sve = cip.querySelector("input");
         sve.checked = skup.size === VRSTE_STAZA.length;
         sve.indeterminate = skup.size > 0 && skup.size < VRSTE_STAZA.length;
@@ -746,13 +743,6 @@ const MAPA = (() => {
       postaviStaze(stazeTipovi);
       stazeSpremne.then((km) => { if (km) { kmStaza = km; crtajStaze(); } });
       sGrupa.querySelector(".parking-sve input").addEventListener("change", () => postaviStaze(new Set(stazeTipovi.size === VRSTE_STAZA.length ? [] : VRSTE_STAZA)));
-      sGrupa.querySelector(".cip-staze").addEventListener("click", (e) => {
-        const d = e.target.closest("[data-s]");
-        if (!d) return;
-        const novo = new Set(stazeTipovi);
-        if (novo.has(d.dataset.s)) novo.delete(d.dataset.s); else novo.add(d.dataset.s);
-        postaviStaze(novo);
-      });
       sStrelica.addEventListener("click", (e) => {
         e.stopPropagation();
         const otvori = sPanel.classList.contains("skriveno");
@@ -973,7 +963,7 @@ const MAPA = (() => {
   }
 
   /** Legenda „Stanje brojača“ sa info-oblačićima + staze. */
-  function legenda(el, s, saStazama = true) {
+  function legenda(el, s, saStazama = false) {          // značenja staza su u padajućem panelu „Biciklističke staze“
     const opis = s.stanja_opis || {};
     el.className = "legenda-pinova";
     el.innerHTML = `<span class="eyebrow">Stanje brojača</span>` + REDOSLED.map((k) =>
