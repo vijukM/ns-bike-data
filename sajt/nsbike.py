@@ -3,8 +3,10 @@
     python -m sajt.nsbike                 # preuzima KML (GitHub Actions, workflow sajt_istorija, sta=mapa)
     python -m sajt.nsbike --kml mapa.kml  # iz već preuzetog fajla
 
-U podacima se čuvaju samo linkovi (mymaps.usercontent.google.com, veličina 408 px); slika se u pregledaču učitava
-tek kad se klikne stanica, isto kao na Google mapi. Stanica i tačka iz KML-a uparuju se po položaju (najbliža, do 80 m).
+Google slike šalje sa „Cross-Origin-Resource-Policy: same-site“, pa se ne mogu prikazati direktno sa drugog sajta
+(ERR_BLOCKED_BY_RESPONSE.NotSameSite). Zato se jednom preuzmu, smanje (640 px, WebP) i čuvaju u
+docs/assets/slike/nsbike/NSBxx-n.webp; na mapi se učitavaju tek kad se klikne stanica.
+Stanica i tačka iz KML-a uparuju se po položaju (najbliža, do 80 m). Treba Pillow (pip install pillow).
 """
 from __future__ import annotations
 
@@ -22,7 +24,9 @@ KOREN = Path(__file__).resolve().parents[1]
 STANICE = KOREN / "sajt" / "podaci" / "nsbike_stanice.json"
 MID = "1z5ScvGMDEaXjNNq8U4Jcg3FIKW0"
 KML_URL = f"https://www.google.com/maps/d/kml?mid={MID}&forcekml=1"
-VELICINA = "s408"
+VELICINA = "s800"                                     # preuzima se 800 px, čuva 640 px
+SLIKE = KOREN / "docs" / "assets" / "slike" / "nsbike"
+SIRINA = 640
 log = logging.getLogger(__name__)
 
 
@@ -51,6 +55,7 @@ def _metri(a, b) -> float:
 
 
 def dodaj_slike(stanice: list[dict], tacke: list[dict], prag: float = 80) -> int:
+    """Stanici upisuje linkove slika najbliže tačke iz KML-a (privremeno, pre preuzimanja)."""
     n = 0
     for s in stanice:
         najbliza = min(tacke, key=lambda t: _metri((s["lon"], s["lat"]), (t["lon"], t["lat"])), default=None)
@@ -58,6 +63,41 @@ def dodaj_slike(stanice: list[dict], tacke: list[dict], prag: float = 80) -> int
             s["slike"] = najbliza["slike"]
             n += 1
     return n
+
+
+def preuzmi_slike(stanice: list[dict], folder: Path = SLIKE) -> dict[str, int]:
+    """Linkove zamenjuje lokalnim WebP slikama (assets/slike/nsbike/…); vraća broj slika po stanici i broj različitih."""
+    from hashlib import sha1
+    from io import BytesIO
+
+    from PIL import Image
+
+    folder.mkdir(parents=True, exist_ok=True)
+    otisci, broj = set(), {}
+    for s in stanice:
+        lokalne = []
+        for k, u in enumerate(s.get("slike", []), 1):
+            if not u.startswith("http"):
+                lokalne.append(u)
+                continue
+            try:
+                r = requests.get(u, timeout=60, headers={"User-Agent": "Mozilla/5.0"})
+                r.raise_for_status()
+                otisci.add(sha1(r.content).hexdigest())
+                im = Image.open(BytesIO(r.content)).convert("RGB")
+                im.thumbnail((SIRINA, SIRINA * 2))
+                put = folder / f"{s['sif']}-{k}.webp"
+                im.save(put, "WEBP", quality=74, method=6)
+                lokalne.append(f"assets/slike/nsbike/{put.name}")
+            except Exception as e:  # noqa: BLE001
+                log.warning("%s: slika %d nije preuzeta: %s", s["sif"], k, e)
+        if lokalne:
+            s["slike"] = lokalne
+        else:
+            s.pop("slike", None)
+        broj[s["sif"]] = len(lokalne)
+    broj["_razlicitih"] = len(otisci)
+    return broj
 
 
 def main(argv=None) -> int:
@@ -68,10 +108,19 @@ def main(argv=None) -> int:
     kml = a.kml.read_text(encoding="utf-8") if a.kml else requests.get(KML_URL, timeout=60, headers={"User-Agent": "Mozilla/5.0"}).text
     tacke = tacke_iz_kml(kml)
     stanice = json.loads(STANICE.read_text(encoding="utf-8"))
+    stare = {s["sif"]: s.get("slike") for s in stanice}
     n = dodaj_slike(stanice, tacke)
     if n < len(stanice) // 2:
         log.warning("slike za samo %d od %d stanica — ostaje prethodna verzija", n, len(stanice))
         return 0
+    if not a.kml:
+        log.info("preuzeto: %s", preuzmi_slike(stanice))
+    for s in stanice:                                  # ako preuzimanje nije uspelo, ostaju ranije lokalne slike
+        if not s.get("slike") or s["slike"][0].startswith("http"):
+            if stare.get(s["sif"]) and not stare[s["sif"]][0].startswith("http"):
+                s["slike"] = stare[s["sif"]]
+            elif s.get("slike") and s["slike"][0].startswith("http"):
+                s.pop("slike")
     STANICE.write_text("[\n" + ",\n".join(json.dumps(s, ensure_ascii=False) for s in stanice) + "\n]\n", encoding="utf-8")
     log.info("slike za %d od %d stanica (%d tačaka u KML-u)", n, len(stanice), len(tacke))
     return 0

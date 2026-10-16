@@ -592,7 +592,7 @@ const MAPA = (() => {
             try { slike = typeof o.slike === "string" ? JSON.parse(o.slike) : o.slike || []; } catch (x) { /* */ }
             kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${o.ime}</b><div class="tt-red sitno">NS bike · stanica za iznajmljivanje</div>` +
               red(o.adr) + (slike.length ? `<button type="button" class="nsb-slika-omot" title="${slike.length > 1 ? "Sledeća slika" : o.ime}">
-                <img class="nsb-slika" src="${slike[0]}" alt="Stanica ${o.ime}" referrerpolicy="no-referrer" onerror="this.parentNode.remove()">
+                <img class="nsb-slika" src="${slike[0]}" alt="Stanica ${o.ime}" onerror="this.parentNode.remove()">
                 ${slike.length > 1 ? `<span class="nsb-slika-broj">1/${slike.length}</span>` : ""}</button>` : "") +
               `<div class="tt-red nsb-uzivo" data-sif="${o.sif}"><span class="sitno">učitavam stanje uživo…</span></div>`).addTo(m);
             const omot = kartica.getElement() && kartica.getElement().querySelector(".nsb-slika-omot");
@@ -647,7 +647,7 @@ const MAPA = (() => {
       if (da) await ucitajParking();
       vidljiv("parking", da);
     }
-    const NAPOMENA_PARKING = "Parkinzi su spoj zvaničnog spiska JKP „Parking servis” (317 lokacija, položaji preneti sa njihove mape) i OpenStreetMap-a. NS bike, servisi i stanice za popravku su samo oni javno upisani na internetu.";
+    const NAPOMENA_PARKING = "Podaci su preuzeti sa javno dostupnih internet stranica.";
     function crtajTipoveParkinga() {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".tipovi-parkinga");
       if (!lista) return;
@@ -891,8 +891,7 @@ const MAPA = (() => {
       `<span><img src="${NS.pin(k)}" alt="" class="${k === "neispravan" ? "svetli" : ""}">${s.stanja[k]}${info(opis[k] || "")}</span>`).join("") +
       `<span><img src="${NS.pin("izabrana")}" alt="">izabrana${info("stanica u fokusu: pređi mišem preko pina ili klikni na njega (ili u spisku)")}</span>` +
       (saStazama ? `<span class="eyebrow" style="margin-left:6px">Staze</span><span><i class="linija" style="--b:var(--staza)"></i>staza</span><span><i class="linija" style="--b:var(--traka)"></i>traka</span>
-        <span><i class="linija" style="--b:var(--zajednicka)"></i>zajednička</span>` : "") +
-      `<span class="sitno" style="margin-left:auto">${info("Desni klik (ili Ctrl) + prevlačenje okreće i naginje mapu; na telefonu dva prsta. Dugme 3D gore desno daje pogled iz ugla sa zgradama, kompas vraća pogled odozgo.")} rotacija i nagib</span>`;
+        <span><i class="linija" style="--b:var(--zajednicka)"></i>zajednička</span>` : "");
   }
 
   /** Krofna: koliko brojača je u kom stanju (boje kao pinovi), animira se kad dođe na ekran. */
