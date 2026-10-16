@@ -876,18 +876,14 @@ html.bez-skrola { overflow: hidden; }
 }
 @media (min-width: 961px) { .ljuska.uzak .meni .uzivo-znak { display: none; } }
 
-/* mapa: izvor kao mali tekst (bez info dugmeta) i prikaz preko celog ekrana */
-.maplibregl-ctrl.izvor-mape { font-size: 10.5px; line-height: 1; padding: 3px 6px; border-radius: 6px; color: var(--t-muted);
-  background: color-mix(in srgb, var(--bg-card) 78%, transparent); margin-left: 6px !important; align-self: flex-end; }
-.maplibregl-ctrl.izvor-mape a { color: inherit; }
-.maplibregl-ctrl-bottom-left { display: flex; align-items: flex-end; }
+/* mapa: prikaz preko celog ekrana */
 .mapa.ceo-ekran, .mapa:fullscreen { border-radius: 0; width: 100vw; height: 100vh !important; max-height: none; }
 .maplibregl-ctrl-fullscreen, .maplibregl-ctrl-shrink { width: 34px; height: 34px; }
 /* info u kartici pina: oblačić ispod ikonice i u granicama kartice */
 .maplibregl-popup .info::after { bottom: calc(100% + 6px); top: auto; left: auto; right: -10px; transform: none; width: 200px; max-width: 200px; }
 .maplibregl-popup .info { vertical-align: -2px; }
 
-/* izbor podloge: Svetla | Tamna | Vektor + nijanse vektorske mape (boja mape – boja ulica) */
+/* tip mape: Standardna | Satelitska | Vektor + nijanse vektorske mape (boja mape – boja ulica) */
 .izbor-podloge { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .nijanse { display: inline-flex; gap: 6px; padding: 3px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-muted); }
 .nijansa { width: 30px; height: 30px; border-radius: 50%; padding: 3px; border: 2px solid transparent; background: none; cursor: pointer; transition: transform .15s, border-color .15s; }
@@ -899,3 +895,30 @@ html.bez-skrola { overflow: hidden; }
 .cip-parking img { width: 18px; height: 18px; margin: 0 -2px 0 -2px; }
 .maplibregl-popup.kartica-parking .maplibregl-popup-content { padding: 10px 30px 10px 12px; }
 #staze-cip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* nazivi ulica: štikla na samoj mapi (gore levo) */
+.maplibregl-ctrl.nazivi-ctrl { margin: 10px 0 0 10px; }
+.nazivi-ctrl label { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 9px; border-radius: 8px; cursor: pointer;
+  background: color-mix(in srgb, var(--bg-card) 92%, transparent); color: var(--t-base); border: 1px solid var(--border); box-shadow: var(--shadow-card);
+  font: 600 12px/1 Inter, system-ui, sans-serif; user-select: none; backdrop-filter: blur(4px); }
+.nazivi-ctrl input { position: absolute; opacity: 0; width: 0; height: 0; }
+.nazivi-ctrl .kvacica { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--t-light); display: grid; place-items: center; }
+.nazivi-ctrl input:checked + .kvacica { background: var(--primary); border-color: var(--primary); }
+.nazivi-ctrl input:checked + .kvacica::after { content: ""; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+.nazivi-ctrl input:focus-visible + .kvacica { outline: 2px solid var(--primary-ring); outline-offset: 2px; }
+.nazivi-ctrl.onemoguceno label { opacity: 0.55; cursor: not-allowed; }
+/* sloj „Za bicikliste“: čip + strelica za izbor vrsta */
+.parking-grupa { position: relative; display: inline-flex; align-items: center; }
+.parking-grupa .cip-parking { border-radius: 999px 0 0 999px; border-right-width: 0; }
+.cip-strelica { height: 38px; padding: 0 10px 0 8px; border-radius: 0 999px 999px 0; }
+.cip-strelica svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; transform: rotate(90deg); transition: transform .15s; }
+.cip-strelica[aria-expanded="true"] svg { transform: rotate(-90deg); }
+.cip-strelica:hover { color: var(--t-base); }
+.parking-grupa:has(.cip-parking input:checked) .cip-strelica { color: var(--t-base); border-color: #2f7de1; background: color-mix(in srgb, #2f7de1 12%, transparent); }
+.parking-broj-tipova:not(:empty) { font-size: 10.5px; color: var(--t-light); margin-left: -2px; }
+.panel.tipovi-parkinga { left: 0; right: auto; top: calc(100% + 6px); width: 300px; padding: 10px; }
+.tipovi-parkinga > p { margin: 0 4px 8px; color: var(--t-muted); line-height: 1.4; }
+.tipovi-parkinga .red-izbora b { margin-left: auto; font-size: 11px; color: var(--t-light); font-weight: 500; }
+.tipovi-dno { display: flex; gap: 6px; justify-content: flex-end; padding: 8px 4px 0; margin-top: 6px; border-top: 1px solid var(--border); }
+[dir="rtl"] .panel.tipovi-parkinga { left: auto; right: 0; }
+@media (max-width: 960px) { .panel.tipovi-parkinga { position: absolute; left: 0; right: auto; top: calc(100% + 6px); width: min(300px, calc(100vw - 40px)); } }
