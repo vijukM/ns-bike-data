@@ -290,7 +290,12 @@ const MAPA = (() => {
         m.on("mouseleave", "o-vazna", () => { m.getCanvas().style.cursor = ""; });
       });
       natpisiUcitani = Promise.allSettled([deo, mesto]).then((r) => {
-        for (const x of r) if (x.status === "rejected") console.warn(x.reason);
+        // bez podataka (još nisu pripremljeni) stavka se ne nudi u meniju
+        r.forEach((x, i) => {
+          if (x.status !== "rejected") return;
+          console.warn(x.reason);
+          for (const k of i ? ["mesta", "vazna"] : ["delovi"]) naziviEl.querySelector(`[data-natpis="${k}"]`).closest("label").classList.add("skriveno");
+        });
         return true;
       });
       return natpisiUcitani;
