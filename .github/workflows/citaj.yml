@@ -36,7 +36,7 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Čitanje (brza varijanta, bez pregledača)
+      - name: Čitanje (javni fajl, pa sesija — bez pregledača)
         id: brza
         continue-on-error: true
         run: python -m scraper.citaj --metod brza --pokusaji-u 0 $SAMO_AKO_NEMA

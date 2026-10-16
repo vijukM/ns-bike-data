@@ -4,6 +4,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 BASE_URL = "http://stari.ugzins.rs/SAUS/QLTCnetTrafficAgent"
+# Isti fajl sa biciklistima javno stoji u folderu SAUS (IIS ga osvežava na par minuta): jedan GET, bez sesije i filtera.
+STATICKI_URL = "http://stari.ugzins.rs/SAUS/bicycles_georss_gps_sr.xml"
 
 # Običan User-Agent pregledača; može se promeniti promenljivom okruženja NS_BIKE_USER_AGENT.
 USER_AGENT = os.environ.get(

@@ -420,7 +420,8 @@ def spoji_nsbike(fc: dict, stanice: list[dict], prag: float = 60) -> dict:
             upareni[i] = j
 
     def svojstva(z):
-        return {"t": "i", "sif": z["sif"], "ime": z["ime"], "adr": z["adr"], "kap": z["mesta"], "nsb": 1}
+        return {"t": "i", "sif": z["sif"], "ime": z["ime"], "adr": z["adr"], "kap": z["mesta"], "nsb": 1,
+                **({"slike": z["slike"]} if z.get("slike") else {})}
     for i, j in upareni.items():
         z = stanice[j]
         osm[i]["properties"] = svojstva(z)

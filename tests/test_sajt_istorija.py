@@ -308,3 +308,16 @@ def test_nsbike_stanice_spajanje():
     stanica = next(f for f in out["features"] if f["properties"].get("sif") == "NSB03")
     assert stanica["geometry"]["coordinates"] == [19.8304, 45.264725] and stanica["properties"]["kap"] == 14
     assert any(f["properties"].get("ime") == "eMTB.rs" for f in out["features"])       # privatna ostaje
+
+
+def test_nsbike_slike_iz_kml():
+    from sajt import nsbike
+    kml = """<kml><Document><Placemark><name>ШТРАНД/STRAND</name>
+      <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/AAA?fife=s16383" height="200" />]]></description>
+      <ExtendedData><Data name="gx_media_links"><value>https://mymaps.usercontent.google.com/hostedimage/m/*/AAA?fife=s16383</value></Data></ExtendedData>
+      <Point><coordinates>19.848036,45.238023,0</coordinates></Point></Placemark>
+      <Placemark><name>Daleko</name><Point><coordinates>19.70,45.30,0</coordinates></Point></Placemark></Document></kml>"""
+    t = nsbike.tacke_iz_kml(kml)
+    assert t[0]["slike"] == ["https://mymaps.usercontent.google.com/hostedimage/m/*/AAA?fife=s408"]      # jedna, manja
+    st = [{"sif": "NSB01", "lon": 19.848378, "lat": 45.238311}, {"sif": "NSB99", "lon": 19.9, "lat": 45.2}]
+    assert nsbike.dodaj_slike(st, t) == 1 and "slike" in st[0] and "slike" not in st[1]
