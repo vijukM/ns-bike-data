@@ -41,7 +41,8 @@ const MAPA = (() => {
   // natpisi na vektorskoj i satelitskoj mapi: delovi grada, parkovi i trgovi, važna mesta (docs/data/mapa/delovi, mesta)
   const NATPISI = [["nazivi", "Nazivi ulica"], ["delovi", "Delovi grada"], ["mesta", "Parkovi i trgovi"], ["vazna", "Važna mesta"]];
   // boje gradskih delova (dovoljno različite i na tamnoj, svetloj i satelitskoj podlozi)
-  const PALETA_DELOVA = ["#ef4444", "#f59e0b", "#22c55e", "#06b6d4", "#8b5cf6", "#ec4899", "#3b82f6", "#eab308", "#14b8a6", "#f97316", "#a855f7", "#84cc16"];
+  // poređane po nijansi (u krug): susedni delovi ne dobijaju istu ni susednu (sličnu) boju
+  const PALETA_DELOVA = ["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e", "#14b8a6", "#0ea5e9", "#3b82f6", "#8b5cf6", "#ec4899"];
   const VAZNA = { f: "Fakultet / visoka škola", b: "Bolnica", k: "Pozorište / muzej", z: "Železnička / autobuska stanica", c: "Tržni centar", s: "Stadion" };
   function ikonaMesta(t) {
     const c = document.createElement("canvas"); c.width = c.height = 40;
@@ -262,20 +263,60 @@ const MAPA = (() => {
         // „Prikaži granice“: gradski delovi (četvrti), svaki u svojoj boji; „Okolna naselja“: Petrovaradin, Kamenica, Veternik, Futog…
         // (mesne zajednice se ne crtaju jer se preklapaju sa četvrtima)
         const sGranicom = data.features.filter((f) => f.geometry.type === "Point" && f.properties.b);
-        const gradski = sGranicom.filter((f) => f.properties.v === "quarter" || f.properties.n === "Liman");
+        const prstenovi = {};                                                       // naziv → spoljni prstenovi granice
+        for (const f of data.features) {
+          if (f.geometry.type === "Polygon") prstenovi[f.properties.n] = [f.geometry.coordinates[0]];
+          else if (f.geometry.type === "MultiPolygon") prstenovi[f.properties.n] = f.geometry.coordinates.map((p) => p[0]);
+        }
+        const unutra = ([x, y], prsten) => {
+          let u = false;
+          for (let i = 1; i < prsten.length; i++) {
+            const [x1, y1] = prsten[i - 1], [x2, y2] = prsten[i];
+            if ((y1 > y) !== (y2 > y) && x < (x2 - x1) * (y - y1) / (y2 - y1) + x1) u = !u;
+          }
+          return u;
+        };
+        const cetvrti = sGranicom.filter((f) => f.properties.v === "quarter" || f.properties.n === "Liman");
+        // manja naselja sa granicom koja nisu deo neke četvrti (Satelit, Jugovićevo, Kamenjar) su takođe gradski delovi
+        const gradski = cetvrti.concat(sGranicom.filter((f) => f.properties.v === "neighbourhood" &&
+          !cetvrti.some((c) => (prstenovi[c.properties.n] || []).some((p) => unutra(f.geometry.coordinates, p)))));
         const okolna = sGranicom.filter((f) => ["town", "village"].includes(f.properties.v) || (f.properties.v === "suburb" && f.properties.n !== "Liman"));
         const pre2 = () => (imaSloj("o-put-o") ? "o-put-o" : pre());              // boje ispod ulica, da ulice ostanu čitljive
         const obojeni = (lista) => {
           // „Liman“ obuhvata Liman 1–4: boje dobijaju samo delovi bez pod-delova; susedi (preklopljeni okviri) dobijaju različite boje
           const imena = lista.map((f) => f.properties.n);
           const listovi = lista.filter((f) => !imena.some((x) => x.startsWith(f.properties.n + " ")));
-          const boja = {};
-          const dodir = (a, b) => a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
+          // susedi = granice se dodiruju (tačke granica, progušćene na ~25 m, bliže od ~35 m)
+          const KX = 111320 * Math.cos(45.25 * Math.PI / 180), KY = 110574, CELIJA = 35;
+          const resetka = new Map();
           for (const f of listovi) {
-            const zauzete = new Set(listovi.filter((g) => boja[g.properties.n] !== undefined && dodir(f.properties.b, g.properties.b)).map((g) => boja[g.properties.n]));
+            const n = f.properties.n;
+            for (const p of prstenovi[n] || []) {
+              for (let i = 1; i < p.length; i++) {
+                const ax = p[i - 1][0] * KX, ay = p[i - 1][1] * KY, bx = p[i][0] * KX, by = p[i][1] * KY;
+                const k = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / 25));
+                for (let j = 0; j < k; j++) {
+                  const x = ax + (bx - ax) * j / k, y = ay + (by - ay) * j / k, kljuc = `${Math.floor(x / CELIJA)},${Math.floor(y / CELIJA)}`;
+                  if (!resetka.has(kljuc)) resetka.set(kljuc, new Set());
+                  resetka.get(kljuc).add(n);
+                }
+              }
+            }
+          }
+          const susedi = Object.fromEntries(listovi.map((f) => [f.properties.n, new Set()]));
+          for (const [kljuc, imena] of resetka) {
+            const [cx, cy] = kljuc.split(",").map(Number);
+            for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
+              for (const b of resetka.get(`${cx + dx},${cy + dy}`) || []) for (const a of imena) if (a !== b) { susedi[a].add(b); susedi[b].add(a); }
+            }
+          }
+          const N = PALETA_DELOVA.length, boja = {};
+          const razlika = (a, b) => Math.min(Math.abs(a - b), N - Math.abs(a - b));
+          for (const f of [...listovi].sort((a, b) => susedi[b.properties.n].size - susedi[a.properties.n].size)) {
+            const n = f.properties.n;
             const koriscenje = PALETA_DELOVA.map((_, i) => Object.values(boja).filter((x) => x === i).length);
-            const slobodne = PALETA_DELOVA.map((_, i) => i).filter((i) => !zauzete.has(i));
-            boja[f.properties.n] = (slobodne.length ? slobodne : PALETA_DELOVA.map((_, i) => i)).sort((x, y) => koriscenje[x] - koriscenje[y])[0];
+            const cena = (i) => [...susedi[n]].reduce((z, s) => z + (boja[s] === undefined ? 0 : razlika(i, boja[s]) === 0 ? 100 : razlika(i, boja[s]) === 1 ? 10 : 0), 0) + koriscenje[i] * 0.5;
+            boja[n] = PALETA_DELOVA.map((_, i) => i).sort((x, y) => cena(x) - cena(y))[0];
           }
           const izraz = ["match", ["get", "n"]];
           for (const [n, i] of Object.entries(boja)) izraz.push(n, PALETA_DELOVA[i]);
@@ -544,8 +585,15 @@ const MAPA = (() => {
         m.on("click", "parking", (e) => {
           const f = e.features[0], o = f.properties;
           const red = (t) => `<div class="tt-red">${t}</div>`;
-          kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${TACKE[o.t]}</b>${o.ime ? `<br>${o.ime}` : ""}` +
-            (o.adr ? red(o.adr) : "") + (o.sif ? red(`<span class="sitno">šifra <b class="mono">${o.sif}</b> · JKP „Parking servis”${o.pribl ? " · približan položaj" : ""}</span>`) : "") +
+          if (o.nsb) {                     // zvanična NS bike stanica: naziv, opis, slika, broj mesta; stanje uživo uskoro
+            kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${o.ime}</b><div class="tt-red sitno">NS bike · stanica za iznajmljivanje</div>` +
+              red(o.adr) + (o.slika ? `<img class="nsb-slika" src="${o.slika}" alt="Stanica ${o.ime}" loading="lazy">` : "") +
+              red(`mesta za bicikle: <b>${o.kap}</b>`) +
+              red(`<span class="uskoro-uzivo" title="Broj slobodnih bicikala i mesta biće prikazan uživo">${LJ.ik("clock")}Slobodni bicikli uživo · uskoro</span>`)).addTo(m);
+            return;
+          }
+          kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${TACKE[o.t]}${o.sif ? ` ${o.sif}` : ""}</b>${o.ime ? `<br>${o.ime}` : ""}` +
+            (o.adr ? red(o.adr) : "") + (o.pribl ? red(`<span class="sitno">približan položaj</span>`) : "") +
             (o.kap ? red(`mesta za bicikle: <b>${o.kap}</b>`) : "") + (o.vrsta ? red(`vrsta: ${VRSTE_PARKINGA[o.vrsta] || o.vrsta}`) : "") +
             (o.pok ? red("natkriveno") : "") + (o.op ? red(`<span class="sitno">${o.op}</span>`) : "")).addTo(m);
         });
