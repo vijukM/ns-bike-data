@@ -318,6 +318,6 @@ def test_nsbike_slike_iz_kml():
       <Point><coordinates>19.848036,45.238023,0</coordinates></Point></Placemark>
       <Placemark><name>Daleko</name><Point><coordinates>19.70,45.30,0</coordinates></Point></Placemark></Document></kml>"""
     t = nsbike.tacke_iz_kml(kml)
-    assert t[0]["slike"] == ["https://mymaps.usercontent.google.com/hostedimage/m/*/AAA?fife=s408"]      # jedna, manja
+    assert t[0]["slike"] == ["https://mymaps.usercontent.google.com/hostedimage/m/*/AAA?fife=s800"]      # jedna, manja
     st = [{"sif": "NSB01", "lon": 19.848378, "lat": 45.238311}, {"sif": "NSB99", "lon": 19.9, "lat": 45.2}]
     assert nsbike.dodaj_slike(st, t) == 1 and "slike" in st[0] and "slike" not in st[1]
