@@ -585,11 +585,20 @@ const MAPA = (() => {
         m.on("click", "parking", (e) => {
           const f = e.features[0], o = f.properties;
           const red = (t) => `<div class="tt-red">${t}</div>`;
-          if (o.nsb) {                     // zvanična NS bike stanica: naziv, opis, slika, broj mesta; stanje uživo uskoro
+          if (o.nsb) {                     // zvanična NS bike stanica: naziv, opis, slika, broj mesta i stanje uživo
             kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${o.ime}</b><div class="tt-red sitno">NS bike · stanica za iznajmljivanje</div>` +
               red(o.adr) + (o.slika ? `<img class="nsb-slika" src="${o.slika}" alt="Stanica ${o.ime}" loading="lazy">` : "") +
-              red(`mesta za bicikle: <b>${o.kap}</b>`) +
-              red(`<span class="uskoro-uzivo" title="Broj slobodnih bicikala i mesta biće prikazan uživo">${LJ.ik("clock")}Slobodni bicikli uživo · uskoro</span>`)).addTo(m);
+              red(`mesta za bicikle: <b>${o.kap}</b>`) + `<div class="tt-red nsb-uzivo" data-sif="${o.sif}"><span class="sitno">učitavam stanje uživo…</span></div>`).addTo(m);
+            stanjeNSBike().then((sve) => {
+              const el = kartica.getElement() && kartica.getElement().querySelector(`.nsb-uzivo[data-sif="${o.sif}"]`);
+              if (!el) return;
+              const st = sve && sve.find((x) => x.biciklana === o.sif);
+              if (!st) { el.innerHTML = `<span class="sitno">Stanje uživo trenutno nije dostupno.</span>`; return; }
+              const vreme = String(st.vreme || "").slice(11, 16);
+              el.innerHTML = `<div class="nsb-brojevi"><span><b>${st.zauzeto}</b> ${st.zauzeto === 1 ? "bicikl" : st.zauzeto % 10 >= 2 && st.zauzeto % 10 <= 4 && (st.zauzeto % 100 < 12 || st.zauzeto % 100 > 14) ? "bicikla" : "bicikala"}</span>
+                <span><b>${st.slobodno}</b> slobodnih mesta</span></div>
+                <div class="nsb-meta">${LJ.uzivoZnak().replace("uzivo-znak", "uzivo-znak sveze")}<span class="sitno">${vreme ? `stanje u ${vreme}` : ""}</span></div>`;
+            });
             return;
           }
           kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${TACKE[o.t]}${o.sif ? ` ${o.sif}` : ""}</b>${o.ime ? `<br>${o.ime}` : ""}` +
@@ -602,6 +611,15 @@ const MAPA = (() => {
         return data.features.length;
       }).catch((e) => { console.warn(e); parkingUcitan = null; LJ.tost("Podaci o parkinzima još nisu pripremljeni.", "map"); return 0; });
       return parkingUcitan;
+    }
+    // stanje NS bike stanica uživo (isti javni izvor koji koristi ns-bike.web.app); čita se tek na klik, najviše jednom u 30 s
+    let nsbStanje = null, nsbVreme = 0;
+    function stanjeNSBike() {
+      if (nsbStanje && Date.now() - nsbVreme < 30000) return nsbStanje;
+      nsbVreme = Date.now();
+      nsbStanje = fetch("https://app.nsbike.rs/stanje", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+        .then((d) => { if (!d) nsbVreme = 0; return d; });
+      return nsbStanje;
     }
     async function prikaziParking(da) {
       if (da) await ucitajParking();

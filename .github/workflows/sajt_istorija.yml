@@ -13,7 +13,7 @@ on:
         required: true
         default: sve
         type: choice
-        options: [sve, istorija, staze, mapa, nsbike]
+        options: [sve, istorija, staze, mapa]
 
 permissions:
   contents: write
@@ -68,17 +68,11 @@ jobs:
         if: inputs.sta == 'sve' || inputs.sta == 'mapa'
         run: python -m sajt.osnova_mape
 
-      - name: Pregled aplikacije NS bike (privremeno)
-        if: inputs.sta == 'nsbike'
-        run: |
-          pip install playwright && python -m playwright install --with-deps chromium
-          python istrazivanje/nsbike/proba.py
-
       - name: Commit i push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for f in docs/data/istorija docs/data/staze.geojson docs/data/mapa istrazivanje/nsbike; do [ -e "$f" ] && git add "$f"; done
+          for f in docs/data/istorija docs/data/staze.geojson docs/data/mapa; do [ -e "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then echo "nema promena"; exit 0; fi
           git commit -m "sajt: podaci (${{ inputs.sta }})"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}" && break; sleep 5; done
