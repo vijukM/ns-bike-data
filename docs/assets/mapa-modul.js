@@ -40,6 +40,8 @@ const MAPA = (() => {
     building: "u zgradi", lockers: "ormarići", two_tier: "na dva nivoa", "two-tier": "na dva nivoa", wheel_loops: "držači za točak", anchors: "ankeri u tlu", ground_slots: "žlebovi u tlu", informal: "neformalno" };
   // natpisi na vektorskoj i satelitskoj mapi: delovi grada, parkovi i trgovi, važna mesta (docs/data/mapa/delovi, mesta)
   const NATPISI = [["nazivi", "Nazivi ulica"], ["delovi", "Delovi grada"], ["mesta", "Parkovi i trgovi"], ["vazna", "Važna mesta"]];
+  // boje gradskih delova (dovoljno različite i na tamnoj, svetloj i satelitskoj podlozi)
+  const PALETA_DELOVA = ["#ef4444", "#f59e0b", "#22c55e", "#06b6d4", "#8b5cf6", "#ec4899", "#3b82f6", "#eab308", "#14b8a6", "#f97316", "#a855f7", "#84cc16"];
   const VAZNA = { f: "Fakultet / visoka škola", b: "Bolnica", k: "Pozorište / muzej", z: "Železnička / autobuska stanica", c: "Tržni centar", s: "Stadion" };
   function ikonaMesta(t) {
     const c = document.createElement("canvas"); c.width = c.height = 40;
@@ -160,7 +162,7 @@ const MAPA = (() => {
     ceoEkran.on("fullscreenend", () => { m.cooperativeGestures.enable(); el.classList.remove("ceo-ekran"); setTimeout(() => m.resize(), 60); });
     m.addControl(new maplibregl.ScaleControl({ maxWidth: 90, unit: "metric" }), "bottom-left");
     // gore levo, na samoj mapi: padajući meni „Natpisi“ (samo vektorska i satelitska; na standardnoj su natpisi deo slike)
-    const natpisi = { nazivi: true, delovi: true, granice: false, mesta: true, vazna: true };
+    const natpisi = { nazivi: true, delovi: true, granice: false, okolina: false, mesta: true, vazna: true };
     try {
       if (localStorage.getItem("ns-nazivi") === "0") natpisi.nazivi = false;      // ranije zapamćeno
       Object.assign(natpisi, JSON.parse(localStorage.getItem("ns-natpisi") || "{}"));
@@ -170,8 +172,10 @@ const MAPA = (() => {
     naziviEl.innerHTML = `<button type="button" class="natpisi-dugme" aria-expanded="false" aria-haspopup="true">Natpisi${LJ.ik("chevron")}</button>
       <div class="natpisi-panel skriveno" role="group" aria-label="Natpisi na mapi">
         ${NATPISI.map(([k, ime]) => `<label class="red-izbora"><input type="checkbox" data-natpis="${k}" ${natpisi[k] ? "checked" : ""}><span>${ime}</span></label>` +
-          (k === "delovi" ? `<label class="red-izbora pod-izbor${natpisi.delovi ? "" : " skriveno"}" title="Obris svih glavnih delova grada i okolnih naselja">
-            <input type="checkbox" data-natpis="granice" ${natpisi.granice ? "checked" : ""}><span>Prikaži granice</span></label>` : "")).join("")}</div>`;
+          (k === "delovi" ? `<label class="red-izbora pod-izbor${natpisi.delovi ? "" : " skriveno"}" title="Granice gradskih delova, svaki deo u svojoj boji">
+            <input type="checkbox" data-natpis="granice" ${natpisi.granice ? "checked" : ""}><span>Prikaži granice</span></label>
+            <label class="red-izbora pod-izbor${natpisi.delovi ? "" : " skriveno"}" title="Granice okolnih naselja: Petrovaradin, Sremska Kamenica, Veternik, Futog, Kać…">
+            <input type="checkbox" data-natpis="okolina" ${natpisi.okolina ? "checked" : ""}><span>Okolna naselja</span></label>` : "")).join("")}</div>`;
     const natpisiDugme = naziviEl.querySelector(".natpisi-dugme"), natpisiPanel = naziviEl.querySelector(".natpisi-panel");
     const zatvoriNatpise = () => { natpisiPanel.classList.add("skriveno"); natpisiDugme.setAttribute("aria-expanded", "false"); };
     natpisiDugme.addEventListener("click", () => {
@@ -185,7 +189,7 @@ const MAPA = (() => {
       natpisi[k] = e.target.checked;
       try { localStorage.setItem("ns-natpisi", JSON.stringify(natpisi)); } catch (x) { /* */ }
       if (k === "delovi" && !natpisi.delovi) ocistiDeo();
-      if (k === "delovi") naziviEl.querySelector(".pod-izbor").classList.toggle("skriveno", !natpisi.delovi);   // granice samo uz delove grada
+      if (k === "delovi") for (const el of naziviEl.querySelectorAll(".pod-izbor")) el.classList.toggle("skriveno", !natpisi.delovi);   // granice samo uz delove grada
       spremna.then(() => postaviPodlogu(izbor));
     });
     document.addEventListener("click", (e) => { if (!naziviEl.contains(e.target)) zatvoriNatpise(); });
@@ -255,14 +259,40 @@ const MAPA = (() => {
       const deo = NS.json("mapa/delovi.geojson", "data/").then((data) => {
         m.addSource("o-delovi", { type: "geojson", data, attribution: OSM });
         const nijedan = ["==", ["get", "n"], "\u0000"];
-        // „Prikaži granice“: obris glavnih delova grada i naselja (četvrti, naselja, gradići; bez mesnih zajednica koje se preklapaju)
-        const glavni = data.features.filter((f) => f.geometry.type === "Point" && f.properties.b && ["town", "village", "suburb", "quarter"].includes(f.properties.v))
-          .map((f) => f.properties.n);
-        const filterGranica = ["all", ["!=", ["geometry-type"], "Point"], ["in", ["get", "n"], ["literal", glavni]]];
-        m.addLayer({ id: "o-granice-senka", type: "line", source: "o-delovi", filter: filterGranica, layout: { "line-join": "round", visibility: "none" },
-          paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 4, 16, 6.5], "line-opacity": 0.5, "line-blur": 0.5 } }, pre());
-        m.addLayer({ id: "o-granice", type: "line", source: "o-delovi", filter: filterGranica, layout: { "line-join": "round", visibility: "none" },
-          paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 1.6, 16, 3], "line-dasharray": [4, 1.5], "line-opacity": 0.9 } }, pre());
+        // „Prikaži granice“: gradski delovi (četvrti), svaki u svojoj boji; „Okolna naselja“: Petrovaradin, Kamenica, Veternik, Futog…
+        // (mesne zajednice se ne crtaju jer se preklapaju sa četvrtima)
+        const sGranicom = data.features.filter((f) => f.geometry.type === "Point" && f.properties.b);
+        const gradski = sGranicom.filter((f) => f.properties.v === "quarter" || f.properties.n === "Liman");
+        const okolna = sGranicom.filter((f) => ["town", "village"].includes(f.properties.v) || (f.properties.v === "suburb" && f.properties.n !== "Liman"));
+        const pre2 = () => (imaSloj("o-put-o") ? "o-put-o" : pre());              // boje ispod ulica, da ulice ostanu čitljive
+        const obojeni = (lista) => {
+          // „Liman“ obuhvata Liman 1–4: boje dobijaju samo delovi bez pod-delova; susedi (preklopljeni okviri) dobijaju različite boje
+          const imena = lista.map((f) => f.properties.n);
+          const listovi = lista.filter((f) => !imena.some((x) => x.startsWith(f.properties.n + " ")));
+          const boja = {};
+          const dodir = (a, b) => a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
+          for (const f of listovi) {
+            const zauzete = new Set(listovi.filter((g) => boja[g.properties.n] !== undefined && dodir(f.properties.b, g.properties.b)).map((g) => boja[g.properties.n]));
+            const koriscenje = PALETA_DELOVA.map((_, i) => Object.values(boja).filter((x) => x === i).length);
+            const slobodne = PALETA_DELOVA.map((_, i) => i).filter((i) => !zauzete.has(i));
+            boja[f.properties.n] = (slobodne.length ? slobodne : PALETA_DELOVA.map((_, i) => i)).sort((x, y) => koriscenje[x] - koriscenje[y])[0];
+          }
+          const izraz = ["match", ["get", "n"]];
+          for (const [n, i] of Object.entries(boja)) izraz.push(n, PALETA_DELOVA[i]);
+          izraz.push("rgba(0,0,0,0)");
+          return { imena: Object.keys(boja), izraz };
+        };
+        for (const [kraj, lista] of [["grad", gradski], ["ok", okolna]]) {
+          const o = obojeni(lista), sve = lista.map((f) => f.properties.n);
+          m.addLayer({ id: `o-boje-${kraj}`, type: "fill", source: "o-delovi", layout: { visibility: "none" },
+            filter: ["all", ["!=", ["geometry-type"], "Point"], ["in", ["get", "n"], ["literal", o.imena]]],
+            paint: { "fill-color": o.izraz, "fill-opacity": 0.24 } }, pre2());
+          const filterGranica = ["all", ["!=", ["geometry-type"], "Point"], ["in", ["get", "n"], ["literal", sve]]];
+          m.addLayer({ id: `o-granice-${kraj}-senka`, type: "line", source: "o-delovi", filter: filterGranica, layout: { "line-join": "round", visibility: "none" },
+            paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 4, 16, 6.5], "line-opacity": 0.5, "line-blur": 0.5 } }, pre());
+          m.addLayer({ id: `o-granice-${kraj}`, type: "line", source: "o-delovi", filter: filterGranica, layout: { "line-join": "round", visibility: "none" },
+            paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 1.6, 16, 3], "line-dasharray": [4, 1.5], "line-opacity": 0.9 } }, pre());
+        }
         m.addLayer({ id: "o-deo-povrs", type: "fill", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
           paint: { "fill-opacity": 0.12 } }, pre());
         m.addLayer({ id: "o-deo-obod-senka", type: "line", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
@@ -305,7 +335,7 @@ const MAPA = (() => {
         r.forEach((x, i) => {
           if (x.status !== "rejected") return;
           console.warn(x.reason);
-          for (const k of i ? ["mesta", "vazna"] : ["delovi", "granice"]) naziviEl.querySelector(`[data-natpis="${k}"]`).closest("label").classList.add("skriveno");
+          for (const k of i ? ["mesta", "vazna"] : ["delovi", "granice", "okolina"]) naziviEl.querySelector(`[data-natpis="${k}"]`).closest("label").classList.add("skriveno");
         });
         return true;
       });
@@ -355,7 +385,9 @@ const MAPA = (() => {
       vidljiv("o-mesta", !!nazivi && natpisi.mesta);
       vidljiv("o-vazna", !!nazivi && natpisi.vazna);
       for (const id of ["o-deo-povrs", "o-deo-obod-senka", "o-deo-obod"]) vidljiv(id, !!nazivi && natpisi.delovi);
-      for (const id of ["o-granice", "o-granice-senka"]) vidljiv(id, !!nazivi && natpisi.delovi && natpisi.granice);
+      for (const [kraj, ukljuceno] of [["grad", natpisi.granice], ["ok", natpisi.okolina]]) {
+        for (const id of [`o-boje-${kraj}`, `o-granice-${kraj}`, `o-granice-${kraj}-senka`]) vidljiv(id, !!nazivi && natpisi.delovi && ukljuceno);
+      }
       if (!nazivi && izabraniDeo) ocistiDeo();
       if (nazivi) {
         for (const id of ["o-nazivi", "o-delovi", "o-mesta", "o-vazna"]) {
@@ -370,8 +402,11 @@ const MAPA = (() => {
           m.setPaintProperty("o-deo-obod", "line-color", akcenat);
           m.setPaintProperty("o-deo-povrs", "fill-color", akcenat);
           m.setPaintProperty("o-deo-obod-senka", "line-color", nazivi[1]);
-          m.setPaintProperty("o-granice", "line-color", nazivi[0]);
-          m.setPaintProperty("o-granice-senka", "line-color", nazivi[1]);
+          for (const kraj of ["grad", "ok"]) {
+            m.setPaintProperty(`o-granice-${kraj}`, "line-color", nazivi[0]);
+            m.setPaintProperty(`o-granice-${kraj}-senka`, "line-color", nazivi[1]);
+            m.setPaintProperty(`o-boje-${kraj}`, "fill-opacity", izbor === "satelit" ? 0.36 : svetla ? 0.32 : 0.34);
+          }
         }
       }
       naziviEl.classList.toggle("skriveno", !nazivi);        // na standardnoj mapi natpisi su deo slike i ne mogu se sakriti
@@ -510,6 +545,7 @@ const MAPA = (() => {
           const f = e.features[0], o = f.properties;
           const red = (t) => `<div class="tt-red">${t}</div>`;
           kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${TACKE[o.t]}</b>${o.ime ? `<br>${o.ime}` : ""}` +
+            (o.adr ? red(o.adr) : "") + (o.sif ? red(`<span class="sitno">šifra <b class="mono">${o.sif}</b> · JKP „Parking servis”${o.pribl ? " · približan položaj" : ""}</span>`) : "") +
             (o.kap ? red(`mesta za bicikle: <b>${o.kap}</b>`) : "") + (o.vrsta ? red(`vrsta: ${VRSTE_PARKINGA[o.vrsta] || o.vrsta}`) : "") +
             (o.pok ? red("natkriveno") : "") + (o.op ? red(`<span class="sitno">${o.op}</span>`) : "")).addTo(m);
         });
@@ -523,7 +559,7 @@ const MAPA = (() => {
       if (da) await ucitajParking();
       vidljiv("parking", da);
     }
-    const NAPOMENA_PARKING = "Ovo nisu svi parkinzi, servisi i stanice u gradu, već samo oni koji su javno upisani na internetu.";
+    const NAPOMENA_PARKING = "Parkinzi su spoj zvaničnog spiska JKP „Parking servis” (317 lokacija, položaji preneti sa njihove mape) i OpenStreetMap-a. NS bike, servisi i stanice za popravku su samo oni javno upisani na internetu.";
     function crtajTipoveParkinga() {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".tipovi-parkinga");
       if (!lista) return;

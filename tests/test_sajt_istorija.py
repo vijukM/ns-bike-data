@@ -273,3 +273,23 @@ def test_delovi_grada_i_mesta():
     ]})["features"]
     assert [(x["properties"]["t"], x["properties"]["n"]) for x in mesta] == [
         ("f", "Fakultet tehničkih nauka"), ("park", "Dunavski park"), ("trg", "Trg slobode")]
+
+
+def test_unija_osm_i_zvanicnih_parkinga():
+    from sajt import osnova_mape as om
+    fc = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"t": "p"}, "geometry": {"type": "Point", "coordinates": [19.8400, 45.2500]}},
+        {"type": "Feature", "properties": {"t": "p"}, "geometry": {"type": "Point", "coordinates": [19.8500, 45.2600]}},
+        {"type": "Feature", "properties": {"t": "s"}, "geometry": {"type": "Point", "coordinates": [19.8300, 45.2400]}},
+    ]}
+    zv = [{"sif": 1, "adr": "Trg galerija", "lon": 19.84020, "lat": 45.25010},     # ~19 m od prvog OSM parkinga → isto mesto
+          {"sif": 2, "adr": "Isti ugao", "lon": 19.84025, "lat": 45.25005},        # i on je blizu, ali je prvi već uparen → nova tačka
+          {"sif": 3, "adr": "Daleko", "lon": 19.8700, "lat": 45.2400},
+          {"sif": 4, "adr": "Kod servisa", "lon": 19.8300, "lat": 45.2400}]       # servis (t = s) se ne uparuje sa parkingom
+    out = om.spoji_zvanicne(fc, zv)
+    assert (out["uparenih"], out["dodatih"]) == (1, 3)
+    osm1 = next(f for f in out["features"] if f["geometry"]["coordinates"] == [19.84, 45.25])
+    assert osm1["properties"] == {"t": "p", "sif": "Bic 1", "adr": "Trg galerija"}
+    novi = sorted(f["properties"]["sif"] for f in out["features"] if f["properties"].get("zv"))
+    assert novi == ["Bic 2", "Bic 3", "Bic 4"]
+    assert len(out["features"]) == 6

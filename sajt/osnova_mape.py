@@ -10,7 +10,10 @@ Svojstva:
                    n — naziv ulice latinicom (name:sr-Latn, inače name preslovljen), za a/g/s
   zgrade.geojson   h — visina u metrima (height, building:levels × 3 m ili procena po vrsti)
   parking.geojson  tačke za bicikliste; t — p parking za bicikle, i iznajmljivanje (NS bike), s servis / prodavnica,
-                   r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime
+                   r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime;
+                   unija sa zvaničnim spiskom JKP „Parking servis“ (sajt/podaci/parking_parkingns.json): sif — šifra
+                   (npr. „Bic 23“), adr — opis lokacije; zvanično mesto bez OSM parkinga u blizini dodaje se kao nova tačka
+                   (zv = 1; pribl = 1 kad je položaj poznat samo po ulici ili naselju)
   delovi.geojson   delovi grada i okolna naselja: tačke za natpis (n naziv, v vrsta: town, village, suburb, quarter,
                    neighbourhood, hamlet, locality; b [zapad, jug, istok, sever] ako postoji granica) i granice
                    (Polygon/MultiPolygon, n, v) — iz place=* i administrativnih granica nivoa 9–10 (mesne zajednice)
@@ -23,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import math
 import sys
 import time
 from datetime import datetime, timezone
@@ -50,6 +54,9 @@ VRSTE_DELOVA = ("town", "village", "suburb", "quarter", "neighbourhood", "hamlet
 MESTA_RE = "|".join(VRSTE_DELOVA)
 NIJE_DEO = {"Novi Sad", "Grad Novi Sad", "Нови Сад", "Град Нови Сад"}
 PREFIKSI_MZ = ("Mesna zajednica ", "MZ ", "M.Z. ")
+
+ZVANICNI = KOREN / "sajt" / "podaci" / "parking_parkingns.json"
+PRAG_ISTI_PARKING = 40                                  # m: zvanično mesto i OSM parking bliže od ovoga su isto mesto
 
 log = logging.getLogger(__name__)
 
@@ -370,6 +377,34 @@ def mesta_sa_nazivom(odgovor: dict) -> dict:
     return _fc(out)
 
 
+def _metri(a, b) -> float:
+    kx = 111320 * math.cos(math.radians((a[1] + b[1]) / 2))
+    return math.hypot((a[0] - b[0]) * kx, (a[1] - b[1]) * 110574)
+
+
+def spoji_zvanicne(fc: dict, zvanicni: list[dict], prag: float = PRAG_ISTI_PARKING) -> dict:
+    """Unija OSM parkinga i zvaničnog spiska: par (OSM parking, zvanično mesto) bliži od praga je isto mesto — OSM tački se
+    dopišu šifra i opis; zvanična mesta bez para dodaju se kao nove tačke (t = p). Uparuje se jedan na jedan, od najbližih."""
+    osm = [f for f in fc["features"] if f["properties"]["t"] == "p"]
+    parovi = sorted((_metri(f["geometry"]["coordinates"], (z["lon"], z["lat"])), i, j)
+                    for i, f in enumerate(osm) for j, z in enumerate(zvanicni))
+    uzet_o, uzet_z = set(), set()
+    for d, i, j in parovi:
+        if d > prag:
+            break
+        if i in uzet_o or j in uzet_z:
+            continue
+        uzet_o.add(i); uzet_z.add(j)
+        osm[i]["properties"].update({"sif": f"Bic {zvanicni[j]['sif']}", "adr": zvanicni[j]["adr"]})
+    novi = [{"type": "Feature", "properties": {"t": "p", "sif": f"Bic {z['sif']}", "adr": z["adr"], "zv": 1,
+                                               **({"pribl": 1} if "približno" in z.get("pol", "") else {})},
+             "geometry": {"type": "Point", "coordinates": [round(z["lon"], 6), round(z["lat"], 6)]}}
+            for j, z in enumerate(zvanicni) if j not in uzet_z]
+    out = fc["features"] + novi
+    out.sort(key=lambda f: f["geometry"]["coordinates"])
+    return {**fc, "features": out, "zvanicnih": len(zvanicni), "uparenih": len(uzet_z), "dodatih": len(novi)}
+
+
 def napravi(odgovori: dict) -> dict[str, dict]:
     return {
         "putevi": linije(odgovori["putevi"], svojstva_puta),
@@ -377,7 +412,8 @@ def napravi(odgovori: dict) -> dict[str, dict]:
         "voda": povrsine(odgovori["voda"]),
         "zelenilo": povrsine(odgovori["zelenilo"]),
         "zgrade": povrsine(odgovori["zgrade"], lambda t: {"h": visina(t)}),
-        "parking": tacke_za_bicikliste(odgovori.get("parking", {})),
+        "parking": spoji_zvanicne(tacke_za_bicikliste(odgovori.get("parking", {})),
+                                  json.loads(ZVANICNI.read_text(encoding="utf-8")) if ZVANICNI.exists() else []),
         "delovi": delovi_grada(odgovori.get("delovi", {})),
         "mesta": mesta_sa_nazivom(odgovori.get("mesta", {})),
     }
