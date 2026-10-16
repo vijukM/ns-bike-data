@@ -465,7 +465,7 @@ const LJ = (() => {
     const podnozje = document.createElement("footer");
     podnozje.className = "podnozje";
     podnozje.innerHTML = `Brojači: UGZINS / Mikrobit (očišćeni satni podaci iz master rada, FTN Novi Sad) · vreme: Open-Meteo ·
-      staze i podloga: © OpenStreetMap saradnici, © CARTO · grafici: Apache ECharts, mapa: MapLibre GL ·
+      staze i podloga: © OpenStreetMap saradnici · grafici: Apache ECharts, mapa: MapLibre GL ·
       izgled po uzoru na Adminator (MIT). Sati su po lokalnom vremenu (Europe/Belgrade).`;
 
     main.parentNode.insertBefore(ljuska, main);
