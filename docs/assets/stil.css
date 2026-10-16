@@ -875,3 +875,11 @@ html.bez-skrola { overflow: hidden; }
   .uzivo-znak.sveze .talas { opacity: 1; }
 }
 @media (min-width: 961px) { .ljuska.uzak .meni .uzivo-znak { display: none; } }
+
+/* mapa: izvor kao mali tekst (bez info dugmeta) i prikaz preko celog ekrana */
+.maplibregl-ctrl.izvor-mape { font-size: 10.5px; line-height: 1; padding: 3px 6px; border-radius: 6px; color: var(--t-muted);
+  background: color-mix(in srgb, var(--bg-card) 78%, transparent); margin-left: 6px !important; align-self: flex-end; }
+.maplibregl-ctrl.izvor-mape a { color: inherit; }
+.maplibregl-ctrl-bottom-left { display: flex; align-items: flex-end; }
+.mapa.ceo-ekran, .mapa:fullscreen { border-radius: 0; width: 100vw; height: 100vh !important; max-height: none; }
+.maplibregl-ctrl-fullscreen, .maplibregl-ctrl-shrink { width: 34px; height: 34px; }

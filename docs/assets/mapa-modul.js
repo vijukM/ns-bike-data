@@ -1,5 +1,5 @@
 /* Mapa brojača (MapLibre GL): mapa se pomera, rotira i naginje (desni klik / Ctrl + prevlačenje, dva prsta), dugme
-   3D podiže pogled i prikazuje zgrade. Podloge: OpenStreetMap (iste pločice kao na sajtu UGZINS) i tri „poster“ mape koje sajt sam
+   3D podiže pogled i prikazuje zgrade. Podloge: UGZINS i OpenStreetMap (iste OSM pločice) i tri „poster“ mape koje sajt sam
    crta iz vektorskih podataka OpenStreetMap-a (docs/data/mapa/, sajt/osnova_mape.py): tamno plava, siva i bela —
    oštre na svakom zumu. Pinovi po stanju brojača (hover = kartica, klik = fokus, „odskakivanje“ iz spiska),
    a/b razmaknuti u pikselima, biciklističke staze iz OSM-a, Ctrl + točkić za zum, filtriranje pinova,
@@ -14,7 +14,7 @@ const MAPA = (() => {
   const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>`;
 
   // ---------------------------------------------------------------- podloge
-  const PODLOGE = [["osm", "OpenStreetMap"], ["plava", "Tamno plava"], ["siva", "Siva"], ["bela", "Bela"]];
+  const PODLOGE = [["ugzins", "UGZINS"], ["osm", "OpenStreetMap"], ["plava", "Tamno plava"], ["siva", "Siva"], ["bela", "Bela"]];
   /** „Poster“ mape: boje slojeva i debljina ulica (k = klasa puta: a autoput, g glavna, s sporedna, o ostale). */
   const POSTERI = {
     plava: { pozadina: "#13233b", voda: "#0a1526", obalaVode: "#28466b", zelenilo: "#172b45", pruga: "#6d89b0", zgrade: "#5f7fa8",
@@ -77,17 +77,22 @@ const MAPA = (() => {
         "CooperativeGesturesHandler.MacHelpText": "Drži ⌘ i skroluj točkićem da uvećaš ili smanjiš mapu",
         "CooperativeGesturesHandler.MobileHelpText": "Pomeraj mapu sa dva prsta",
         "NavigationControl.ResetBearing": "Vrati sever gore i pogled odozgo", "NavigationControl.ZoomIn": "Uvećaj", "NavigationControl.ZoomOut": "Umanji",
-        "AttributionControl.ToggleAttribution": "Izvori mape",
+        "FullscreenControl.Enter": "Mapa preko celog ekrana", "FullscreenControl.Exit": "Izađi iz prikaza preko celog ekrana",
       },
     });
     m.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
     const d3 = new Dugme3D(() => postavi3D(m.getPitch() < 15));
     m.addControl(d3, "top-right");
-    m.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+    // dole desno: preko celog ekrana (tada točkić zumira i bez Ctrl-a); izvor podataka kao mali tekst dole levo, bez dugmeta
+    const ceoEkran = new maplibregl.FullscreenControl({ container: el });
+    m.addControl(ceoEkran, "bottom-right");
+    ceoEkran.on("fullscreenstart", () => { m.cooperativeGestures.disable(); el.classList.add("ceo-ekran"); setTimeout(() => m.resize(), 60); });
+    ceoEkran.on("fullscreenend", () => { m.cooperativeGestures.enable(); el.classList.remove("ceo-ekran"); setTimeout(() => m.resize(), 60); });
     m.addControl(new maplibregl.ScaleControl({ maxWidth: 90, unit: "metric" }), "bottom-left");
+    m.addControl({ onAdd() { const d = document.createElement("div"); d.className = "maplibregl-ctrl izvor-mape"; d.innerHTML = OSM; return d; }, onRemove() {} }, "bottom-left");
 
     // ---------------------------------------------------------------- podloga i slojevi
-    let izbor = "osm";                                  // ranije zapamćena CARTO podloga prelazi na OpenStreetMap
+    let izbor = "ugzins";                               // ranije zapamćena CARTO podloga prelazi na UGZINS
     try { if (PODLOGE.some(([k]) => k === localStorage.getItem("ns-podloga"))) izbor = localStorage.getItem("ns-podloga"); } catch (e) { /* */ }
     let osnovaUcitana = null, zgradeUcitane = null;
     const imaSloj = (id) => !!m.getLayer(id);
@@ -98,8 +103,10 @@ const MAPA = (() => {
       m.addLayer({ id, type: "raster", source: id, layout: { visibility: "none" } });
     }
     function osnovniSlojevi() {
-      // standardne OpenStreetMap pločice, kao na sajtu UGZINS (OpenLayers + tile.openstreetmap.org)
+      // standardne OpenStreetMap pločice (isto što koristi sajt UGZINS: OpenLayers + tile.openstreetmap.org);
+      // dva sloja iz istog izvora: „UGZINS“ uvek u originalnim bojama, „OpenStreetMap“ u tamnoj temi potamnjen
       rasterSloj("osm", ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], OSM);
+      m.addLayer({ id: "ugzins", type: "raster", source: "osm", layout: { visibility: "none" } }, "osm");
       m.addSource("staze", { type: "geojson", data: { type: "FeatureCollection", features: [] }, attribution: OSM });
       m.addLayer({ id: "staze-obod", type: "line", source: "staze", layout: { "line-cap": "round", "line-join": "round" },
         paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 3.5, 13.5, 6, 16, 10], "line-opacity": 0.9 } });
@@ -144,9 +151,16 @@ const MAPA = (() => {
       const tamna = NS.tamna();
       const p = POSTERI[izbor];
       m.setPaintProperty("pozadina", "background-color", p ? p.pozadina : css("--bg-muted"));
+      vidljiv("ugzins", izbor === "ugzins");
       vidljiv("osm", izbor === "osm");
-      // OSM u originalnim bojama (kao na UGZINS); u tamnoj temi samo malo prigušen da ne blešti
-      if (imaSloj("osm")) m.setPaintProperty("osm", "raster-brightness-max", tamna ? 0.88 : 1);
+      // UGZINS: originalne boje (u tamnoj temi samo malo prigušeno da ne blešti)
+      if (imaSloj("ugzins")) m.setPaintProperty("ugzins", "raster-brightness-max", tamna ? 0.88 : 1);
+      if (imaSloj("osm")) {               // OpenStreetMap u tamnoj temi: obrnuta svetlina i ugašene boje (kao ranije)
+        m.setPaintProperty("osm", "raster-brightness-min", tamna ? 0.92 : 0);
+        m.setPaintProperty("osm", "raster-brightness-max", tamna ? 0.08 : 1);
+        m.setPaintProperty("osm", "raster-hue-rotate", tamna ? 180 : 0);
+        m.setPaintProperty("osm", "raster-saturation", tamna ? -0.45 : 0);
+      }
       const poster = !!p;
       for (const id of ["o-zelenilo", "o-voda", "o-obala", "o-pruga", "o-put-o", "o-put-s", "o-put-g", "o-put-a"]) vidljiv(id, poster);
       if (poster && imaSloj("o-voda")) {
@@ -170,8 +184,8 @@ const MAPA = (() => {
     }
     async function postaviPodlogu(v) {
       if (POSTERI[v] && !(await ucitajOsnovu())) {
-        LJ.tost("Vektorska osnova mape još nije pripremljena — prikazujem OpenStreetMap.", "map");
-        v = "osm";
+        LJ.tost("Vektorska osnova mape još nije pripremljena — prikazujem UGZINS mapu.", "map");
+        v = "ugzins";
         if (opcije.podlogaEl) opcije.podlogaEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.v === v)));
       }
       izbor = v;
