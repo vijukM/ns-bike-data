@@ -11,6 +11,11 @@ Svojstva:
   zgrade.geojson   h — visina u metrima (height, building:levels × 3 m ili procena po vrsti)
   parking.geojson  tačke za bicikliste; t — p parking za bicikle, i iznajmljivanje (NS bike), s servis / prodavnica,
                    r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime
+  delovi.geojson   delovi grada i okolna naselja: tačke za natpis (n naziv, v vrsta: town, village, suburb, quarter,
+                   neighbourhood, hamlet, locality; b [zapad, jug, istok, sever] ako postoji granica) i granice
+                   (Polygon/MultiPolygon, n, v) — iz place=* i administrativnih granica nivoa 9–10 (mesne zajednice)
+  mesta.geojson    tačke sa nazivom (n) i vrstom (t): park, trg; važna mesta f fakultet, b bolnica, k pozorište / muzej,
+                   z železnička / autobuska stanica, c tržni centar, s stadion
 Podaci: © OpenStreetMap saradnici, ODbL (navodi se na sajtu).
 """
 from __future__ import annotations
@@ -41,6 +46,11 @@ KLASA = {h: k for k, lista in KLASE.items() for h in lista}
 VISINE = {"house": 6, "detached": 6, "garage": 3, "garages": 3, "shed": 3, "roof": 4, "apartments": 15,
           "commercial": 10, "retail": 8, "industrial": 9, "warehouse": 9, "church": 18, "school": 12, "university": 15}
 
+VRSTE_DELOVA = ("town", "village", "suburb", "quarter", "neighbourhood", "hamlet", "locality")
+MESTA_RE = "|".join(VRSTE_DELOVA)
+NIJE_DEO = {"Novi Sad", "Grad Novi Sad", "Нови Сад", "Град Нови Сад"}
+PREFIKSI_MZ = ("Mesna zajednica ", "MZ ", "M.Z. ")
+
 log = logging.getLogger(__name__)
 
 
@@ -61,6 +71,13 @@ def upiti(okvir=OKVIR, okvir_zgrade=OKVIR_ZGRADE) -> dict[str, str]:
                      f'way["landuse"~"^(forest|grass|meadow|recreation_ground|cemetery)$"]({b});way["natural"="wood"]({b});'
                      f'relation["leisure"="park"]({b});relation["landuse"="forest"]({b});relation["natural"="wood"]({b}););out geom;'),
         "zgrade": f'[out:json][timeout:180];way["building"]({z});out geom;',
+        "delovi": (f'[out:json][timeout:180];(node["place"~"^({MESTA_RE})$"]({b});way["place"~"^({MESTA_RE})$"]({b});'
+                   f'relation["place"~"^({MESTA_RE})$"]({b});relation["boundary"="administrative"]["admin_level"~"^(9|10)$"]({b});'
+                   f'relation["boundary"="place"]({b}););out geom;'),
+        "mesta": (f'[out:json][timeout:180];(nwr["leisure"="park"]["name"]({b});nwr["place"="square"]({b});'
+                  f'way["highway"="pedestrian"]["name"~"^(Trg|Трг) "]({b});'
+                  f'nwr["amenity"~"^(university|college|hospital|theatre|bus_station)$"]["name"]({b});nwr["tourism"="museum"]["name"]({b});'
+                  f'nwr["railway"="station"]["name"]({b});nwr["shop"="mall"]["name"]({b});nwr["leisure"="stadium"]["name"]({b}););out center tags;'),
         "parking": (f'[out:json][timeout:120];(nwr["amenity"="bicycle_parking"]({b});nwr["amenity"="bicycle_rental"]({b});'
                     f'nwr["amenity"="bicycle_repair_station"]({b});nwr["shop"="bicycle"]({b}););out center tags;'),
     }
@@ -244,6 +261,115 @@ def tacke_za_bicikliste(odgovor: dict) -> dict:
     return _fc(out)
 
 
+def pojednostavi(prsten: list[list[float]], tolerancija: float = 4e-5) -> list[list[float]]:
+    """Douglas–Peucker (~4 m): granice mesnih zajednica imaju mnogo tačaka, a za obris su dovoljne ovako."""
+    if len(prsten) <= 4:
+        return prsten
+    out = _dp(prsten, tolerancija)
+    return out if len(out) >= 4 else prsten
+
+
+def _dp(prsten, tolerancija):
+    if len(prsten) <= 2:
+        return prsten
+    (x1, y1), (x2, y2) = prsten[0], prsten[-1]
+    dx, dy = x2 - x1, y2 - y1
+    d2 = dx * dx + dy * dy
+    najdalja, i_max = -1.0, 0
+    for i in range(1, len(prsten) - 1):
+        x, y = prsten[i]
+        if d2 == 0:
+            d = (x - x1) ** 2 + (y - y1) ** 2
+        else:
+            u = max(0.0, min(1.0, ((x - x1) * dx + (y - y1) * dy) / d2))
+            d = (x - x1 - u * dx) ** 2 + (y - y1 - u * dy) ** 2
+        if d > najdalja:
+            najdalja, i_max = d, i
+    if najdalja <= tolerancija ** 2:
+        return [prsten[0], prsten[-1]]
+    return _dp(prsten[: i_max + 1], tolerancija)[:-1] + _dp(prsten[i_max:], tolerancija)
+
+
+def _povrsina_i_teziste(prsten):
+    a = cx = cy = 0.0
+    for (x1, y1), (x2, y2) in zip(prsten, prsten[1:]):
+        k = x1 * y2 - x2 * y1
+        a += k
+        cx += (x1 + x2) * k
+        cy += (y1 + y2) * k
+    if abs(a) < 1e-12:
+        return 0.0, prsten[0]
+    return abs(a) / 2, [round(cx / (3 * a), 5), round(cy / (3 * a), 5)]
+
+
+def naziv_dela(t: dict) -> str | None:
+    n = naziv_ulice(t)
+    if not n:
+        return None
+    for p in PREFIKSI_MZ:
+        if n.startswith(p):
+            n = n[len(p):].strip()
+    return n or None
+
+
+def delovi_grada(odgovor: dict) -> dict:
+    """Tačke za natpise delova grada (place=* čvorovi) + granice (place=* površine, mesne zajednice) uparene po nazivu."""
+    tacke_d, granice = {}, {}
+    for e in odgovor.get("elements", []):
+        t = e.get("tags", {})
+        n = naziv_dela(t)
+        if not n or n in NIJE_DEO:
+            continue
+        if e.get("type") == "node":
+            if t.get("place") in VRSTE_DELOVA and n not in tacke_d:
+                tacke_d[n] = {"v": t["place"], "p": [round(e["lon"], 5), round(e["lat"], 5)]}
+            continue
+        poli = [[pojednostavi(r) for r in p] for p in poligoni(e)]
+        poli = [p for p in poli if len(p[0]) >= 4]
+        if not poli:
+            continue
+        v = t.get("place") if t.get("place") in VRSTE_DELOVA else "mz"
+        # ista celina može da postoji i kao place=* i kao mesna zajednica: prednost ima place=*
+        if n not in granice or (granice[n][0] == "mz" and v != "mz"):
+            granice[n] = (v, poli)
+    out = []
+    for n, (v, poli) in sorted(granice.items()):
+        geom = {"type": "Polygon", "coordinates": poli[0]} if len(poli) == 1 else {"type": "MultiPolygon", "coordinates": poli}
+        out.append({"type": "Feature", "properties": {"n": n, "v": v}, "geometry": geom})
+    for n in sorted(set(tacke_d) | set(granice)):
+        sv = {"n": n, "v": tacke_d[n]["v"] if n in tacke_d else granice[n][0]}
+        if n in granice:
+            sve = [x for p in granice[n][1] for x in p[0]]
+            sv["b"] = [min(x for x, _ in sve), min(y for _, y in sve), max(x for x, _ in sve), max(y for _, y in sve)]
+            tacka = tacke_d[n]["p"] if n in tacke_d else max((_povrsina_i_teziste(p[0]) for p in granice[n][1]), key=lambda x: x[0])[1]
+        else:
+            tacka = tacke_d[n]["p"]
+        out.append({"type": "Feature", "properties": sv, "geometry": {"type": "Point", "coordinates": tacka}})
+    return _fc(out)
+
+
+VRSTE_MESTA = (("leisure", "park", "park"), ("place", "square", "trg"), ("highway", "pedestrian", "trg"),
+               ("amenity", "university", "f"), ("amenity", "college", "f"), ("amenity", "hospital", "b"),
+               ("amenity", "theatre", "k"), ("tourism", "museum", "k"), ("amenity", "bus_station", "z"),
+               ("railway", "station", "z"), ("shop", "mall", "c"), ("leisure", "stadium", "s"))
+
+
+def mesta_sa_nazivom(odgovor: dict) -> dict:
+    """Parkovi, trgovi i važna mesta kao tačke (centar površine), bez ponavljanja istog naziva iste vrste."""
+    vidjeno, out = set(), []
+    for e in odgovor.get("elements", []):
+        t = e.get("tags", {})
+        vrsta = next((k for kljuc, v, k in VRSTE_MESTA if t.get(kljuc) == v), None)
+        n = naziv_ulice(t)
+        lat, lon = (e.get("lat"), e.get("lon")) if e.get("type") == "node" else ((e.get("center") or {}).get("lat"), (e.get("center") or {}).get("lon"))
+        if vrsta is None or not n or lat is None or (vrsta, n) in vidjeno:
+            continue
+        vidjeno.add((vrsta, n))
+        out.append({"type": "Feature", "properties": {"n": n, "t": vrsta}, "geometry": {"type": "Point", "coordinates": [round(lon, 5), round(lat, 5)]}})
+    out.sort(key=lambda f: (f["properties"]["t"], f["properties"]["n"]))
+    return _fc(out)
+
+
 def napravi(odgovori: dict) -> dict[str, dict]:
     return {
         "putevi": linije(odgovori["putevi"], svojstva_puta),
@@ -252,10 +378,13 @@ def napravi(odgovori: dict) -> dict[str, dict]:
         "zelenilo": povrsine(odgovori["zelenilo"]),
         "zgrade": povrsine(odgovori["zgrade"], lambda t: {"h": visina(t)}),
         "parking": tacke_za_bicikliste(odgovori.get("parking", {})),
+        "delovi": delovi_grada(odgovori.get("delovi", {})),
+        "mesta": mesta_sa_nazivom(odgovori.get("mesta", {})),
     }
 
 
-MINIMUM = {"putevi": 2000, "pruga": 5, "voda": 5, "zelenilo": 50, "zgrade": 1000, "parking": 20}
+MINIMUM = {"putevi": 2000, "pruga": 5, "voda": 5, "zelenilo": 50, "zgrade": 1000, "parking": 20, "delovi": 10, "mesta": 20}
+OPCIONI = {"delovi", "mesta"}            # natpisi: ako zakažu, ne ruše osnovu mape
 
 
 def main(argv=None) -> int:
@@ -265,11 +394,20 @@ def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     odgovori = {}
     for ime, upit in upiti().items():
-        odgovori[ime] = posalji(upit)
+        try:
+            odgovori[ime] = posalji(upit)
+        except RuntimeError:
+            if ime not in OPCIONI:
+                raise
+            log.warning("%s: Overpass nije odgovorio — ostaje prethodna verzija", ime)
+            odgovori[ime] = {}
         log.info("%s: %d elemenata", ime, len(odgovori[ime].get("elements", [])))
     slojevi = napravi(odgovori)
     a.izlaz.mkdir(parents=True, exist_ok=True)
     for ime, fc in slojevi.items():
+        if len(fc["features"]) < MINIMUM[ime] and ime in OPCIONI:
+            log.warning("%s: premalo obeležja (%d) — ostaje prethodna verzija", ime, len(fc["features"]))
+            continue
         if len(fc["features"]) < MINIMUM[ime]:
             raise SystemExit(f"{ime}: premalo obeležja ({len(fc['features'])}) — Overpass odgovor je verovatno nepotpun")
         put = a.izlaz / f"{ime}.geojson"

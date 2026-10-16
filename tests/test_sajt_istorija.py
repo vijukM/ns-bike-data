@@ -240,3 +240,36 @@ def test_osnova_mape_prstenovi_visine_klase():
     assert sorted(po_tipu) == ["p", "s"]                                           # klupa se ne uzima
     assert po_tipu["p"]["properties"] == {"t": "p", "kap": 10, "pok": 1, "vrsta": "stands"}
     assert po_tipu["s"]["properties"]["ime"] == "Servis" and po_tipu["s"]["geometry"]["coordinates"] == [19.83, 45.26]
+
+
+def test_delovi_grada_i_mesta():
+    from sajt import osnova_mape as om
+    kv = [{"lon": 19.80, "lat": 45.24}, {"lon": 19.82, "lat": 45.24}, {"lon": 19.82, "lat": 45.25}, {"lon": 19.80, "lat": 45.25}, {"lon": 19.80, "lat": 45.24}]
+    odg = {"elements": [
+        {"type": "node", "lat": 45.245, "lon": 19.81, "tags": {"place": "suburb", "name": "Лиман"}},
+        {"type": "node", "lat": 45.26, "lon": 19.83, "tags": {"place": "quarter", "name": "Podbara"}},
+        {"type": "node", "lat": 45.25, "lon": 19.84, "tags": {"place": "city", "name": "Novi Sad"}},
+        {"type": "relation", "tags": {"boundary": "administrative", "admin_level": "10", "name": "Mesna zajednica Liman"},
+         "members": [{"type": "way", "role": "outer", "geometry": kv}]},
+        {"type": "way", "tags": {"place": "neighbourhood", "name": "Telep"}, "geometry": [{"lon": x["lon"] - 0.05, "lat": x["lat"]} for x in kv]},
+    ]}
+    f = om.delovi_grada(odg)["features"]
+    granice = {x["properties"]["n"]: x for x in f if x["geometry"]["type"] != "Point"}
+    tacke = {x["properties"]["n"]: x for x in f if x["geometry"]["type"] == "Point"}
+    assert set(granice) == {"Liman", "Telep"} and set(tacke) == {"Liman", "Podbara", "Telep"}
+    assert tacke["Liman"]["properties"] == {"n": "Liman", "v": "suburb", "b": [19.8, 45.24, 19.82, 45.25]}
+    assert tacke["Liman"]["geometry"]["coordinates"] == [19.81, 45.245]           # natpis na čvoru place=*
+    assert tacke["Telep"]["geometry"]["coordinates"] == [19.76, 45.245]           # bez čvora: težište granice
+    assert "b" not in tacke["Podbara"]["properties"]
+    # pojednostavljenje zadržava krajeve i uglove
+    assert om.pojednostavi([[0, 0], [1e-6, 0], [1, 0], [1, 1], [0, 1], [0, 0]]) == [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]
+
+    mesta = om.mesta_sa_nazivom({"elements": [
+        {"type": "way", "center": {"lat": 45.25, "lon": 19.85}, "tags": {"leisure": "park", "name": "Дунавски парк"}},
+        {"type": "way", "center": {"lat": 45.25, "lon": 19.85}, "tags": {"leisure": "park", "name": "Дунавски парк"}},
+        {"type": "node", "lat": 45.255, "lon": 19.845, "tags": {"place": "square", "name": "Trg slobode"}},
+        {"type": "way", "center": {"lat": 45.24, "lon": 19.85}, "tags": {"amenity": "university", "name": "Fakultet tehničkih nauka"}},
+        {"type": "node", "lat": 45.2, "lon": 19.8, "tags": {"amenity": "hospital"}},
+    ]})["features"]
+    assert [(x["properties"]["t"], x["properties"]["n"]) for x in mesta] == [
+        ("f", "Fakultet tehničkih nauka"), ("park", "Dunavski park"), ("trg", "Trg slobode")]
