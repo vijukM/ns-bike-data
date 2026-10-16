@@ -545,7 +545,7 @@ const MAPA = (() => {
           const f = e.features[0], o = f.properties;
           const red = (t) => `<div class="tt-red">${t}</div>`;
           kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${TACKE[o.t]}</b>${o.ime ? `<br>${o.ime}` : ""}` +
-            (o.adr ? red(o.adr) : "") + (o.sif ? red(`<span class="sitno">šifra <b class="mono">${o.sif}</b> · JKP „Parking servis”</span>`) : "") +
+            (o.adr ? red(o.adr) : "") + (o.sif ? red(`<span class="sitno">šifra <b class="mono">${o.sif}</b> · JKP „Parking servis”${o.pribl ? " · približan položaj" : ""}</span>`) : "") +
             (o.kap ? red(`mesta za bicikle: <b>${o.kap}</b>`) : "") + (o.vrsta ? red(`vrsta: ${VRSTE_PARKINGA[o.vrsta] || o.vrsta}`) : "") +
             (o.pok ? red("natkriveno") : "") + (o.op ? red(`<span class="sitno">${o.op}</span>`) : "")).addTo(m);
         });
@@ -559,7 +559,7 @@ const MAPA = (() => {
       if (da) await ucitajParking();
       vidljiv("parking", da);
     }
-    const NAPOMENA_PARKING = "Ovo nisu svi parkinzi, servisi i stanice u gradu, već samo oni koji su javno upisani na internetu.";
+    const NAPOMENA_PARKING = "Parkinzi su spoj zvaničnog spiska JKP „Parking servis” (317 lokacija, položaji preneti sa njihove mape) i OpenStreetMap-a. NS bike, servisi i stanice za popravku su samo oni javno upisani na internetu.";
     function crtajTipoveParkinga() {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".tipovi-parkinga");
       if (!lista) return;

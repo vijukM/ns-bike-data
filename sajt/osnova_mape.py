@@ -13,6 +13,7 @@ Svojstva:
                    r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime;
                    unija sa zvaničnim spiskom JKP „Parking servis“ (sajt/podaci/parking_parkingns.json): sif — šifra
                    (npr. „Bic 23“), adr — opis lokacije; zvanično mesto bez OSM parkinga u blizini dodaje se kao nova tačka
+                   (zv = 1; pribl = 1 kad je položaj poznat samo po ulici ili naselju)
   delovi.geojson   delovi grada i okolna naselja: tačke za natpis (n naziv, v vrsta: town, village, suburb, quarter,
                    neighbourhood, hamlet, locality; b [zapad, jug, istok, sever] ako postoji granica) i granice
                    (Polygon/MultiPolygon, n, v) — iz place=* i administrativnih granica nivoa 9–10 (mesne zajednice)
@@ -55,7 +56,7 @@ NIJE_DEO = {"Novi Sad", "Grad Novi Sad", "Нови Сад", "Град Нови �
 PREFIKSI_MZ = ("Mesna zajednica ", "MZ ", "M.Z. ")
 
 ZVANICNI = KOREN / "sajt" / "podaci" / "parking_parkingns.json"
-PRAG_ISTI_PARKING = 35                                  # m: zvanično mesto i OSM parking bliže od ovoga su isto mesto
+PRAG_ISTI_PARKING = 40                                  # m: zvanično mesto i OSM parking bliže od ovoga su isto mesto
 
 log = logging.getLogger(__name__)
 
@@ -395,7 +396,8 @@ def spoji_zvanicne(fc: dict, zvanicni: list[dict], prag: float = PRAG_ISTI_PARKI
             continue
         uzet_o.add(i); uzet_z.add(j)
         osm[i]["properties"].update({"sif": f"Bic {zvanicni[j]['sif']}", "adr": zvanicni[j]["adr"]})
-    novi = [{"type": "Feature", "properties": {"t": "p", "sif": f"Bic {z['sif']}", "adr": z["adr"], "zv": 1},
+    novi = [{"type": "Feature", "properties": {"t": "p", "sif": f"Bic {z['sif']}", "adr": z["adr"], "zv": 1,
+                                               **({"pribl": 1} if "približno" in z.get("pol", "") else {})},
              "geometry": {"type": "Point", "coordinates": [round(z["lon"], 6), round(z["lat"], 6)]}}
             for j, z in enumerate(zvanicni) if j not in uzet_z]
     out = fc["features"] + novi
