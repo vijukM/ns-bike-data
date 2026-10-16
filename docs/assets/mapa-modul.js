@@ -743,8 +743,7 @@ const MAPA = (() => {
       postaviStaze(stazeTipovi);
       stazeSpremne.then((km) => { if (km) { kmStaza = km; crtajStaze(); } });
       sGrupa.querySelector(".parking-sve input").addEventListener("change", () => postaviStaze(new Set(stazeTipovi.size === VRSTE_STAZA.length ? [] : VRSTE_STAZA)));
-      sStrelica.addEventListener("click", (e) => {
-        e.stopPropagation();
+      sStrelica.addEventListener("click", () => {           // bez stopPropagation: klik zatvara ostale padajuće panele
         const otvori = sPanel.classList.contains("skriveno");
         sPanel.classList.toggle("skriveno", !otvori);
         sStrelica.setAttribute("aria-expanded", String(otvori));
@@ -785,8 +784,7 @@ const MAPA = (() => {
         if (novo.has(d.dataset.t)) novo.delete(d.dataset.t); else novo.add(d.dataset.t);
         postaviTipove(novo);
       });
-      strelica.addEventListener("click", (e) => {
-        e.stopPropagation();
+      strelica.addEventListener("click", () => {
         const otvori = panel.classList.contains("skriveno");
         panel.classList.toggle("skriveno", !otvori);
         strelica.setAttribute("aria-expanded", String(otvori));

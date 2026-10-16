@@ -14,7 +14,7 @@
     });
     MAPA.legenda(document.getElementById("legenda-mape"), s);
     kpi(s, ctl);
-    document.getElementById("stanje-period").textContent = s.stanje_period;
+    document.getElementById("stanje-period").innerHTML = MAPA.info(`Stanje svakog brojača računa se iz poslednjih 30 dana sa podacima (${s.stanje_period}).`);
 
     // spisak + filter (filter i pretraga važe i za pinove na mapi)
     let filter = "sve", upit = "", vrednostiSata = null;
@@ -23,7 +23,8 @@
     for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
     const filterEl = document.getElementById("spisak-filter");
     filterEl.className = "cipovi";
-    filterEl.innerHTML = [["sve", "Sve"], ...MAPA.REDOSLED.map((k) => [k, s.stanja[k]])].filter(([k]) => brojevi[k])
+    // redosled filtera: sve, radi, ne radi, delimično radi, neispravan (staje u dva reda)
+    filterEl.innerHTML = [["sve", "Sve"], ...["radi", "ne_radi", "delimicno", "neispravan"].map((k) => [k, s.stanja[k]])].filter(([k]) => brojevi[k])
       .map(([k, t]) => `<button class="cip" data-k="${k}" aria-pressed="${k === filter}" style="--boja:var(--primary)"
         title="${k === "sve" ? "svi brojači" : (s.stanja_opis || {})[k] || ""}">${k === "sve" ? "" : `<img src="${NS.pin(k)}" alt="">`}${t}<span class="broj">${brojevi[k]}</span></button>`).join("");
     function postaviFilter(k) {
