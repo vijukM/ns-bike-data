@@ -160,7 +160,7 @@ const MAPA = (() => {
     ceoEkran.on("fullscreenend", () => { m.cooperativeGestures.enable(); el.classList.remove("ceo-ekran"); setTimeout(() => m.resize(), 60); });
     m.addControl(new maplibregl.ScaleControl({ maxWidth: 90, unit: "metric" }), "bottom-left");
     // gore levo, na samoj mapi: padajući meni „Natpisi“ (samo vektorska i satelitska; na standardnoj su natpisi deo slike)
-    const natpisi = { nazivi: true, delovi: true, mesta: true, vazna: true };
+    const natpisi = { nazivi: true, delovi: true, granice: false, mesta: true, vazna: true };
     try {
       if (localStorage.getItem("ns-nazivi") === "0") natpisi.nazivi = false;      // ranije zapamćeno
       Object.assign(natpisi, JSON.parse(localStorage.getItem("ns-natpisi") || "{}"));
@@ -169,7 +169,9 @@ const MAPA = (() => {
     naziviEl.className = "maplibregl-ctrl natpisi-ctrl skriveno";
     naziviEl.innerHTML = `<button type="button" class="natpisi-dugme" aria-expanded="false" aria-haspopup="true">Natpisi${LJ.ik("chevron")}</button>
       <div class="natpisi-panel skriveno" role="group" aria-label="Natpisi na mapi">
-        ${NATPISI.map(([k, ime]) => `<label class="red-izbora"><input type="checkbox" data-natpis="${k}" ${natpisi[k] ? "checked" : ""}><span>${ime}</span></label>`).join("")}</div>`;
+        ${NATPISI.map(([k, ime]) => `<label class="red-izbora"><input type="checkbox" data-natpis="${k}" ${natpisi[k] ? "checked" : ""}><span>${ime}</span></label>` +
+          (k === "delovi" ? `<label class="red-izbora pod-izbor${natpisi.delovi ? "" : " skriveno"}" title="Obris svih glavnih delova grada i okolnih naselja">
+            <input type="checkbox" data-natpis="granice" ${natpisi.granice ? "checked" : ""}><span>Prikaži granice</span></label>` : "")).join("")}</div>`;
     const natpisiDugme = naziviEl.querySelector(".natpisi-dugme"), natpisiPanel = naziviEl.querySelector(".natpisi-panel");
     const zatvoriNatpise = () => { natpisiPanel.classList.add("skriveno"); natpisiDugme.setAttribute("aria-expanded", "false"); };
     natpisiDugme.addEventListener("click", () => {
@@ -183,6 +185,7 @@ const MAPA = (() => {
       natpisi[k] = e.target.checked;
       try { localStorage.setItem("ns-natpisi", JSON.stringify(natpisi)); } catch (x) { /* */ }
       if (k === "delovi" && !natpisi.delovi) ocistiDeo();
+      if (k === "delovi") naziviEl.querySelector(".pod-izbor").classList.toggle("skriveno", !natpisi.delovi);   // granice samo uz delove grada
       spremna.then(() => postaviPodlogu(izbor));
     });
     document.addEventListener("click", (e) => { if (!naziviEl.contains(e.target)) zatvoriNatpise(); });
@@ -252,6 +255,14 @@ const MAPA = (() => {
       const deo = NS.json("mapa/delovi.geojson", "data/").then((data) => {
         m.addSource("o-delovi", { type: "geojson", data, attribution: OSM });
         const nijedan = ["==", ["get", "n"], "\u0000"];
+        // „Prikaži granice“: obris glavnih delova grada i naselja (četvrti, naselja, gradići; bez mesnih zajednica koje se preklapaju)
+        const glavni = data.features.filter((f) => f.geometry.type === "Point" && f.properties.b && ["town", "village", "suburb", "quarter"].includes(f.properties.v))
+          .map((f) => f.properties.n);
+        const filterGranica = ["all", ["!=", ["geometry-type"], "Point"], ["in", ["get", "n"], ["literal", glavni]]];
+        m.addLayer({ id: "o-granice-senka", type: "line", source: "o-delovi", filter: filterGranica, layout: { "line-join": "round", visibility: "none" },
+          paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 4, 16, 6.5], "line-opacity": 0.5, "line-blur": 0.5 } }, pre());
+        m.addLayer({ id: "o-granice", type: "line", source: "o-delovi", filter: filterGranica, layout: { "line-join": "round", visibility: "none" },
+          paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 1.6, 16, 3], "line-dasharray": [4, 1.5], "line-opacity": 0.9 } }, pre());
         m.addLayer({ id: "o-deo-povrs", type: "fill", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
           paint: { "fill-opacity": 0.12 } }, pre());
         m.addLayer({ id: "o-deo-obod-senka", type: "line", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
@@ -294,7 +305,7 @@ const MAPA = (() => {
         r.forEach((x, i) => {
           if (x.status !== "rejected") return;
           console.warn(x.reason);
-          for (const k of i ? ["mesta", "vazna"] : ["delovi"]) naziviEl.querySelector(`[data-natpis="${k}"]`).closest("label").classList.add("skriveno");
+          for (const k of i ? ["mesta", "vazna"] : ["delovi", "granice"]) naziviEl.querySelector(`[data-natpis="${k}"]`).closest("label").classList.add("skriveno");
         });
         return true;
       });
@@ -344,6 +355,7 @@ const MAPA = (() => {
       vidljiv("o-mesta", !!nazivi && natpisi.mesta);
       vidljiv("o-vazna", !!nazivi && natpisi.vazna);
       for (const id of ["o-deo-povrs", "o-deo-obod-senka", "o-deo-obod"]) vidljiv(id, !!nazivi && natpisi.delovi);
+      for (const id of ["o-granice", "o-granice-senka"]) vidljiv(id, !!nazivi && natpisi.delovi && natpisi.granice);
       if (!nazivi && izabraniDeo) ocistiDeo();
       if (nazivi) {
         for (const id of ["o-nazivi", "o-delovi", "o-mesta", "o-vazna"]) {
@@ -358,6 +370,8 @@ const MAPA = (() => {
           m.setPaintProperty("o-deo-obod", "line-color", akcenat);
           m.setPaintProperty("o-deo-povrs", "fill-color", akcenat);
           m.setPaintProperty("o-deo-obod-senka", "line-color", nazivi[1]);
+          m.setPaintProperty("o-granice", "line-color", nazivi[0]);
+          m.setPaintProperty("o-granice-senka", "line-color", nazivi[1]);
         }
       }
       naziviEl.classList.toggle("skriveno", !nazivi);        // na standardnoj mapi natpisi su deo slike i ne mogu se sakriti
