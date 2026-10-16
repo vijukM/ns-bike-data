@@ -38,6 +38,38 @@ const MAPA = (() => {
   const TACKE = { p: "Parking za bicikle", i: "Iznajmljivanje bicikala", s: "Servis / prodavnica bicikala", r: "Stanica za popravku bicikla" };
   const VRSTE_PARKINGA = { stands: "stalci (obrnuto U)", wall_loops: "držači za točak", rack: "rešetka", bollard: "stubići", shed: "kućica / nadstrešnica",
     building: "u zgradi", lockers: "ormarići", two_tier: "na dva nivoa", "two-tier": "na dva nivoa", wheel_loops: "držači za točak", anchors: "ankeri u tlu", ground_slots: "žlebovi u tlu", informal: "neformalno" };
+  // natpisi na vektorskoj i satelitskoj mapi: delovi grada, parkovi i trgovi, važna mesta (docs/data/mapa/delovi, mesta)
+  const NATPISI = [["nazivi", "Nazivi ulica"], ["delovi", "Delovi grada"], ["mesta", "Parkovi i trgovi"], ["vazna", "Važna mesta"]];
+  const VAZNA = { f: "Fakultet / visoka škola", b: "Bolnica", k: "Pozorište / muzej", z: "Železnička / autobuska stanica", c: "Tržni centar", s: "Stadion" };
+  function ikonaMesta(t) {
+    const c = document.createElement("canvas"); c.width = c.height = 40;
+    const g = c.getContext("2d");
+    g.fillStyle = { f: "#7c3aed", b: "#dc2626", k: "#db2777", z: "#0f766e", c: "#ea580c", s: "#16a34a" }[t];
+    g.strokeStyle = "#fff"; g.lineWidth = 2.5;
+    g.beginPath(); g.arc(20, 20, 17, 0, 2 * Math.PI); g.fill(); g.stroke();
+    g.fillStyle = "#fff"; g.strokeStyle = "#fff"; g.lineJoin = "round"; g.lineCap = "round";
+    if (t === "b") { g.fillRect(17, 10, 6, 20); g.fillRect(10, 17, 20, 6); }
+    else if (t === "f") {                                   // kapa za diplomu
+      g.beginPath(); g.moveTo(20, 11); g.lineTo(32, 17); g.lineTo(20, 23); g.lineTo(8, 17); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(13, 20); g.lineTo(13, 26); g.quadraticCurveTo(20, 30, 27, 26); g.lineTo(27, 20); g.lineTo(20, 24); g.closePath(); g.fill();
+      g.lineWidth = 1.6; g.beginPath(); g.moveTo(31, 17); g.lineTo(31, 25); g.stroke();
+    } else if (t === "k") {                                 // zgrada sa stubovima
+      g.beginPath(); g.moveTo(9, 15); g.lineTo(20, 9); g.lineTo(31, 15); g.closePath(); g.fill();
+      for (const x of [11.5, 18, 24.5]) g.fillRect(x, 17, 4, 9);
+      g.fillRect(9, 27, 22, 3);
+    } else if (t === "z") {                                 // vozilo spreda
+      g.beginPath(); g.roundRect(12, 9, 16, 19, 4); g.fill();
+      g.fillStyle = "#0f766e"; g.fillRect(14.5, 12, 11, 7); g.beginPath(); g.arc(16, 23.5, 1.6, 0, 7); g.arc(24, 23.5, 1.6, 0, 7); g.fill();
+      g.strokeStyle = "#fff"; g.lineWidth = 2.2; g.beginPath(); g.moveTo(14, 28); g.lineTo(12, 32); g.moveTo(26, 28); g.lineTo(28, 32); g.stroke();
+    } else if (t === "c") {                                 // kesa
+      g.beginPath(); g.roundRect(11, 15, 18, 15, 2.5); g.fill();
+      g.lineWidth = 2.4; g.beginPath(); g.arc(20, 15, 4.5, Math.PI, 0); g.stroke();
+    } else {                                                // stadion
+      g.lineWidth = 3; g.beginPath(); g.ellipse(20, 20, 11, 7, 0, 0, 2 * Math.PI); g.stroke();
+      g.lineWidth = 1.6; g.beginPath(); g.moveTo(20, 13); g.lineTo(20, 27); g.stroke();
+    }
+    return c;
+  }
   function ikonaParkinga(t) {
     const c = document.createElement("canvas"); c.width = c.height = 48;
     const g = c.getContext("2d");
@@ -128,13 +160,16 @@ const MAPA = (() => {
     ceoEkran.on("fullscreenend", () => { m.cooperativeGestures.enable(); el.classList.remove("ceo-ekran"); setTimeout(() => m.resize(), 60); });
     m.addControl(new maplibregl.ScaleControl({ maxWidth: 90, unit: "metric" }), "bottom-left");
     // gore levo, na samoj mapi: padajući meni „Natpisi“ (samo vektorska i satelitska; na standardnoj su natpisi deo slike)
-    let naziviUkljuceni = true;
-    try { naziviUkljuceni = localStorage.getItem("ns-nazivi") !== "0"; } catch (e) { /* */ }
+    const natpisi = { nazivi: true, delovi: true, mesta: true, vazna: true };
+    try {
+      if (localStorage.getItem("ns-nazivi") === "0") natpisi.nazivi = false;      // ranije zapamćeno
+      Object.assign(natpisi, JSON.parse(localStorage.getItem("ns-natpisi") || "{}"));
+    } catch (e) { /* */ }
     const naziviEl = document.createElement("div");
     naziviEl.className = "maplibregl-ctrl natpisi-ctrl skriveno";
     naziviEl.innerHTML = `<button type="button" class="natpisi-dugme" aria-expanded="false" aria-haspopup="true">Natpisi${LJ.ik("chevron")}</button>
       <div class="natpisi-panel skriveno" role="group" aria-label="Natpisi na mapi">
-        <label class="red-izbora"><input type="checkbox" data-natpis="nazivi" ${naziviUkljuceni ? "checked" : ""}><span>Nazivi ulica</span></label></div>`;
+        ${NATPISI.map(([k, ime]) => `<label class="red-izbora"><input type="checkbox" data-natpis="${k}" ${natpisi[k] ? "checked" : ""}><span>${ime}</span></label>`).join("")}</div>`;
     const natpisiDugme = naziviEl.querySelector(".natpisi-dugme"), natpisiPanel = naziviEl.querySelector(".natpisi-panel");
     const zatvoriNatpise = () => { natpisiPanel.classList.add("skriveno"); natpisiDugme.setAttribute("aria-expanded", "false"); };
     natpisiDugme.addEventListener("click", () => {
@@ -142,9 +177,12 @@ const MAPA = (() => {
       natpisiPanel.classList.toggle("skriveno", !otvori);
       natpisiDugme.setAttribute("aria-expanded", String(otvori));
     });
-    naziviEl.querySelector('[data-natpis="nazivi"]').addEventListener("change", (e) => {
-      naziviUkljuceni = e.target.checked;
-      try { localStorage.setItem("ns-nazivi", naziviUkljuceni ? "1" : "0"); } catch (x) { /* */ }
+    natpisiPanel.addEventListener("change", (e) => {
+      const k = e.target.dataset.natpis;
+      if (!k) return;
+      natpisi[k] = e.target.checked;
+      try { localStorage.setItem("ns-natpisi", JSON.stringify(natpisi)); } catch (x) { /* */ }
+      if (k === "delovi" && !natpisi.delovi) ocistiDeo();
       spremna.then(() => postaviPodlogu(izbor));
     });
     document.addEventListener("click", (e) => { if (!naziviEl.contains(e.target)) zatvoriNatpise(); });
@@ -206,6 +244,76 @@ const MAPA = (() => {
       }).catch((e) => { console.warn(e); osnovaUcitana = null; return false; });
       return osnovaUcitana;
     }
+    // delovi grada (klik na natpis: fokus i obris granice), parkovi i trgovi, važna mesta — samo vektorska i satelitska mapa
+    let natpisiUcitani = null, izabraniDeo = null;
+    function ucitajNatpise() {
+      if (natpisiUcitani) return natpisiUcitani;
+      const pre = () => (imaSloj("parking") ? "parking" : undefined);           // iznad ulica i staza, ispod ikonica za bicikliste
+      const deo = NS.json("mapa/delovi.geojson", "data/").then((data) => {
+        m.addSource("o-delovi", { type: "geojson", data, attribution: OSM });
+        const nijedan = ["==", ["get", "n"], "\u0000"];
+        m.addLayer({ id: "o-deo-povrs", type: "fill", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
+          paint: { "fill-opacity": 0.12 } }, pre());
+        m.addLayer({ id: "o-deo-obod-senka", type: "line", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
+          layout: { "line-join": "round" }, paint: { "line-width": 6, "line-opacity": 0.55, "line-blur": 1 } }, pre());
+        m.addLayer({ id: "o-deo-obod", type: "line", source: "o-delovi", filter: ["all", ["!=", ["geometry-type"], "Point"], nijedan],
+          layout: { "line-join": "round" }, paint: { "line-width": 2.6 } }, pre());
+        const v = ["get", "v"];
+        m.addLayer({ id: "o-delovi", type: "symbol", source: "o-delovi", minzoom: 10, maxzoom: 17,
+          filter: ["all", ["==", ["geometry-type"], "Point"], ["any", ["in", v, ["literal", ["town", "village"]]],
+            ["all", ["in", v, ["literal", ["suburb", "quarter", "mz"]]], [">=", ["zoom"], 11.5]], [">=", ["zoom"], 13.5]]],
+          layout: { "text-field": ["get", "n"], "text-font": ["noto"], "text-transform": "uppercase", "text-letter-spacing": 0.12, "text-max-width": 7,
+            "text-size": ["match", v, ["town", "village"], 13, ["suburb", "quarter", "mz"], 12, 10.5], "text-padding": 6,
+            "symbol-sort-key": ["match", v, ["town", "village"], 0, ["suburb", "quarter", "mz"], 1, 2], visibility: "none" },
+          paint: { "text-halo-width": 1.8, "text-opacity": 0.9 } }, pre());
+        m.on("click", "o-delovi", (e) => { e.preventDefault(); izaberiDeo(e.features[0]); });
+        m.on("mouseenter", "o-delovi", () => { m.getCanvas().style.cursor = "pointer"; });
+        m.on("mouseleave", "o-delovi", () => { m.getCanvas().style.cursor = ""; });
+      });
+      const mesto = NS.json("mapa/mesta.geojson", "data/").then((data) => {
+        m.addSource("o-mesta", { type: "geojson", data, attribution: OSM });
+        for (const t of Object.keys(VAZNA)) if (!m.hasImage(`vm-${t}`)) m.addImage(`vm-${t}`, ikonaMesta(t).getContext("2d").getImageData(0, 0, 40, 40), { pixelRatio: 2 });
+        m.addLayer({ id: "o-mesta", type: "symbol", source: "o-mesta", minzoom: 13.5, filter: ["in", ["get", "t"], ["literal", ["park", "trg"]]],
+          layout: { "text-field": ["get", "n"], "text-font": ["noto"], "text-size": ["interpolate", ["linear"], ["zoom"], 14, 10.5, 17, 13], "text-max-width": 8,
+            "text-padding": 4, visibility: "none" }, paint: { "text-halo-width": 1.6 } }, pre());
+        m.addLayer({ id: "o-vazna", type: "symbol", source: "o-mesta", minzoom: 13, filter: ["in", ["get", "t"], ["literal", Object.keys(VAZNA)]],
+          layout: { "icon-image": ["concat", "vm-", ["get", "t"]], "icon-size": ["interpolate", ["linear"], ["zoom"], 13, 0.75, 16, 1],
+            "text-field": ["step", ["zoom"], "", 14.5, ["get", "n"]], "text-font": ["noto"], "text-size": 10.5, "text-max-width": 8,
+            "text-anchor": "top", "text-offset": [0, 1.05], "text-optional": true, "icon-padding": 2, visibility: "none" },
+          paint: { "text-halo-width": 1.5 } }, pre());
+        const kartica = new maplibregl.Popup({ closeButton: true, maxWidth: "260px", offset: 12, className: "kartica-parking" });
+        m.on("click", "o-vazna", (e) => {
+          const f = e.features[0];
+          kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${f.properties.n}</b><div class="tt-red sitno">${VAZNA[f.properties.t]}</div>`).addTo(m);
+        });
+        m.on("mouseenter", "o-vazna", () => { m.getCanvas().style.cursor = "pointer"; });
+        m.on("mouseleave", "o-vazna", () => { m.getCanvas().style.cursor = ""; });
+      });
+      natpisiUcitani = Promise.allSettled([deo, mesto]).then((r) => {
+        for (const x of r) if (x.status === "rejected") console.warn(x.reason);
+        return true;
+      });
+      return natpisiUcitani;
+    }
+    const filterDela = (n) => ["all", ["!=", ["geometry-type"], "Point"], ["==", ["get", "n"], n]];
+    function izaberiDeo(f) {
+      const o = f.properties;
+      if (izabraniDeo === o.n) { ocistiDeo(); return; }
+      izabraniDeo = o.n;
+      for (const id of ["o-deo-povrs", "o-deo-obod-senka", "o-deo-obod"]) m.setFilter(id, filterDela(o.n));
+      const b = typeof o.b === "string" ? JSON.parse(o.b) : o.b;               // MapLibre nizove u svojstvima vraća kao tekst
+      if (b) m.fitBounds([[b[0], b[1]], [b[2], b[3]]], { padding: 60, maxZoom: 15.5, duration: 1100 });
+      else m.flyTo({ center: f.geometry.coordinates, zoom: Math.max(m.getZoom(), 14.5), duration: 1100 });
+    }
+    function ocistiDeo() {
+      izabraniDeo = null;
+      for (const id of ["o-deo-povrs", "o-deo-obod-senka", "o-deo-obod"]) if (imaSloj(id)) m.setFilter(id, filterDela("\u0000"));
+    }
+    m.on("click", (e) => {                                                      // klik van natpisa dela grada skida izbor
+      if (izabraniDeo && !e.defaultPrevented && imaSloj("o-delovi") && !m.queryRenderedFeatures(e.point, { layers: ["o-delovi"] }).length) ocistiDeo();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && izabraniDeo) ocistiDeo(); });
+
     function ucitajZgrade() {
       if (zgradeUcitane) return zgradeUcitane;
       zgradeUcitane = NS.json("mapa/zgrade.geojson", "data/").then((data) => {
@@ -226,8 +334,27 @@ const MAPA = (() => {
       vidljiv("osm", izbor === "tamna");
       vidljiv("satelit", izbor === "satelit");
       const nazivi = NAZIVI[izbor];
-      vidljiv("o-nazivi", !!nazivi && naziviUkljuceni);
-      if (nazivi && imaSloj("o-nazivi")) { m.setPaintProperty("o-nazivi", "text-color", nazivi[0]); m.setPaintProperty("o-nazivi", "text-halo-color", nazivi[1]); }
+      vidljiv("o-nazivi", !!nazivi && natpisi.nazivi);
+      vidljiv("o-delovi", !!nazivi && natpisi.delovi);
+      vidljiv("o-mesta", !!nazivi && natpisi.mesta);
+      vidljiv("o-vazna", !!nazivi && natpisi.vazna);
+      for (const id of ["o-deo-povrs", "o-deo-obod-senka", "o-deo-obod"]) vidljiv(id, !!nazivi && natpisi.delovi);
+      if (!nazivi && izabraniDeo) ocistiDeo();
+      if (nazivi) {
+        for (const id of ["o-nazivi", "o-delovi", "o-mesta", "o-vazna"]) {
+          if (!imaSloj(id)) continue;
+          m.setPaintProperty(id, "text-color", nazivi[0]);
+          m.setPaintProperty(id, "text-halo-color", nazivi[1]);
+        }
+        const svetla = izbor === "bela";
+        if (imaSloj("o-mesta")) m.setPaintProperty("o-mesta", "text-color", ["match", ["get", "t"], "park", svetla ? "#2e7d32" : "#a7e3b0", nazivi[0]]);
+        if (imaSloj("o-deo-obod")) {
+          const akcenat = svetla ? "#1d4ed8" : "#fbbf24";
+          m.setPaintProperty("o-deo-obod", "line-color", akcenat);
+          m.setPaintProperty("o-deo-povrs", "fill-color", akcenat);
+          m.setPaintProperty("o-deo-obod-senka", "line-color", nazivi[1]);
+        }
+      }
       naziviEl.classList.toggle("skriveno", !nazivi);        // na standardnoj mapi natpisi su deo slike i ne mogu se sakriti
       if (!nazivi) zatvoriNatpise();
       // Svetla: OSM pločice u originalnim bojama, kao na sajtu UGZINS (u tamnoj temi sajta samo malo prigušeno)
@@ -260,7 +387,8 @@ const MAPA = (() => {
       el.dataset.podloga = izbor;
     }
     async function postaviPodlogu(v) {
-      const trebaOsnova = POSTERI[v] || (v === "satelit" && naziviUkljuceni);      // satelitskoj treba samo za nazive
+      const trebaOsnova = POSTERI[v] || (v === "satelit" && natpisi.nazivi);       // satelitskoj osnova treba samo za nazive ulica
+      if (NAZIVI[v]) await ucitajNatpise();
       if (trebaOsnova && !(await ucitajOsnovu()) && POSTERI[v]) {
         LJ.tost("Vektorska osnova mape još nije pripremljena — prikazujem svetlu mapu.", "map");
         v = "svetla";
@@ -340,11 +468,14 @@ const MAPA = (() => {
       return km;
     }).catch(() => null);
     // ---------------------------------------------------------------- parking i ostale tačke za bicikliste (OSM)
-    let parkingUkljucen = false, parkingUcitan = null, parkingTipovi = new Set(Object.keys(TACKE));
+    // sloj se vidi kad je uključena bar jedna vrsta (parking, NS bike, servis, stanica za popravku)
+    const SVE_VRSTE = Object.keys(TACKE);
+    let parkingUcitan = null, parkingTipovi = new Set();
     try {
-      parkingUkljucen = localStorage.getItem("ns-parking") === "1";
-      const z = JSON.parse(localStorage.getItem("ns-parking-tipovi") || "null");
-      if (Array.isArray(z)) parkingTipovi = new Set(z.filter((t) => TACKE[t]));
+      if (localStorage.getItem("ns-parking") === "1") {
+        const z = JSON.parse(localStorage.getItem("ns-parking-tipovi") || "null");
+        parkingTipovi = new Set(Array.isArray(z) ? z.filter((t) => TACKE[t]) : SVE_VRSTE);
+      }
     } catch (e) { /* */ }
     const filterParkinga = () => ["in", ["get", "t"], ["literal", [...parkingTipovi]]];
     function ucitajParking() {
@@ -384,40 +515,54 @@ const MAPA = (() => {
     }
     function postaviTipove(skup) {
       parkingTipovi = skup;
-      try { localStorage.setItem("ns-parking-tipovi", JSON.stringify([...skup])); } catch (e) { /* */ }
+      try {
+        localStorage.setItem("ns-parking", skup.size ? "1" : "0");
+        localStorage.setItem("ns-parking-tipovi", JSON.stringify([...skup]));
+      } catch (e) { /* */ }
       if (imaSloj("parking")) m.setFilter("parking", filterParkinga());
+      if (skup.size || imaSloj("parking")) spremna.then(() => prikaziParking(parkingTipovi.size > 0));
       crtajTipoveParkinga();
-      // ikonice na čipu: u boji su vrste koje se prikazuju (kad je sloj uključen), ostale su blede
-      if (opcije.stazeEl) for (const img of opcije.stazeEl.querySelectorAll(".cip-parking img[data-t]")) img.classList.toggle("ukljuceno", parkingTipovi.has(img.dataset.t));
+      // čip: svaka ikonica je u boji kad se ta vrsta prikazuje; glavna štikla je štiklirana (sve), polu (neke) ili prazna (nijedna)
+      const cip = opcije.stazeEl && opcije.stazeEl.querySelector(".cip-parking");
+      if (!cip) return;
+      for (const d of cip.querySelectorAll("[data-t]")) d.setAttribute("aria-pressed", String(skup.has(d.dataset.t)));
+      const sve = cip.querySelector("input");
+      sve.checked = skup.size === SVE_VRSTE.length;
+      sve.indeterminate = skup.size > 0 && skup.size < SVE_VRSTE.length;
+      cip.classList.toggle("aktivno", skup.size > 0);
     }
-    spremna.then(() => { if (parkingUkljucen) prikaziParking(true); });
 
     if (opcije.stazeEl) {
       opcije.stazeEl.innerHTML = `<label class="cip cip-stikla" style="--boja:var(--staza)"><input type="checkbox" ${stazeUkljucene ? "checked" : ""}>
         <span class="kvacica" aria-hidden="true"></span>Biciklističke staze</label>`;
-      // za bicikliste (parking, NS bike, servisi, stanice za popravku): štikla uključuje sloj, strelica otvara izbor vrsta (sve štiklirano dok se ne promeni)
-      const opisParkinga = "Za bicikliste: " + Object.values(TACKE).join(", ").toLowerCase();
+      // za bicikliste: glavna štikla pali ili gasi sve 4 vrste, svaka ikonica se pali i gasi posebno, strelica otvara spisak sa nazivima
       opcije.stazeEl.insertAdjacentHTML("beforeend", `<div class="parking-grupa">
-          <label class="cip cip-stikla cip-parking" style="--boja:#2f7de1" title="${opisParkinga}"><input type="checkbox" aria-label="${opisParkinga}" ${parkingUkljucen ? "checked" : ""}>
-            <span class="kvacica" aria-hidden="true"></span><span class="ikonice-parkinga">${Object.keys(TACKE).map((t) =>
-              `<img src="${ikonaParkinga(t).toDataURL()}" alt="" data-t="${t}">`).join("")}</span></label>
+          <div class="cip cip-parking" style="--boja:#2f7de1">
+            <label class="parking-sve" title="Sve za bicikliste: uključi ili isključi"><input type="checkbox" aria-label="Sve za bicikliste">
+              <span class="kvacica" aria-hidden="true"></span></label>
+            ${SVE_VRSTE.map((t) => `<button type="button" class="ikonica-parkinga" data-t="${t}" aria-pressed="false" title="${TACKE[t]}" aria-label="${TACKE[t]}">
+              <img src="${ikonaParkinga(t).toDataURL()}" alt=""></button>`).join("")}</div>
           <button type="button" class="cip cip-strelica" aria-expanded="false" aria-label="Izaberi šta se prikazuje" title="Izaberi šta se prikazuje">${LJ.ik("chevron")}</button>
           <div class="panel tipovi-parkinga skriveno" role="group" aria-label="Šta se prikazuje"></div></div>`);
       const grupa = opcije.stazeEl.querySelector(".parking-grupa");
       const panel = grupa.querySelector(".tipovi-parkinga"), strelica = grupa.querySelector(".cip-strelica");
       crtajTipoveParkinga();
       postaviTipove(parkingTipovi);
-      grupa.querySelector(".cip-parking input").addEventListener("change", (e) => {
-        parkingUkljucen = e.target.checked;
-        try { localStorage.setItem("ns-parking", parkingUkljucen ? "1" : "0"); } catch (x) { /* */ }
-        spremna.then(() => prikaziParking(parkingUkljucen));
+      grupa.querySelector(".parking-sve input").addEventListener("change", () => {
+        postaviTipove(new Set(parkingTipovi.size === SVE_VRSTE.length ? [] : SVE_VRSTE));
+      });
+      grupa.querySelector(".cip-parking").addEventListener("click", (e) => {
+        const d = e.target.closest(".ikonica-parkinga");
+        if (!d) return;
+        const novo = new Set(parkingTipovi);
+        if (novo.has(d.dataset.t)) novo.delete(d.dataset.t); else novo.add(d.dataset.t);
+        postaviTipove(novo);
       });
       strelica.addEventListener("click", (e) => {
         e.stopPropagation();
         const otvori = panel.classList.contains("skriveno");
         panel.classList.toggle("skriveno", !otvori);
         strelica.setAttribute("aria-expanded", String(otvori));
-        if (otvori && !parkingUkljucen) { grupa.querySelector(".cip-parking input").click(); }
       });
       panel.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -596,12 +741,10 @@ const MAPA = (() => {
 
   /** Legenda „Stanje brojača“ sa info-oblačićima + staze. */
   function legenda(el, s, saStazama = true) {
-    const brojevi = {};
-    for (const r of s.serije) brojevi[r.stanje] = (brojevi[r.stanje] || 0) + 1;
     const opis = s.stanja_opis || {};
     el.className = "legenda-pinova";
     el.innerHTML = `<span class="eyebrow">Stanje brojača</span>` + REDOSLED.map((k) =>
-      `<span><img src="${NS.pin(k)}" alt="" class="${k === "neispravan" ? "svetli" : ""}">${s.stanja[k]} <b class="mono">${brojevi[k] || 0}</b>${info(opis[k] || "")}</span>`).join("") +
+      `<span><img src="${NS.pin(k)}" alt="" class="${k === "neispravan" ? "svetli" : ""}">${s.stanja[k]}${info(opis[k] || "")}</span>`).join("") +
       `<span><img src="${NS.pin("izabrana")}" alt="">izabrana${info("stanica u fokusu: pređi mišem preko pina ili klikni na njega (ili u spisku)")}</span>` +
       (saStazama ? `<span class="eyebrow" style="margin-left:6px">Staze</span><span><i class="linija" style="--b:var(--staza)"></i>staza</span><span><i class="linija" style="--b:var(--traka)"></i>traka</span>
         <span><i class="linija" style="--b:var(--zajednicka)"></i>zajednička</span>` : "") +
