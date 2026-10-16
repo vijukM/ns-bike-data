@@ -261,10 +261,10 @@ const MAPA = (() => {
         const v = ["get", "v"];
         m.addLayer({ id: "o-delovi", type: "symbol", source: "o-delovi", minzoom: 10, maxzoom: 17,
           filter: ["all", ["==", ["geometry-type"], "Point"], ["any", ["in", v, ["literal", ["town", "village"]]],
-            ["all", ["in", v, ["literal", ["suburb", "quarter", "mz"]]], [">=", ["zoom"], 11.5]], [">=", ["zoom"], 13.5]]],
+            ["all", ["in", v, ["literal", ["suburb", "quarter"]]], [">=", ["zoom"], 11.5]], [">=", ["zoom"], 13.5]]],   // mesne zajednice i manji delovi tek bliže
           layout: { "text-field": ["get", "n"], "text-font": ["noto"], "text-transform": "uppercase", "text-letter-spacing": 0.12, "text-max-width": 7,
-            "text-size": ["match", v, ["town", "village"], 13, ["suburb", "quarter", "mz"], 12, 10.5], "text-padding": 6,
-            "symbol-sort-key": ["match", v, ["town", "village"], 0, ["suburb", "quarter", "mz"], 1, 2], visibility: "none" },
+            "text-size": ["match", v, ["town", "village"], 13, ["suburb", "quarter"], 12, 10.5], "text-padding": 6,
+            "symbol-sort-key": ["match", v, ["town", "village"], 0, ["suburb", "quarter"], 1, 2], visibility: "none" },
           paint: { "text-halo-width": 1.8, "text-opacity": 0.9 } }, pre());
         m.on("click", "o-delovi", (e) => { e.preventDefault(); izaberiDeo(e.features[0]); });
         m.on("mouseenter", "o-delovi", () => { m.getCanvas().style.cursor = "pointer"; });
