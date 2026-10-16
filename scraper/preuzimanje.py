@@ -1,10 +1,11 @@
 """Preuzimanje fajla sa BICIKLISTIMA (bicycles_georss_gps_sr.xml) sa UGZINS / Mikrobit QLTCnet servisa.
 
-Izbor filtera (ETYPETABLE: 0 = Sve, 1 = Vozila, 2 = Biciklisti) čuva se u IntraWeb sesiji, pa se
-pre preuzimanja u istoj sesiji mora postaviti ETYPETABLE = 2.
-
-a) brza varijanta: requests.Session (IntraWeb asinhroni događaj / submit forme, pa /rss i „Preuzimanje“),
-b) rezerva: Playwright (headless Chromium).
+a) direktno (prvo): isti fajl javno stoji na http://stari.ugzins.rs/SAUS/bicycles_georss_gps_sr.xml — jedan GET.
+   Sadržaj je bajt po bajt isti kao preko dugmeta „Preuzimanje“ (provereno 16. 10. 2026.).
+b) brza varijanta (rezerva): requests.Session (IntraWeb asinhroni događaj / submit forme, pa /rss i „Preuzimanje“).
+   Izbor filtera (ETYPETABLE: 0 = Sve, 1 = Vozila, 2 = Biciklisti) čuva se u IntraWeb sesiji, pa se
+   pre preuzimanja u istoj sesiji mora postaviti ETYPETABLE = 2.
+c) rezerva: Playwright (headless Chromium).
 
 Svaki preuzeti sadržaj prolazi proveri_sadrzaj(): fajl sa vozilima se odbija.
 
@@ -24,7 +25,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from .konfig import BASE_URL, POKUSAJI_U, TIMEOUT_S, USER_AGENT
+from .konfig import BASE_URL, POKUSAJI_U, STATICKI_URL, TIMEOUT_S, USER_AGENT
 
 log = logging.getLogger(__name__)
 
@@ -267,6 +268,14 @@ class _Brza:
             log.warning("istraživanje: brza varijanta nije uspela: %s", e)
 
 
+def preuzmi_direktno() -> bytes:
+    """Jedan GET javnog fajla sa biciklistima (bez sesije i filtera); sadržaj se proverava kao i kod ostalih načina."""
+    r = requests.get(STATICKI_URL, headers={"User-Agent": USER_AGENT, "Cache-Control": "no-cache"}, timeout=TIMEOUT_S)
+    r.raise_for_status()
+    proveri_sadrzaj(r.content)
+    return r.content
+
+
 def preuzmi_brzo(debug_dir: Path | None = None) -> bytes:
     return _Brza(debug_dir).preuzmi()
 
@@ -316,7 +325,7 @@ def _playwright_dostupan() -> bool:
 def preuzmi_bicikliste(metod: str = "auto", pokusaji_u=POKUSAJI_U, pocetak: float | None = None) -> bytes:
     """Preuzima fajl sa biciklistima i proverava sadržaj.
 
-    metod: "auto" (brza, pa Playwright ako je instaliran), "brza" ili "pregledac".
+    metod: "auto" (direktno, brza, pa Playwright ako je instaliran), "brza" (direktno, pa sesija), "direktno" ili "pregledac".
     pokusaji_u: trenuci pokušaja u sekundama od `pocetak` (unix vreme; podrazumevano sada), npr. (0, 180, 360)
     = odmah, posle 3 i posle 6 min. Svaki pokušaj je jedno preuzimanje (brza, pa po potrebi Playwright).
     """
@@ -327,6 +336,12 @@ def preuzmi_bicikliste(metod: str = "auto", pokusaji_u=POKUSAJI_U, pocetak: floa
         if cekanje > 0:
             log.info("pokušaj u +%d s — čekam %.0f s", u, cekanje)
             time.sleep(cekanje)
+        if metod in ("auto", "brza", "direktno"):
+            try:
+                return preuzmi_direktno()
+            except Exception as e:  # noqa: BLE001
+                greske.append(f"direktno (+{u:.0f} s): {type(e).__name__}: {e}")
+                log.warning(greske[-1])
         if metod in ("auto", "brza"):
             try:
                 return preuzmi_brzo()
@@ -345,7 +360,7 @@ def preuzmi_bicikliste(metod: str = "auto", pokusaji_u=POKUSAJI_U, pocetak: floa
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--istrazi", type=Path, help="snimi sve odgovore i JS fajlove u folder")
-    ap.add_argument("--metod", choices=["auto", "brza", "pregledac"], default="auto")
+    ap.add_argument("--metod", choices=["auto", "brza", "direktno", "pregledac"], default="auto")
     ap.add_argument("--izlaz", type=Path, help="sačuvaj preuzeti XML")
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")

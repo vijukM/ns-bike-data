@@ -366,7 +366,7 @@ const MAPA = (() => {
         const kartica = new maplibregl.Popup({ closeButton: true, maxWidth: "260px", offset: 12, className: "kartica-parking" });
         m.on("click", "o-vazna", (e) => {
           const f = e.features[0];
-          kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${f.properties.n}</b><div class="tt-red sitno">${VAZNA[f.properties.t]}</div>`).addTo(m);
+          setTimeout(() => kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${f.properties.n}</b><div class="tt-red sitno">${VAZNA[f.properties.t]}</div>`).addTo(m), 0);
         });
         m.on("mouseenter", "o-vazna", () => { m.getCanvas().style.cursor = "pointer"; });
         m.on("mouseleave", "o-vazna", () => { m.getCanvas().style.cursor = ""; });
@@ -582,13 +582,28 @@ const MAPA = (() => {
           layout: { "icon-image": ["concat", "bp-", ["get", "t"]], "icon-size": ["interpolate", ["linear"], ["zoom"], 11.5, 0.6, 14, 0.85, 16, 1.05],
             "icon-allow-overlap": false, "icon-padding": 1, "symbol-sort-key": ["match", ["get", "t"], "i", 0, "p", 1, 2] } });
         const kartica = new maplibregl.Popup({ closeButton: true, maxWidth: "260px", offset: 14, className: "kartica-parking" });
-        m.on("click", "parking", (e) => {
-          const f = e.features[0], o = f.properties;
+        // kartica se puni posle podrazumevanog zatvaranja na klik (closeOnClick), inače bi klik na drugu tačku samo zatvorio staru
+        m.on("click", "parking", (e) => { const f = e.features[0]; setTimeout(() => otvoriKarticuTacke(f), 0); });
+        function otvoriKarticuTacke(f) {
+          const o = f.properties;
           const red = (t) => `<div class="tt-red">${t}</div>`;
-          if (o.nsb) {                     // zvanična NS bike stanica: naziv, opis, slika, broj mesta i stanje uživo
+          if (o.nsb) {                     // zvanična NS bike stanica: naziv, opis, slika (Google My Maps, učitava se tek sada) i stanje uživo
+            let slike = [];
+            try { slike = typeof o.slike === "string" ? JSON.parse(o.slike) : o.slike || []; } catch (x) { /* */ }
             kartica.setLngLat(f.geometry.coordinates).setHTML(`<b>${o.ime}</b><div class="tt-red sitno">NS bike · stanica za iznajmljivanje</div>` +
-              red(o.adr) + (o.slika ? `<img class="nsb-slika" src="${o.slika}" alt="Stanica ${o.ime}" loading="lazy">` : "") +
-              red(`mesta za bicikle: <b>${o.kap}</b>`) + `<div class="tt-red nsb-uzivo" data-sif="${o.sif}"><span class="sitno">učitavam stanje uživo…</span></div>`).addTo(m);
+              red(o.adr) + (slike.length ? `<button type="button" class="nsb-slika-omot" title="${slike.length > 1 ? "Sledeća slika" : o.ime}">
+                <img class="nsb-slika" src="${slike[0]}" alt="Stanica ${o.ime}" referrerpolicy="no-referrer" onerror="this.parentNode.remove()">
+                ${slike.length > 1 ? `<span class="nsb-slika-broj">1/${slike.length}</span>` : ""}</button>` : "") +
+              `<div class="tt-red nsb-uzivo" data-sif="${o.sif}"><span class="sitno">učitavam stanje uživo…</span></div>`).addTo(m);
+            const omot = kartica.getElement() && kartica.getElement().querySelector(".nsb-slika-omot");
+            if (omot && slike.length > 1) {
+              let i = 0;
+              omot.addEventListener("click", () => {
+                i = (i + 1) % slike.length;
+                omot.querySelector("img").src = slike[i];
+                omot.querySelector(".nsb-slika-broj").textContent = `${i + 1}/${slike.length}`;
+              });
+            }
             stanjeNSBike().then((sve) => {
               const el = kartica.getElement() && kartica.getElement().querySelector(`.nsb-uzivo[data-sif="${o.sif}"]`);
               if (!el) return;
@@ -605,21 +620,28 @@ const MAPA = (() => {
             (o.adr ? red(o.adr) : "") + (o.pribl ? red(`<span class="sitno">približan položaj</span>`) : "") +
             (o.kap ? red(`mesta za bicikle: <b>${o.kap}</b>`) : "") + (o.vrsta ? red(`vrsta: ${VRSTE_PARKINGA[o.vrsta] || o.vrsta}`) : "") +
             (o.pok ? red("natkriveno") : "") + (o.op ? red(`<span class="sitno">${o.op}</span>`) : "")).addTo(m);
-        });
+        }
         m.on("mouseenter", "parking", () => { m.getCanvas().style.cursor = "pointer"; });
         m.on("mouseleave", "parking", () => { m.getCanvas().style.cursor = ""; });
         return data.features.length;
       }).catch((e) => { console.warn(e); parkingUcitan = null; LJ.tost("Podaci o parkinzima još nisu pripremljeni.", "map"); return 0; });
       return parkingUcitan;
     }
-    // stanje NS bike stanica uživo (isti javni izvor koji koristi ns-bike.web.app); čita se tek na klik, najviše jednom u 30 s
-    let nsbStanje = null, nsbVreme = 0;
+    // stanje NS bike stanica uživo (isti javni izvor koji koristi ns-bike.web.app): preuzima se čim se uključe NS bike stanice
+    // (da kartica ne čeka) i osvežava na minut dok su uključene i stranica je vidljiva
+    let nsbStanje = null, nsbVreme = 0, nsbTajmer = null;
     function stanjeNSBike() {
-      if (nsbStanje && Date.now() - nsbVreme < 30000) return nsbStanje;
+      if (nsbStanje && Date.now() - nsbVreme < 60000) return nsbStanje;
       nsbVreme = Date.now();
       nsbStanje = fetch("https://app.nsbike.rs/stanje", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
         .then((d) => { if (!d) nsbVreme = 0; return d; });
       return nsbStanje;
+    }
+    function pratiNSBike(da) {
+      clearInterval(nsbTajmer); nsbTajmer = null;
+      if (!da) return;
+      stanjeNSBike();
+      nsbTajmer = setInterval(() => { if (!document.hidden) stanjeNSBike(); }, 60000);
     }
     async function prikaziParking(da) {
       if (da) await ucitajParking();
@@ -642,6 +664,7 @@ const MAPA = (() => {
       } catch (e) { /* */ }
       if (imaSloj("parking")) m.setFilter("parking", filterParkinga());
       if (skup.size || imaSloj("parking")) spremna.then(() => prikaziParking(parkingTipovi.size > 0));
+      pratiNSBike(skup.has("i"));
       crtajTipoveParkinga();
       // čip: svaka ikonica je u boji kad se ta vrsta prikazuje; glavna štikla je štiklirana (sve), polu (neke) ili prazna (nijedna)
       const cip = opcije.stazeEl && opcije.stazeEl.querySelector(".cip-parking");

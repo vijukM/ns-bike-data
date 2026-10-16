@@ -2,6 +2,7 @@
 #   sta=istorija  istorija 2021-01 … 2026-08 (docs/data/istorija/) iz Release-a istorija-v1 (parquet ne ide u git)
 #   sta=staze     biciklističke staze iz OpenStreetMap-a (docs/data/staze.geojson), Overpass API
 #   sta=mapa      vektorska osnova mape (ulice, voda, zelenilo, pruga, zgrade) iz OpenStreetMap-a (docs/data/mapa/)
+#                 + linkovi slika NS bike stanica iz zvanične Google My Maps mape (sajt/podaci/nsbike_stanice.json)
 #   sta=sve       sve navedeno
 name: sajt_istorija
 
@@ -64,6 +65,11 @@ jobs:
         if: inputs.sta == 'sve' || inputs.sta == 'staze'
         run: python -m sajt.staze
 
+      - name: Slike NS bike stanica (Google My Maps, JKP „Parking servis“) — samo linkovi
+        if: inputs.sta == 'sve' || inputs.sta == 'mapa'
+        continue-on-error: true
+        run: python -m sajt.nsbike
+
       - name: Osnova mape (OpenStreetMap, Overpass)
         if: inputs.sta == 'sve' || inputs.sta == 'mapa'
         run: python -m sajt.osnova_mape
@@ -72,7 +78,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for f in docs/data/istorija docs/data/staze.geojson docs/data/mapa; do [ -e "$f" ] && git add "$f"; done
+          for f in docs/data/istorija docs/data/staze.geojson docs/data/mapa sajt/podaci; do [ -e "$f" ] && git add "$f"; done
           if git diff --cached --quiet; then echo "nema promena"; exit 0; fi
           git commit -m "sajt: podaci (${{ inputs.sta }})"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}" && break; sleep 5; done

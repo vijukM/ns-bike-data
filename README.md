@@ -25,6 +25,9 @@ Inače se dobija fajl sa vozilima (`counters_georss_gps_sr.xml`).
 
 `scraper/preuzimanje.py`, funkcija `preuzmi_bicikliste()`:
 
+- **direktno (prvo)**: isti fajl javno stoji u folderu servisa —
+  <http://stari.ugzins.rs/SAUS/bicycles_georss_gps_sr.xml> (IIS ga osvežava na par minuta). Jedan GET, bez sesije i
+  filtera; sadržaj je bajt po bajt isti kao preko „Preuzimanje" (provereno 16. 10. 2026.). Ostale varijante su rezerva.
 - **a) brza varijanta** (`requests.Session`, bez pregledača): glavna stranica → IntraWeb asinhroni događaj
   `$/callback?callback=ETYPETABLE.<Događaj>` sa ETYPETABLE=2 (rezerva: submit forme sa `IW_Action`) →
   `/rss` (mora da piše „Biciklisti") → klik na „Preuzimanje" (submit forme sa `IW_Action=<dugme>`, rezerva:
