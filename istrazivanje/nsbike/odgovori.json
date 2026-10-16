@@ -1,0 +1,254 @@
+[
+{
+"url": "https://ns-bike.web.app/home",
+"tip": "document",
+"ct": "text/html; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/runtime.991d7b98306a76f8.js",
+"tip": "script",
+"ct": "text/javascript; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/polyfills.4af078d27f599293.js",
+"tip": "script",
+"ct": "text/javascript; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/styles.b7d38ea1945e29a4.css",
+"tip": "stylesheet",
+"ct": "text/css; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/main.d11fd7bb198ab397.js",
+"tip": "script",
+"ct": "text/javascript; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/i18n/sr_crl.json",
+"tip": "xhr",
+"ct": "application/json",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/parkingServiceImg.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/noviSadImg.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/nsBikeImg.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://maps.googleapis.com/maps/api/js?key=AIzaSyDRpuRRpDUsi-YfgfdNIzVULE4fbcfZHDU&libraries=geometry",
+"tip": "script",
+"ct": "text/javascript; charset=UTF-8",
+"status": 200
+},
+{
+"url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+"tip": "xhr",
+"ct": "application/json; charset=UTF-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/terms.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/icons8-serbia-48.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/info.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/price-list.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/promo.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/icons8-great-britain-48.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/home.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://app.nsbike.rs/stanje",
+"tip": "xhr",
+"ct": "application/json",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/logo.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/menu.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/",
+"tip": "document",
+"ct": "text/html; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/styles.b7d38ea1945e29a4.css",
+"tip": "stylesheet",
+"ct": "text/css; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/runtime.991d7b98306a76f8.js",
+"tip": "script",
+"ct": "text/javascript; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/polyfills.4af078d27f599293.js",
+"tip": "script",
+"ct": "text/javascript; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/main.d11fd7bb198ab397.js",
+"tip": "script",
+"ct": "text/javascript; charset=utf-8",
+"status": 200
+},
+{
+"url": "https://maps.googleapis.com/maps/api/js?key=AIzaSyDRpuRRpDUsi-YfgfdNIzVULE4fbcfZHDU&libraries=geometry",
+"tip": "script",
+"ct": "text/javascript; charset=UTF-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/parkingServiceImg.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/nsBikeImg.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/noviSadImg.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/i18n/sr_crl.json",
+"tip": "xhr",
+"ct": "application/json",
+"status": 200
+},
+{
+"url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+"tip": "xhr",
+"ct": "application/json; charset=UTF-8",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/logo.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/terms.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/icons8-serbia-48.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/images/icons8-great-britain-48.png",
+"tip": "image",
+"ct": "image/png",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/menu.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/home.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/info.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/promo.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://ns-bike.web.app/assets/icons/price-list.svg",
+"tip": "image",
+"ct": "image/svg+xml",
+"status": 200
+},
+{
+"url": "https://app.nsbike.rs/stanje",
+"tip": "xhr",
+"ct": "application/json",
+"status": 200
+}
+]

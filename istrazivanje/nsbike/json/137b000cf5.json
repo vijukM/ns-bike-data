@@ -1,0 +1,60 @@
+{
+    "SIDEBAR_HOME": "Почетна",
+    "SIDEBAR_STATIONS": "Станице",
+    "SIDEBAR_INFO": "Информације",
+    "SIDEBAR_TERMS": "Општи услови",
+    "SIDEBAR_PROMO": "Промоције",
+    "SIDEBAR_PRICE_LIST": "Ценовник",
+
+    "CHOSE_LANGUAGE": "Изабери језик",
+    "GEOLOCATION_NOT_SUPPORTED": "Локација није подржана од стране браузера.",
+    "CHECK_BROWSER_PERMISSION": "Проверите локацију у браузеру!",
+
+    "INFO": "ИНФО",
+    "STATION_WORKING_HOURS": "Радно време станица",
+    "FROM_0_TO_24": "Oд 0 дo 24",
+    "USER_REGISTRATION": "Регистрација корисника",
+    "REGISTRATION_LOCATION_1_ADDRESS": "Булевар Михајла Пупина 1, 2. спрат, кан. 206",
+    "REGISTRATION_LOCATION_1_HOURS": "Радним данима 09–14х",
+    "REGISTRATION_LOCATION_2_ADDRESS": "Филипа Вишњића 47",
+    "REGISTRATION_LOCATION_2_HOURS": "Радним данима 14–19х, суботом 09–19х",
+    "CONTACT_PHONE": "Контакт",
+    "CONTACT_EMAIL_LABEL": "Имejл",
+    "CONTACT_SUPPORT_LABEL": "Техничка подршка",
+
+    "PRICELIST": "Ценовник",
+    "RENTAL_FOR_STARTED_HOUR": "Изнајмљивање бицикала за сваки започети сат",
+    "DAILY_BICYCLE_RENTAL": "Дневно изнајмљивање бицикала",
+    "SEASON_SUBSCRIPTION": "Сезонска претплата (кумулативно два сата дневно у току трајања сезоне)",
+    "CREATING_USER_CARD": "Израда корисничке картице",
+    "PRICE": "дин",
+
+    "LANGUAGE_SERBIAN_LATIN": "Српски латиница",
+    "LANGUAGE_SERBIAN_CYRILLIC": "Српски ћирилица",
+    "LANGUAGE_ENGLISH": "Енглески",
+
+    "PERMISSION_MODAL_TEXT": "Желите ли да омогућите да NS Bike приступа локацији овог уређаја?",
+
+    "ALLOW": "Дозволи",
+    "CANCEL": "Одбиј",
+
+    "PROMO": "Промоције",
+    "SEASON": "Сезонска претплата",
+    "SEASON_SUB_TEXT": "По цени од 1.100,00 динара имате могућност свакодневног изнајмљивања бицикала у току сезоне, у трајању од 2 сата дневно",
+    "LEARN_MORE": "Сазнај више",
+
+    "SEARCH": "Претрага станица",
+    "MAP": "Мапа",
+    "LIST": "Листа",
+
+    "KM": "км",
+    "FREE_SPACE": "Слободних места",
+    "BIKES": "Бицикли",
+    "SCOOTERS": "Електрични тротинети",
+    "STATION_OUT_OF_SERVICE": "Бициклана је ван функције",
+    "SHOW_ON_MAP": "Погледај на мапи",
+    "CLOSE": "Затвори",
+
+    "MESSAGE_END_SEASON": "NS-bike sezona se zavrsava u ponedeljak 01.12.2025.\nMolimo sve korisnike da vrate iznajmljene bicikle.\nBiciklana SPENS ce ostati u funkciji radi vracanja bicikala do 05.12.2025."
+
+  }
