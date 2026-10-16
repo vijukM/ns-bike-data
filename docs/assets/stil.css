@@ -883,3 +883,6 @@ html.bez-skrola { overflow: hidden; }
 .maplibregl-ctrl-bottom-left { display: flex; align-items: flex-end; }
 .mapa.ceo-ekran, .mapa:fullscreen { border-radius: 0; width: 100vw; height: 100vh !important; max-height: none; }
 .maplibregl-ctrl-fullscreen, .maplibregl-ctrl-shrink { width: 34px; height: 34px; }
+/* info u kartici pina: oblačić ispod ikonice i u granicama kartice */
+.maplibregl-popup .info::after { bottom: calc(100% + 6px); top: auto; left: auto; right: -10px; transform: none; width: 200px; max-width: 200px; }
+.maplibregl-popup .info { vertical-align: -2px; }
