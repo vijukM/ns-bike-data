@@ -1,45 +1,34 @@
-"""Privremeno: šta učitava ns-bike.web.app (slike stanica, API) — Playwright, beleži sve odgovore."""
-import json, re, pathlib, hashlib
+"""Privremeno: slike sa stranica stanica app.nsbike.rs/ebiciklana/nsbNN (Playwright)."""
+import json, re, pathlib
 from playwright.sync_api import sync_playwright
-D = pathlib.Path(__file__).parent
-odg = []
+D = pathlib.Path(__file__).parent; (D / "stanice").mkdir(exist_ok=True)
+rez = {}
 with sync_playwright() as p:
-    b = p.chromium.launch()
-    pg = b.new_page(viewport={"width": 1400, "height": 1000})
-    def zabelezi(r):
-        try:
-            u = r.url; t = r.request.resource_type; ct = r.headers.get("content-type", "")
-            odg.append({"url": u, "tip": t, "ct": ct, "status": r.status})
-            if t == "image" or ct.startswith("image/"):
-                body = r.body()
-                if len(body) > 3000:
-                    ime = re.sub(r"[^A-Za-z0-9._-]+", "_", u.split("?")[0].split("/")[-1])[:60] or hashlib.md5(u.encode()).hexdigest()
-                    (D / "slike").mkdir(exist_ok=True); (D / "slike" / ime).write_bytes(body)
-            if "json" in ct and len(odg) < 400:
-                (D / "json").mkdir(exist_ok=True)
-                (D / "json" / (hashlib.md5(u.encode()).hexdigest()[:10] + ".json")).write_bytes(r.body())
-        except Exception as e:  # noqa: BLE001
-            print("greška", e)
-    pg.on("response", zabelezi)
-    for u in ("https://ns-bike.web.app/home", "https://ns-bike.web.app/"):
-        try:
-            pg.goto(u, wait_until="networkidle", timeout=60000); pg.wait_for_timeout(4000)
-        except Exception as e:  # noqa: BLE001
-            print(u, e)
-    (D / "strana.html").write_text(pg.content(), encoding="utf-8")
-    pg.screenshot(path=str(D / "snimak.png"), full_page=True)
-    # linkovi i dugmad koja vode na stanice
-    linkovi = pg.eval_on_selector_all("a", "els => els.map(e => [e.href, e.innerText.trim().slice(0,60)])")
-    (D / "linkovi.json").write_text(json.dumps(linkovi, ensure_ascii=False, indent=0), encoding="utf-8")
-    for href, txt in linkovi[:40]:
-        if href and "ns-bike.web.app" in href and href.rstrip("/") not in ("https://ns-bike.web.app", "https://ns-bike.web.app/home"):
+    b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 1000})
+    for n in range(1, 17):
+        sif = f"nsb{n:02d}"; slike = []
+        def zab(r, slike=slike, sif=sif):
             try:
-                pg.goto(href, wait_until="networkidle", timeout=30000); pg.wait_for_timeout(2500)
+                if r.request.resource_type == "image" or r.headers.get("content-type", "").startswith("image/"):
+                    body = r.body()
+                    slike.append((r.url, len(body)))
+                    if len(body) > 8000:
+                        ime = sif + "_" + re.sub(r"[^A-Za-z0-9._-]+", "_", r.url.split("?")[0].split("/")[-1])[-50:]
+                        (D / "stanice" / ime).write_bytes(body)
             except Exception as e:  # noqa: BLE001
-                print(href, e)
+                print("greška", e)
+        pg.on("response", zab)
+        try:
+            pg.goto(f"https://app.nsbike.rs/ebiciklana/{sif}", wait_until="networkidle", timeout=45000); pg.wait_for_timeout(2500)
+        except Exception as e:  # noqa: BLE001
+            print(sif, e)
+        imgs = pg.eval_on_selector_all("img", "els => els.map(e => [e.currentSrc || e.src, e.naturalWidth, e.naturalHeight, e.alt])")
+        bg = pg.evaluate("[...document.querySelectorAll('*')].map(e=>getComputedStyle(e).backgroundImage).filter(x=>x&&x!=='none'&&x.includes('url'))")
+        txt = pg.inner_text("body")[:600]
+        if n == 1:
+            (D / "stanica1.html").write_text(pg.content(), encoding="utf-8"); pg.screenshot(path=str(D / "stanica1.png"), full_page=True)
+        pg.remove_listener("response", zab)
+        rez[sif] = {"img": imgs, "bg": bg[:10], "odgovori": slike, "tekst": txt}
+        print(sif, imgs, bg[:3], [s for s in slike if s[1] > 8000])
     b.close()
-(D / "odgovori.json").write_text(json.dumps(odg, ensure_ascii=False, indent=0), encoding="utf-8")
-print(len(odg), "odgovora;", sum(1 for o in odg if o["tip"] == "image"), "slika")
-for o in odg:
-    if o["tip"] in ("image", "fetch", "xhr", "script") or "json" in o["ct"]:
-        print(o["status"], o["tip"], o["url"][:160])
+(D / "stanice.json").write_text(json.dumps(rez, ensure_ascii=False, indent=0), encoding="utf-8")

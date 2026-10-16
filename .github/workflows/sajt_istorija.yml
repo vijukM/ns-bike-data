@@ -71,7 +71,8 @@ jobs:
       - name: Pregled sajta NS bike (privremeno)
         if: inputs.sta == 'nsbike'
         run: |
-          bash istrazivanje/nsbike/proba2.sh
+          pip install playwright && python -m playwright install --with-deps chromium
+          python istrazivanje/nsbike/proba.py
 
       - name: Commit i push
         run: |
