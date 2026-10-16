@@ -30,6 +30,12 @@ def upiti(opis):
 spisak = json.load(open(D / "spisak.json", encoding="utf-8"))
 H = {"User-Agent": "ns-bike-data master rad (github.com/vijukM/ns-bike-data)"}
 out = {}
+dodatno = D / "dodatno.json"
+if dodatno.exists():                       # drugi krug: samo ručno sastavljeni upiti, prethodni rezultati ostaju
+    out = json.loads((D / "geokod.json").read_text(encoding="utf-8")) if (D / "geokod.json").exists() else {}
+    spisak = {k: v for k, v in spisak.items() if k in json.loads(dodatno.read_text(encoding="utf-8"))}
+    rucno = json.loads(dodatno.read_text(encoding="utf-8"))
+    upiti = lambda opis, _r=rucno, _s=dict(spisak): next(v for k, v in _r.items() if _s.get(k) == opis)
 for k in sorted(spisak, key=int):
     for q in upiti(spisak[k]):
         try:
@@ -40,8 +46,9 @@ for k in sorted(spisak, key=int):
         except Exception as e:  # noqa: BLE001
             print(k, q, "greška", e); time.sleep(3); continue
         if j:
-            out[k] = {"q": q, "lon": float(j[0]["lon"]), "lat": float(j[0]["lat"]), "tip": j[0].get("addresstype") or j[0].get("type"), "ime": j[0].get("display_name", "")[:120]}
+            out[k + ("_dod" if dodatno.exists() else "")] = {"q": q, "lon": float(j[0]["lon"]), "lat": float(j[0]["lat"]), "tip": j[0].get("addresstype") or j[0].get("type"), "ime": j[0].get("display_name", "")[:120]}
             break
-    print(k, out.get(k, {}).get("q"), out.get(k, {}).get("tip"), flush=True)
+    kk = k + ("_dod" if dodatno.exists() else "")
+    print(k, out.get(kk, {}).get("q"), out.get(kk, {}).get("tip"), out.get(kk, {}).get("ime", "")[:80], flush=True)
 (D / "geokod.json").write_text(json.dumps(out, ensure_ascii=False, indent=0), encoding="utf-8")
 print("geokodirano", len(out), "od", len(spisak))
