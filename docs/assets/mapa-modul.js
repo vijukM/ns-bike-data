@@ -1,5 +1,5 @@
 /* Mapa brojača (MapLibre GL): mapa se pomera, rotira i naginje (desni klik / Ctrl + prevlačenje, dva prsta), dugme
-   3D podiže pogled i prikazuje zgrade. Podloge: UGZINS i OpenStreetMap (iste OSM pločice) i tri „poster“ mape koje sajt sam
+   3D podiže pogled i prikazuje zgrade. Podloge: Svetla i Tamna (iste OSM pločice kao na sajtu UGZINS, Tamna kroz filter boja) i tri „poster“ mape koje sajt sam
    crta iz vektorskih podataka OpenStreetMap-a (docs/data/mapa/, sajt/osnova_mape.py): tamno plava, siva i bela —
    oštre na svakom zumu. Pinovi po stanju brojača (hover = kartica, klik = fokus, „odskakivanje“ iz spiska),
    a/b razmaknuti u pikselima, biciklističke staze iz OSM-a, Ctrl + točkić za zum, filtriranje pinova,
@@ -14,7 +14,7 @@ const MAPA = (() => {
   const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>`;
 
   // ---------------------------------------------------------------- podloge
-  const PODLOGE = [["ugzins", "UGZINS"], ["osm", "OpenStreetMap"], ["plava", "Tamno plava"], ["siva", "Siva"], ["bela", "Bela"]];
+  const PODLOGE = [["svetla", "Svetla"], ["tamna", "Tamna"], ["plava", "Tamno plava"], ["siva", "Siva"], ["bela", "Bela"]];
   /** „Poster“ mape: boje slojeva i debljina ulica (k = klasa puta: a autoput, g glavna, s sporedna, o ostale). */
   const POSTERI = {
     plava: { pozadina: "#13233b", voda: "#0a1526", obalaVode: "#28466b", zelenilo: "#172b45", pruga: "#6d89b0", zgrade: "#5f7fa8",
@@ -92,8 +92,13 @@ const MAPA = (() => {
     m.addControl({ onAdd() { const d = document.createElement("div"); d.className = "maplibregl-ctrl izvor-mape"; d.innerHTML = OSM; return d; }, onRemove() {} }, "bottom-left");
 
     // ---------------------------------------------------------------- podloga i slojevi
-    let izbor = "ugzins";                               // ranije zapamćena CARTO podloga prelazi na UGZINS
-    try { if (PODLOGE.some(([k]) => k === localStorage.getItem("ns-podloga"))) izbor = localStorage.getItem("ns-podloga"); } catch (e) { /* */ }
+    let izbor = "svetla";
+    const STARI_NAZIVI = { ugzins: "svetla", osm: "tamna", carto: "svetla" };   // ranije zapamćeni izbori
+    try {
+      const z = localStorage.getItem("ns-podloga");
+      const k = STARI_NAZIVI[z] || z;
+      if (PODLOGE.some(([x]) => x === k)) izbor = k;
+    } catch (e) { /* */ }
     let osnovaUcitana = null, zgradeUcitane = null;
     const imaSloj = (id) => !!m.getLayer(id);
     const vidljiv = (id, da) => { if (imaSloj(id)) m.setLayoutProperty(id, "visibility", da ? "visible" : "none"); };
@@ -106,7 +111,7 @@ const MAPA = (() => {
       // standardne OpenStreetMap pločice (isto što koristi sajt UGZINS: OpenLayers + tile.openstreetmap.org);
       // dva sloja iz istog izvora: „UGZINS“ uvek u originalnim bojama, „OpenStreetMap“ u tamnoj temi potamnjen
       rasterSloj("osm", ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], OSM);
-      m.addLayer({ id: "ugzins", type: "raster", source: "osm", layout: { visibility: "none" } }, "osm");
+      m.addLayer({ id: "osm-svetla", type: "raster", source: "osm", layout: { visibility: "none" } }, "osm");
       m.addSource("staze", { type: "geojson", data: { type: "FeatureCollection", features: [] }, attribution: OSM });
       m.addLayer({ id: "staze-obod", type: "line", source: "staze", layout: { "line-cap": "round", "line-join": "round" },
         paint: { "line-width": ["interpolate", ["linear"], ["zoom"], 11, 3.5, 13.5, 6, 16, 10], "line-opacity": 0.9 } });
@@ -151,15 +156,15 @@ const MAPA = (() => {
       const tamna = NS.tamna();
       const p = POSTERI[izbor];
       m.setPaintProperty("pozadina", "background-color", p ? p.pozadina : css("--bg-muted"));
-      vidljiv("ugzins", izbor === "ugzins");
-      vidljiv("osm", izbor === "osm");
-      // UGZINS: originalne boje (u tamnoj temi samo malo prigušeno da ne blešti)
-      if (imaSloj("ugzins")) m.setPaintProperty("ugzins", "raster-brightness-max", tamna ? 0.88 : 1);
-      if (imaSloj("osm")) {               // OpenStreetMap u tamnoj temi: obrnuta svetlina i ugašene boje (kao ranije)
-        m.setPaintProperty("osm", "raster-brightness-min", tamna ? 0.92 : 0);
-        m.setPaintProperty("osm", "raster-brightness-max", tamna ? 0.08 : 1);
-        m.setPaintProperty("osm", "raster-hue-rotate", tamna ? 180 : 0);
-        m.setPaintProperty("osm", "raster-saturation", tamna ? -0.45 : 0);
+      vidljiv("osm-svetla", izbor === "svetla");
+      vidljiv("osm", izbor === "tamna");
+      // Svetla: OSM pločice u originalnim bojama, kao na sajtu UGZINS (u tamnoj temi sajta samo malo prigušeno)
+      if (imaSloj("osm-svetla")) m.setPaintProperty("osm-svetla", "raster-brightness-max", tamna ? 0.88 : 1);
+      if (imaSloj("osm")) {               // Tamna: iste pločice, obrnuta svetlina i ugašene boje (filter na grafičkoj kartici)
+        m.setPaintProperty("osm", "raster-brightness-min", 0.92);
+        m.setPaintProperty("osm", "raster-brightness-max", 0.08);
+        m.setPaintProperty("osm", "raster-hue-rotate", 180);
+        m.setPaintProperty("osm", "raster-saturation", -0.45);
       }
       const poster = !!p;
       for (const id of ["o-zelenilo", "o-voda", "o-obala", "o-pruga", "o-put-o", "o-put-s", "o-put-g", "o-put-a"]) vidljiv(id, poster);
@@ -184,8 +189,8 @@ const MAPA = (() => {
     }
     async function postaviPodlogu(v) {
       if (POSTERI[v] && !(await ucitajOsnovu())) {
-        LJ.tost("Vektorska osnova mape još nije pripremljena — prikazujem UGZINS mapu.", "map");
-        v = "ugzins";
+        LJ.tost("Vektorska osnova mape još nije pripremljena — prikazujem svetlu mapu.", "map");
+        v = "svetla";
         if (opcije.podlogaEl) opcije.podlogaEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.v === v)));
       }
       izbor = v;
@@ -347,7 +352,7 @@ const MAPA = (() => {
         if (moj !== poziv) return;
         postaviPin(r.serija, r.stanje, null, `${opis(r)}<div class="tt-red"><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span></div>
           ${r.prosek_12m != null && r.stanje !== "neispravan" ? `<div class="tt-red">prosek <b>${NS.broj(r.prosek_12m)}</b> / dan
-            <small>kompletni dani, 1. 9. 2025. – 31. 8. 2026.</small></div>` : ""}${danas}
+            ${info("prosečan broj biciklista dnevno — samo kompletni dani, 1. 9. 2025. – 31. 8. 2026. (poslednjih 12 meseci istorije)")}</div>` : ""}${danas}
           ${r.napomena ? `<div class="tt-red sitno">${r.napomena}</div>` : ""}`);
       }
     }
