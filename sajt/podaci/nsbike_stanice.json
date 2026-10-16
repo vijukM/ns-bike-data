@@ -1,0 +1,18 @@
+[
+{"sif": "NSB01", "ime": "Štrand", "adr": "Fruškogorska ulica", "mesta": 14, "lat": 45.238311, "lon": 19.848378},
+{"sif": "NSB02", "ime": "SPENS", "adr": "Ulica Maksima Gorkog", "mesta": 14, "lat": 45.248525, "lon": 19.843469},
+{"sif": "NSB03", "ime": "Železnička stanica", "adr": "Bulevar Jaše Tomića", "mesta": 14, "lat": 45.264725, "lon": 19.8304},
+{"sif": "NSB04", "ime": "Kampus univerziteta", "adr": "Ulica Vladimira Perića Valtera", "mesta": 14, "lat": 45.246503, "lon": 19.850353},
+{"sif": "NSB05", "ime": "SNP", "adr": "Prolaz Miloša Hadžića", "mesta": 14, "lat": 45.256175, "lon": 19.843267},
+{"sif": "NSB06", "ime": "Detelinara 1 (ABC)", "adr": "Rumenačka ulica", "mesta": 14, "lat": 45.261051, "lon": 19.820182},
+{"sif": "NSB07", "ime": "Novo naselje", "adr": "Bulevar Jovana Dučića", "mesta": 14, "lat": 45.252369, "lon": 19.802175},
+{"sif": "NSB08", "ime": "Liman 3 (Dom zdravlja)", "adr": "Balzakova ulica", "mesta": 14, "lat": 45.241178, "lon": 19.831586},
+{"sif": "NSB09", "ime": "Liman 3 (NIS)", "adr": "Ulica Narodnog fronta", "mesta": 14, "lat": 45.241167, "lon": 19.840447},
+{"sif": "NSB10", "ime": "Novo naselje 2", "adr": "Raskrsnica Bulevara vojvode Stepe i Bulevara Slobodana Jovanovića", "mesta": 14, "lat": 45.2571274, "lon": 19.8011948},
+{"sif": "NSB11", "ime": "Beogradski kej", "adr": "Beogradski kej, kod železničkog mosta", "mesta": 14, "lat": 45.261392, "lon": 19.856617},
+{"sif": "NSB12", "ime": "Detelinara 2", "adr": "Ulica Kornelija Stankovića", "mesta": 14, "lat": 45.262178, "lon": 19.813208},
+{"sif": "NSB13", "ime": "Futoška", "adr": "Futoška ulica, preko puta kasarne", "mesta": 14, "lat": 45.249361, "lon": 19.832472},
+{"sif": "NSB14", "ime": "Telep", "adr": "Bulevar patrijarha Pavla", "mesta": 14, "lat": 45.24012, "lon": 19.814986},
+{"sif": "NSB15", "ime": "Rotkvarija", "adr": "Bulevar kralja Petra I", "mesta": 14, "lat": 45.262434, "lon": 19.83828},
+{"sif": "NSB16", "ime": "Bulevar Evrope", "adr": "Bulevar Evrope, raskrsnica sa Hadži Ruvimovom ulicom", "mesta": 14, "lat": 45.25614, "lon": 19.811789}
+]

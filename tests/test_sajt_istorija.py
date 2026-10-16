@@ -289,7 +289,22 @@ def test_unija_osm_i_zvanicnih_parkinga():
     out = om.spoji_zvanicne(fc, zv)
     assert (out["uparenih"], out["dodatih"]) == (1, 3)
     osm1 = next(f for f in out["features"] if f["geometry"]["coordinates"] == [19.84, 45.25])
-    assert osm1["properties"] == {"t": "p", "sif": "Bic 1", "adr": "Trg galerija"}
+    assert osm1["properties"] == {"t": "p", "sif": 1, "adr": "Trg galerija"}
     novi = sorted(f["properties"]["sif"] for f in out["features"] if f["properties"].get("zv"))
-    assert novi == ["Bic 2", "Bic 3", "Bic 4"]
+    assert novi == [2, 3, 4]
     assert len(out["features"]) == 6
+
+
+def test_nsbike_stanice_spajanje():
+    from sajt import osnova_mape as om
+    fc = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"t": "i", "op": "JKP"}, "geometry": {"type": "Point", "coordinates": [19.8301, 45.2647]}},
+        {"type": "Feature", "properties": {"t": "i", "ime": "eMTB.rs"}, "geometry": {"type": "Point", "coordinates": [19.8700, 45.2500]}},
+    ]}
+    st = [{"sif": "NSB03", "ime": "Železnička stanica", "adr": "Bulevar Jaše Tomića", "mesta": 14, "lat": 45.264725, "lon": 19.8304},
+          {"sif": "NSB08", "ime": "Liman 3 (Dom zdravlja)", "adr": "Balzakova ulica", "mesta": 14, "lat": 45.241178, "lon": 19.831586}]
+    out = om.spoji_nsbike(fc, st)
+    assert out["nsbike_dodato"] == 1 and len(out["features"]) == 3
+    stanica = next(f for f in out["features"] if f["properties"].get("sif") == "NSB03")
+    assert stanica["geometry"]["coordinates"] == [19.8304, 45.264725] and stanica["properties"]["kap"] == 14
+    assert any(f["properties"].get("ime") == "eMTB.rs" for f in out["features"])       # privatna ostaje

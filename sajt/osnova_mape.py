@@ -11,8 +11,8 @@ Svojstva:
   zgrade.geojson   h — visina u metrima (height, building:levels × 3 m ili procena po vrsti)
   parking.geojson  tačke za bicikliste; t — p parking za bicikle, i iznajmljivanje (NS bike), s servis / prodavnica,
                    r stanica za samostalnu popravku; kap (capacity), pok (natkriveno), vrsta (bicycle_parking), ime;
-                   unija sa zvaničnim spiskom JKP „Parking servis“ (sajt/podaci/parking_parkingns.json): sif — šifra
-                   (npr. „Bic 23“), adr — opis lokacije; zvanično mesto bez OSM parkinga u blizini dodaje se kao nova tačka
+                   unija sa zvaničnim spiskom JKP „Parking servis“ (sajt/podaci/parking_parkingns.json): sif — broj
+                   parkirališta (šifra „Bic 23“ → 23), adr — opis lokacije; zvanično mesto bez OSM parkinga u blizini dodaje se kao nova tačka
                    (zv = 1; pribl = 1 kad je položaj poznat samo po ulici ili naselju)
   delovi.geojson   delovi grada i okolna naselja: tačke za natpis (n naziv, v vrsta: town, village, suburb, quarter,
                    neighbourhood, hamlet, locality; b [zapad, jug, istok, sever] ako postoji granica) i granice
@@ -56,6 +56,7 @@ NIJE_DEO = {"Novi Sad", "Grad Novi Sad", "Нови Сад", "Град Нови �
 PREFIKSI_MZ = ("Mesna zajednica ", "MZ ", "M.Z. ")
 
 ZVANICNI = KOREN / "sajt" / "podaci" / "parking_parkingns.json"
+NSBIKE = KOREN / "sajt" / "podaci" / "nsbike_stanice.json"     # 16 stanica sistema NS bike (app.nsbike.rs/stanje), naziv i opis latinicom
 PRAG_ISTI_PARKING = 40                                  # m: zvanično mesto i OSM parking bliže od ovoga su isto mesto
 
 log = logging.getLogger(__name__)
@@ -395,14 +396,40 @@ def spoji_zvanicne(fc: dict, zvanicni: list[dict], prag: float = PRAG_ISTI_PARKI
         if i in uzet_o or j in uzet_z:
             continue
         uzet_o.add(i); uzet_z.add(j)
-        osm[i]["properties"].update({"sif": f"Bic {zvanicni[j]['sif']}", "adr": zvanicni[j]["adr"]})
-    novi = [{"type": "Feature", "properties": {"t": "p", "sif": f"Bic {z['sif']}", "adr": z["adr"], "zv": 1,
+        osm[i]["properties"].update({"sif": zvanicni[j]["sif"], "adr": zvanicni[j]["adr"]})
+    novi = [{"type": "Feature", "properties": {"t": "p", "sif": z["sif"], "adr": z["adr"], "zv": 1,
                                                **({"pribl": 1} if "približno" in z.get("pol", "") else {})},
              "geometry": {"type": "Point", "coordinates": [round(z["lon"], 6), round(z["lat"], 6)]}}
             for j, z in enumerate(zvanicni) if j not in uzet_z]
     out = fc["features"] + novi
     out.sort(key=lambda f: f["geometry"]["coordinates"])
     return {**fc, "features": out, "zvanicnih": len(zvanicni), "uparenih": len(uzet_z), "dodatih": len(novi)}
+
+
+def spoji_nsbike(fc: dict, stanice: list[dict], prag: float = 60) -> dict:
+    """Zvanične NS bike stanice: OSM tačka za iznajmljivanje (t = i) bliža od praga dobija šifru, naziv, opis, broj mesta
+    i zvanični položaj; stanica bez para dodaje se. Ostale OSM tačke za iznajmljivanje (privatne) ostaju kakve jesu."""
+    osm = [f for f in fc["features"] if f["properties"]["t"] == "i"]
+    parovi = sorted((_metri(f["geometry"]["coordinates"], (z["lon"], z["lat"])), i, j)
+                    for i, f in enumerate(osm) for j, z in enumerate(stanice))
+    upareni = {}                                                  # OSM indeks -> indeks stanice, jedan na jedan, od najbližih
+    for d, i, j in parovi:
+        if d > prag:
+            break
+        if i not in upareni and j not in upareni.values():
+            upareni[i] = j
+
+    def svojstva(z):
+        return {"t": "i", "sif": z["sif"], "ime": z["ime"], "adr": z["adr"], "kap": z["mesta"], "nsb": 1}
+    for i, j in upareni.items():
+        z = stanice[j]
+        osm[i]["properties"] = svojstva(z)
+        osm[i]["geometry"] = {"type": "Point", "coordinates": [round(z["lon"], 6), round(z["lat"], 6)]}
+    novi = [{"type": "Feature", "properties": svojstva(z), "geometry": {"type": "Point", "coordinates": [round(z["lon"], 6), round(z["lat"], 6)]}}
+            for j, z in enumerate(stanice) if j not in upareni.values()]
+    out = fc["features"] + novi
+    out.sort(key=lambda f: f["geometry"]["coordinates"])
+    return {**fc, "features": out, "nsbike": len(stanice), "nsbike_dodato": len(novi)}
 
 
 def napravi(odgovori: dict) -> dict[str, dict]:
@@ -412,8 +439,9 @@ def napravi(odgovori: dict) -> dict[str, dict]:
         "voda": povrsine(odgovori["voda"]),
         "zelenilo": povrsine(odgovori["zelenilo"]),
         "zgrade": povrsine(odgovori["zgrade"], lambda t: {"h": visina(t)}),
-        "parking": spoji_zvanicne(tacke_za_bicikliste(odgovori.get("parking", {})),
-                                  json.loads(ZVANICNI.read_text(encoding="utf-8")) if ZVANICNI.exists() else []),
+        "parking": spoji_nsbike(spoji_zvanicne(tacke_za_bicikliste(odgovori.get("parking", {})),
+                                               json.loads(ZVANICNI.read_text(encoding="utf-8")) if ZVANICNI.exists() else []),
+                                json.loads(NSBIKE.read_text(encoding="utf-8")) if NSBIKE.exists() else []),
         "delovi": delovi_grada(odgovori.get("delovi", {})),
         "mesta": mesta_sa_nazivom(odgovori.get("mesta", {})),
     }
