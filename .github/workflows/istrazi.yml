@@ -27,6 +27,9 @@ jobs:
           pip install playwright
           python -m playwright install --with-deps chromium
           python -m scraper.preuzimanje --metod pregledac | head -c 600
+      - name: Mapa na sajtu (pločice i biblioteka)
+        if: always()
+        run: python alati/istrazi_mapu.py istrazi/mapa
       - name: Proba Open-Meteo (faza 3) — ništa se ne čuva
         if: always()
         run: |
