@@ -127,17 +127,27 @@ const MAPA = (() => {
     ceoEkran.on("fullscreenstart", () => { m.cooperativeGestures.disable(); el.classList.add("ceo-ekran"); setTimeout(() => m.resize(), 60); });
     ceoEkran.on("fullscreenend", () => { m.cooperativeGestures.enable(); el.classList.remove("ceo-ekran"); setTimeout(() => m.resize(), 60); });
     m.addControl(new maplibregl.ScaleControl({ maxWidth: 90, unit: "metric" }), "bottom-left");
-    // gore levo, na samoj mapi: nazivi ulica (vektorska i satelitska; na standardnoj su nazivi deo slike)
+    // gore levo, na samoj mapi: padajući meni „Natpisi“ (samo vektorska i satelitska; na standardnoj su natpisi deo slike)
     let naziviUkljuceni = true;
     try { naziviUkljuceni = localStorage.getItem("ns-nazivi") !== "0"; } catch (e) { /* */ }
     const naziviEl = document.createElement("div");
-    naziviEl.className = "maplibregl-ctrl nazivi-ctrl";
-    naziviEl.innerHTML = `<label><input type="checkbox" ${naziviUkljuceni ? "checked" : ""}><span class="kvacica" aria-hidden="true"></span>Nazivi ulica</label>`;
-    naziviEl.querySelector("input").addEventListener("change", (e) => {
+    naziviEl.className = "maplibregl-ctrl natpisi-ctrl skriveno";
+    naziviEl.innerHTML = `<button type="button" class="natpisi-dugme" aria-expanded="false" aria-haspopup="true">Natpisi${LJ.ik("chevron")}</button>
+      <div class="natpisi-panel skriveno" role="group" aria-label="Natpisi na mapi">
+        <label class="red-izbora"><input type="checkbox" data-natpis="nazivi" ${naziviUkljuceni ? "checked" : ""}><span>Nazivi ulica</span></label></div>`;
+    const natpisiDugme = naziviEl.querySelector(".natpisi-dugme"), natpisiPanel = naziviEl.querySelector(".natpisi-panel");
+    const zatvoriNatpise = () => { natpisiPanel.classList.add("skriveno"); natpisiDugme.setAttribute("aria-expanded", "false"); };
+    natpisiDugme.addEventListener("click", () => {
+      const otvori = natpisiPanel.classList.contains("skriveno");
+      natpisiPanel.classList.toggle("skriveno", !otvori);
+      natpisiDugme.setAttribute("aria-expanded", String(otvori));
+    });
+    naziviEl.querySelector('[data-natpis="nazivi"]').addEventListener("change", (e) => {
       naziviUkljuceni = e.target.checked;
       try { localStorage.setItem("ns-nazivi", naziviUkljuceni ? "1" : "0"); } catch (x) { /* */ }
       spremna.then(() => postaviPodlogu(izbor));
     });
+    document.addEventListener("click", (e) => { if (!naziviEl.contains(e.target)) zatvoriNatpise(); });
     m.addControl({ onAdd: () => naziviEl, onRemove() {} }, "top-left");
 
     // ---------------------------------------------------------------- podloga i slojevi
@@ -218,10 +228,8 @@ const MAPA = (() => {
       const nazivi = NAZIVI[izbor];
       vidljiv("o-nazivi", !!nazivi && naziviUkljuceni);
       if (nazivi && imaSloj("o-nazivi")) { m.setPaintProperty("o-nazivi", "text-color", nazivi[0]); m.setPaintProperty("o-nazivi", "text-halo-color", nazivi[1]); }
-      const naziviInput = naziviEl.querySelector("input");
-      naziviInput.disabled = !nazivi;
-      naziviEl.classList.toggle("onemoguceno", !nazivi);
-      naziviEl.title = nazivi ? "Prikaži ili sakrij nazive ulica" : "Na standardnoj mapi nazivi ulica su deo slike i uvek se vide";
+      naziviEl.classList.toggle("skriveno", !nazivi);        // na standardnoj mapi natpisi su deo slike i ne mogu se sakriti
+      if (!nazivi) zatvoriNatpise();
       // Svetla: OSM pločice u originalnim bojama, kao na sajtu UGZINS (u tamnoj temi sajta samo malo prigušeno)
       if (imaSloj("osm-svetla")) m.setPaintProperty("osm-svetla", "raster-brightness-max", tamna ? 0.88 : 1);
       if (imaSloj("osm")) {               // Tamna: iste pločice, obrnuta svetlina i ugašene boje (filter na grafičkoj kartici)
@@ -332,7 +340,7 @@ const MAPA = (() => {
       return km;
     }).catch(() => null);
     // ---------------------------------------------------------------- parking i ostale tačke za bicikliste (OSM)
-    let parkingUkljucen = false, parkingUcitan = null, parkingTipovi = new Set(Object.keys(TACKE)), parkingBroj = {};
+    let parkingUkljucen = false, parkingUcitan = null, parkingTipovi = new Set(Object.keys(TACKE));
     try {
       parkingUkljucen = localStorage.getItem("ns-parking") === "1";
       const z = JSON.parse(localStorage.getItem("ns-parking-tipovi") || "null");
@@ -344,8 +352,6 @@ const MAPA = (() => {
       parkingUcitan = NS.json("mapa/parking.geojson", "data/").then((data) => {
         for (const t of Object.keys(TACKE)) if (!m.hasImage(`bp-${t}`)) m.addImage(`bp-${t}`, ikonaParkinga(t).getContext("2d").getImageData(0, 0, 48, 48), { pixelRatio: 2 });
         m.addSource("parking", { type: "geojson", data, attribution: OSM });
-        for (const f of data.features) parkingBroj[f.properties.t] = (parkingBroj[f.properties.t] || 0) + 1;
-        crtajTipoveParkinga();
         m.addLayer({ id: "parking", type: "symbol", source: "parking", minzoom: 11.5, filter: filterParkinga(),
           layout: { "icon-image": ["concat", "bp-", ["get", "t"]], "icon-size": ["interpolate", ["linear"], ["zoom"], 11.5, 0.6, 14, 0.85, 16, 1.05],
             "icon-allow-overlap": false, "icon-padding": 1, "symbol-sort-key": ["match", ["get", "t"], "i", 0, "p", 1, 2] } });
@@ -367,13 +373,13 @@ const MAPA = (() => {
       if (da) await ucitajParking();
       vidljiv("parking", da);
     }
-    const NAPOMENA_PARKING = "Ovo nisu svi parkinzi, servisi i stanice u gradu — samo oni koji su javno upisani na internetu (OpenStreetMap). Podaci se osvežavaju povremeno.";
+    const NAPOMENA_PARKING = "Ovo nisu svi parkinzi, servisi i stanice u gradu, već samo oni koji su javno upisani na internetu.";
     function crtajTipoveParkinga() {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".tipovi-parkinga");
       if (!lista) return;
       lista.innerHTML = `<p class="sitno">${NAPOMENA_PARKING}</p>` + Object.entries(TACKE).map(([t, ime]) =>
         `<label class="red-izbora"><input type="checkbox" data-t="${t}" ${parkingTipovi.has(t) ? "checked" : ""}><img src="${ikonaParkinga(t).toDataURL()}" alt="">
-          <span>${ime}</span><b class="mono">${parkingBroj[t] ?? ""}</b></label>`).join("") +
+          <span>${ime}</span></label>`).join("") +
         `<div class="tipovi-dno"><button type="button" class="dugme malo" data-svi="1">Sve</button><button type="button" class="dugme malo" data-svi="0">Ništa</button></div>`;
     }
     function postaviTipove(skup) {
@@ -381,20 +387,22 @@ const MAPA = (() => {
       try { localStorage.setItem("ns-parking-tipovi", JSON.stringify([...skup])); } catch (e) { /* */ }
       if (imaSloj("parking")) m.setFilter("parking", filterParkinga());
       crtajTipoveParkinga();
-      const broj = opcije.stazeEl && opcije.stazeEl.querySelector(".parking-broj-tipova");
-      if (broj) broj.textContent = parkingTipovi.size === Object.keys(TACKE).length ? "" : `${parkingTipovi.size}/${Object.keys(TACKE).length}`;
+      // ikonice na čipu: u boji su vrste koje se prikazuju (kad je sloj uključen), ostale su blede
+      if (opcije.stazeEl) for (const img of opcije.stazeEl.querySelectorAll(".cip-parking img[data-t]")) img.classList.toggle("ukljuceno", parkingTipovi.has(img.dataset.t));
     }
     spremna.then(() => { if (parkingUkljucen) prikaziParking(true); });
 
     if (opcije.stazeEl) {
       opcije.stazeEl.innerHTML = `<label class="cip cip-stikla" style="--boja:var(--staza)"><input type="checkbox" ${stazeUkljucene ? "checked" : ""}>
         <span class="kvacica" aria-hidden="true"></span>Biciklističke staze</label>`;
-      // „Za bicikliste“: uključi/isključi sloj, a strelica otvara izbor vrsta (sve štiklirano dok se ne promeni)
+      // za bicikliste (parking, NS bike, servisi, stanice za popravku): štikla uključuje sloj, strelica otvara izbor vrsta (sve štiklirano dok se ne promeni)
+      const opisParkinga = "Za bicikliste: " + Object.values(TACKE).join(", ").toLowerCase();
       opcije.stazeEl.insertAdjacentHTML("beforeend", `<div class="parking-grupa">
-          <label class="cip cip-stikla cip-parking" style="--boja:#2f7de1"><input type="checkbox" ${parkingUkljucen ? "checked" : ""}>
-            <span class="kvacica" aria-hidden="true"></span><img src="${ikonaParkinga("p").toDataURL()}" alt="">Za bicikliste<span class="parking-broj-tipova mono"></span></label>
+          <label class="cip cip-stikla cip-parking" style="--boja:#2f7de1" title="${opisParkinga}"><input type="checkbox" aria-label="${opisParkinga}" ${parkingUkljucen ? "checked" : ""}>
+            <span class="kvacica" aria-hidden="true"></span><span class="ikonice-parkinga">${Object.keys(TACKE).map((t) =>
+              `<img src="${ikonaParkinga(t).toDataURL()}" alt="" data-t="${t}">`).join("")}</span></label>
           <button type="button" class="cip cip-strelica" aria-expanded="false" aria-label="Izaberi šta se prikazuje" title="Izaberi šta se prikazuje">${LJ.ik("chevron")}</button>
-          <div class="panel tipovi-parkinga skriveno" role="group" aria-label="Šta se prikazuje"></div></div>${info(NAPOMENA_PARKING)}`);
+          <div class="panel tipovi-parkinga skriveno" role="group" aria-label="Šta se prikazuje"></div></div>`);
       const grupa = opcije.stazeEl.querySelector(".parking-grupa");
       const panel = grupa.querySelector(".tipovi-parkinga"), strelica = grupa.querySelector(".cip-strelica");
       crtajTipoveParkinga();
