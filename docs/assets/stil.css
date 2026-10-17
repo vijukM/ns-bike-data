@@ -972,3 +972,9 @@ html.bez-skrola { overflow: hidden; }
 .cip .ikonica-staze[aria-pressed="true"] .linija-staze { opacity: 1; filter: none; }
 .staze-grupa:has(.cip-staze.aktivno) .cip-strelica { color: var(--t-base); border-color: var(--staza); background: color-mix(in srgb, var(--staza) 12%, transparent); }
 .mapa-raspored aside .info::after { left: auto; right: -10px; transform: none; }
+/* mapa: kružići boja idu u red sa natpisom „Tip mape“, pa grupa ne menja širinu i sve kontrole ostaju u jednom redu */
+.mapa-alat { gap: 14px 18px; }
+.mapa-alat .grupa-kontrola:has(.izbor-podloge) { position: relative; }
+.mapa-alat .izbor-podloge .nijanse { position: absolute; top: -7px; right: 0; gap: 2px; padding: 1px; }
+.mapa-alat .izbor-podloge .nijansa { width: 22px; height: 22px; padding: 2px; }
+.mapa-alat .segment button { padding: 6px 9px; }
