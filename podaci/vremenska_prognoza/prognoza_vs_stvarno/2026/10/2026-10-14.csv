@@ -10,8 +10,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,8.3,8.64,8.3,0.34,0.34,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,9.3,8.64,5.8,2.84,2.84,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,10.3,9.0,9.7,-0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,11.3,9.72,7.6,2.12,2.12,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,12.3,9.360000000000001,7.2,2.16,2.16,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,11.3,9.72,8.6,1.12,1.12,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,met_norway,2026-10-14T09:39:03Z,12.3,9.360000000000001,7.6,1.76,1.76,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,0.9,12.6,12.2,0.4,0.4,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,1.9,11.16,12.6,-1.44,1.44,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,2.9,11.879999999999999,13.3,-1.42,1.42,analiza
@@ -21,13 +21,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,6.9,8.64,8.3,0.34,0.34,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,7.9,8.64,5.8,2.84,2.84,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,8.9,9.0,9.7,-0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,9.9,9.72,7.6,2.12,2.12,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,10.9,9.360000000000001,7.2,2.16,2.16,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,9.9,9.72,8.6,1.12,1.12,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,met_norway,2026-10-14T11:03:18Z,10.9,9.360000000000001,7.6,1.76,1.76,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,0.9,8.64,8.3,0.34,0.34,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,1.9,8.64,5.8,2.84,2.84,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,2.9,9.360000000000001,9.7,-0.34,0.34,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,3.9,9.0,7.6,1.4,1.4,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,4.9,10.44,7.2,3.24,3.24,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,3.9,9.0,8.6,0.4,0.4,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,met_norway,2026-10-14T17:03:52Z,4.9,10.44,7.6,2.84,2.84,analiza
 2026-10-14,2026-10-14 11:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,0.1,6.5,6.1,0.4,0.4,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,1.1,10.1,8.6,1.5,1.5,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,2.1,11.5,11.9,-0.4,0.4,analiza
@@ -40,8 +40,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,9.1,7.9,8.3,-0.4,0.4,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,10.1,11.9,5.8,6.1,6.1,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,11.1,6.5,9.7,-3.2,3.2,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,12.1,8.6,7.6,1.0,1.0,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,13.1,9.7,7.2,2.5,2.5,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,12.1,8.6,8.6,0.0,0.0,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,13.1,9.7,7.6,2.1,2.1,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,0.3,9.0,8.6,0.4,0.4,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,1.3,12.2,11.9,0.3,0.3,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,2.3,12.6,12.2,0.4,0.4,analiza
@@ -53,8 +53,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,8.3,9.0,8.3,0.7,0.7,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,9.3,8.6,5.8,2.8,2.8,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,10.3,10.4,9.7,0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,11.3,9.4,7.6,1.8,1.8,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,12.3,7.9,7.2,0.7,0.7,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,11.3,9.4,8.6,0.8,0.8,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,12.3,7.9,7.6,0.3,0.3,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,0.9,12.6,12.2,0.4,0.4,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,1.9,13.7,12.6,1.1,1.1,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,2.9,13.7,13.3,0.4,0.4,analiza
@@ -64,13 +64,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,6.9,9.0,8.3,0.7,0.7,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,7.9,8.6,5.8,2.8,2.8,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,8.9,10.4,9.7,0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,9.9,9.4,7.6,1.8,1.8,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,10.9,7.9,7.2,0.7,0.7,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,9.9,9.4,8.6,0.8,0.8,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,10.9,7.9,7.6,0.3,0.3,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,0.9,8.3,8.3,0.0,0.0,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,1.9,5.0,5.8,-0.8,0.8,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,2.9,12.2,9.7,2.5,2.5,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,3.9,7.6,7.6,0.0,0.0,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,4.9,8.3,7.2,1.1,1.1,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,3.9,7.6,8.6,-1.0,1.0,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,4.9,8.3,7.6,0.7,0.7,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,0.3,7.9,8.6,-0.7,0.7,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,1.3,9.7,11.9,-2.2,2.2,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,2.3,10.7,12.2,-1.5,1.5,analiza
@@ -82,8 +82,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,8.3,7.1,8.3,-1.2,1.2,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,9.3,7.4,5.8,1.6,1.6,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,10.3,8.0,9.7,-1.7,1.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,11.3,8.3,7.6,0.7,0.7,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,12.3,9.0,7.2,1.8,1.8,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,11.3,8.3,8.6,-0.3,0.3,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,12.3,9.0,7.6,1.4,1.4,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,0.9,10.7,12.2,-1.5,1.5,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,1.9,10.2,12.6,-2.4,2.4,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,2.9,8.9,13.3,-4.4,4.4,analiza
@@ -93,13 +93,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,6.9,7.1,8.3,-1.2,1.2,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,7.9,7.4,5.8,1.6,1.6,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,8.9,8.0,9.7,-1.7,1.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,9.9,8.3,7.6,0.7,0.7,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,10.9,9.0,7.2,1.8,1.8,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,9.9,8.3,8.6,-0.3,0.3,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,10.9,9.0,7.6,1.4,1.4,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,0.9,6.8,8.3,-1.5,1.5,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,1.9,7.2,5.8,1.4,1.4,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,2.9,7.3,9.7,-2.4,2.4,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,3.9,7.9,7.6,0.3,0.3,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,4.9,8.6,7.2,1.4,1.4,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,3.9,7.9,8.6,-0.7,0.7,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,4.9,8.6,7.6,1.0,1.0,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,0.3,8.9,8.6,0.3,0.3,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,1.3,9.7,11.9,-2.2,2.2,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,2.3,9.9,12.2,-2.3,2.3,analiza
@@ -111,8 +111,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,8.3,8.8,8.3,0.5,0.5,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,9.3,7.1,5.8,1.3,1.3,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,10.3,8.6,9.7,-1.1,1.1,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,11.3,10.0,7.6,2.4,2.4,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,12.3,11.3,7.2,4.1,4.1,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,11.3,10.0,8.6,1.4,1.4,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,12.3,11.3,7.6,3.7,3.7,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,0.9,9.9,12.2,-2.3,2.3,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,1.9,12.0,12.6,-0.6,0.6,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,2.9,11.5,13.3,-1.8,1.8,analiza
@@ -122,13 +122,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,6.9,8.8,8.3,0.5,0.5,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,7.9,7.1,5.8,1.3,1.3,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,8.9,8.6,9.7,-1.1,1.1,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,9.9,10.0,7.6,2.4,2.4,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,10.9,11.3,7.2,4.1,4.1,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,9.9,10.0,8.6,1.4,1.4,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,10.9,11.3,7.6,3.7,3.7,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,0.9,8.2,8.3,-0.1,0.1,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,1.9,8.7,5.8,2.9,2.9,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,2.9,7.1,9.7,-2.6,2.6,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,3.9,8.9,7.6,1.3,1.3,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,4.9,10.1,7.2,2.9,2.9,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,3.9,8.9,8.6,0.3,0.3,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,4.9,10.1,7.6,2.5,2.5,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,0.3,10.8,8.6,2.2,2.2,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,1.3,12.3,11.9,0.4,0.4,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,2.3,12.0,12.2,-0.2,0.2,analiza
@@ -140,8 +140,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,8.3,4.8,8.3,-3.5,3.5,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,9.3,6.1,5.8,0.3,0.3,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,10.3,7.2,9.7,-2.5,2.5,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,11.3,7.2,7.6,-0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,12.3,7.6,7.2,0.4,0.4,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,11.3,7.2,8.6,-1.4,1.4,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T09:39:03Z,12.3,7.6,7.6,0.0,0.0,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,0.9,12.0,12.2,-0.2,0.2,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,1.9,13.0,12.6,0.4,0.4,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,2.9,12.8,13.3,-0.5,0.5,analiza
@@ -151,13 +151,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,6.9,4.8,8.3,-3.5,3.5,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,7.9,5.1,5.8,-0.7,0.7,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,8.9,7.6,9.7,-2.1,2.1,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,9.9,7.2,7.6,-0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,10.9,7.6,7.2,0.4,0.4,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,9.9,7.2,8.6,-1.4,1.4,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T11:03:18Z,10.9,7.6,7.6,0.0,0.0,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,0.9,4.9,8.3,-3.4,3.4,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,1.9,4.4,5.8,-1.4,1.4,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,2.9,6.2,9.7,-3.5,3.5,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,3.9,6.8,7.6,-0.8,0.8,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,4.9,8.0,7.2,0.8,0.8,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,3.9,6.8,8.6,-1.8,1.8,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_icon_eu,2026-10-14T17:03:52Z,4.9,8.0,7.6,0.4,0.4,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,0.3,12.7,8.6,4.1,4.1,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,1.3,13.9,11.9,2.0,2.0,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,2.3,14.6,12.2,2.4,2.4,analiza
@@ -169,8 +169,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,8.3,7.3,8.3,-1.0,1.0,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,9.3,11.2,5.8,5.4,5.4,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,10.3,9.8,9.7,0.1,0.1,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,11.3,10.7,7.6,3.1,3.1,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,12.3,13.7,7.2,6.5,6.5,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,11.3,10.7,8.6,2.1,2.1,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,12.3,13.7,7.6,6.1,6.1,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,0.9,14.2,12.2,2.0,2.0,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,1.9,13.1,12.6,0.5,0.5,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,2.9,12.0,13.3,-1.3,1.3,analiza
@@ -180,13 +180,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,6.9,6.9,8.3,-1.4,1.4,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,7.9,8.7,5.8,2.9,2.9,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,8.9,12.3,9.7,2.6,2.6,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,9.9,11.4,7.6,3.8,3.8,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,10.9,14.0,7.2,6.8,6.8,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,9.9,11.4,8.6,2.8,2.8,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,10.9,14.0,7.6,6.4,6.4,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,0.9,7.8,8.3,-0.5,0.5,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,1.9,10.6,5.8,4.8,4.8,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,2.9,10.5,9.7,0.8,0.8,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,3.9,10.9,7.6,3.3,3.3,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,4.9,13.3,7.2,6.1,6.1,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,3.9,10.9,8.6,2.3,2.3,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,4.9,13.3,7.6,5.7,5.7,analiza
 2026-10-14,2026-10-14 12:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,0.3,11.9,8.6,3.3,3.3,analiza
 2026-10-14,2026-10-14 13:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,1.3,12.6,11.9,0.7,0.7,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,2.3,13.0,12.2,0.8,0.8,analiza
@@ -198,8 +198,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,8.3,10.1,8.3,1.8,1.8,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,9.3,10.4,5.8,4.6,4.6,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,10.3,10.4,9.7,0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,11.3,10.8,7.6,3.2,3.2,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,12.3,10.8,7.2,3.6,3.6,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,11.3,10.8,8.6,2.2,2.2,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,12.3,10.8,7.6,3.2,3.2,analiza
 2026-10-14,2026-10-14 14:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,0.9,13.0,12.2,0.8,0.8,analiza
 2026-10-14,2026-10-14 15:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,1.9,12.2,12.6,-0.4,0.4,analiza
 2026-10-14,2026-10-14 16:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,2.9,13.0,13.3,-0.3,0.3,analiza
@@ -209,13 +209,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,6.9,10.1,8.3,1.8,1.8,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,7.9,10.4,5.8,4.6,4.6,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,8.9,10.4,9.7,0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,9.9,10.8,7.6,3.2,3.2,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,10.9,10.8,7.2,3.6,3.6,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,9.9,10.8,8.6,2.2,2.2,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,10.9,10.8,7.6,3.2,3.2,analiza
 2026-10-14,2026-10-14 20:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,0.9,9.4,8.3,1.1,1.1,analiza
 2026-10-14,2026-10-14 21:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,1.9,8.6,5.8,2.8,2.8,analiza
 2026-10-14,2026-10-14 22:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,2.9,9.0,9.7,-0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,3.9,10.8,7.6,3.2,3.2,analiza
-2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,4.9,9.7,7.2,2.5,2.5,analiza
+2026-10-14,2026-10-14 23:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,3.9,10.8,8.6,2.2,2.2,analiza
+2026-10-14,2026-10-15 00:00,brzina_vetra,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,4.9,9.7,7.6,2.1,2.1,analiza
 2026-10-14,2026-10-14 11:00,insolacija,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,0.1,490.0,475.0,15.0,15.0,analiza
 2026-10-14,2026-10-14 12:00,insolacija,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,1.1,570.0,535.0,35.0,35.0,analiza
 2026-10-14,2026-10-14 13:00,insolacija,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,2.1,595.0,595.0,0.0,0.0,analiza
@@ -849,8 +849,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,met_norway,2026-10-14T09:39:03Z,8.3,9.8,9.6,0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,met_norway,2026-10-14T09:39:03Z,9.3,9.5,9.3,0.2,0.2,analiza
 2026-10-14,2026-10-14 22:00,temperatura,met_norway,2026-10-14T09:39:03Z,10.3,11.0,9.9,1.1,1.1,analiza
-2026-10-14,2026-10-14 23:00,temperatura,met_norway,2026-10-14T09:39:03Z,11.3,11.1,10.5,0.6,0.6,analiza
-2026-10-14,2026-10-15 00:00,temperatura,met_norway,2026-10-14T09:39:03Z,12.3,10.7,10.7,0.0,0.0,analiza
+2026-10-14,2026-10-14 23:00,temperatura,met_norway,2026-10-14T09:39:03Z,11.3,11.1,10.3,0.8,0.8,analiza
+2026-10-14,2026-10-15 00:00,temperatura,met_norway,2026-10-14T09:39:03Z,12.3,10.7,10.5,0.2,0.2,analiza
 2026-10-14,2026-10-14 14:00,temperatura,met_norway,2026-10-14T11:03:18Z,0.9,15.4,15.9,-0.5,0.5,analiza
 2026-10-14,2026-10-14 15:00,temperatura,met_norway,2026-10-14T11:03:18Z,1.9,15.6,16.4,-0.8,0.8,analiza
 2026-10-14,2026-10-14 16:00,temperatura,met_norway,2026-10-14T11:03:18Z,2.9,15.4,16.6,-1.2,1.2,analiza
@@ -860,13 +860,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,met_norway,2026-10-14T11:03:18Z,6.9,9.8,9.6,0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,met_norway,2026-10-14T11:03:18Z,7.9,9.5,9.3,0.2,0.2,analiza
 2026-10-14,2026-10-14 22:00,temperatura,met_norway,2026-10-14T11:03:18Z,8.9,11.0,9.9,1.1,1.1,analiza
-2026-10-14,2026-10-14 23:00,temperatura,met_norway,2026-10-14T11:03:18Z,9.9,11.1,10.5,0.6,0.6,analiza
-2026-10-14,2026-10-15 00:00,temperatura,met_norway,2026-10-14T11:03:18Z,10.9,10.7,10.7,0.0,0.0,analiza
+2026-10-14,2026-10-14 23:00,temperatura,met_norway,2026-10-14T11:03:18Z,9.9,11.1,10.3,0.8,0.8,analiza
+2026-10-14,2026-10-15 00:00,temperatura,met_norway,2026-10-14T11:03:18Z,10.9,10.7,10.5,0.2,0.2,analiza
 2026-10-14,2026-10-14 20:00,temperatura,met_norway,2026-10-14T17:03:52Z,0.9,9.9,9.6,0.3,0.3,analiza
 2026-10-14,2026-10-14 21:00,temperatura,met_norway,2026-10-14T17:03:52Z,1.9,9.9,9.3,0.6,0.6,analiza
 2026-10-14,2026-10-14 22:00,temperatura,met_norway,2026-10-14T17:03:52Z,2.9,11.3,9.9,1.4,1.4,analiza
-2026-10-14,2026-10-14 23:00,temperatura,met_norway,2026-10-14T17:03:52Z,3.9,10.2,10.5,-0.3,0.3,analiza
-2026-10-14,2026-10-15 00:00,temperatura,met_norway,2026-10-14T17:03:52Z,4.9,10.7,10.7,0.0,0.0,analiza
+2026-10-14,2026-10-14 23:00,temperatura,met_norway,2026-10-14T17:03:52Z,3.9,10.2,10.3,-0.1,0.1,analiza
+2026-10-14,2026-10-15 00:00,temperatura,met_norway,2026-10-14T17:03:52Z,4.9,10.7,10.5,0.2,0.2,analiza
 2026-10-14,2026-10-14 11:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,0.1,11.0,10.6,0.4,0.4,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,1.1,13.7,13.1,0.6,0.6,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,2.1,15.3,14.8,0.5,0.5,analiza
@@ -879,8 +879,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,9.1,10.0,9.6,0.4,0.4,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,10.1,9.7,9.3,0.4,0.4,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,11.1,9.8,9.9,-0.1,0.1,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,12.1,10.4,10.5,-0.1,0.1,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,13.1,10.5,10.7,-0.2,0.2,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,12.1,10.4,10.3,0.1,0.1,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T08:51:17Z,13.1,10.5,10.5,0.0,0.0,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,0.3,13.4,13.1,0.3,0.3,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,1.3,15.1,14.8,0.3,0.3,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,2.3,16.2,15.9,0.3,0.3,analiza
@@ -892,8 +892,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,8.3,9.8,9.6,0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,9.3,9.0,9.3,-0.3,0.3,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,10.3,9.5,9.9,-0.4,0.4,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,11.3,10.1,10.5,-0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,12.3,10.4,10.7,-0.3,0.3,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,11.3,10.1,10.3,-0.2,0.2,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T09:39:03Z,12.3,10.4,10.5,-0.1,0.1,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,0.9,16.2,15.9,0.3,0.3,analiza
 2026-10-14,2026-10-14 15:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,1.9,16.8,16.4,0.4,0.4,analiza
 2026-10-14,2026-10-14 16:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,2.9,16.9,16.6,0.3,0.3,analiza
@@ -903,13 +903,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,6.9,9.8,9.6,0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,7.9,9.0,9.3,-0.3,0.3,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,8.9,9.5,9.9,-0.4,0.4,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,9.9,10.1,10.5,-0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,10.9,10.4,10.7,-0.3,0.3,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,9.9,10.1,10.3,-0.2,0.2,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T11:03:18Z,10.9,10.4,10.5,-0.1,0.1,analiza
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,0.9,9.8,9.6,0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,1.9,9.2,9.3,-0.1,0.1,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,2.9,10.1,9.9,0.2,0.2,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,3.9,10.6,10.5,0.1,0.1,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,4.9,10.9,10.7,0.2,0.2,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,3.9,10.6,10.3,0.3,0.3,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_best_match (ulaz modela),2026-10-14T17:03:52Z,4.9,10.9,10.5,0.4,0.4,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,0.3,12.8,13.1,-0.3,0.3,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,1.3,14.1,14.8,-0.7,0.7,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,2.3,14.9,15.9,-1.0,1.0,analiza
@@ -921,8 +921,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,8.3,10.3,9.6,0.7,0.7,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,9.3,10.4,9.3,1.1,1.1,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,10.3,11.1,9.9,1.2,1.2,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,11.3,11.4,10.5,0.9,0.9,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,12.3,10.9,10.7,0.2,0.2,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,11.3,11.4,10.3,1.1,1.1,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T09:39:03Z,12.3,10.9,10.5,0.4,0.4,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,0.9,14.9,15.9,-1.0,1.0,analiza
 2026-10-14,2026-10-14 15:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,1.9,15.0,16.4,-1.4,1.4,analiza
 2026-10-14,2026-10-14 16:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,2.9,14.6,16.6,-2.0,2.0,analiza
@@ -932,13 +932,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,6.9,10.3,9.6,0.7,0.7,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,7.9,10.4,9.3,1.1,1.1,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,8.9,11.1,9.9,1.2,1.2,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,9.9,11.4,10.5,0.9,0.9,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,10.9,10.9,10.7,0.2,0.2,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,9.9,11.4,10.3,1.1,1.1,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T11:03:18Z,10.9,10.9,10.5,0.4,0.4,analiza
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,0.9,10.1,9.6,0.5,0.5,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,1.9,10.2,9.3,0.9,0.9,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,2.9,10.7,9.9,0.8,0.8,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,3.9,10.9,10.5,0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,4.9,10.3,10.7,-0.4,0.4,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,3.9,10.9,10.3,0.6,0.6,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ecmwf_ifs025,2026-10-14T17:03:52Z,4.9,10.3,10.5,-0.2,0.2,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,0.3,14.0,13.1,0.9,0.9,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,1.3,15.2,14.8,0.4,0.4,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,2.3,16.0,15.9,0.1,0.1,analiza
@@ -950,8 +950,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,8.3,14.7,9.6,5.1,5.1,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,9.3,14.5,9.3,5.2,5.2,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,10.3,14.4,9.9,4.5,4.5,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,11.3,12.8,10.5,2.3,2.3,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,12.3,12.1,10.7,1.4,1.4,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,11.3,12.8,10.3,2.5,2.5,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_gfs_seamless,2026-10-14T09:39:03Z,12.3,12.1,10.5,1.6,1.6,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,0.9,16.0,15.9,0.1,0.1,analiza
 2026-10-14,2026-10-14 15:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,1.9,16.5,16.4,0.1,0.1,analiza
 2026-10-14,2026-10-14 16:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,2.9,16.6,16.6,0.0,0.0,analiza
@@ -961,13 +961,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,6.9,14.7,9.6,5.1,5.1,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,7.9,14.5,9.3,5.2,5.2,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,8.9,14.4,9.9,4.5,4.5,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,9.9,12.8,10.5,2.3,2.3,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,10.9,12.1,10.7,1.4,1.4,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,9.9,12.8,10.3,2.5,2.5,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_gfs_seamless,2026-10-14T11:03:18Z,10.9,12.1,10.5,1.6,1.6,analiza
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,0.9,14.4,9.6,4.8,4.8,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,1.9,14.1,9.3,4.8,4.8,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,2.9,14.0,9.9,4.1,4.1,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,3.9,13.7,10.5,3.2,3.2,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,4.9,12.4,10.7,1.7,1.7,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,3.9,13.7,10.3,3.4,3.4,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_gfs_seamless,2026-10-14T17:03:52Z,4.9,12.4,10.5,1.9,1.9,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,0.3,13.3,13.1,0.2,0.2,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,1.3,14.7,14.8,-0.1,0.1,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,2.3,15.5,15.9,-0.4,0.4,analiza
@@ -979,8 +979,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,8.3,9.4,9.6,-0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,9.3,9.6,9.3,0.3,0.3,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,10.3,10.3,9.9,0.4,0.4,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,11.3,9.9,10.5,-0.6,0.6,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,12.3,9.4,10.7,-1.3,1.3,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,11.3,9.9,10.3,-0.4,0.4,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_icon_eu,2026-10-14T09:39:03Z,12.3,9.4,10.5,-1.1,1.1,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,0.9,15.4,15.9,-0.5,0.5,analiza
 2026-10-14,2026-10-14 15:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,1.9,15.7,16.4,-0.7,0.7,analiza
 2026-10-14,2026-10-14 16:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,2.9,15.4,16.6,-1.2,1.2,analiza
@@ -990,13 +990,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,6.9,8.8,9.6,-0.8,0.8,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,7.9,9.3,9.3,0.0,0.0,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,8.9,10.2,9.9,0.3,0.3,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,9.9,9.6,10.5,-0.9,0.9,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,10.9,8.9,10.7,-1.8,1.8,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,9.9,9.6,10.3,-0.7,0.7,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_icon_eu,2026-10-14T11:03:18Z,10.9,8.9,10.5,-1.6,1.6,analiza
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,0.9,9.4,9.6,-0.2,0.2,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,1.9,9.9,9.3,0.6,0.6,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,2.9,10.6,9.9,0.7,0.7,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,3.9,10.3,10.5,-0.2,0.2,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,4.9,9.7,10.7,-1.0,1.0,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,3.9,10.3,10.3,0.0,0.0,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_icon_eu,2026-10-14T17:03:52Z,4.9,9.7,10.5,-0.8,0.8,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,0.3,12.1,13.1,-1.0,1.0,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,1.3,13.9,14.8,-0.9,0.9,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,2.3,14.9,15.9,-1.0,1.0,analiza
@@ -1008,8 +1008,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,8.3,10.4,9.6,0.8,0.8,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,9.3,10.6,9.3,1.3,1.3,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,10.3,10.8,9.9,0.9,0.9,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,11.3,10.9,10.5,0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,12.3,11.3,10.7,0.6,0.6,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,11.3,10.9,10.3,0.6,0.6,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T09:39:03Z,12.3,11.3,10.5,0.8,0.8,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,0.9,14.6,15.9,-1.3,1.3,analiza
 2026-10-14,2026-10-14 15:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,1.9,15.0,16.4,-1.4,1.4,analiza
 2026-10-14,2026-10-14 16:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,2.9,15.0,16.6,-1.6,1.6,analiza
@@ -1019,13 +1019,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,6.9,10.0,9.6,0.4,0.4,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,7.9,9.9,9.3,0.6,0.6,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,8.9,10.8,9.9,0.9,0.9,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,9.9,10.9,10.5,0.4,0.4,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,10.9,11.3,10.7,0.6,0.6,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,9.9,10.9,10.3,0.6,0.6,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T11:03:18Z,10.9,11.3,10.5,0.8,0.8,analiza
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,0.9,11.2,9.6,1.6,1.6,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,1.9,11.5,9.3,2.2,2.2,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,2.9,11.8,9.9,1.9,1.9,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,3.9,11.7,10.5,1.2,1.2,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,4.9,11.6,10.7,0.9,0.9,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,3.9,11.7,10.3,1.4,1.4,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_meteofrance_seamless,2026-10-14T17:03:52Z,4.9,11.6,10.5,1.1,1.1,analiza
 2026-10-14,2026-10-14 12:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,0.3,13.6,13.1,0.5,0.5,analiza
 2026-10-14,2026-10-14 13:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,1.3,15.3,14.8,0.5,0.5,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,2.3,16.0,15.9,0.1,0.1,analiza
@@ -1037,8 +1037,8 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,8.3,11.0,9.6,1.4,1.4,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,9.3,11.1,9.3,1.8,1.8,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,10.3,12.6,9.9,2.7,2.7,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,11.3,12.2,10.5,1.7,1.7,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,12.3,11.6,10.7,0.9,0.9,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,11.3,12.2,10.3,1.9,1.9,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T09:39:03Z,12.3,11.6,10.5,1.1,1.1,analiza
 2026-10-14,2026-10-14 14:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,0.9,16.0,15.9,0.1,0.1,analiza
 2026-10-14,2026-10-14 15:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,1.9,16.2,16.4,-0.2,0.2,analiza
 2026-10-14,2026-10-14 16:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,2.9,16.0,16.6,-0.6,0.6,analiza
@@ -1048,13 +1048,13 @@ datum,vreme_lokalno,promenljiva,izvor,izdato_utc,horizont_h,prognoza,stvarno,gre
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,6.9,11.0,9.6,1.4,1.4,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,7.9,11.1,9.3,1.8,1.8,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,8.9,12.6,9.9,2.7,2.7,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,9.9,12.2,10.5,1.7,1.7,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,10.9,11.6,10.7,0.9,0.9,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,9.9,12.2,10.3,1.9,1.9,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T11:03:18Z,10.9,11.6,10.5,1.1,1.1,analiza
 2026-10-14,2026-10-14 20:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,0.9,10.5,9.6,0.9,0.9,analiza
 2026-10-14,2026-10-14 21:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,1.9,12.1,9.3,2.8,2.8,analiza
 2026-10-14,2026-10-14 22:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,2.9,12.4,9.9,2.5,2.5,analiza
-2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,3.9,10.8,10.5,0.3,0.3,analiza
-2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,4.9,9.9,10.7,-0.8,0.8,analiza
+2026-10-14,2026-10-14 23:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,3.9,10.8,10.3,0.5,0.5,analiza
+2026-10-14,2026-10-15 00:00,temperatura,open_meteo_ukmo_seamless,2026-10-14T17:03:52Z,4.9,9.9,10.5,-0.6,0.6,analiza
 2026-10-14,2026-10-14 12:00,vlaznost,met_norway,2026-10-14T09:39:03Z,0.3,55.4,44.0,11.4,11.4,analiza
 2026-10-14,2026-10-14 13:00,vlaznost,met_norway,2026-10-14T09:39:03Z,1.3,49.2,38.0,11.2,11.2,analiza
 2026-10-14,2026-10-14 14:00,vlaznost,met_norway,2026-10-14T09:39:03Z,2.3,45.6,33.0,12.6,12.6,analiza
