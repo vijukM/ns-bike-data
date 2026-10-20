@@ -837,11 +837,11 @@ const MAPA = (() => {
     const kartica = new maplibregl.Popup({ closeButton: true, closeOnClick: false, maxWidth: "300px", focusAfterOpen: false, offset: POMAK });
     kartica.on("close", () => { prikazana = null; if (!menjam && izabrana) odznaci(); });
 
-    function html(serija, stanje, brojTekst) {
+    function html(serija, stanje, brojTekst, ton) {
       const sv = stanje === "nije_postavljen" || stanje === "neispravan" ? " svetli-obod" : "";
       return `<div class="pin${sv}${brojTekst == null ? " bez-broja" : ""}${serija === izabrana ? " izabran" : ""}">
         <div class="telo"><img class="n" src="${NS.pin(stanje)}" alt=""><img class="h" src="${NS.pin("izabrana")}" alt=""></div>
-        <span class="pin-broj">${brojTekst ?? ""}</span><span class="senka"></span></div>`;
+        <span class="pin-broj${ton ? ` ton-${ton}` : ""}">${brojTekst ?? ""}</span><span class="senka"></span></div>`;
     }
     for (const r of s.serije) {
       const e = document.createElement("div");
@@ -880,14 +880,14 @@ const MAPA = (() => {
       const st = stanjePina[serija];
       const p = pinovi[serija];
       const sakriven = st.stanje === "sakriven" || (vidljive && !vidljive.has(serija));
-      p.getElement().innerHTML = html(serija, st.stanje === "sakriven" ? "nije_postavljen" : st.stanje, st.broj);
+      p.getElement().innerHTML = html(serija, st.stanje === "sakriven" ? "nije_postavljen" : st.stanje, st.broj, st.ton);
       p.getElement().style.zIndex = serija === izabrana ? 5 : "";
       if (serija === izabrana && typeof PIN3D !== "undefined" && PIN3D.aktivan()) PIN3D.prikaci(p.getElement().querySelector(".telo"));
       if (sakriven && naMapi[serija]) { p.remove(); naMapi[serija] = false; if (prikazana === serija) { menjam = true; kartica.remove(); menjam = false; } }
       else if (!sakriven && !naMapi[serija] && postavljeni) { p.addTo(m); naMapi[serija] = true; }
     }
-    function postaviPin(serija, stanje, brojTekst, tekst) {
-      stanjePina[serija] = { stanje, broj: brojTekst };
+    function postaviPin(serija, stanje, brojTekst, tekst, ton) {
+      stanjePina[serija] = { stanje, broj: brojTekst, ton };
       tekstovi[serija] = tekst || null;
       osveziPin(serija);
       if (prikazana === serija) { if (tekst) otvoriKarticu(serija); else { menjam = true; kartica.remove(); menjam = false; } }
@@ -940,6 +940,15 @@ const MAPA = (() => {
         else postaviPin(r.serija, "radi", NS.broj(v), `${opis(r)}<br><b>${NS.broj(v)}</b> biciklista, ${oznaka}`);
       }
     }
+    /** Proizvoljne vrednosti na pinovima (npr. „Danas uživo“): {serija: {stanje, broj, tekst, ton: "vise"|"manje"}}. */
+    function prikaziVrednosti(vrednosti) {
+      poziv++;
+      for (const r of s.serije) {
+        const v = vrednosti[r.serija];
+        if (!v) { postaviPin(r.serija, "sakriven", null, null); continue; }
+        postaviPin(r.serija, v.stanje, v.broj, v.tekst ? `${opis(r)}${v.tekst}` : null, v.ton);
+      }
+    }
     /** Fokus: pin ostaje uvećan, mapa ga centrira, otvara se ista kartica kao na hover.
         skok = true samo kad se bira iz spiska/pretrage (pin tada odskoči kad mapa stigne do njega). */
     function fokus(serija, { leti = true, skok = false } = {}) {
@@ -966,7 +975,7 @@ const MAPA = (() => {
     }
     document.addEventListener("tema", () => spremna.then(boje));
     prikaziStanje();
-    return { mapa: m, prikaziStanje, prikaziSat, fokus, izaberi: (x, leti) => fokus(x, { leti, skok: true }), filtriraj, stazeSpremne, TIPOVI_STAZA };
+    return { mapa: m, prikaziStanje, prikaziSat, prikaziVrednosti, fokus, izaberi: (x, leti) => fokus(x, { leti, skok: true }), filtriraj, stazeSpremne, TIPOVI_STAZA };
   }
 
   /** Legenda „Stanje brojača“ sa info-oblačićima + staze. */

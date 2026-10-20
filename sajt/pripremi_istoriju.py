@@ -441,6 +441,20 @@ def _mreza_meseca(godina: int, mesec: int) -> tuple[pd.Timestamp, int, list]:
 
 # ---------------------------------------------------------------- glavno
 
+def prosek_dana(m: pd.DataFrame, praznici: set, od: date = date(2024, 9, 1)) -> dict:
+    """Za stranu „Danas uživo“: prosečan grad po lokalnom satu za isti dan u nedelji i mesec (poslednje 2 godine,
+    bez praznika). Grad = zbir proseka serija (prosek svake serije po satu samo iz validnih sati)."""
+    x = m[(m["datum"] >= od) & m["y_A"].notna() & ~m["datum"].isin(praznici)]
+    po_seriji = x.groupby(["stanica_id", "dan_u_nedelji", "mesec", "sat"])["y_A"].mean()
+    grad = po_seriji.groupby(level=["dan_u_nedelji", "mesec", "sat"]).sum()
+    out = {}
+    for (dn, mes), g in grad.groupby(level=["dan_u_nedelji", "mesec"]):
+        v = g.droplevel([0, 1]).reindex(range(24))
+        out[f"{dn}-{mes}"] = [None if pd.isna(a) else int(round(a)) for a in v]
+    return {"opis": "prosečan broj biciklista u gradu po lokalnom satu (zbir proseka serija), isti dan u nedelji "
+                    f"(pon = 0) i mesec, {datum_sr(od)} – {datum_sr(DO)}, bez praznika", "grad": out}
+
+
 def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> dict:
     m = ucitaj_master(master)
     w = ucitaj_meteo(meteo)
@@ -594,6 +608,7 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ) -> 
         "stanje_period": f"{datum_sr(date.fromordinal(DO.toordinal() - DANA_STANJE + 1))} – {datum_sr(DO)}", "dani_bez_24h": dst, "serije": redovi,
         "meseci": [str(p) for p in pd.period_range(OD, DO, freq="M")],
     })
+    velicine["prosek_dana.json"] = _pisi(izlaz / "prosek_dana.json", prosek_dana(m, praznici))
     return velicine
 
 
