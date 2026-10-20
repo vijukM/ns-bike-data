@@ -1028,3 +1028,12 @@ html.bez-skrola { overflow: hidden; }
 .danas-tabela-omot thead th { position: sticky; top: 0; z-index: 1; background: var(--bg-card); }
 .danas-kontrole select { max-width: 280px; }
 @media (max-width: 640px) { .danas-kontrole { flex: 1 1 100%; } .danas-kontrole select { max-width: 100%; width: 100%; } }
+/* Danas: info oblačići se ne seku (KPI kartica i tabela sa skrolom) */
+.danas .kpi { overflow: visible; }
+.danas .kpi::after { border-radius: inherit; }
+.danas .kpi .info::after { left: auto; right: -12px; transform: none; }
+.danas-tabela th .info::after { bottom: auto; top: calc(100% + 8px); left: auto; right: -10px; transform: none; text-transform: none; letter-spacing: 0; }
+.danas-tabela th[data-sort] { cursor: pointer; }
+.danas-tabela th[data-sort]:hover, .danas-tabela th.sortirano { color: var(--t-base); }
+.danas-tabela th.bez-sorta { cursor: default; }
+.danas-tabela .strelica-sort { margin-left: 4px; font-size: 9px; color: var(--primary); }
