@@ -1024,3 +1024,7 @@ html.bez-skrola { overflow: hidden; }
 .danas-mini-k .vrednost { font: 700 26px/1.1 "Inter Tight", sans-serif; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 @media (max-width: 1200px) { .danas-mreza, .danas-mreza.dole { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .danas-mini { grid-template-columns: minmax(0, 1fr); } .danas-mapa { height: 340px; } }
+.danas-tabela-omot { max-height: 470px; overflow-y: auto; overscroll-behavior: contain; border-radius: 10px; }
+.danas-tabela-omot thead th { position: sticky; top: 0; z-index: 1; background: var(--bg-card); }
+.danas-kontrole select { max-width: 280px; }
+@media (max-width: 640px) { .danas-kontrole { flex: 1 1 100%; } .danas-kontrole select { max-width: 100%; width: 100%; } }
