@@ -164,3 +164,15 @@ def test_otkaz_smera_kratak_niz_ne_dira():
 
 def test_dvosmerne_konstanta():
     assert set(STARI_DVOSMERNI) == {"25a", "26", "28", "40a", "40b", "41", "46a", "46b", "47", "51a", "51b"}
+
+
+def test_scraper_u_oznaku_modela_utc1():
+    from prognoza_biciklista.priprema import u_utc1
+    # leto (CEST): lokalni sat 07–08 = UTC 05–06 → ts = 07:00 (UTC+1); zima (CET): lokalni 07–08 = UTC 06–07 → ts = 08:00
+    # jesenji prelaz: dva lokalna sata 02:00 su dva različita UTC+1 sata (nema duplikata)
+    df = pd.DataFrame({"ts_utc": ["2026-10-19 06:00:00+00:00", "2026-11-19 07:00:00+00:00",
+                                  "2026-10-25 00:00:00+00:00", "2026-10-25 01:00:00+00:00", "2026-10-18 23:00:00+00:00"]})
+    x = u_utc1(df)
+    assert x["ts"].astype(str).tolist() == ["2026-10-19 07:00:00", "2026-11-19 08:00:00", "2026-10-25 01:00:00",
+                                            "2026-10-25 02:00:00", "2026-10-19 00:00:00"]
+    assert x["datum"].tolist()[-1] == "2026-10-18" and x["sat"].tolist() == [7, 8, 1, 2, 24]
