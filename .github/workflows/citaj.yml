@@ -58,6 +58,11 @@ jobs:
         continue-on-error: true
         run: python -m sajt.uzivo
 
+      - name: Sajt — „Danas uživo“ (docs/data/danas.json)
+        if: always()
+        continue-on-error: true
+        run: python -m sajt.danas
+
       - name: Commit i push podataka
         if: always()
         run: |
@@ -65,6 +70,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add podaci
           [ -e docs/data/uzivo.json ] && git add docs/data/uzivo.json
+          [ -e docs/data/danas.json ] && git add docs/data/danas.json
           if git diff --cached --quiet; then echo "nema promena"; exit 0; fi
           git commit -q -m "podaci: čitanje $(TZ=Europe/Belgrade date '+%Y-%m-%d %H:%M')"
           for i in 1 2 3 4; do

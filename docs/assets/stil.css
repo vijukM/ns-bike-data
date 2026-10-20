@@ -987,3 +987,40 @@ html.bez-skrola { overflow: hidden; }
 .red-izbora.red-uzivo > span:not(.uzivo-znak) { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .red-izbora .nsb-osvezeno { font-size: 11px; color: var(--t-light); }
 .red-izbora .uzivo-znak { margin-left: auto; }
+/* ---------------------------------------------------------------- Danas uživo */
+.danas-uzivo { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding-bottom: 10px; }
+.danas-osvezeno { font-size: 13px; color: var(--t-muted); }
+.danas-osvezeno b { color: var(--t-base); font-family: "JetBrains Mono", monospace; font-size: 12.5px; }
+.danas-osvezeno .upozorenje { color: var(--warning); font-weight: 600; }
+.danas-traka { width: 110px; height: 4px; border-radius: 4px; background: var(--bg-muted); overflow: hidden; }
+.danas-traka span { display: block; height: 100%; background: var(--primary); transition: width .4s; }
+.danas-obavestenje { padding: 10px 14px; border-radius: 10px; background: var(--warning-soft); color: var(--warning); font-size: 13.5px; }
+.danas-mreza { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.danas-mreza.dole { grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr); }
+.danas-kontrole { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.danas .legenda-grafika { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--t-muted); margin-bottom: 6px; }
+.danas .legenda-grafika > span { display: inline-flex; align-items: center; gap: 6px; }
+.danas .legenda-grafika i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; }
+.danas .legenda-grafika i.isprekidano { height: 0; border-top: 2px dashed; border-radius: 0; }
+.danas .legenda-grafika img { width: 18px; height: 18px; }
+.danas-mapa { height: 420px; }
+.danas-tabela td { padding: 9px 12px; }
+.danas-tabela .stanica-celija { min-width: 170px; }
+.danas-tabela tbody tr { cursor: pointer; }
+.danas-tabela tbody tr.izabran { background: var(--primary-soft); }
+.danas-tabela tbody tr:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.danas-spark { display: block; }
+.danas-spark rect { fill: var(--g-bicikl); }
+.danas-spark rect.buduce { fill: var(--border); }
+.danas-spark rect.nema { fill: var(--danger); opacity: .6; }
+.danas-razlika { display: inline-block; font: 600 11.5px/1 "JetBrains Mono", monospace; padding: 4px 7px; border-radius: 6px; background: var(--bg-muted); color: var(--t-muted); white-space: nowrap; }
+.danas-razlika.ton-vise, .pin .pin-broj.ton-vise { background: var(--success-soft); color: var(--success); border-color: color-mix(in srgb, var(--success) 45%, transparent); }
+.danas-razlika.ton-manje, .pin .pin-broj.ton-manje { background: var(--danger-soft); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
+.danas-stanje { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--t-muted); white-space: nowrap; }
+.danas-stanje i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.danas-mini { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.danas-mini-k { display: grid; gap: 6px; align-content: start; }
+.danas-mini-k .eyebrow { display: flex; align-items: center; gap: 8px; }
+.danas-mini-k .vrednost { font: 700 26px/1.1 "Inter Tight", sans-serif; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+@media (max-width: 1200px) { .danas-mreza, .danas-mreza.dole { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 760px) { .danas-mini { grid-template-columns: minmax(0, 1fr); } .danas-mapa { height: 340px; } }

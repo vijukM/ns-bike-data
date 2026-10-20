@@ -56,6 +56,11 @@ jobs:
         id: prognoza
         run: python -m prognoza_biciklista.izdaj --vrsta ${{ inputs.vrsta }}
 
+      - name: Sajt — „Danas uživo“ sa novom prognozom (docs/data/danas.json)
+        if: always() && steps.prognoza.outcome == 'success'
+        continue-on-error: true
+        run: python -m sajt.danas
+
       - name: Vremenska prognoza vs. stvarno (svi izvori, poslednjih 10 dana)
         if: always() && steps.prognoza.outcome != 'skipped'
         run: python -m vremenska_prognoza.poredjenje

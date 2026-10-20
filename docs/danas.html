@@ -4,21 +4,81 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Danas uživo · Biciklisti Novog Sada</title>
-  <meta name="description" content="Koliko je biciklista izbrojano danas u Novom Sadu — uskoro.">
+  <meta name="description" content="Koliko je biciklista izbrojano danas u Novom Sadu, sat po sat, prema prognozi i prosečnom istom danu.">
   <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark",z=JSON.parse(localStorage.getItem("ns-izgled")||"{}")||{};if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(!z.raspored&&localStorage.getItem("ns-meni-uzak")==="1")z.raspored="uzak";["boja","gustina","raspored","sirina"].forEach(function(k){if(z[k])d.dataset[k]=z[k]});if(z.smer)d.dir=z.smer}catch(e){}</script>
   <link rel="icon" href="assets/slike/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/stil.css?v=202610201300">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+        integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/stil.css?v=202610201400">
 </head>
 <body data-strana="danas" data-putanja="Pregled|Danas uživo">
-  <!-- strana u izradi: sadržaj (skicu i plan) crta assets/uskoro.js -->
-  <main class="sadrzaj" id="sadrzaj"></main>
+  <main class="sadrzaj danas" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow" id="danas-datum">Pregled · danas</span>
+        <h1>Danas <em>uživo</em></h1>
+      </div>
+      <div class="danas-uzivo" id="danas-uzivo" aria-live="polite"></div>
+    </header>
 
+    <p class="danas-obavestenje skriveno" id="danas-obavestenje" role="status"></p>
+
+    <section class="kpi-mreza" id="kpi" aria-label="Danas u brojkama"></section>
+
+    <div class="danas-mreza">
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow" id="g-oznaka">Ceo grad · sat po sat</span><h2 id="g-naslov">Danas prema prognozi i prosečnom istom danu</h2></div>
+          <div class="danas-kontrole">
+            <button type="button" class="dugme malo skriveno" id="nazad-grad">Ceo grad</button>
+            <div class="segment" id="g-prikaz" role="group" aria-label="Prikaz"></div>
+          </div>
+        </div>
+        <div class="legenda-grafika" id="g-legenda"></div>
+        <div class="grafik" id="g-glavni"></div>
+      </section>
+
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow">Mapa danas</span><h2>Koliko je izbrojano na svakom brojaču</h2></div>
+        </div>
+        <div class="mapa danas-mapa" id="mapa" role="region" aria-label="Mapa brojača sa današnjim brojem"></div>
+        <div class="legenda-grafika" id="mapa-legenda"></div>
+      </section>
+    </div>
+
+    <div class="danas-mreza dole">
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow">Vreme danas</span><h2>Temperatura, oblačnost i kiša</h2>
+            <p class="opis" id="vreme-opis"></p></div>
+        </div>
+        <div class="grafik nizak" id="g-vreme"></div>
+      </section>
+
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow" id="t-oznaka">Brojači · danas</span><h2>Svaki brojač prema svojoj prognozi</h2></div>
+          <div class="segment" id="t-redosled" role="group" aria-label="Redosled"></div>
+        </div>
+        <div class="tabela-omot"><table class="tabela danas-tabela" id="tabela"></table></div>
+        <button type="button" class="dugme malo" id="tabela-sve" style="margin-top:12px"></button>
+      </section>
+    </div>
+
+    <section class="danas-mini" id="mini" aria-label="Još o danu"></section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+          integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610201300"></script>
-  <script src="assets/ljuska.js?v=202610201300"></script>
-  <script src="assets/uskoro.js?v=202610201300"></script>
+  <script src="assets/zajednicko.js?v=202610201400"></script>
+  <script src="assets/ljuska.js?v=202610201400"></script>
+  <script src="assets/pin3d.js?v=202610201400"></script>
+  <script src="assets/mapa-modul.js?v=202610201400"></script>
+  <script src="assets/danas.js?v=202610201400"></script>
 </body>
 </html>
