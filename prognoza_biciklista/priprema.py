@@ -4,6 +4,7 @@ očišćeni po istim pravilima kao istorijski master (docs/MODEL_KONTEKST.md, ta
     python -m prognoza_biciklista.priprema        # -> model_podaci/istorija.parquet
 
 Izlaz: stanica_id, ts, y_A, razlog_A na punoj naivnoj satnoj mreži (rupa 01.09–08.10.2026 = NaN, nema_reda).
+Oznaka vremena kao istorija (MODEL_KONTEKST 4b): ts = ts_utc + 1 h (kraj sata, UTC+1 cele godine) — u_utc1.
 Istorija iz paketa se ne menja; pravila se primenjuju samo na nove sate (istorija služi kao kontekst).
 
 Pravila (redosled primene; vrednost → NaN uz razlog):
@@ -239,7 +240,8 @@ def pravilo_iskljucene(df: pd.DataFrame, smerovi: pd.DataFrame) -> int:
 
 def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
              p90: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
-    """istorija: očišćen master iz paketa; novo: master_YYYY-MM iz scrapera; smerovi: satno_smerovi novih dana."""
+    """istorija: očišćen master iz paketa; novo: satno iz scraper-a (u_utc1); smerovi: satno_smerovi (u_utc1).
+    Sve u oznaci modela: ts = kraj sata UTC+1."""
     kolone = ["stanica_id", "ts", "y_A", "razlog_A"]
     ist = istorija[kolone].copy()
     ist["novo"] = False
@@ -266,14 +268,28 @@ def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
     return df[kolone].sort_values(["stanica_id", "ts"]).reset_index(drop=True), izvestaj
 
 
+def u_utc1(df: pd.DataFrame) -> pd.DataFrame:
+    """Scraper (satno) → oznaka modela (MODEL_KONTEKST 4b): ts = ts_utc + 1 h (kraj sata, naivno UTC+1, cele godine);
+    datum i sat se računaju iz te oznake ((ts − 1 h).date(), (ts − 1 h).hour + 1), kao u istoriji.
+    Lokalni ts iz scraper-a (Europe/Belgrade, leti UTC+2) se NE koristi: leti bi bio pomeren 1 h."""
+    df = df.copy()
+    df["ts"] = pd.to_datetime(df["ts_utc"], utc=True).dt.tz_convert(None) + pd.Timedelta(hours=1)
+    pocetak = df["ts"] - pd.Timedelta(hours=1)
+    df["datum"] = pocetak.dt.strftime("%Y-%m-%d")
+    df["sat"] = pocetak.dt.hour + 1
+    return df
+
+
 def _ucitaj_novo(podaci: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
-    mesecni = sorted(podaci.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/master_*.parquet"))
+    """Novi sati iz scraper-a u oznaci modela (UTC+1): mesečni satno_YYYY-MM.parquet (ima ts_utc) i satno_smerovi."""
+    mesecni = sorted(podaci.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/satno_[0-9][0-9][0-9][0-9]-[0-9][0-9].parquet"))
     if not mesecni:
-        raise SystemExit("nema podaci/YYYY/MM/master_YYYY-MM.parquet — prvo pokrenuti scraper.satno")
-    novo = pd.concat([pd.read_parquet(f) for f in mesecni], ignore_index=True)
+        raise SystemExit("nema podaci/YYYY/MM/satno_YYYY-MM.parquet — prvo pokrenuti scraper.satno")
+    novo = u_utc1(pd.concat([pd.read_parquet(f) for f in mesecni], ignore_index=True))
+    novo["razlog_A"] = novo["razlog_A"].fillna("ok")
     sm = sorted(podaci.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]/satno_smerovi.csv"))
-    smerovi = pd.concat([pd.read_csv(f, dtype={"direction": str, "serija": str}) for f in sm],
-                        ignore_index=True) if sm else pd.DataFrame()
+    smerovi = u_utc1(pd.concat([pd.read_csv(f, dtype={"direction": str, "serija": str}) for f in sm],
+                               ignore_index=True)) if sm else pd.DataFrame()
     return novo, smerovi
 
 
