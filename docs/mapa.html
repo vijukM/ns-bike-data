@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610201100">
+  <link rel="stylesheet" href="assets/stil.css?v=202610201200">
 </head>
 <body data-strana="mapa" data-putanja="Mapa|Mapa brojača">
   <script>if (/rezim=dan/.test(location.search)) { document.body.dataset.strana = "dan"; document.body.dataset.putanja = "Mapa|Dan na mapi"; }</script>
@@ -20,12 +20,9 @@
       <div>
         <span class="eyebrow">Mapa · 46 brojača · 27 mesta</span>
         <h1>Mapa brojača</h1>
-        <p class="uvod" id="uvod">Stanje svakog brojača, biciklističke staze iz OpenStreetMap-a i — u režimu
-          <b>dan na mapi</b> — broj biciklista na svakom brojaču sat po sat.</p>
+        <p class="uvod" id="uvod">Gde se nalaze brojači, da li rade i koliko biciklista prolazi pored njih iz sata u sat.</p>
       </div>
     </header>
-
-    <section class="kpi-mreza" id="kpi"></section>
 
     <section class="kartica pojava">
       <div class="mapa-raspored">
@@ -60,7 +57,7 @@
           <div class="spisak-glava eyebrow"><span>Stanica</span><span id="spisak-kolona"></span></div>
           <div class="spisak" id="spisak" role="list"></div>
           <div class="krofna-okvir">
-            <span class="eyebrow">Stanje · poslednjih 30 dana<span id="stanje-period"></span></span>
+            <span class="eyebrow">Stanje brojača<span id="stanje-period"></span></span>
             <div class="grafik krofna" id="krofna" title="Klik na deo grafika filtrira mapu i spisak"></div>
           </div>
         </aside>
@@ -73,10 +70,10 @@
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610201100"></script>
-  <script src="assets/ljuska.js?v=202610201100"></script>
-  <script src="assets/pin3d.js?v=202610201100"></script>
-  <script src="assets/mapa-modul.js?v=202610201100"></script>
-  <script src="assets/mapa.js?v=202610201100"></script>
+  <script src="assets/zajednicko.js?v=202610201200"></script>
+  <script src="assets/ljuska.js?v=202610201200"></script>
+  <script src="assets/pin3d.js?v=202610201200"></script>
+  <script src="assets/mapa-modul.js?v=202610201200"></script>
+  <script src="assets/mapa.js?v=202610201200"></script>
 </body>
 </html>

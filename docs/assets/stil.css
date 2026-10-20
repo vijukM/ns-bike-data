@@ -753,7 +753,7 @@ a.rekord:hover, a.cinjenica:hover { border-color: var(--kpi-boja, var(--primary)
 #prilagodi-dugme svg { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
 #prilagodi-dugme:hover svg { transform: rotate(35deg); }
 html.bez-skrola { overflow: hidden; }
-.prilagodi-pozadina { position: fixed; inset: 0; z-index: 1900; background: var(--overlay); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.prilagodi-pozadina { position: fixed; inset: 0; z-index: 1900; background: transparent; opacity: 0; pointer-events: none; transition: opacity .25s; }
 .prilagodi-pozadina.otvoren { opacity: 1; pointer-events: auto; }
 .prilagodi { position: fixed; top: 0; bottom: 0; right: 0; z-index: 1950; width: min(408px, 100vw); display: flex; flex-direction: column;
   background: var(--bg-card); border-left: 1px solid var(--border); box-shadow: -18px 0 40px -12px rgb(0 0 0 / 0.35);
@@ -937,7 +937,11 @@ html.bez-skrola { overflow: hidden; }
 .cip-strelica:hover { color: var(--t-base); }
 .parking-grupa:has(.cip-parking.aktivno) .cip-strelica { color: var(--t-base); border-color: #2f7de1; background: color-mix(in srgb, #2f7de1 12%, transparent); }
 .panel.tipovi-parkinga { left: 0; right: auto; top: calc(100% + 6px); width: 280px; padding: 10px; }
-.tipovi-dno { display: flex; gap: 6px; justify-content: flex-end; padding: 8px 4px 0; margin-top: 6px; border-top: 1px solid var(--border); }
+.panel-glava { display: flex; align-items: center; gap: 8px; padding: 0 2px 8px; margin-bottom: 4px; border-bottom: 1px solid var(--border); }
+.panel-x { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 1px solid var(--border); border-radius: 7px;
+  background: transparent; color: var(--t-muted); cursor: pointer; flex: none; }
+.panel-x:hover, .panel-x:focus-visible { color: var(--t-base); background: var(--bg-hover); outline: none; }
+.panel-x svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
 [dir="rtl"] .panel.tipovi-parkinga { left: auto; right: 0; }
 @media (max-width: 960px) { .panel.tipovi-parkinga { position: absolute; left: 0; right: auto; top: calc(100% + 6px); width: min(300px, calc(100vw - 40px)); } }
 /* kartica NS bike stanice */
