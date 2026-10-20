@@ -462,14 +462,9 @@ const LJ = (() => {
       <div class="padajuce"><button class="ikonica-dugme" id="obavestenja-dugme" aria-label="Obaveštenja">${ik("bell")}<span class="brojac skriveno"></span></button></div>
       <button class="ikonica-dugme" id="tema-dugme" aria-label="Svetla ili tamna tema" title="Svetla / tamna tema">${ik(tema() === "dark" ? "sun" : "moon")}</button>
       <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>`;
-    const podnozje = document.createElement("footer");
-    podnozje.className = "podnozje";
-    podnozje.innerHTML = `Brojači: UGZINS / Mikrobit (očišćeni satni podaci iz master rada, FTN Novi Sad) · vreme: Open-Meteo ·
-      staze i podloga: © OpenStreetMap saradnici · grafici: Apache ECharts, mapa: MapLibre GL ·
-      izgled po uzoru na Adminator (MIT). Sati su po lokalnom vremenu (Europe/Belgrade).`;
 
     main.parentNode.insertBefore(ljuska, main);
-    glavno.append(gornja, gornjiMeni(strana), main, podnozje);
+    glavno.append(gornja, gornjiMeni(strana), main);
     ljuska.append(meni, glavno);
 
     // događaji

@@ -1,4 +1,4 @@
-/* Strana mape: KPI (brojači, staze u km), velika mapa sa spiskom stanica (pretraga, filter po stanju)
+/* Strana mape: velika mapa sa spiskom stanica (pretraga, filter po stanju)
    i režim „dan na mapi“ (datum, klizač sata, ▶, satni grafik grada). URL: ?rezim=dan&dan=2025-09-05&sat=7&id=23a */
 "use strict";
 
@@ -13,7 +13,6 @@
       naFokus: (serija) => { izabrana = serija; crtajSpisak(); if (serija) skrolujDo(serija); },
     });
     MAPA.legenda(document.getElementById("legenda-mape"), s);
-    kpi(s, ctl);
     document.getElementById("stanje-period").innerHTML = MAPA.info(`Stanje svakog brojača računa se iz poslednjih 30 dana sa podacima (${s.stanje_period}).`);
 
     // spisak + filter (filter i pretraga važe i za pinove na mapi)
@@ -27,16 +26,17 @@
     filterEl.innerHTML = [["sve", "Sve"], ...["radi", "ne_radi", "delimicno", "neispravan"].map((k) => [k, s.stanja[k]])].filter(([k]) => brojevi[k])
       .map(([k, t]) => `<button class="cip" data-k="${k}" aria-pressed="${k === filter}" style="--boja:var(--primary)"
         title="${k === "sve" ? "svi brojači" : (s.stanja_opis || {})[k] || ""}">${k === "sve" ? "" : `<img src="${NS.pin(k)}" alt="">`}${t}<span class="broj">${brojevi[k]}</span></button>`).join("");
+    // filter: null = nijedan (klik na već uključen filter ga gasi, pa se ne prikazuje nijedan brojač)
     function postaviFilter(k) {
       filter = k;
       filterEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.k === k)));
       crtajSpisak();
     }
-    filterEl.addEventListener("click", (e) => { const d = e.target.closest("button"); if (d) postaviFilter(d.dataset.k); });
+    filterEl.addEventListener("click", (e) => { const d = e.target.closest("button"); if (d) postaviFilter(d.dataset.k === filter ? null : d.dataset.k); });
     document.getElementById("spisak-pretraga").addEventListener("input", (e) => { upit = bez(e.target.value); crtajSpisak(); });
     function crtajSpisak() {
       const el = document.getElementById("spisak");
-      const red = s.serije.filter((r) => (filter === "sve" || r.stanje === filter) && (!upit || bez(`${r.serija} ${r.naziv} ${r.smerovi.join(" ")}`).includes(upit)));
+      const red = s.serije.filter((r) => filter && (filter === "sve" || r.stanje === filter) && (!upit || bez(`${r.serija} ${r.naziv} ${r.smerovi.join(" ")}`).includes(upit)));
       ctl.filtriraj(filter === "sve" && !upit ? null : new Set(red.map((r) => r.serija)));
       document.getElementById("spisak-kolona").innerHTML = vrednostiSata
         ? `u izabranom satu${MAPA.info("broj biciklista koji je brojač izbrojao u izabranom satu izabranog dana")}`
@@ -47,7 +47,7 @@
         return `<button type="button" data-s="${r.serija}" class="${r.serija === izabrana ? "izabran" : ""}" role="listitem">
           <img src="${NS.pin(r.serija === izabrana ? "izabrana" : r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}<small>${r.smerovi[0]}</small></span>
           <span class="vrednost-reda" title="${vrednostiSata ? "biciklista u izabranom satu" : "prosek biciklista dnevno (12 meseci)"}">${desno}</span></button>`;
-      }).join("") || '<p class="sitno" style="padding:10px">Nema stanica za ovaj filter.</p>';
+      }).join("") || `<p class="sitno" style="padding:10px">${filter ? "Nema stanica za ovaj filter." : "Nijedan filter nije uključen — klikni na neki iznad."}</p>`;
     }
     const skrolujDo = (serija) => {
       const d = document.querySelector(`#spisak button[data-s="${CSS.escape(serija)}"]`);
@@ -81,29 +81,6 @@
     NS.greska(main, e);
   }
 })();
-
-async function kpi(s, ctl) {
-  const radi = s.serije.filter((r) => r.stanje === "radi").length;
-  const mesta = new Set(s.serije.map((r) => r.mesto)).size;
-  const el = document.getElementById("kpi");
-  const k = (boja, ikona, naslov, delta, id, dole) => `<div class="kpi ${boja} pojava"><div class="vrh"><span class="kvadrat">${LJ.ik(ikona)}</span>
-    <span class="naslov">${naslov}</span><span class="kpi-delta">${delta}</span></div><div class="vrednost" id="${id}">—</div><div class="dole">${dole}</div></div>`;
-  el.innerHTML = [
-    k("c-plava", "pin", "Brojača", `${mesta} mesta`, "k-brojaci", "serija sa satnim podacima"),
-    k("c-zelena", "activity", "Rade", "30 dana", "k-radi", `<b>${s.stanje_period}</b>`),
-    k("c-teal", "route", "Biciklističke staze", "OSM", "k-staze", "izdvojene staze, trake i zajedničke"),
-    k("c-ljubicasta", "layers", "Izdvojene staze", "od ukupno", "k-izdvojene", "odvojene od kolovoza"),
-  ].join("");
-  LJ.pojave(el);
-  LJ.brojanje(document.getElementById("k-brojaci"), s.serije.length, (x) => String(Math.round(x)));
-  LJ.brojanje(document.getElementById("k-radi"), radi, (x) => `${Math.round(x)}<sup>/${s.serije.length}</sup>`);
-  const km = await ctl.stazeSpremne;
-  if (km) {
-    const ukupno = km.s + km.t + km.z;
-    LJ.brojanje(document.getElementById("k-staze"), ukupno, (x) => `${NS.broj(Math.round(x))}<sup>km</sup>`);
-    LJ.brojanje(document.getElementById("k-izdvojene"), 100 * km.s / ukupno, (x) => `${Math.round(x)}<sup>%</sup>`);
-  }
-}
 
 // ---------------------------------------------------------------- dan na mapi
 function danNaMapi(s, g, ctl, naPromenu) {
