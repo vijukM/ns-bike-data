@@ -937,8 +937,8 @@ html.bez-skrola { overflow: hidden; }
 .cip-strelica:hover { color: var(--t-base); }
 .parking-grupa:has(.cip-parking.aktivno) .cip-strelica { color: var(--t-base); border-color: #2f7de1; background: color-mix(in srgb, #2f7de1 12%, transparent); }
 .panel.tipovi-parkinga { left: 0; right: auto; top: calc(100% + 6px); width: 280px; padding: 10px; }
-.panel-glava { display: flex; align-items: center; gap: 8px; padding: 0 2px 8px; margin-bottom: 4px; border-bottom: 1px solid var(--border); }
-.panel-x { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 1px solid var(--border); border-radius: 7px;
+.panel.tipovi-parkinga { padding-top: 34px; }
+.panel-x { position: absolute; top: 6px; right: 6px; display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 1px solid var(--border); border-radius: 7px;
   background: transparent; color: var(--t-muted); cursor: pointer; flex: none; }
 .panel-x:hover, .panel-x:focus-visible { color: var(--t-base); background: var(--bg-hover); outline: none; }
 .panel-x svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }

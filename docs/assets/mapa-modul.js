@@ -683,13 +683,12 @@ const MAPA = (() => {
       if (da) await ucitajParking();
       vidljiv("parking", da);
     }
-    /** zaglavlje padajućeg panela: X (zatvori) u gornjem levom uglu + naslov */
-    const glavaPanela = (naslov) => `<div class="panel-glava"><button type="button" class="panel-x" data-zatvori aria-label="Zatvori" title="Zatvori">${LJ.ik("x")}</button>
-      <span class="eyebrow">${naslov}</span></div>`;
+    /** dugme X (zatvori) u gornjem desnom uglu padajućeg panela, bez naslova */
+    const glavaPanela = () => `<button type="button" class="panel-x" data-zatvori aria-label="Zatvori" title="Zatvori">${LJ.ik("x")}</button>`;
     function crtajTipoveParkinga() {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".grupa-tacaka .tipovi-parkinga");
       if (!lista) return;
-      lista.innerHTML = glavaPanela("Na mapi") + Object.entries(TACKE).map(([t, ime]) =>
+      lista.innerHTML = glavaPanela() + Object.entries(TACKE).map(([t, ime]) =>
         `<label class="red-izbora${t === "i" ? " red-uzivo" : ""}"><input type="checkbox" data-t="${t}" ${parkingTipovi.has(t) ? "checked" : ""}><img src="${ikonaParkinga(t).toDataURL()}" alt="">
           ${t === "i" ? `<span>${ime}<small class="nsb-osvezeno">${nsbOsvezenoTekst()}</small></span>
             <span class="uzivo-znak sveze" title="Broj slobodnih bicikala na NS bike stanicama preuzima se uživo i osvežava na minut">${LJ.ODASILJAC}<b>UŽIVO</b></span>`
@@ -733,7 +732,7 @@ const MAPA = (() => {
       const sPanel = sGrupa.querySelector(".tipovi-staza"), sStrelica = sGrupa.querySelector(".cip-strelica");
       let kmStaza = null;
       const crtajStaze = () => {
-        sPanel.innerHTML = glavaPanela("Biciklističke staze") + VRSTE_STAZA.map((t) =>
+        sPanel.innerHTML = glavaPanela() + VRSTE_STAZA.map((t) =>
           `<label class="red-izbora red-staze"><input type="checkbox" data-s="${t}" ${stazeTipovi.has(t) ? "checked" : ""}>${linijaStaze(t)}
             <span><b>${OPIS_STAZA[t][0]}</b>${kmStaza ? ` <span class="mono sitno">${NS.broj(Math.round(kmStaza[t]))} km</span>` : ""}<small>${OPIS_STAZA[t][1]}</small></span></label>`).join("");
       };
