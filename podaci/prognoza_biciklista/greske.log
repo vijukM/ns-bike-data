@@ -1,0 +1,1 @@
+2026-10-20T23:03:48Z	zvanicna	ReadTimeout: HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=30)
