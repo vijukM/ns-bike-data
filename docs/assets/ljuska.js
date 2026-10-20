@@ -518,5 +518,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { MENI, ik, IK, info, uzivoZnak, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();

@@ -657,12 +657,20 @@ const MAPA = (() => {
     }
     // stanje NS bike stanica uživo (isti javni izvor koji koristi ns-bike.web.app): preuzima se čim se uključe NS bike stanice
     // (da kartica ne čeka) i osvežava na minut dok su uključene i stranica je vidljiva
-    let nsbStanje = null, nsbVreme = 0, nsbTajmer = null;
+    let nsbStanje = null, nsbVreme = 0, nsbTajmer = null, nsbOsvezeno = null;
+    // red „Iznajmljivanje bicikala“ u panelu: oznaka UŽIVO i vreme poslednjeg uspešnog osvežavanja
+    const nsbOsvezenoTekst = () => (nsbOsvezeno
+      ? `osveženo u ${nsbOsvezeno.toLocaleTimeString("sr-Latn-RS", { hour: "2-digit", minute: "2-digit" })}`
+      : "osvežava se na minut");
+    function osveziNSBikeRed() {
+      const el = opcije.stazeEl && opcije.stazeEl.querySelector(".grupa-tacaka .nsb-osvezeno");
+      if (el) el.textContent = nsbOsvezenoTekst();
+    }
     function stanjeNSBike() {
       if (nsbStanje && Date.now() - nsbVreme < 60000) return nsbStanje;
       nsbVreme = Date.now();
       nsbStanje = fetch("https://app.nsbike.rs/stanje", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
-        .then((d) => { if (!d) nsbVreme = 0; return d; });
+        .then((d) => { if (d) { nsbOsvezeno = new Date(); osveziNSBikeRed(); } else nsbVreme = 0; return d; });
       return nsbStanje;
     }
     function pratiNSBike(da) {
@@ -679,8 +687,10 @@ const MAPA = (() => {
       const lista = opcije.stazeEl && opcije.stazeEl.querySelector(".grupa-tacaka .tipovi-parkinga");
       if (!lista) return;
       lista.innerHTML = Object.entries(TACKE).map(([t, ime]) =>
-        `<label class="red-izbora"><input type="checkbox" data-t="${t}" ${parkingTipovi.has(t) ? "checked" : ""}><img src="${ikonaParkinga(t).toDataURL()}" alt="">
-          <span>${ime}</span></label>`).join("") +
+        `<label class="red-izbora${t === "i" ? " red-uzivo" : ""}"><input type="checkbox" data-t="${t}" ${parkingTipovi.has(t) ? "checked" : ""}><img src="${ikonaParkinga(t).toDataURL()}" alt="">
+          ${t === "i" ? `<span>${ime}<small class="nsb-osvezeno">${nsbOsvezenoTekst()}</small></span>
+            <span class="uzivo-znak sveze" title="Broj slobodnih bicikala na NS bike stanicama preuzima se uživo i osvežava na minut">${LJ.ODASILJAC}<b>UŽIVO</b></span>`
+          : `<span>${ime}</span>`}</label>`).join("") +
         `<div class="tipovi-dno"><button type="button" class="dugme malo" data-svi="1">Sve</button><button type="button" class="dugme malo" data-svi="0">Ništa</button></div>`;
     }
     function postaviTipove(skup) {

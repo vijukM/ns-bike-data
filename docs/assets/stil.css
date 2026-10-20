@@ -978,3 +978,8 @@ html.bez-skrola { overflow: hidden; }
 .mapa-alat .izbor-podloge .nijanse { position: absolute; top: -7px; right: 0; gap: 2px; padding: 1px; }
 .mapa-alat .izbor-podloge .nijansa { width: 22px; height: 22px; padding: 2px; }
 .mapa-alat .segment button { padding: 6px 9px; }
+/* panel „Na mapi“: NS bike stanice su uživo (oznaka i vreme poslednjeg osvežavanja) */
+.grupa-tacaka .panel.tipovi-parkinga { width: 310px; }
+.red-izbora.red-uzivo > span:not(.uzivo-znak) { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.red-izbora .nsb-osvezeno { font-size: 11px; color: var(--t-light); }
+.red-izbora .uzivo-znak { margin-left: auto; }
