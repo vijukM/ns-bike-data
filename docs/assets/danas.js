@@ -14,7 +14,7 @@
     neispravan: ["neispravan", "var(--t-light)", "neispravan"],
   };
   let D = null, s = null, ctl = null;
-  let izabrana = null, zbirno = false, redosled = "danas", sve = false;
+  let izabrana = null, zbirno = false, redosled = "danas";
   const g = {};
 
   async function ucitaj() {
@@ -32,6 +32,26 @@
   const prognoza = () => D.prognoza.zvanicna || D.prognoza.najnovija;
   const najnovija = () => D.prognoza.najnovija || D.prognoza.zvanicna;
   const oznake = () => NS.satneOznake(Date.parse(D.pocetak_utc), 0, D.sati.length);
+
+  /** X osa po satima: stubić zauzima ceo sat (između oznaka h i h+1), oznake stoje na granicama sati.
+      Osa 0 = kategorije (stubići, linije u sredini sata, hover po satu); osa 1 = vrednosti 0…n samo za oznake i „sada“. */
+  function osaSati(b, korak = 2) {
+    const n = D.sati.length, kraj = String((+D.sati[n - 1] + 1) % 24).padStart(2, "0");
+    return [
+      { type: "category", data: D.sati, boundaryGap: true, axisLine: { lineStyle: { color: b.osa } },
+        axisTick: { show: true, alignWithLabel: false, interval: 0, lineStyle: { color: b.osa } }, axisLabel: { show: false } },
+      { type: "value", min: 0, max: n, interval: korak, position: "bottom", axisLine: { show: false }, axisTick: { show: false },
+        splitLine: { show: false }, axisPointer: { show: false }, triggerEvent: false,
+        axisLabel: { color: b["ink-3"], fontSize: 10.5, fontFamily: "JetBrains Mono", formatter: (v) => (v >= n ? (kraj === "00" ? "24" : kraj) : D.sati[v]) } },
+    ];
+  }
+  /** Prazna serija na brojčanoj osi: vertikalna linija „sada“ na granici poslednjeg završenog sata. */
+  function linijaSada(b, saOznakom = true) {
+    if (D.sati_gotovo >= D.sati.length) return [];
+    return [{ type: "line", xAxisIndex: 1, data: [], silent: true, tooltip: { show: false },
+      markLine: { symbol: "none", silent: true, animation: false, data: [{ xAxis: D.sati_gotovo }], lineStyle: { color: b["ink-3"], type: "solid", width: 1 },
+        label: saOznakom ? { formatter: "sada", color: b["ink-2"], fontFamily: "JetBrains Mono", fontSize: 11, position: "insideEndTop" } : { show: false } } }];
+  }
 
   /** Izbrojano prema prognozi na istim satima (prošli sati sa obe vrednosti). */
   function poredjenje(stv, pr) {
@@ -116,7 +136,7 @@
     const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"] };
     document.getElementById("g-oznaka").textContent = izabrana ? `Brojač ${izabrana} · ${(s.serije.find((r) => r.serija === izabrana) || {}).naziv || ""}` : `Ceo grad · ${zbirno ? "zbirno od ponoći" : "sat po sat"}`;
     document.getElementById("g-naslov").textContent = izabrana ? "Danas prema prognozi za ovaj brojač" : "Danas prema prognozi i prosečnom istom danu";
-    document.getElementById("nazad-grad").classList.toggle("skriveno", !izabrana);
+    document.getElementById("g-izbor").value = izabrana || "";
     document.getElementById("g-legenda").innerHTML = [
       `<span><i style="background:${boja.stv}"></i>izbrojano</span>`,
       n.pr ? `<span><i style="background:${boja.pr}"></i>prognoza${P ? ` (${D.prognoza.zvanicna ? "iz ponoći" : `izdata u ${sat(P.izdato_utc)}`})` : ""}</span>` : "",
@@ -126,9 +146,8 @@
     ].join("");
     const serije = [
       { name: "izbrojano", type: zbirno ? "line" : "bar", data: n.stv, barMaxWidth: 22, itemStyle: { color: boja.stv, borderRadius: [4, 4, 0, 0] },
-        lineStyle: { color: boja.stv, width: 3 }, symbol: "none", areaStyle: zbirno ? { color: boja.stv, opacity: 0.14 } : undefined, z: 3,
-        markLine: D.sati_gotovo < D.sati.length ? { symbol: "none", silent: true, animation: false, data: [{ xAxis: D.sati_gotovo }],
-          lineStyle: { color: b["ink-3"], type: "solid", width: 1 }, label: { formatter: "sada", color: b["ink-2"], fontFamily: "JetBrains Mono", fontSize: 11, position: "insideEndTop" } } : undefined },
+        lineStyle: { color: boja.stv, width: 3 }, symbol: "none", areaStyle: zbirno ? { color: boja.stv, opacity: 0.14 } : undefined, z: 3 },
+      ...linijaSada(b),
     ];
     if (n.pr) serije.push({ name: "prognoza", type: "line", data: n.pr, symbol: "none", smooth: 0.3, lineStyle: { color: boja.pr, width: 2.5 }, itemStyle: { color: boja.pr }, z: 4 });
     if (n.q) serije.push(
@@ -139,13 +158,15 @@
     const o = NS.osnova(b);
     return { ...o,
       grid: { left: 52, right: 12, top: 18, bottom: 28 },
-      tooltip: { ...o.tooltip, formatter: (ps) => {
+      tooltip: { ...o.tooltip, axisPointer: { type: "shadow", shadowStyle: { color: b["ink-3"], opacity: 0.12 } }, formatter: (ps) => {
+        ps = ps.filter((p) => p.axisIndex !== 1 && p.seriesType !== undefined && p.dataIndex != null);
+        if (!ps.length) return "";
         const i = ps[0].dataIndex;
         return `<b>${x[i].oznaka}</b><br>` + ps.filter((p) => !["q10", "int"].includes(p.seriesName)).map((p) => `${p.marker}${p.seriesName}: <b>${
           p.value == null ? (p.seriesName === "izbrojano" ? (i >= D.sati_gotovo ? "sat još traje" : "nema podataka") : "—") : NS.broj(Math.round(p.value))}</b>`).join("<br>")
           + (n.q && !zbirno && P.grad.q10[i] != null ? `<br><span style="opacity:.7">interval ${NS.broj(Math.round(P.grad.q10[i]))} – ${NS.broj(Math.round(P.grad.q90[i]))}</span>` : "");
       } },
-      xAxis: { type: "category", data: x.map((o2) => String(o2.sat).padStart(2, "0")), ...NS.osaX(b, { axisLabel: { color: b["ink-3"], fontSize: 11, interval: 1, fontFamily: "JetBrains Mono" } }) },
+      xAxis: osaSati(b),
       yAxis: { type: "value", ...NS.osaY(b) },
       series: serije,
     };
@@ -158,17 +179,18 @@
     const o = NS.osnova(b);
     return { ...o,
       grid: { left: 36, right: 40, top: 14, bottom: 26 },
-      tooltip: { ...o.tooltip, formatter: (ps) => `<b>${x[ps[0].dataIndex].oznaka}</b><br>` + ps.map((p) => `${p.marker}${p.seriesName}: <b>${
+      tooltip: { ...o.tooltip, axisPointer: { type: "shadow", shadowStyle: { color: b["ink-3"], opacity: 0.12 } },
+        formatter: (ps) => (ps = ps.filter((p) => p.axisIndex !== 1 && p.dataIndex != null)).length === 0 ? "" : `<b>${x[ps[0].dataIndex].oznaka}</b><br>` + ps.map((p) => `${p.marker}${p.seriesName}: <b>${
         p.value == null ? "—" : p.seriesName === "temperatura" ? `${NS.dec(p.value)} °C` : p.seriesName === "kiša" ? `${NS.dec(p.value)} mm` : `${Math.round(p.value)} %`}</b>`).join("<br>") },
-      xAxis: { type: "category", data: x.map((o2) => String(o2.sat).padStart(2, "0")), ...NS.osaX(b, { axisLabel: { color: b["ink-3"], fontSize: 10.5, interval: 2, fontFamily: "JetBrains Mono" } }) },
+      xAxis: osaSati(b, 3),
       yAxis: [{ type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value}°" } }) },
         { type: "value", min: 0, max: 100, ...NS.osaY(b, { splitLine: { show: false }, axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value} %" } }) }],
       series: [
         { name: "oblačnost", type: "bar", yAxisIndex: 1, data: V.oblacnost, barWidth: "70%", itemStyle: { color: b["ink-3"], opacity: 0.25, borderRadius: [3, 3, 0, 0] } },
         { name: "kiša", type: "bar", yAxisIndex: 1, data: V.padavine.map((v) => (v ? Math.min(100, v * 20) : null)), barWidth: "40%", itemStyle: { color: b.kisa },
           tooltip: { show: false } },
-        { name: "temperatura", type: "line", data: V.temperatura, symbol: "none", smooth: 0.3, lineStyle: { color: b.temp, width: 2.5 }, itemStyle: { color: b.temp },
-          markLine: D.sati_gotovo < D.sati.length ? { symbol: "none", silent: true, animation: false, data: [{ xAxis: D.sati_gotovo }], lineStyle: { color: b["ink-3"], width: 1 }, label: { show: false } } : undefined },
+        { name: "temperatura", type: "line", data: V.temperatura, symbol: "none", smooth: 0.3, lineStyle: { color: b.temp, width: 2.5 }, itemStyle: { color: b.temp } },
+        ...linijaSada(b, false),
       ] };
   }
   function opisVremena() {
@@ -196,10 +218,9 @@
     const r = Object.keys(D.serije).map(redSerije);
     r.sort(redosled === "danas" ? (a, b) => (b.danas ?? -1) - (a.danas ?? -1)
       : (a, b) => Math.abs(b.odst ?? -1) - Math.abs(a.odst ?? -1) || (b.danas ?? -1) - (a.danas ?? -1));
-    const prikaz = sve ? r : r.slice(0, 12);
     const naziv = Object.fromEntries(s.serije.map((x) => [x.serija, x.naziv]));
     document.getElementById("tabela").innerHTML = `<thead><tr><th>Brojač</th><th class="broj">Danas</th><th class="broj">Prognoza${MAPA.info("prognoza za iste sate za koje postoji izbrojano")}</th>
-      <th class="broj">Razlika</th><th>Sat po sat</th><th>Stanje</th></tr></thead><tbody>` + prikaz.map((x) => {
+      <th class="broj">Razlika</th><th>Sat po sat</th><th>Stanje</th></tr></thead><tbody>` + r.map((x) => {
       const [txt, boja] = STANJE[x.stanje] || ["", "var(--t-light)"];
       const t = ton(x.odst);
       return `<tr data-s="${x.k}" tabindex="0" class="${x.k === izabrana ? "izabran" : ""}"><td><div class="stanica-celija"><div><b>${x.k}</b><small>${naziv[x.k] || ""}</small></div></div></td>
@@ -207,8 +228,6 @@
         <td class="broj"><span class="danas-razlika ${t ? `ton-${t}` : ""}">${znak(x.odst)}</span></td>
         <td>${spark(x.sati)}</td><td><span class="danas-stanje"><i style="background:${boja}"></i>${txt}${x.napomena ? MAPA.info(x.napomena) : ""}</span></td></tr>`;
     }).join("") + "</tbody>";
-    const dug = document.getElementById("tabela-sve");
-    dug.textContent = sve ? "Prikaži manje" : `Prikaži sve (${r.length})`;
     document.getElementById("t-oznaka").textContent = `Brojači · danas do ${D.brojaci_do}`;
   }
 
@@ -251,19 +270,30 @@
   }
 
   // ---------------------------------------------------------------- interakcija
+  /** Grad ili jedan brojač na glavnom grafiku; izabrani brojač se na mapi fokusira i odskoči. */
   function izaberi(k, { saMape = false } = {}) {
-    izabrana = k && izabrana !== k ? k : null;
-    if (!saMape && izabrana && ctl) ctl.fokus(izabrana, { leti: true });
+    izabrana = k || null;
+    if (!saMape && ctl) ctl.fokus(izabrana, { leti: !!izabrana, skok: !!izabrana });
     g.glavni.osvezi();
     tabela();
+    const red = izabrana && document.querySelector(`#tabela tr[data-s="${CSS.escape(izabrana)}"]`);
+    const omot = document.querySelector(".danas-tabela-omot");
+    if (red && omot && !saMape) omot.scrollTo({ top: red.offsetTop - omot.clientHeight / 2, behavior: "smooth" });
   }
-  document.getElementById("tabela").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-s]"); if (tr) izaberi(tr.dataset.s); });
-  document.getElementById("tabela").addEventListener("keydown", (e) => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-s]"); if (tr) izaberi(tr.dataset.s); } });
-  document.getElementById("tabela-sve").addEventListener("click", () => { sve = !sve; tabela(); });
-  document.getElementById("nazad-grad").addEventListener("click", () => izaberi(null));
+  function popuniIzbor() {
+    const el = document.getElementById("g-izbor");
+    const naziv = Object.fromEntries(s.serije.map((x) => [x.serija, x.naziv]));
+    el.innerHTML = `<option value="">Ceo grad (svi brojači)</option>` + s.serije.filter((x) => D.serije[x.serija])
+      .map((x) => `<option value="${x.serija}">${x.serija} · ${naziv[x.serija]}</option>`).join("");
+    el.value = izabrana || "";
+  }
+  document.getElementById("g-izbor").addEventListener("change", (e) => izaberi(e.target.value));
+  // klik na već izabran red vraća grad
+  document.getElementById("tabela").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-s]"); if (tr) izaberi(tr.dataset.s === izabrana ? null : tr.dataset.s); });
+  document.getElementById("tabela").addEventListener("keydown", (e) => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-s]"); if (tr) izaberi(tr.dataset.s === izabrana ? null : tr.dataset.s); } });
 
   function nacrtajSve() {
-    zaglavlje(); kpi(); tabela(); opisVremena(); mini();
+    zaglavlje(); kpi(); popuniIzbor(); tabela(); opisVremena(); mini();
     if (ctl) mapaVrednosti();
     for (const x of Object.values(g)) x.osvezi();
   }
