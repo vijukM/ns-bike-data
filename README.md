@@ -164,9 +164,9 @@ podaci/
                                      pokrivenost_%, RMSE_naive, dana
     iskljucene_serije.log            povratak isključene serije (28), ako se desi
     greske.log                       neuspela izdavanja
-docs/data/ocena_prognoze_biciklista.json   ocena za sajt (dnevni RMSE model vs. naive, referenca 12,85)
+docs/data/ocena_prognoze_biciklista.json   ocena za sajt (dnevni RMSE model vs. naive, referenca 12,71; samo model-v2)
 docs/data/prognoza_biciklista.json   poslednja prognoza biciklista za sajt (danas, sutra; isključene serije)
-model/                               paket modela (GitHub Release model-v1; nije u git-u)
+model/                               paket modela (GitHub Release model-v2 = E31; nije u git-u)
 model_podaci/                        privremeni ulazi modela (nije u git-u)
 ```
 
@@ -277,8 +277,11 @@ za ~1 MB dnevno. Potrebni su `model/istorija.parquet` i `model/p90.parquet` iz p
 sutra, satno), čuva ga u `podaci/vremenska_prognoza/za_model/YYYY/MM/DD/HHMM.json` (stariji fajlovi su u
 Europe/Belgrade i čitaju se isto) i pravi tabelu u formatu treninga: `Datum` + `Cas` 01:00–24:00 (kraj sata).
 Sat modela bira **jedna** funkcija, `oznaka_modela(df, meteo_vreme)`:
-`"lokalno"` (podrazumevano, model-v1: lokalno vreme T → Cas T + 1 h; DST: prolećna rupa interpolirana, jesenji
-duplikat usrednjen) ili `"utc1"` (kandidat za model-v2: isti trenutak na satu UTC+1, bez DST rupa i duplikata). Promenljive: temperatura ←
+`"utc1"` (podrazumevano, **model-v2 = E31**, MODEL_KONTEKST 4b: Open-Meteo vreme t (UTC) → `ts = t + 1 h`, kraj sata
+u UTC+1, ista oznaka kao brojači, **bez ikakvog dodatnog pomaka**; nema DST rupa ni duplikata; kalendar iz
+`(ts − 1 h)`) ili `"lokalno"` (samo model-v1 = E28, više se ne koristi). Izmerena istorija vremena za model je
+`model/meteo_istorija_utc1.parquet` (već u toj konvenciji); `model/meteo_istorija.parquet` je sirova tabela koja
+kasni 1 h i služi samo za poređenje. Promenljive: temperatura ←
 temperature_2m, vlaznost ← relative_humidity_2m, brzina_vetra ← wind_speed_10m (km/h), insolacija ←
 shortwave_radiation, oblacnost ← cloud_cover, padavine ← precipitation, sneg_U ← snow_depth (m),
 vlaznost_zemljista ← soil_moisture_0_to_7cm (od pre 24 h). Izvedeno: padavine_pre_1h, padavine_3h,

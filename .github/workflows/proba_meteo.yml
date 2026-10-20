@@ -21,7 +21,7 @@ jobs:
       - name: Paket modela (samo meteo_istorija)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release download model-v1 -p model.zip && unzip -q model.zip model/meteo_istorija.parquet
+        run: gh release download model-v2 -p model.zip && unzip -q model.zip model/meteo_istorija.parquet
       - name: Poravnanje Cas (trening) prema Open-Meteo vremenu
         run: |
           python - <<'PY'

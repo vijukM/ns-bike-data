@@ -1,4 +1,4 @@
-"""Obavezan test podudarnosti sa model/referenca.parquet (7 dana, 24–31.08.2026): obeležja i predikcije moraju
+"""Obavezan test podudarnosti sa model/referenca.parquet (model-v2 = E31, 7 dana, 25–31.08.2026): obeležja i predikcije moraju
 biti iste kao u originalnom kodu (model/izvor/). Preskače se ako paket modela (model/) ili biblioteke nisu tu."""
 from pathlib import Path
 
@@ -14,7 +14,10 @@ pytestmark = pytest.mark.skipif(not (MODEL / "referenca.parquet").exists(), reas
 def osnova():
     from prognoza_biciklista.obelezja import Paket, napravi
     P = Paket.ucitaj(MODEL)
-    df = napravi(pd.read_parquet(MODEL / "istorija.parquet"), pd.read_parquet(MODEL / "meteo_istorija.parquet"), P)
+    from vremenska_prognoza.open_meteo import tabela_iz_ts
+    # meteo u konvenciji modela-v2 (UTC+1, stvarno vreme); meteo_istorija.parquet je sirova tabela (kasni 1 h)
+    meteo = tabela_iz_ts(pd.read_parquet(MODEL / "meteo_istorija_utc1.parquet"))
+    df = napravi(pd.read_parquet(MODEL / "istorija.parquet"), meteo, P)
     return P, df, pd.read_parquet(MODEL / "referenca.parquet")
 
 
@@ -42,11 +45,14 @@ def test_tft_ulazi_i_predikcija_i_ansambl(osnova):
     x = tf.merge(ref, on=["stanica_id", "ts"], suffixes=("", "_ref"))
     for c in P.ob["tft_poznata"]:
         assert (x[c].astype(float) - x["tft_" + c].astype(float)).abs().max() <= 1e-5, c
+    for c in ["yn_cilj", "y_nema"]:
+        assert (x[c].astype(float) - x[c + "_ref"].astype(float)).abs().max() <= 1e-5, c
     assert (x["time_idx"] == x["time_idx_ref"]).all()
     tft = pd.concat([predvidi_tft(tf, d, P) for d in pd.date_range("2026-08-25", "2026-08-31")])
     p = tft.merge(ref, on=["stanica_id", "ts"], suffixes=("", "_ref"))
     assert len(p) == len(ref)
-    for c in ["tft_q10", "tft_q50", "tft_q90"]:
+    for c in [f"tft_{q}_seed{s}" for s in ("42", "1", "2") for q in ("q10", "q50", "q90")] + ["tft_q10", "tft_q50",
+                                                                                              "tft_q90"]:
         assert (p[c] - p[c + "_ref"]).abs().max() <= 0.5, c
     e = ansambl(predvidi_xgb(df[df["ts"].isin(ref["ts"].unique())], P), tft, P).merge(ref, on=["stanica_id", "ts"],
                                                                                       suffixes=("", "_ref"))

@@ -39,8 +39,17 @@ def test_rezime_dana_i_neobicne_stanice():
             van = st != "d" and 7 <= sat <= 14          # a, b, c: 8 dnevnih sati van intervala
             redovi.append({"datum": "2026-10-20", "sat": sat, "stanica_id": st, "vrsta": "zvanicna", "razlog_A": "ok",
                            "stvarno": y, "prognoza": 40.0, "naive_t168": 60.0,
-                           "u_intervalu": 0.0 if van else 1.0})
-    r = rezime_dana(pd.DataFrame(redovi))
+                           "u_intervalu": 0.0 if van else 1.0, "verzija_modela": "v2"})
+    r = rezime_dana(pd.DataFrame(redovi), "v2")
     assert r["prozor"] == "probni" and r["n"] == 96 and r["RMSE"] == 10 and r["bias"] == -10
     assert r["RMSE_naive"] == 10 and r["neobicne_stanice"] == "a b c" and r["gradski_dogadjaj"]
     assert np.isclose(r["pokrivenost_%"], 100 * (1 - 24 / 96))
+
+
+def test_rezime_samo_aktuelni_model():
+    # prognoze starog modela (druga verzija ili stari CSV bez kolone) ne ulaze u ocenu novog
+    red = {"datum": "2026-10-20", "sat": 8, "stanica_id": "a", "vrsta": "zvanicna", "razlog_A": "ok", "stvarno": 50.0,
+           "prognoza": 40.0, "naive_t168": 60.0, "u_intervalu": 1.0}
+    x = pd.DataFrame([{**red, "verzija_modela": "v1"}, {**red, "prognoza": 48.0, "verzija_modela": "v2"}])
+    assert rezime_dana(x, "v2")["n"] == 1 and rezime_dana(x, "v2")["RMSE"] == 2
+    assert rezime_dana(pd.DataFrame([red]), "v2") is None
