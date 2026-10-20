@@ -1,4 +1,4 @@
-# PROGNOZA BICIKLISTA (model E28) — pokreće je citaj.yml (gh workflow run), nema sopstvenog rasporeda.
+# PROGNOZA BICIKLISTA (model-v2 = E31) — pokreće je citaj.yml (gh workflow run), nema sopstvenog rasporeda.
 #   vrsta=zvanicna     posle satnog obračuna u 01:xx: za danas, podaci do 24:00 juče (preskače se ako već postoji)
 #   vrsta=osvezavanje  u 07, 13 i 19 h: za danas i sutra, sa novijom vremenskom prognozom (samo za prikaz)
 # Usput preuzima i trajno čuva VREMENSKU PROGNOZU (podaci/vremenska_prognoza/).
@@ -41,14 +41,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: model
-          key: model-v1
+          key: model-v2
 
       - name: Paket modela iz GitHub Release-a (samo ako nije u kešu)
         if: steps.kes.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download model-v1 -p model.zip
+          gh release download model-v2 -p model.zip
           unzip -q -o model.zip && rm model.zip
           ls -la model
 

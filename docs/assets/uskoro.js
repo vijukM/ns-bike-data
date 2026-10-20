@@ -236,7 +236,7 @@
     },
 
     prognoza: {
-      ik: "cloud", prioritet: 3, eyebrow: "Prognoza · model E28", naslov: "Prognoza za <em>sutra</em>",
+      ik: "cloud", prioritet: 3, eyebrow: "Prognoza · model E31", naslov: "Prognoza za <em>sutra</em>",
       uvod: "Svako jutro: satna prognoza broja biciklista za svaku stanicu, sa intervalom u kome se stvarna vrednost nalazi u 80 % slučajeva.",
       kpi: [["clock", "Horizont", "24<sup>h</sup>", "sutra, sat po sat", "plava"], ["chart", "Interval", "10–90<sup>%</sup>", "kvantili modela", "ljubicasta"],
         ["table", "Serija", "45", "bez neispravnog brojača 28", "zelena"], ["rain", "Ulaz", "Open<sup>-Meteo</sup>", "vremenska prognoza", "teal"]],
@@ -265,7 +265,7 @@
       ],
       plan: [["Mapa sa prognozom", "pin svake stanice nosi očekivani broj za sutra"], ["Prognoza i interval", "satni grafik za svaku stanicu, na istim graficima kao istorija"],
         ["Vreme sutra", "temperatura i padavine koje model koristi"], ["Ocena posle", "sutradan: prognoza prema stvarno izbrojanom"]],
-      izvor: "model E28 (kvantilni) + Open-Meteo prognoza",
+      izvor: "model E31 (kvantilni) + Open-Meteo prognoza",
     },
 
     tacnost: {
@@ -312,7 +312,7 @@
           <span class="tok-strelica">${LJ.ik("arrow")}</span>
           <div class="tok-kutija istaknuta">${LJ.ik("layers")}<b>Priprema</b><small>lokalno vreme, rupe ostaju rupe, skaliranje po stanici</small></div>
           <span class="tok-strelica">${LJ.ik("arrow")}</span>
-          <div class="tok-kutija istaknuta">${LJ.ik("cpu")}<b>Model E28</b><small>uči obrasce svih stanica zajedno</small></div>
+          <div class="tok-kutija istaknuta">${LJ.ik("cpu")}<b>Model E31</b><small>uči obrasce svih stanica zajedno</small></div>
           <span class="tok-strelica">${LJ.ik("arrow")}</span>
           <div class="tok-kutija">${LJ.ik("chart")}<b>Prognoza</b><small>24 sata unapred, kvantili 10 / 50 / 90 %</small></div></div>` },
         { sirina: "pola", eyebrow: "Ulazi", naslov: "Na šta model najviše pazi", opcija: (b) => {

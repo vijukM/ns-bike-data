@@ -4,7 +4,10 @@ model/izvor/tft.py (pripremi), bez izmena. Svako odstupanje od izvor/ je greška
 Ulazi:
   master  — stanica_id, ts, y_A, razlog_A (očišćen, puna satna mreža; model_podaci/istorija.parquet)
   meteo   — tabela vremena u formatu treninga: Datum, Cas (01:00–24:00), 8 meteo kolona, dan_u_nedelji (pon = 1),
-            is_weekend, is_holiday (model/meteo_istorija.parquet ili prognoza.meteo.u_format_treninga)
+            is_weekend, is_holiday — oznaka sata u UTC+1 (model-v2, MODEL_KONTEKST 4b): open_meteo.tabela_iz_ts(
+            model/meteo_istorija_utc1.parquet) ili open_meteo.u_format_treninga (Open-Meteo t → ts = t + 1 h).
+            Meteo je već na oznaci modela, pa se ovde NE prevodi (features._meteo_u_utc1 / pomeri_izmereno se
+            primenjuju samo na sirovu izmerenu tabelu iz treninga, koja ovde ne ulazi).
   paket   — model/obelezja.json + model/skale.json (fiksna skala po stanici)
 """
 from __future__ import annotations
@@ -84,7 +87,7 @@ def _istorija(g: pd.Series, ime: str, L: int) -> pd.Series:
 
 
 def napravi(master: pd.DataFrame, meteo: pd.DataFrame, paket: Paket) -> pd.DataFrame:
-    """Kao features.napravi sa config_E26b (cilj A, dinamička skala 720 h, fiksna skala iz skale.json)."""
+    """Kao features.napravi sa config_E31 (cilj A, dinamička skala 720 h, fiksna skala iz skale.json)."""
     ob, L = paket.ob, paket.L
     df = master[["stanica_id", "ts", "y_A", "razlog_A"]].rename(columns={"y_A": "y", "razlog_A": "razlog"})
     df = df.sort_values(["stanica_id", "ts"]).reset_index(drop=True)

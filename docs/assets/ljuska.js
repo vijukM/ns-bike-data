@@ -514,7 +514,7 @@ const LJ = (() => {
     padajuce(dugme, async () => `<div class="naslov-panela"><b>Obaveštenja</b><span class="eyebrow">${s.stanje_period}</span></div>` +
       lose.map((r) => `<a class="red-panela" href="stanica.html?id=${encodeURIComponent(r.serija)}"><img src="${NS.pin(r.stanje)}" alt="">
         <span>${r.serija} · ${r.naziv}<small>${r.napomena || s.stanja[r.stanje]} · kompletnih dana ${r.kompletnih_30d}/30</small></span></a>`).join("") +
-      `<a class="red-panela" href="prognoza.html">${ik("cloud")}<span>Prognoza za sutra<small>model E28 — uskoro na sajtu</small></span></a>`);
+      `<a class="red-panela" href="prognoza.html">${ik("cloud")}<span>Prognoza za sutra<small>model E31 — uskoro na sajtu</small></span></a>`);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();

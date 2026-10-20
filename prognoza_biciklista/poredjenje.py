@@ -13,11 +13,13 @@ Izlaz (podaci/prognoza_biciklista/prognoza_vs_stvarno/):
       RMSE_naive, MAE_naive, neobicne_stanice, gradski_dogadjaj
   po_stanici.csv           samo zvanične, kumulativno po prozoru: prozor, stanica_id, n, RMSE, MAE, bias, WAPE_%,
       pokrivenost_%, RMSE_naive, dana
-docs/data/ocena_prognoze_biciklista.json   za sajt (dnevni RMSE model vs. naive, referenca 12,85, po stanici)
+docs/data/ocena_prognoze_biciklista.json   za sajt (dnevni RMSE model vs. naive, referenca 12,71, po stanici)
 
 Prozori ocene: „probni“ od 17.10.2026 (skala ≥ 7,5 dana), „glavni“ od 08.11.2026 (skala puna 30 dana).
 Neobičan dan: stanica sa ≥ 6 dnevnih sati (07–22 h) van intervala 10–90 %; ≥ 3 takve stanice = gradski događaj
-(samo oznaka, ne izbacuje se iz ocene). Referenca iz rada: RMSE 12,85 (test, stvarna prognoza vremena).
+(samo oznaka, ne izbacuje se iz ocene). Referenca iz rada: RMSE 12,71 (model-v2 = E31, test 09/2025–08/2026,
+stvarna prognoza vremena). U ocenu ulaze SAMO prognoze aktuelnog modela (kolona verzija_modela); prognoze
+model-v1 (E28, do 20.10.2026) ostaju sačuvane i u dnevnim CSV-ovima, ali se ne mešaju u rezime.
 """
 from __future__ import annotations
 
@@ -34,7 +36,7 @@ import pandas as pd
 from scraper import konfig
 
 from . import priprema
-from .obelezja import MODEL
+from .obelezja import MODEL, Paket
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +44,7 @@ PROGNOZE = konfig.KOREN / "podaci" / "prognoza_biciklista"
 IZLAZ = PROGNOZE / "prognoza_vs_stvarno"
 SAJT = konfig.KOREN / "docs" / "data" / "ocena_prognoze_biciklista.json"
 PROBNI_OD, GLAVNI_OD = pd.Timestamp("2026-10-17"), pd.Timestamp("2026-11-08")
-REFERENCA_RMSE = 12.85
+REFERENCA_RMSE = 12.71
 NEOBICNO_SATI, NEOBICNO_OD, NEOBICNO_DO, DOGADJAJ_STANICA = 6, 7, 22, 3
 
 
@@ -82,12 +84,19 @@ def uporedi_dan(dan: pd.Timestamp, stvarno: pd.DataFrame) -> pd.DataFrame:
     x["u_intervalu"] = np.where(x["stvarno"].isna(), np.nan,
                                 ((x["stvarno"] >= x["q10"]) & (x["stvarno"] <= x["q90"])).astype(float))
     kol = ["datum", "sat", "ts", "stanica_id", "vrsta", "izdato_utc", "horizont_h", "prognoza", "q10", "q90", "tft",
-           "xgb", "stvarno", "razlog_A", "greska", "aps_greska", "u_intervalu", "naive_t168", "nepouzdano"]
+           "xgb", "stvarno", "razlog_A", "greska", "aps_greska", "u_intervalu", "naive_t168", "nepouzdano",
+           "verzija_modela"]
     return x[kol].sort_values(["vrsta", "izdato_utc", "stanica_id", "sat"]).round(3)
 
 
-def rezime_dana(x: pd.DataFrame) -> dict | None:
-    z = x[(x["vrsta"] == "zvanicna") & (x["razlog_A"] == "ok") & x["stvarno"].notna()]
+def zvanicne_modela(x: pd.DataFrame, verzija: str) -> pd.DataFrame:
+    """Zvanične prognoze aktuelnog modela sa validnim stvarnim vrednostima (stariji CSV bez kolone = stari model)."""
+    v = x["verzija_modela"] if "verzija_modela" in x else pd.Series("", index=x.index)
+    return x[(x["vrsta"] == "zvanicna") & (v == verzija) & (x["razlog_A"] == "ok") & x["stvarno"].notna()]
+
+
+def rezime_dana(x: pd.DataFrame, verzija: str) -> dict | None:
+    z = zvanicne_modela(x, verzija)
     if z.empty:
         return None
     m = metrike(z["stvarno"], z["prognoza"])
@@ -101,9 +110,9 @@ def rezime_dana(x: pd.DataFrame) -> dict | None:
             "neobicne_stanice": " ".join(neobicne), "gradski_dogadjaj": len(neobicne) >= DOGADJAJ_STANICA}
 
 
-def po_stanici(fajlovi: list[Path]) -> pd.DataFrame:
+def po_stanici(fajlovi: list[Path], verzija: str) -> pd.DataFrame:
     x = pd.concat([pd.read_csv(f) for f in fajlovi], ignore_index=True)
-    z = x[(x["vrsta"] == "zvanicna") & (x["razlog_A"] == "ok") & x["stvarno"].notna()].copy()
+    z = zvanicne_modela(x, verzija).copy()
     z["prozor"] = z["datum"].map(prozor)
     redovi = []
     for (pr, st), g in z.groupby(["prozor", "stanica_id"]):
@@ -121,6 +130,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     stvarno = stvarno_ocisceno(a.model)
+    verzija = Paket.ucitaj(a.model).ob["verzija_modela"]
     danas = pd.Timestamp(datetime.now(konfig.TZ).date())
     for k in range(1, a.dana + 1):
         dan = danas - timedelta(days=k)
@@ -134,15 +144,15 @@ def main(argv=None) -> int:
     fajlovi = sorted(IZLAZ.glob("[0-9][0-9][0-9][0-9]/[0-9][0-9]/*.csv"))
     if not fajlovi:
         return 0
-    dnevno = pd.DataFrame([r for f in fajlovi if (r := rezime_dana(pd.read_csv(f))) is not None])
+    dnevno = pd.DataFrame([r for f in fajlovi if (r := rezime_dana(pd.read_csv(f), verzija)) is not None])
     if dnevno.empty:
-        log.info("još nema zvaničnih prognoza sa poznatim stvarnim vrednostima")
+        log.info("još nema zvaničnih prognoza modela %s sa poznatim stvarnim vrednostima", verzija)
         return 0
     dnevno.round(3).to_csv(IZLAZ / "rezime_dnevno.csv", index=False)
-    ps = po_stanici(fajlovi)
+    ps = po_stanici(fajlovi, verzija)
     ps.to_csv(IZLAZ / "po_stanici.csv", index=False)
     SAJT.parent.mkdir(parents=True, exist_ok=True)
-    SAJT.write_text(json.dumps({"referenca_RMSE": REFERENCA_RMSE, "probni_od": str(PROBNI_OD.date()),
+    SAJT.write_text(json.dumps({"verzija_modela": verzija, "referenca_RMSE": REFERENCA_RMSE, "probni_od": str(PROBNI_OD.date()),
                                 "glavni_od": str(GLAVNI_OD.date()),
                                 "dnevno": json.loads(dnevno.round(3).to_json(orient="records")),
                                 "po_stanici": json.loads(ps.to_json(orient="records"))}, ensure_ascii=False),

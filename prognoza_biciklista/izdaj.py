@@ -39,10 +39,11 @@ PRAG_ENKODER = 0.5          # serija sa < 50 % validnih sati u enkoderu → nepo
 
 
 def meteo_tabela(paket: Paket, folder_vreme: Path = open_meteo.FOLDER) -> pd.DataFrame:
-    """Meteo za obeležja: istorija iz paketa (format treninga) + sva sačuvana preuzimanja vremenske prognoze
-    (za svaki sat poslednje izdanje pre tog sata); preuzimanja imaju prednost nad istorijom."""
+    """Meteo za obeležja: izmerena istorija iz paketa (model/meteo_istorija_utc1.parquet, već u konvenciji modela-v2)
+    + sva sačuvana preuzimanja vremenske prognoze (za svaki sat poslednje izdanje pre tog sata); preuzimanja imaju
+    prednost nad istorijom. Sve u istoj oznaci: ts = kraj sata UTC+1 (Open-Meteo t → t + 1 h, bez pomaka)."""
     kol = ["Datum", "Cas", *open_meteo.PROMENLJIVE, "dan_u_nedelji", "is_weekend", "is_holiday"]
-    ist = pd.read_parquet(paket.folder / "meteo_istorija.parquet")[kol]
+    ist = open_meteo.tabela_iz_ts(pd.read_parquet(paket.folder / "meteo_istorija_utc1.parquet"))[kol]
     novo = open_meteo.po_satu(open_meteo.sva_preuzimanja(folder_vreme))
     m = pd.concat([ist, novo[kol]] if not novo.empty else [ist], ignore_index=True)
     return m.drop_duplicates(["Datum", "Cas"], keep="last").reset_index(drop=True)
