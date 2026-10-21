@@ -193,6 +193,7 @@ function meseciPoGodinama(p) {
 // ---------------------------------------------------------------- izabrani dan
 function izabraniDan(s, r, d) {
   const datumEl = document.getElementById("dan-datum");
+  datumEl.dataset.serija = d.serija;                     // izbor datuma: promet ove stanice ispod svakog dana
   const prvi = d.od, poslednji = NS.dodajDane(d.od, d.v.length - 1);
   datumEl.min = prvi; datumEl.max = poslednji;
   let poslednjiKompletan = poslednji;

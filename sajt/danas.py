@@ -291,7 +291,12 @@ def arhiviraj(dani: list[date], sada_utc: datetime, koren: Path = konfig.PODACI,
         (arhiva / f"{d}.json").write_text(json.dumps(x, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         gotovi.append(d.isoformat())
     spisak = sorted(f.stem for f in arhiva.glob("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].json"))
-    (arhiva / "spisak.json").write_text(json.dumps({"dani": spisak}, separators=(",", ":")), encoding="utf-8")
+    zbir = {}                                                  # za izbor datuma: [zbir sati grada, brojača sa podacima]
+    for d in spisak:
+        x = json.loads((arhiva / f"{d}.json").read_text(encoding="utf-8"))
+        n = sum(1 for v in x["serije"].values() if v["stanje"] != "neispravan" and any(y is not None for y in v["sati"]))
+        zbir[d] = [int(sum(v for v in x["grad"] if v is not None)), n]
+    (arhiva / "spisak.json").write_text(json.dumps({"dani": spisak, "zbir": zbir}, separators=(",", ":")), encoding="utf-8")
     return gotovi
 
 
