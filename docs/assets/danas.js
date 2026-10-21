@@ -252,9 +252,11 @@
     { k: "osecaj", ime: "osećaj temperature", jed: "°C", tip: "line", os: 0, boja: (b) => b.temp, crtica: true },
     { k: "oblacnost", ime: "oblačnost", jed: "%", tip: "bar", os: 1, boja: (b) => b["ink-3"], providno: 0.28 },
     { k: "padavine", ime: "kiša", jed: "mm/h", tip: "bar", os: 2, boja: (b) => b.kisa, dec: true },
-    { k: "vetar", ime: "vetar", jed: "km/h", tip: "line", os: 3, boja: (b) => b["tip-3"] },
-    { k: "vlaznost", ime: "vlažnost vazduha", jed: "%", tip: "line", os: 1, boja: (b) => b.primary },
-    { k: "zracenje", ime: "sunčevo zračenje", jed: "W/m²", tip: "line", os: 4, boja: (b) => b.warning, povrsina: true },
+    // vetar i zračenje na desnoj osi (%): 100 % = 99,9. percentil satnih vrednosti u Novom Sadu 2021–2026
+    // (vetar: medijana 8,4, p99,9 30,2, najviše 38,8 km/h; zračenje: p99,9 906, najviše 939 W/m²) — ekstremi idu do vrha
+    { k: "vetar", ime: "vetar", jed: "km/h", tip: "line", os: 1, puna: 30, boja: (b) => b["tip-3"] },
+    { k: "vlaznost", ime: "vlažnost vazduha", jed: "%", tip: "line", os: 1, boja: () => (NS.tamna() ? "#86efac" : "#22c55e") },
+    { k: "zracenje", ime: "sunčevo zračenje", jed: "W/m²", tip: "line", os: 1, puna: 900, boja: (b) => b.warning, povrsina: true },
   ];
   let vremeIzbor = new Set(["temperatura", "oblacnost", "padavine"]);
   try { const z = JSON.parse(localStorage.getItem("ns-danas-vreme") || "null"); if (Array.isArray(z) && z.length) vremeIzbor = new Set(z); } catch (e) { /* */ }
@@ -282,7 +284,7 @@
         ...izabrane.map((v) => v.tip === "bar"
           ? { name: v.ime, type: "bar", yAxisIndex: v.os, data: V[v.k], barGap: "-100%", barWidth: v.k === "padavine" ? "40%" : "70%",
               itemStyle: { color: v.boja(b), opacity: v.providno || 1, borderRadius: [3, 3, 0, 0] }, z: v.k === "padavine" ? 3 : 1 }
-          : { name: v.ime, type: "line", yAxisIndex: v.os, data: V[v.k], symbol: "none", smooth: 0.3, z: 4,
+          : { name: v.ime, type: "line", yAxisIndex: v.os, data: v.puna ? V[v.k].map((z) => (z == null ? null : Math.min(100, (100 * z) / v.puna))) : V[v.k], symbol: "none", smooth: 0.3, z: 4,
               lineStyle: { color: v.boja(b), width: 2.4, type: v.crtica ? "dashed" : "solid" }, itemStyle: { color: v.boja(b) },
               areaStyle: v.povrsina ? { color: v.boja(b), opacity: 0.12 } : undefined }),
         ...linijaSada(b, false),
@@ -302,9 +304,11 @@
         if (stari) { stari.remove(); return; }
         const p = document.createElement("div");
         p.className = "panel izbor-stanica izbor-vremena";
-        p.innerHTML = VREME.map((v) => `<label class="red-izbora${imaVreme(v) ? "" : " onemoguceno"}"><input type="checkbox" data-k="${v.k}" ${vremeIzbor.has(v.k) && imaVreme(v) ? "checked" : ""} ${imaVreme(v) ? "" : "disabled"}>
+        p.innerHTML = `<button type="button" class="panel-x" aria-label="Zatvori" title="Zatvori">${LJ.ik("x")}</button>` + VREME.map((v) => `<label class="red-izbora${imaVreme(v) ? "" : " onemoguceno"}"><input type="checkbox" data-k="${v.k}" ${vremeIzbor.has(v.k) && imaVreme(v) ? "checked" : ""} ${imaVreme(v) ? "" : "disabled"}>
           <span>${v.ime} <span class="jedinica">(${v.jed})</span>${imaVreme(v) ? "" : `<small>stiže sa sledećim preuzimanjem prognoze</small>`}</span></label>`).join("");
+        p.insertAdjacentHTML("beforeend", `<p class="sitno skala-napomena">Vetar i sunčevo zračenje su na desnoj osi: 100 % = 30 km/h, odnosno 900 W/m² (skoro najviše izmereno u Novom Sadu 2021–2026).</p>`);
         omot.appendChild(p);
+        p.querySelector(".panel-x").addEventListener("click", (ev) => { ev.stopPropagation(); p.remove(); });
         p.addEventListener("change", (ev) => {
           const k = ev.target.dataset.k;
           if (!k) return;
@@ -451,6 +455,7 @@
     g.glavni = NS.grafik(document.getElementById("g-glavni"), crtajGlavni, { odmah: true });
     g.vreme = NS.grafik(document.getElementById("g-vreme"), crtajVreme);
     hover(g.glavni); hover(g.vreme);
+    g.vreme.spreman.then(({ ec, el }) => new ResizeObserver(() => ec.resize()).observe(el));
     ctl = MAPA.napravi(document.getElementById("mapa"), s, { naFokus: (k) => { if (k && k !== izabrana) izaberi(k, { saMape: true }); } });
     nacrtajSve();
     LJ.pojave(main);

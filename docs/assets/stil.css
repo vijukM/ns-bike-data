@@ -1049,3 +1049,11 @@ html.bez-skrola { overflow: hidden; }
 .danas-pretraga input { width: 100%; padding-left: 36px; }
 [dir="rtl"] .danas-pretraga svg { left: auto; right: 12px; }
 [dir="rtl"] .danas-pretraga input { padding-left: 12px; padding-right: 36px; }
+/* vreme iste visine kao tabela brojača (tabela: najviše 4 reda, ostalo skrol) */
+.danas-tabela-omot { max-height: 280px; }
+.danas-mreza.dole { align-items: stretch; }
+.danas-vreme-kartica { display: flex; flex-direction: column; }
+.danas-vreme-grafik { flex: 1 1 0; height: auto; min-height: 140px; overflow: hidden; }
+.izbor-vremena { padding-top: 38px; }
+.izbor-vremena .skala-napomena { margin: 8px 4px 2px; border-top: 1px solid var(--border-soft); padding-top: 8px; }
+@media (max-width: 1200px) { .danas-vreme-grafik { min-height: 240px; } }
