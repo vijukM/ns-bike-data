@@ -246,34 +246,88 @@
   }
 
   // ---------------------------------------------------------------- vreme
+  // vreme: šta može da se prikaže (k = ključ u danas.json → vreme); os: 0 °C (vidljiva), 1 % (vidljiva), ostale skrivene
+  const VREME = [
+    { k: "temperatura", ime: "temperatura", jed: "°C", tip: "line", os: 0, boja: (b) => b.temp },
+    { k: "osecaj", ime: "osećaj temperature", jed: "°C", tip: "line", os: 0, boja: (b) => b.temp, crtica: true },
+    { k: "oblacnost", ime: "oblačnost", jed: "%", tip: "bar", os: 1, boja: (b) => b["ink-3"], providno: 0.28 },
+    { k: "padavine", ime: "kiša", jed: "mm/h", tip: "bar", os: 2, boja: (b) => b.kisa, dec: true },
+    { k: "vetar", ime: "vetar", jed: "km/h", tip: "line", os: 3, boja: (b) => b["tip-3"] },
+    { k: "vlaznost", ime: "vlažnost vazduha", jed: "%", tip: "line", os: 1, boja: (b) => b.primary },
+    { k: "zracenje", ime: "sunčevo zračenje", jed: "W/m²", tip: "line", os: 4, boja: (b) => b.warning, povrsina: true },
+  ];
+  let vremeIzbor = new Set(["temperatura", "oblacnost", "padavine"]);
+  try { const z = JSON.parse(localStorage.getItem("ns-danas-vreme") || "null"); if (Array.isArray(z) && z.length) vremeIzbor = new Set(z); } catch (e) { /* */ }
+  const imaVreme = (v) => D.vreme && Array.isArray(D.vreme[v.k]) && D.vreme[v.k].some((x) => x != null);
+
   function crtajVreme(b) {
     const V = D.vreme, x = oznake();
     if (!V) return { title: { text: "nema vremenske prognoze", left: "center", top: "middle", textStyle: { color: b["ink-3"], fontSize: 13 } } };
+    const izabrane = VREME.filter((v) => vremeIzbor.has(v.k) && imaVreme(v));
+    const ima = (os) => izabrane.some((v) => v.os === os);
     const o = NS.osnova(b);
+    const kisaMax = Math.max(4, ...V.padavine.filter((v) => v != null));
+    const skrivena = (extra = {}) => ({ type: "value", show: false, min: 0, ...extra });
     return { ...o,
-      grid: { left: 36, right: 40, top: 14, bottom: 26 },
+      grid: { left: ima(0) ? 36 : 14, right: ima(1) ? 40 : 14, top: 14, bottom: 26 },
       tooltip: { ...o.tooltip, ...TIP, axisPointer: { type: "shadow", shadowStyle: { color: b["ink-3"], opacity: 0.12 } },
-        formatter: (ps) => (ps = ps.filter((p) => p.axisIndex !== 1 && p.dataIndex != null)).length === 0 ? "" : `<b>${x[ps[0].dataIndex].oznaka}</b><br>` + ps.map((p) => `${p.marker}${p.seriesName}: <b>${
-        p.value == null ? "—" : p.seriesName === "temperatura" ? `${NS.dec(p.value)} °C` : p.seriesName === "kiša" ? `${NS.dec(V.padavine[p.dataIndex])} mm` : `${Math.round(p.value)} %`}</b>`).join("<br>") },
+        formatter: (ps) => (ps = ps.filter((p) => p.axisIndex !== 1 && p.dataIndex != null && p.seriesName)).length === 0 ? "" : `<b>${x[ps[0].dataIndex].oznaka}</b><br>`
+          + ps.map((p) => { const v = VREME.find((z) => z.ime === p.seriesName), val = V[v.k][p.dataIndex];
+            return `${p.marker}${p.seriesName}: <b>${val == null ? "—" : `${v.dec || v.jed === "°C" ? NS.dec(val) : NS.broj(Math.round(val))} ${v.jed}`}</b>`; }).join("<br>") },
       xAxis: osaSati(b),
-      yAxis: [{ type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value}°" } }) },
-        { type: "value", min: 0, max: 100, ...NS.osaY(b, { splitLine: { show: false }, axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value} %" } }) }],
+      yAxis: [{ type: "value", show: ima(0), scale: true, ...NS.osaY(b, { axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value}°" } }) },
+        { type: "value", show: ima(1), min: 0, max: 100, ...NS.osaY(b, { splitLine: { show: !ima(0) }, axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value} %" } }) },
+        skrivena({ max: kisaMax * 1.6 }), skrivena(), skrivena()],
       series: [
-        { name: "oblačnost", type: "bar", yAxisIndex: 1, data: V.oblacnost, barWidth: "70%", itemStyle: { color: b["ink-3"], opacity: 0.25, borderRadius: [3, 3, 0, 0] } },
-        { name: "kiša", type: "bar", yAxisIndex: 1, data: V.padavine.map((v) => (v ? Math.min(100, v * 20) : null)), barWidth: "40%", itemStyle: { color: b.kisa } },
-        { name: "temperatura", type: "line", data: V.temperatura, symbol: "none", smooth: 0.3, lineStyle: { color: b.temp, width: 2.5 }, itemStyle: { color: b.temp } },
+        ...izabrane.map((v) => v.tip === "bar"
+          ? { name: v.ime, type: "bar", yAxisIndex: v.os, data: V[v.k], barGap: "-100%", barWidth: v.k === "padavine" ? "40%" : "70%",
+              itemStyle: { color: v.boja(b), opacity: v.providno || 1, borderRadius: [3, 3, 0, 0] }, z: v.k === "padavine" ? 3 : 1 }
+          : { name: v.ime, type: "line", yAxisIndex: v.os, data: V[v.k], symbol: "none", smooth: 0.3, z: 4,
+              lineStyle: { color: v.boja(b), width: 2.4, type: v.crtica ? "dashed" : "solid" }, itemStyle: { color: v.boja(b) },
+              areaStyle: v.povrsina ? { color: v.boja(b), opacity: 0.12 } : undefined }),
         ...linijaSada(b, false),
       ] };
   }
+  function izborVremena() {
+    const omot = document.getElementById("vreme-izbor");
+    const natpis = () => {
+      const n = VREME.filter((v) => vremeIzbor.has(v.k) && imaVreme(v)).length;
+      omot.querySelector(".izbor-dugme").textContent = `${n ? `${n} ${n === 1 ? "veličina" : n < 5 ? "veličine" : "veličina"}` : "ništa"} ▾`;
+    };
+    if (!omot.querySelector(".izbor-dugme")) {
+      omot.innerHTML = `<button type="button" class="dugme malo izbor-dugme" aria-haspopup="true"></button>`;
+      omot.querySelector("button").addEventListener("click", (e) => {
+        e.stopPropagation();
+        const stari = omot.querySelector(".panel");
+        if (stari) { stari.remove(); return; }
+        const p = document.createElement("div");
+        p.className = "panel izbor-stanica izbor-vremena";
+        p.innerHTML = VREME.map((v) => `<label class="red-izbora${imaVreme(v) ? "" : " onemoguceno"}"><input type="checkbox" data-k="${v.k}" ${vremeIzbor.has(v.k) && imaVreme(v) ? "checked" : ""} ${imaVreme(v) ? "" : "disabled"}>
+          <span>${v.ime} <span class="jedinica">(${v.jed})</span>${imaVreme(v) ? "" : `<small>stiže sa sledećim preuzimanjem prognoze</small>`}</span></label>`).join("");
+        omot.appendChild(p);
+        p.addEventListener("change", (ev) => {
+          const k = ev.target.dataset.k;
+          if (!k) return;
+          if (ev.target.checked) vremeIzbor.add(k); else vremeIzbor.delete(k);
+          try { localStorage.setItem("ns-danas-vreme", JSON.stringify([...vremeIzbor])); } catch (e2) { /* */ }
+          natpis(); legendaVremena(); g.vreme.osvezi();
+        });
+      });
+    }
+    natpis();
+  }
+  function legendaVremena() {
+    const b = NS.boje();
+    document.getElementById("vreme-legenda").innerHTML = D.vreme ? VREME.filter((v) => vremeIzbor.has(v.k) && imaVreme(v)).map((v) =>
+      `<span><i class="${v.crtica ? "isprekidano" : ""}" style="${v.crtica ? `border-color:${v.boja(b)}` : `background:${v.boja(b)};${v.tip === "line" ? "height:3px;" : ""}${v.providno ? `opacity:${v.providno + 0.1}` : ""}`}"></i>${v.ime}</span>`).join("") : "";
+  }
   function opisVremena() {
     const V = D.vreme;
-    document.getElementById("vreme-datum").textContent = `Vreme · ${NS.datumDug(D.datum)}`;
+    document.getElementById("vreme-datum").textContent = `Vremenska prognoza za ${NS.datum(D.datum)}`;
     document.getElementById("vreme-info").innerHTML = V
       ? MAPA.info(`Vremenska prognoza Open-Meteo za Novi Sad, preuzeta ${NS.datum(new Date(V.preuzeto_utc).toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" }))} u ${sat(V.preuzeto_utc)}. Osvežava se uz svako izdanje prognoze biciklista (01, 07, 13 i 19 h).`)
       : MAPA.info("Vremenska prognoza još nije preuzeta.");
-    document.getElementById("vreme-legenda").innerHTML = V ? `<span><i style="background:var(--g-temp);height:3px"></i>temperatura (°C, leva osa)</span>
-      <span><i style="background:var(--t-light);opacity:.35"></i>oblačnost (%, desna osa)</span>
-      <span><i style="background:var(--g-kisa)"></i>kiša (mm u satu; visina stubića 1 mm = 20 %)</span>` : "";
+    izborVremena(); legendaVremena();
   }
 
   // ---------------------------------------------------------------- tabela
@@ -288,7 +342,10 @@
       }).join("") + "</svg>";
   }
   function tabela() {
-    const r = Object.keys(D.serije).map(redSerije);
+    const naz = Object.fromEntries(s.serije.map((x) => [x.serija, x.naziv]));
+    const bezK = (x) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "dj");
+    const upit = bezK(document.getElementById("t-pretraga").value || "");
+    const r = Object.keys(D.serije).map(redSerije).filter((x) => !upit || bezK(`${x.k} ${naz[x.k] || ""}`).includes(upit));
     const red = Object.keys(STANJE);
     const kljuc = { serija: (x) => x.k, danas: (x) => x.danas, prog: (x) => x.prog, odst: (x) => x.odst, stanje: (x) => red.indexOf(x.stanje) }[sort.kol];
     const brojSerije = (k) => [parseInt(k, 10), k];
@@ -312,7 +369,7 @@
         <td class="broj">${NS.broj(x.danas)}</td><td class="broj">${x.prog == null ? "—" : NS.broj(Math.round(x.prog))}</td>
         <td class="broj"><span class="danas-razlika ${t ? `ton-${t}` : ""}">${znak(x.odst)}</span></td>
         <td>${spark(x.sati)}</td><td><span class="danas-stanje"><i style="background:${boja}"></i>${txt}${x.napomena ? MAPA.info(x.napomena) : ""}</span></td></tr>`;
-    }).join("") + "</tbody>";
+    }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema brojača za „${document.getElementById("t-pretraga").value}“.</td></tr>`) + "</tbody>";
     document.getElementById("t-oznaka").textContent = `Brojači · danas do ${D.brojaci_do}`;
   }
 
@@ -366,6 +423,7 @@
     if (red && omot) omot.scrollTo({ top: red.offsetTop - omot.clientHeight / 2, behavior: "smooth" });
     if (izabrana && skrol) document.getElementById("g-glavni").closest(".kartica").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+  document.getElementById("t-pretraga").addEventListener("input", () => tabela());
   document.getElementById("tabela").addEventListener("click", (e) => {
     const t = e.target.closest("th[data-sort]");
     if (!t || e.target.closest(".info")) return;
