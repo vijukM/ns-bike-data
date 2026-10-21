@@ -254,26 +254,26 @@
       grid: { left: 36, right: 40, top: 14, bottom: 26 },
       tooltip: { ...o.tooltip, ...TIP, axisPointer: { type: "shadow", shadowStyle: { color: b["ink-3"], opacity: 0.12 } },
         formatter: (ps) => (ps = ps.filter((p) => p.axisIndex !== 1 && p.dataIndex != null)).length === 0 ? "" : `<b>${x[ps[0].dataIndex].oznaka}</b><br>` + ps.map((p) => `${p.marker}${p.seriesName}: <b>${
-        p.value == null ? "—" : p.seriesName === "temperatura" ? `${NS.dec(p.value)} °C` : p.seriesName === "kiša" ? `${NS.dec(p.value)} mm` : `${Math.round(p.value)} %`}</b>`).join("<br>") },
+        p.value == null ? "—" : p.seriesName === "temperatura" ? `${NS.dec(p.value)} °C` : p.seriesName === "kiša" ? `${NS.dec(V.padavine[p.dataIndex])} mm` : `${Math.round(p.value)} %`}</b>`).join("<br>") },
       xAxis: osaSati(b),
       yAxis: [{ type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value}°" } }) },
         { type: "value", min: 0, max: 100, ...NS.osaY(b, { splitLine: { show: false }, axisLabel: { color: b["ink-3"], fontSize: 10.5, formatter: "{value} %" } }) }],
       series: [
         { name: "oblačnost", type: "bar", yAxisIndex: 1, data: V.oblacnost, barWidth: "70%", itemStyle: { color: b["ink-3"], opacity: 0.25, borderRadius: [3, 3, 0, 0] } },
-        { name: "kiša", type: "bar", yAxisIndex: 1, data: V.padavine.map((v) => (v ? Math.min(100, v * 20) : null)), barWidth: "40%", itemStyle: { color: b.kisa },
-          tooltip: { show: false } },
+        { name: "kiša", type: "bar", yAxisIndex: 1, data: V.padavine.map((v) => (v ? Math.min(100, v * 20) : null)), barWidth: "40%", itemStyle: { color: b.kisa } },
         { name: "temperatura", type: "line", data: V.temperatura, symbol: "none", smooth: 0.3, lineStyle: { color: b.temp, width: 2.5 }, itemStyle: { color: b.temp } },
         ...linijaSada(b, false),
       ] };
   }
   function opisVremena() {
-    const V = D.vreme, el = document.getElementById("vreme-opis");
-    if (!V) { el.textContent = ""; return; }
-    const t = V.temperatura.filter((v) => v != null);
-    const kisni = V.padavine.map((v, i) => (v >= 0.1 ? i : -1)).filter((i) => i >= 0);
-    const x = oznake();
-    const kisa = kisni.length ? `kiša ${x[kisni[0]].oznaka.split("–")[0]}–${x[kisni[kisni.length - 1]].oznaka.split("–")[1]} (${NS.dec(zbir(V.padavine))} mm)` : "bez kiše";
-    el.textContent = `${NS.dec(Math.min(...t))} do ${NS.dec(Math.max(...t))} °C · ${kisa} · Open-Meteo, preuzeto u ${sat(V.preuzeto_utc)}`;
+    const V = D.vreme;
+    document.getElementById("vreme-datum").textContent = `Vreme · ${NS.datumDug(D.datum)}`;
+    document.getElementById("vreme-info").innerHTML = V
+      ? MAPA.info(`Vremenska prognoza Open-Meteo za Novi Sad, preuzeta ${NS.datum(new Date(V.preuzeto_utc).toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" }))} u ${sat(V.preuzeto_utc)}. Osvežava se uz svako izdanje prognoze biciklista (01, 07, 13 i 19 h).`)
+      : MAPA.info("Vremenska prognoza još nije preuzeta.");
+    document.getElementById("vreme-legenda").innerHTML = V ? `<span><i style="background:var(--g-temp);height:3px"></i>temperatura (°C, leva osa)</span>
+      <span><i style="background:var(--t-light);opacity:.35"></i>oblačnost (%, desna osa)</span>
+      <span><i style="background:var(--g-kisa)"></i>kiša (mm u satu; visina stubića 1 mm = 20 %)</span>` : "";
   }
 
   // ---------------------------------------------------------------- tabela
