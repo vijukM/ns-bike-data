@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610211000">
+  <link rel="stylesheet" href="assets/stil.css?v=202610211100">
 </head>
 <body data-strana="danas" data-putanja="Pregled|Danas uživo">
   <main class="sadrzaj danas" id="sadrzaj">
@@ -53,7 +53,8 @@
     <div class="danas-mreza dole">
       <section class="kartica pojava">
         <div class="kartica-glava">
-          <div><span class="eyebrow" id="vreme-datum">Vreme danas</span><h2>Temperatura, oblačnost i kiša <span id="vreme-info"></span></h2></div>
+          <div><span class="eyebrow" id="vreme-datum">Vremenska prognoza</span><h2>Kakvo je vreme danas? <span id="vreme-info"></span></h2></div>
+          <div class="grupa-kontrola"><span class="eyebrow">Na grafiku</span><div class="padajuce" id="vreme-izbor"></div></div>
         </div>
         <div class="grafik nizak" id="g-vreme"></div>
         <div class="legenda-grafika" id="vreme-legenda" style="margin:8px 0 0"></div>
@@ -62,6 +63,8 @@
       <section class="kartica pojava">
         <div class="kartica-glava">
           <div><span class="eyebrow" id="t-oznaka">Brojači · danas</span><h2>Svaki brojač prema svojoj prognozi</h2></div>
+          <div class="pretraga danas-pretraga"><svg class="ik" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="t-pretraga" placeholder="Stanica ili ulica…" aria-label="Pretraga brojača"></div>
         </div>
         <div class="tabela-omot danas-tabela-omot"><table class="tabela danas-tabela" id="tabela"></table></div>
       </section>
@@ -74,10 +77,10 @@
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610211000"></script>
-  <script src="assets/ljuska.js?v=202610211000"></script>
-  <script src="assets/pin3d.js?v=202610211000"></script>
-  <script src="assets/mapa-modul.js?v=202610211000"></script>
-  <script src="assets/danas.js?v=202610211000"></script>
+  <script src="assets/zajednicko.js?v=202610211100"></script>
+  <script src="assets/ljuska.js?v=202610211100"></script>
+  <script src="assets/pin3d.js?v=202610211100"></script>
+  <script src="assets/mapa-modul.js?v=202610211100"></script>
+  <script src="assets/danas.js?v=202610211100"></script>
 </body>
 </html>

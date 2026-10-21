@@ -53,6 +53,8 @@ PROMENLJIVE = {
     "sneg_U": "snow_depth",                    # m (ne cm!)
     "vlaznost_zemljista": "soil_moisture_0_to_7cm",  # m³/m³
 }
+# samo za prikaz na sajtu (strana „Danas uživo“), model ih ne koristi
+EKSTRA = {"osecaj": "apparent_temperature"}               # °C, subjektivni osećaj (temperatura + vetar + vlaga)
 FOLDER = konfig.KOREN / "podaci" / "vremenska_prognoza" / "za_model"      # Open-Meteo best_match = ulaz modela
 EXCEL = konfig.KOREN / "podaci" / "vremenska_prognoza" / "excel"
 ZA_MODEL = konfig.KOREN / "model_podaci" / "vremenska_prognoza.parquet"
@@ -62,7 +64,7 @@ def preuzmi(past_days: int = 8, forecast_days: int = 3) -> dict:
     """forecast_days=3: za „sutra“ treba i Cas 24:00 (sa 2 dana poslednji sat je sutra 23:00)."""
     params = {
         "latitude": LAT, "longitude": LON, "timezone": "GMT",                 # čuva se u UTC
-        "hourly": ",".join(PROMENLJIVE.values()), "past_days": past_days, "forecast_days": forecast_days,
+        "hourly": ",".join([*PROMENLJIVE.values(), *EKSTRA.values()]), "past_days": past_days, "forecast_days": forecast_days,
         "wind_speed_unit": "kmh", "precipitation_unit": "mm",
     }
     r = requests.get(URL, params=params, timeout=konfig.TIMEOUT_S)

@@ -185,9 +185,19 @@ def vreme(sati_utc: pd.DatetimeIndex, koren: Path = VREME) -> dict | None:
         a = s[k].reindex(sati_utc).to_numpy(dtype=float)
         b = s[k].reindex(sati_utc + pd.Timedelta(hours=1)).to_numpy(dtype=float)
         return [None if np.isnan(x) else round(float(x), 1) for x in np.nanmean([a, b], axis=0)]
-    kisa = s["padavine"].reindex(sati_utc + pd.Timedelta(hours=1)).to_numpy(dtype=float)   # zbir sata = vrednost na kraju
-    return {"preuzeto_utc": j["preuzeto_utc"], "temperatura": trenutno("temperatura"), "oblacnost": trenutno("oblacnost"),
-            "padavine": [None if np.isnan(x) else round(float(x), 1) for x in kisa]}
+    from vremenska_prognoza.open_meteo import EKSTRA
+    h = j["odgovor"]["hourly"]
+    for nase, om in EKSTRA.items():                            # samo za prikaz (stariji odgovori ih nemaju)
+        s[nase] = pd.Series(h[om], index=s.index, dtype=float) if om in h and len(h[om]) == len(s) else np.nan
+    def kraj(k):                                               # zbir/prosek prethodnog sata = vrednost na kraju sata
+        v = s[k].reindex(sati_utc + pd.Timedelta(hours=1)).to_numpy(dtype=float)
+        return [None if np.isnan(x) else round(float(x), 1) for x in v]
+    out = {"preuzeto_utc": j["preuzeto_utc"], "temperatura": trenutno("temperatura"), "oblacnost": trenutno("oblacnost"),
+           "padavine": kraj("padavine"), "vetar": trenutno("brzina_vetra"), "vlaznost": trenutno("vlaznost"),
+           "zracenje": kraj("insolacija"), "osecaj": trenutno("osecaj")}
+    if all(x is None for x in out["osecaj"]):
+        out["osecaj"] = None
+    return out
 
 
 def prosek_dana(dan: date, sati_utc: pd.DatetimeIndex, fajl: Path = konfig.KOREN / "docs" / "data" / "istorija" / "prosek_dana.json") -> list | None:
@@ -245,6 +255,7 @@ def napravi(sada_utc: datetime, koren: Path = konfig.PODACI) -> dict | None:
 def main(argv=None) -> int:
     import warnings
     warnings.filterwarnings("ignore", category=DeprecationWarning)      # numpy: „generic“ timedelta u pandas-u
+    warnings.filterwarnings("ignore", category=RuntimeWarning)          # prosek praznog para (sat bez podataka)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     d = napravi(datetime.now(timezone.utc))
     if d is None:

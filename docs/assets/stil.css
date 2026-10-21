@@ -1037,3 +1037,15 @@ html.bez-skrola { overflow: hidden; }
 .danas-tabela th[data-sort]:hover, .danas-tabela th.sortirano { color: var(--t-base); }
 .danas-tabela th.bez-sorta { cursor: default; }
 .danas-tabela .strelica-sort { margin-left: 4px; font-size: 9px; color: var(--primary); }
+.danas-tabela-omot { max-height: 336px; }
+.danas-pretraga { width: 240px; max-width: 100%; }
+.izbor-vremena { width: 260px; }
+.izbor-vremena .jedinica { color: var(--t-light); font-family: "JetBrains Mono", monospace; font-size: 11.5px; }
+.izbor-vremena .onemoguceno { opacity: .55; cursor: default; }
+.izbor-vremena small { display: block; color: var(--t-light); font-size: 11px; }
+@media (max-width: 640px) { .danas-pretraga { width: 100%; } }
+.danas-pretraga { position: relative; align-self: center; }
+.danas-pretraga svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--t-light); }
+.danas-pretraga input { width: 100%; padding-left: 36px; }
+[dir="rtl"] .danas-pretraga svg { left: auto; right: 12px; }
+[dir="rtl"] .danas-pretraga input { padding-left: 12px; padding-right: 36px; }
