@@ -92,11 +92,40 @@ function danNaMapi(s, g, ctl, naPromenu) {
   const dugmePusti = (igra) => { pustiEl.innerHTML = `${LJ.ik(igra ? "pause" : "play")}${igra ? "Zaustavi" : "Pusti dan"}`; };
   dugmePusti(false);
 
+  // dostupni dani: istorija 2021–08/2026 + satni obračun scraper-a (sati_dostupno.json) + danas (data/danas.json)
+  let dostupno = { od: "2021-01-01", do: "2026-08-31", prazni_dani: [] }, danasD = null;
+  const spremno = Promise.all([
+    NS.json("sati_dostupno.json").then((x) => { dostupno = x; }).catch(() => {}),
+    fetch(`data/danas.json?t=${Date.now()}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((x) => { danasD = x; }).catch(() => {}),
+  ]).then(() => {
+    datumEl.min = dostupno.od;
+    datumEl.max = danasD && danasD.datum > dostupno.do ? danasD.datum : dostupno.do;
+  });
+  const prazan = (iso) => (dostupno.prazni_dani || []).includes(iso);
+  /** Današnji dan iz danas.json u obliku mesečnog fajla (samo sati koji su prošli). */
+  function mesDanas() {
+    const D = danasD, v = {}, r = {};
+    for (const [k, x] of Object.entries(D.serije)) {
+      v[k] = x.sati;
+      const kod = x.sati.map((y) => (x.stanje === "neispravan" ? 8 : y == null ? 1 : 0));
+      r[k] = []; let i = 0;
+      while (i < kod.length) { if (!kod[i]) { i++; continue; } let j = i; while (j < kod.length && kod[j] === kod[i]) j++; r[k].push([i, j - i, kod[i]]); i = j; }
+    }
+    return { pocetak_utc: D.pocetak_utc, dani: [[D.datum, 0, Math.max(1, D.sati_gotovo)]], v, r };
+  }
+  /** Sledeći dan sa podacima u smeru (−1 / +1); preskače rupu bez podataka. */
+  function korak(iso, smer) {
+    let d = NS.dodajDane(iso, smer);
+    for (let k = 0; k < 400 && prazan(d) && d >= datumEl.min && d <= datumEl.max; k++) d = NS.dodajDane(d, smer);
+    return d;
+  }
   async function ucitaj(iso) {
-    if (iso < "2021-01-01") iso = "2021-01-01";
-    if (iso > "2026-08-31") iso = "2026-08-31";
+    await spremno;
+    if (iso < datumEl.min) iso = datumEl.min;
+    if (iso > datumEl.max) iso = datumEl.max;
     datumEl.value = iso;
-    const mes = await NS.json(`sati/${iso.slice(0, 7)}.json`);
+    const jeDanas = danasD && iso === danasD.datum;
+    const mes = jeDanas ? mesDanas() : await NS.json(`sati/${iso.slice(0, 7)}.json`);
     const [, i0, n] = mes.dani.find((x) => x[0] === iso);
     const oznake = NS.satneOznake(Date.parse(mes.pocetak_utc), i0, n);
     const zbir = [], ok = [], bez = [];
@@ -108,7 +137,9 @@ function danNaMapi(s, g, ctl, naPromenu) {
       }
       zbir.push(o ? z : null); ok.push(o); bez.push(x);
     }
-    dan = { iso, mes, i0, n, oznake, zbir, ok, bez };
+    dan = { iso, mes, i0, n, oznake, zbir, ok, bez, jeDanas, prazan: prazan(iso) };
+    document.getElementById("dan-pre").disabled = iso <= datumEl.min;
+    document.getElementById("dan-posle").disabled = iso >= datumEl.max;
     satEl.max = n - 1;
     if (+satEl.value > n - 1) satEl.value = n - 1;
     if (mini) mini.osvezi(); else crtajMini();
@@ -120,7 +151,9 @@ function danNaMapi(s, g, ctl, naPromenu) {
     const vr = {};
     for (const r of s.serije) vr[r.serija] = dan.mes.v[r.serija] ? dan.mes.v[r.serija][dan.i0 + k] : null;
     naPromenu(vr);
-    stanjeEl.innerHTML = `<b>${NS.datumDug(dan.iso)}</b> · ${dan.oznake[k].oznaka}<br>` + (dan.zbir[k] == null
+    stanjeEl.innerHTML = `<b>${NS.datumDug(dan.iso)}</b>${dan.jeDanas ? ` <span class="sitno">(danas, do ${danasD.brojaci_do})</span>` : ""} · ${dan.oznake[k].oznaka}<br>` + (dan.prazan
+      ? `<span style="color:var(--warning)">za ovaj dan nema podataka</span> — između istorije (do 31. 8. 2026.) i čitanja brojača uživo (od 9. 10. 2026.)`
+      : dan.zbir[k] == null
       ? "nijedan brojač nema podatak za ovaj sat"
       : `<b>${NS.broj(dan.zbir[k])}</b> biciklista na ${dan.ok[k]} brojača${dan.bez[k] ? ` · <span style="color:var(--warning)">${dan.bez[k]} bez podataka</span>` : ""}`);
     if (mini) mini.osvezi();
@@ -160,14 +193,18 @@ function danNaMapi(s, g, ctl, naPromenu) {
   });
   satEl.addEventListener("input", () => prikazi(+satEl.value));
   datumEl.addEventListener("change", () => { if (datumEl.value) { zaustavi(); ucitaj(datumEl.value); } });
-  document.getElementById("dan-pre").addEventListener("click", () => { zaustavi(); ucitaj(NS.dodajDane(datumEl.value, -1)); });
-  document.getElementById("dan-posle").addEventListener("click", () => { zaustavi(); ucitaj(NS.dodajDane(datumEl.value, 1)); });
+  document.getElementById("dan-pre").addEventListener("click", () => { zaustavi(); ucitaj(korak(datumEl.value, -1)); });
+  document.getElementById("dan-posle").addEventListener("click", () => { zaustavi(); ucitaj(korak(datumEl.value, 1)); });
   return {
     ukljuci(datum, sat) {
       ukljucen = true;
-      if (sat != null && /^\d+$/.test(sat)) satEl.value = sat; else if (!dan) satEl.value = 7;
-      const iso = datum && /^\d{4}-\d\d-\d\d$/.test(datum) ? datum : (dan ? dan.iso : g.cinjenice.najprometniji_dan.datum);
-      ucitaj(iso).then(() => mini && mini.ec && mini.ec.resize());
+      spremno.then(() => {
+        // podrazumevano danas, na poslednjem završenom satu (ili 07–08 h za druge dane)
+        const iso = datum && /^\d{4}-\d\d-\d\d$/.test(datum) ? datum : (dan ? dan.iso : (danasD ? danasD.datum : dostupno.do));
+        if (sat != null && /^\d+$/.test(sat)) satEl.value = sat;
+        else if (!dan) satEl.value = danasD && iso === danasD.datum ? Math.max(0, danasD.sati_gotovo - 1) : 7;
+        return ucitaj(iso);
+      }).then(() => mini && mini.ec && mini.ec.resize());
     },
     iskljuci() { ukljucen = false; zaustavi(); },
   };

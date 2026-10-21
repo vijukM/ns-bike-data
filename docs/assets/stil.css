@@ -1057,3 +1057,5 @@ html.bez-skrola { overflow: hidden; }
 .izbor-vremena { padding-top: 38px; }
 .izbor-vremena .skala-napomena { margin: 8px 4px 2px; border-top: 1px solid var(--border-soft); padding-top: 8px; }
 @media (max-width: 1200px) { .danas-vreme-grafik { min-height: 240px; } }
+.dan-panel .dan-glava { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
+.dan-panel .dan-glava p { margin: 0; }
