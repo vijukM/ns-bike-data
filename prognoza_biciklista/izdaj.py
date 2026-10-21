@@ -136,16 +136,37 @@ def za_sajt(p: pd.DataFrame, vrsta: str, izdato: datetime, paket: Paket, sajt: P
                                ensure_ascii=False), encoding="utf-8")
 
 
+def preuzmi_vreme_uporno(pauze: tuple[int, ...] = (20, 60, 120)) -> dict | None:
+    """Open-Meteo sa ponovnim pokušajima (20.10.2026. u 01:03 zvanična prognoza je pala na jednom isteku vremena).
+    None ako ni posle svih pokušaja nema odgovora — tada se koristi poslednja sačuvana vremenska prognoza."""
+    import time
+    for i, pauza in enumerate((*pauze, None)):
+        try:
+            return open_meteo.preuzmi()
+        except Exception as e:  # noqa: BLE001 — mreža / API
+            log.warning("Open-Meteo, pokušaj %d: %s", i + 1, e)
+            if pauza is None:
+                return None
+            time.sleep(pauza)
+    return None
+
+
 def izdaj(vrsta: str, sada: datetime, paket: Paket, preuzmi_vreme: bool = True) -> pd.DataFrame:
     danas = pd.Timestamp(sada.astimezone(konfig.TZ).date())
     dani = [danas] if vrsta == "zvanicna" else [danas, danas + pd.Timedelta(days=1)]
     if preuzmi_vreme:                                   # VREMENSKA PROGNOZA: preuzmi i trajno sačuvaj
-        odgovor = open_meteo.preuzmi()
-        log.info("vremenska prognoza: %s", open_meteo.sacuvaj_sirovo(odgovor, sada))
-        for mesec in sorted(set(open_meteo.u_format_treninga(odgovor)["Datum"].str[:7])):
-            open_meteo.napravi_excel(mesec)
-        sacuvano = izvori.preuzmi_sve(sada)              # drugi izvori vremena — samo za poređenje
-        log.info("drugi izvori vremenske prognoze: %s", ", ".join(sacuvano) or "nijedan")
+        odgovor = preuzmi_vreme_uporno()
+        if odgovor is not None:
+            log.info("vremenska prognoza: %s", open_meteo.sacuvaj_sirovo(odgovor, sada))
+            for mesec in sorted(set(open_meteo.u_format_treninga(odgovor)["Datum"].str[:7])):
+                open_meteo.napravi_excel(mesec)
+        else:                                           # prognoza se ipak izdaje, sa poslednjom sačuvanom (≤ 6 h stara)
+            log.warning("Open-Meteo nije odgovorio ni posle ponovnih pokušaja — koristi se poslednja sačuvana vremenska prognoza")
+        try:
+            sacuvano = izvori.preuzmi_sve(sada)          # drugi izvori vremena — samo za poređenje
+            log.info("drugi izvori vremenske prognoze: %s", ", ".join(sacuvano) or "nijedan")
+        except Exception as e:  # noqa: BLE001 — poređenje ne sme da obori prognozu
+            log.warning("drugi izvori vremenske prognoze: %s", e)
     novo, smerovi = priprema._ucitaj_novo(konfig.PODACI)        # BICIKLISTI: istorija za model
     master, izv = priprema.pripremi(pd.read_parquet(paket.folder / "istorija.parquet"), novo, smerovi,
                                     pd.read_parquet(paket.folder / "p90.parquet"))

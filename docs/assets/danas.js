@@ -20,7 +20,64 @@
   async function ucitaj() {
     const r = await fetch(`${IZVOR}?t=${Date.now()}`, { cache: "no-store" });
     if (!r.ok) throw new Error(`danas.json: HTTP ${r.status}`);
-    return r.json();
+    const x = await r.json();
+    x.uzivo = true;
+    return x;
+  }
+  // ---------------------------------------------------------------- prošli dani
+  // izvori: danas.json (danas, uživo) · data/dani/YYYY-MM-DD.json (od 9. 10. 2026., konačni snimak sa prognozom i vremenom)
+  // · istorija sati/YYYY-MM.json + meteo_sati (2021 – 31. 8. 2026., bez prognoze)
+  const danasLok = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
+  let dostupno = { od: "2021-01-01", do: "2026-08-31", prazni_dani: [] }, arhiva = [], ziv = null;
+  const prazan = (iso) => (dostupno.prazni_dani || []).includes(iso);
+  async function ucitajDan(iso) {
+    if (!iso || iso === danasLok() || (ziv && iso === ziv.datum)) return ziv || (ziv = await ucitaj());
+    if (arhiva.includes(iso)) {
+      const r = await fetch(`data/dani/${iso}.json?v=${Date.now() / 36e5 | 0}`);
+      if (r.ok) { const x = await r.json(); x.uzivo = false; x.izvor = "arhiva"; return x; }
+    }
+    return izIstorije(iso);
+  }
+  /** Dan iz istorije (satni fajl meseca + izmereno vreme) u obliku danas.json. */
+  async function izIstorije(iso) {
+    const ym = iso.slice(0, 7);
+    const [mes, met, pros] = await Promise.all([NS.json(`sati/${ym}.json`), NS.json(`meteo_sati/${ym}.json`).catch(() => null),
+      NS.json("prosek_dana.json").catch(() => null)]);
+    const dan = mes.dani.find((x) => x[0] === iso);
+    if (!dan) throw new Error(`nema podataka za ${iso}`);
+    const [, i0, n] = dan;
+    const pocetak = new Date(Date.parse(mes.pocetak_utc) + i0 * 3600e3);
+    const lok = NS.satneOznake(Date.parse(mes.pocetak_utc), i0, n).map((o) => String(o.sat).padStart(2, "0"));
+    const serije = {};
+    for (const [k, v] of Object.entries(mes.v)) {
+      const sati = v.slice(i0, i0 + n);
+      const neispravan = sati.every((x, j) => x == null && NS.razlogSata(mes.r[k], i0 + j) === 8);
+      const kodovi = sati.map((x, j) => (x == null ? NS.razlogSata(mes.r[k], i0 + j) : 0));
+      if (kodovi.every((c) => c === 9)) continue;                       // brojač još nije postavljen
+      serije[k] = { sati, danas: sati.some((x) => x != null) ? zbir(sati) : null, juce: null, brojac: "24:00",
+        stanje: neispravan ? "neispravan" : sati.every((x) => x == null) ? "nema_podataka" : "radi",
+        ...(neispravan ? { napomena: "brojač neispravan od 04/2026" } : {}) };
+    }
+    const ukljucene = Object.keys(serije).filter((k) => serije[k].stanje !== "neispravan");
+    const grad = lok.map((_, j) => { const v = ukljucene.map((k) => serije[k].sati[j]).filter((x) => x != null); return v.length ? zbir(v) : null; });
+    const dow = (NS.danUNedelji(iso) + 6) % 7, mesec = +iso.slice(5, 7);
+    const pr = pros && pros.grad[`${dow}-${mesec}`];
+    const satLok = NS.satneOznake(Date.parse(mes.pocetak_utc), i0, n).map((o) => o.sat);
+    return { uzivo: false, izvor: "istorija", datum: iso, pocetak_utc: pocetak.toISOString().slice(0, 16) + "Z", sati: lok, sati_gotovo: n,
+      grad, serije, danas: zbir(ukljucene.map((k) => serije[k].danas || 0)), juce: null, ove_godine: null, brojaci_do: "24:00",
+      prognoza: { zvanicna: null, najnovija: null }, prosek_isti_dan: pr ? satLok.map((h) => pr[h]) : null,
+      vreme: met ? { istorija: true, preuzeto_utc: null, temperatura: met.temp.slice(i0, i0 + n), padavine: met.pad.slice(i0, i0 + n),
+        oblacnost: null, vetar: null, vlaznost: null, zracenje: null, osecaj: null } : null };
+  }
+  function urlDana(iso) {
+    const u = new URL(location.href);
+    if (iso) u.searchParams.set("dan", iso); else u.searchParams.delete("dan");
+    history.replaceState(null, "", u);
+  }
+  function korakDana(iso, smer, min, max) {
+    let d = NS.dodajDane(iso, smer);
+    for (let i = 0; i < 400 && prazan(d) && d > min && d < max; i++) d = NS.dodajDane(d, smer);
+    return d;
   }
 
   // ---------------------------------------------------------------- izvedeno
@@ -80,6 +137,7 @@
 
   /** Zašto sat nema izbrojano: traje, tek dolazi, čeka čitanje ili brojač nije javio. */
   function statusSata(i) {
+    if (!D.uzivo) return "nema podataka";
     const od = Date.parse(D.pocetak_utc) + i * 3600e3, sada = Date.now();
     if (sada >= od && sada < od + 3600e3) return "sat još traje";
     if (od >= sada) return "budući sat";
@@ -88,7 +146,8 @@
   }
   function infoPrognoze() {
     const P = prognoza(), el = document.getElementById("prognoza-info");
-    if (!P) { el.innerHTML = MAPA.info("Prognoza za danas još nije izdata. Zvanična se izdaje u 01:03, osvežene u 07:03, 13:03 i 19:03."); return; }
+    if (!P) { el.innerHTML = MAPA.info(D.uzivo ? "Prognoza za danas još nije izdata. Zvanična se izdaje u 01:03, osvežene u 07:03, 13:03 i 19:03."
+      : "Za ovaj dan nema prognoze modela-v2: prognoze se čuvaju od 21. 10. 2026."); return; }
     const model = String(P.verzija_modela).replace(/ x /g, " × ").replace(/0,5/g, "0,5");
     el.innerHTML = MAPA.info(`Model ${model}: prosek 3 TFT mreže (medijana) i 3 XGBoost modela, učen na satnim podacima 2021–2026. `
       + (D.prognoza.zvanicna ? "Prikazana je zvanična prognoza iz ponoći (samo podaci do 24:00 juče). "
@@ -140,6 +199,24 @@
 
   // ---------------------------------------------------------------- zaglavlje
   function zaglavlje() {
+    const izbor = document.getElementById("dan-izbor");
+    izbor.value = D.datum;
+    document.getElementById("dan-pre").disabled = D.datum <= izbor.min;
+    document.getElementById("dan-posle").disabled = D.datum >= izbor.max;
+    document.getElementById("dan-danas").disabled = !!D.uzivo;
+    if (!D.uzivo) {
+      const [dan, datum] = NS.datumDug(D.datum).split(", ");
+      document.getElementById("danas-datum").textContent = `Pregled dana · ${D.izvor === "istorija" ? "istorija" : "konačni podaci"}`;
+      document.getElementById("danas-naslov").innerHTML = `${dan}, <em>${datum}</em>`;
+      document.getElementById("danas-uzivo").innerHTML = `<span class="danas-osvezeno">${D.izvor === "istorija"
+        ? "očišćeni satni podaci iz istorije (master rada)" : `čitanja brojača · poslednje u <b>${D.citanje_lokalno}</b>`}</span>`;
+      const ob = document.getElementById("danas-obavestenje");
+      ob.classList.toggle("skriveno", !prazan(D.datum));
+      ob.textContent = "Za ovaj dan nema podataka — između istorije (do 31. 8. 2026.) i čitanja brojača uživo (od 9. 10. 2026.).";
+      document.title = `${NS.datum(D.datum)} · Pregled dana · Biciklisti Novog Sada`;
+      return;
+    }
+    document.getElementById("danas-naslov").innerHTML = "Danas <em>uživo</em>";
     document.getElementById("danas-datum").textContent = `Pregled · ${NS.datumDug(D.datum)}`;
     const starost = (Date.now() - Date.parse(D.citanje_utc)) / 60e3;
     const sledece = Math.max(0, 60 - starost);
@@ -157,7 +234,33 @@
   }
 
   // ---------------------------------------------------------------- KPI
+  function kpiProsli() {
+    const P = prognoza();
+    const ser = Object.values(D.serije);
+    const javlja = ser.filter((x) => x.stanje === "radi").length;
+    const p = poredjenje(D.grad, P && P.grad.pred);
+    const pr = poredjenje(D.grad, D.prosek_isti_dan);
+    const dan = NS.datumDug(D.datum).split(",")[0].toLowerCase();
+    const problemi = {};
+    for (const [k, x] of Object.entries(D.serije)) if (x.stanje !== "radi") (problemi[x.stanje] = problemi[x.stanje] || []).push(k);
+    const k = (boja, ikona, naslov, delta, vrednost, dole) => `<div class="kpi ${boja}"><div class="vrh"><span class="kvadrat">${LJ.ik(ikona)}</span>
+      <span class="naslov">${naslov}</span>${delta ? `<span class="kpi-delta">${delta}</span>` : ""}</div><div class="vrednost">${vrednost}</div><div class="dole">${dole}</div></div>`;
+    const boja = (x) => (x == null ? "c-plava" : x > 5 ? "c-zelena" : x < -5 ? "c-narandzasta" : "c-plava");
+    document.getElementById("kpi").innerHTML = [
+      k("c-plava", "activity", "Ceo dan", D.izvor === "istorija" ? "istorija" : "konačno", NS.broj(D.danas),
+        `na <b>${javlja}/${ser.length}</b> brojača${D.juce != null ? ` · dan pre <b>${NS.broj(D.juce)}</b>` : ""}`),
+      k(boja(p.pct), "chart", "Prema prognozi", p.pct == null ? "" : D.prognoza.zvanicna ? "iz ponoći" : "osvežena",
+        p.pct == null ? "—" : `${znak(p.pct).replace(" %", "")}<sup>%</sup>`,
+        p.pct == null ? (D.izvor === "istorija" ? "prognoza se izdaje od 10/2026" : "za ovaj dan nema prognoze model-v2 (od 21. 10. 2026.)")
+          : `prognoza za iste sate: <b>${NS.broj(Math.round(p.prog))}</b>`),
+      k(boja(pr.pct), "target", `Prema prosečnom danu`, "", pr.pct == null ? "—" : `${znak(pr.pct).replace(" %", "")}<sup>%</sup>`,
+        pr.pct == null ? "nema proseka" : `prosečan ${dan} u ovom mesecu: <b>${NS.broj(Math.round(pr.prog))}</b>${MAPA.info("Isti sati, prosek istog dana u nedelji i istog meseca, 9/2024–8/2026, bez praznika.")}`),
+      k(javlja === ser.length ? "c-zelena" : "c-narandzasta", "pin", "Brojači", "", `${javlja}<sup>/${ser.length}</sup>`,
+        Object.keys(problemi).length ? Object.entries(problemi).map(([st, l]) => `${STANJE[st][0]}: <b>${l.join(", ")}</b>`).join(" · ") : "svi su radili"),
+    ].join("");
+  }
   function kpi() {
+    if (!D.uzivo) { kpiProsli(); return; }
     const P = prognoza(), N = najnovija();
     const ser = Object.values(D.serije);
     const javlja = ser.filter((x) => x.stanje === "radi").length;
@@ -208,7 +311,9 @@
     const n = nizovi(), P = prognoza(), x = oznake();
     const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"] };
     document.getElementById("g-oznaka").textContent = izabrana ? `Brojač ${izabrana} · ${(s.serije.find((r) => r.serija === izabrana) || {}).naziv || ""}` : `Ceo grad · ${zbirno ? "zbirno od ponoći" : "sat po sat"}`;
-    document.getElementById("g-naslov").textContent = izabrana ? "Danas prema prognozi za ovaj brojač" : "Danas prema prognozi i prosečnom istom danu";
+    const kad = D.uzivo ? "Danas" : "Tog dana";
+    document.getElementById("g-naslov").textContent = izabrana ? `${kad} prema prognozi za ovaj brojač` : `${kad} prema prognozi i prosečnom istom danu`;
+    document.getElementById("mapa-oznaka").textContent = D.uzivo ? "Mapa danas" : `Mapa · ${NS.datum(D.datum)}`;
     izborBrojaca();
     document.getElementById("g-legenda").innerHTML = [
       `<span><i style="background:${boja.stv}"></i>izbrojano</span>`,
@@ -305,7 +410,7 @@
         const p = document.createElement("div");
         p.className = "panel izbor-stanica izbor-vremena";
         p.innerHTML = `<button type="button" class="panel-x" aria-label="Zatvori" title="Zatvori">${LJ.ik("x")}</button>` + VREME.map((v) => `<label class="red-izbora${imaVreme(v) ? "" : " onemoguceno"}"><input type="checkbox" data-k="${v.k}" ${vremeIzbor.has(v.k) && imaVreme(v) ? "checked" : ""} ${imaVreme(v) ? "" : "disabled"}>
-          <span>${v.ime} <span class="jedinica">(${v.jed})</span>${imaVreme(v) ? "" : `<small>stiže sa sledećim preuzimanjem prognoze</small>`}</span></label>`).join("");
+          <span>${v.ime} <span class="jedinica">(${v.jed})</span>${imaVreme(v) ? "" : `<small>${D.vreme && D.vreme.istorija ? "nema u istoriji" : "stiže sa sledećim preuzimanjem prognoze"}</small>`}</span></label>`).join("");
         p.insertAdjacentHTML("beforeend", `<p class="sitno skala-napomena">Vetar i sunčevo zračenje su na desnoj osi: 100 % = 30 km/h, odnosno 900 W/m² (skoro najviše izmereno u Novom Sadu 2021–2026).</p>`);
         omot.appendChild(p);
         p.querySelector(".panel-x").addEventListener("click", (ev) => { ev.stopPropagation(); p.remove(); });
@@ -327,9 +432,11 @@
   }
   function opisVremena() {
     const V = D.vreme;
-    document.getElementById("vreme-datum").textContent = `Vremenska prognoza za ${NS.datum(D.datum)}`;
-    document.getElementById("vreme-info").innerHTML = V
-      ? MAPA.info(`Vremenska prognoza Open-Meteo za Novi Sad, preuzeta ${NS.datum(new Date(V.preuzeto_utc).toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" }))} u ${sat(V.preuzeto_utc)}. Osvežava se uz svako izdanje prognoze biciklista (01, 07, 13 i 19 h).`)
+    document.getElementById("vreme-datum").textContent = V && V.istorija ? `Izmereno vreme · ${NS.datum(D.datum)}` : `Vremenska prognoza za ${NS.datum(D.datum)}`;
+    document.getElementById("vreme-naslov").textContent = D.uzivo ? "Kakvo je vreme danas?" : "Kakvo je vreme bilo?";
+    document.getElementById("vreme-info").innerHTML = V && V.istorija
+      ? MAPA.info("Izmereno vreme iz istorije (isti podaci kao za grafike na sajtu): temperatura i padavine po satu.")
+      : V ? MAPA.info(`Vremenska prognoza Open-Meteo za Novi Sad, preuzeta ${NS.datum(new Date(V.preuzeto_utc).toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" }))} u ${sat(V.preuzeto_utc)}. Osvežava se uz svako izdanje prognoze biciklista (01, 07, 13 i 19 h).`)
       : MAPA.info("Vremenska prognoza još nije preuzeta.");
     izborVremena(); legendaVremena();
   }
@@ -374,7 +481,7 @@
         <td class="broj"><span class="danas-razlika ${t ? `ton-${t}` : ""}">${znak(x.odst)}</span></td>
         <td>${spark(x.sati)}</td><td><span class="danas-stanje"><i style="background:${boja}"></i>${txt}${x.napomena ? MAPA.info(x.napomena) : ""}</span></td></tr>`;
     }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema brojača za „${document.getElementById("t-pretraga").value}“.</td></tr>`) + "</tbody>";
-    document.getElementById("t-oznaka").textContent = `Brojači · danas do ${D.brojaci_do}`;
+    document.getElementById("t-oznaka").textContent = D.uzivo ? `Brojači · danas do ${D.brojaci_do}` : `Brojači · ${NS.datum(D.datum)}`;
   }
 
   // ---------------------------------------------------------------- mapa
@@ -398,6 +505,18 @@
     const max = D.grad.slice(0, D.sati_gotovo).reduce((m, v, i) => (v != null && (m < 0 || v > D.grad[m]) ? i : m), -1);
     const x = oznake();
     const el = document.getElementById("mini");
+    if (!D.uzivo) {
+      const naj = Object.entries(D.serije).filter(([, v]) => v.danas != null && v.stanje !== "neispravan").sort((a, b) => b[1].danas - a[1].danas)[0];
+      const naziv = naj && (s.serije.find((r) => r.serija === naj[0]) || {}).naziv;
+      el.innerHTML = `
+        <div class="kartica danas-mini-k"><span class="eyebrow">${D.ove_godine != null ? "Od 1. januara do ovog dana" : "Ceo dan, svi brojači"}</span>
+          <div class="vrednost">${NS.broj(D.ove_godine != null ? D.ove_godine : D.danas)}</div><span class="sitno">${D.ove_godine != null ? "zbir „ove godine“ sa svih brojača" : "zbir svih sati sa podacima"}</span></div>
+        <div class="kartica danas-mini-k"><span class="eyebrow">Najprometniji sat</span><div class="vrednost">${max < 0 ? "—" : x[max].oznaka}</div>
+          <span class="sitno">${max < 0 ? "nema podataka" : `${NS.broj(D.grad[max])} biciklista na svim brojačima`}</span></div>
+        <div class="kartica danas-mini-k"><span class="eyebrow">Najprometniji brojač</span><div class="vrednost">${naj ? naj[0] : "—"}</div>
+          <span class="sitno">${naj ? `${naziv || ""} · ${NS.broj(naj[1].danas)} biciklista` : "nema podataka"}</span></div>`;
+      return;
+    }
     el.innerHTML = `
       <div class="kartica danas-mini-k"><span class="eyebrow">Od 1. januara</span><div class="vrednost">${NS.broj(D.ove_godine)}</div><span class="sitno">zbir „ove godine“ sa svih brojača, raste svakog sata</span></div>
       <div class="kartica danas-mini-k"><span class="eyebrow">Najprometniji sat do sada</span><div class="vrednost">${max < 0 ? "—" : x[max].oznaka}</div>
@@ -447,7 +566,28 @@
   }
 
   try {
-    [s, D] = await Promise.all([NS.stanice(), ucitaj()]);
+    const q = new URLSearchParams(location.search);
+    [s] = await Promise.all([NS.stanice(),
+      NS.json("sati_dostupno.json").then((x) => { dostupno = x; }).catch(() => {}),
+      fetch("data/dani/spisak.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : { dani: [] })).then((x) => { arhiva = x.dani || []; }).catch(() => {})]);
+    ziv = await ucitaj().catch(() => null);
+    const izbor = document.getElementById("dan-izbor");
+    izbor.min = dostupno.od;
+    izbor.max = ziv ? ziv.datum : danasLok();
+    const trazeni = q.get("dan");
+    D = await ucitajDan(trazeni && /^\d{4}-\d\d-\d\d$/.test(trazeni) && trazeni >= izbor.min && trazeni <= izbor.max ? trazeni : null);
+    async function idiNa(iso) {
+      if (iso < izbor.min) iso = izbor.min;
+      if (iso > izbor.max) iso = izbor.max;
+      try { D = await ucitajDan(iso); } catch (e) { LJ.tost(`Za ${NS.datum(iso)} nema podataka.`, "info"); izbor.value = D.datum; return; }
+      urlDana(D.uzivo ? null : D.datum);
+      if (izabrana && !D.serije[izabrana]) izabrana = null;
+      nacrtajSve();
+    }
+    izbor.addEventListener("change", () => { if (izbor.value) idiNa(izbor.value); });
+    document.getElementById("dan-pre").addEventListener("click", () => idiNa(korakDana(D.datum, -1, izbor.min, izbor.max)));
+    document.getElementById("dan-posle").addEventListener("click", () => idiNa(korakDana(D.datum, 1, izbor.min, izbor.max)));
+    document.getElementById("dan-danas").addEventListener("click", () => idiNa(izbor.max));
     const prog = document.getElementById("g-prognoza");
     prog.innerHTML = `<label class="prekidac-ui"><input type="checkbox" id="prikazi-prognozu"><span class="klizac" aria-hidden="true"></span><span>prikaži</span></label>`;
     prog.querySelector("input").addEventListener("change", (e) => { saPrognozom = e.target.checked; g.glavni.osvezi(); });
@@ -459,12 +599,12 @@
     ctl = MAPA.napravi(document.getElementById("mapa"), s, { naFokus: (k) => { if (k && k !== izabrana) izaberi(k, { saMape: true }); } });
     nacrtajSve();
     LJ.pojave(main);
-    setInterval(zaglavlje, 60e3);
+    setInterval(() => { if (D.uzivo) zaglavlje(); }, 60e3);
     setInterval(async () => {
-      if (document.hidden) return;
+      if (document.hidden || !D.uzivo) return;
       try {
         const novo = await ucitaj();
-        if (novo.citanje_utc !== D.citanje_utc || novo.napravljeno_utc !== D.napravljeno_utc) { D = novo; nacrtajSve(); }
+        if (novo.citanje_utc !== D.citanje_utc || novo.napravljeno_utc !== D.napravljeno_utc) { ziv = novo; D = novo; nacrtajSve(); }
       } catch (e) { /* bez mreže: ostaje poslednje stanje */ }
     }, PROVERA_MS);
   } catch (e) {
