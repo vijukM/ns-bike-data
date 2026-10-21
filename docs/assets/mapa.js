@@ -138,6 +138,11 @@ function danNaMapi(s, g, ctl, naPromenu) {
       zbir.push(o ? z : null); ok.push(o); bez.push(x);
     }
     dan = { iso, mes, i0, n, oznake, zbir, ok, bez, jeDanas, prazan: prazan(iso) };
+    const veza = document.querySelector(".dan-glava a");
+    if (veza) {
+      veza.href = jeDanas ? "danas.html" : `danas.html?dan=${iso}`;
+      veza.firstChild.textContent = jeDanas ? "Danas uživo, po brojaču " : "Ovaj dan po brojaču ";
+    }
     document.getElementById("dan-pre").disabled = iso <= datumEl.min;
     document.getElementById("dan-posle").disabled = iso >= datumEl.max;
     satEl.max = n - 1;

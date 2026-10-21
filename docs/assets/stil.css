@@ -1059,3 +1059,8 @@ html.bez-skrola { overflow: hidden; }
 @media (max-width: 1200px) { .danas-vreme-grafik { min-height: 240px; } }
 .dan-panel .dan-glava { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
 .dan-panel .dan-glava p { margin: 0; }
+.danas-desno { display: grid; gap: 10px; justify-items: end; }
+.danas-dan { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.danas-dan input[type="date"] { height: 32px; }
+.danas-dan button:disabled { opacity: .45; cursor: default; }
+@media (max-width: 760px) { .danas-desno { justify-items: start; } }

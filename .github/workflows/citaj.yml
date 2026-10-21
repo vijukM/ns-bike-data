@@ -56,7 +56,9 @@ jobs:
       - name: Sajt — „Dan na mapi“ za nove dane (docs/data/istorija/sati, posle satnog obračuna)
         if: steps.brza.outputs.obracunaj == 'true' || steps.pregledac.outputs.obracunaj == 'true'
         continue-on-error: true
-        run: python -m sajt.sati_novi
+        run: |
+          python -m sajt.sati_novi
+          python -m sajt.danas --juce          # konačni snimak jučerašnjeg dana za „Danas uživo“ (izbor dana)
 
       - name: Sajt — „danas do Xh“ po stanici (docs/data/uzivo.json)
         if: always()
@@ -76,7 +78,7 @@ jobs:
           git add podaci
           [ -e docs/data/uzivo.json ] && git add docs/data/uzivo.json
           [ -e docs/data/danas.json ] && git add docs/data/danas.json
-          git add docs/data/istorija/sati docs/data/istorija/sati_dostupno.json 2>/dev/null || true
+          git add docs/data/istorija/sati docs/data/istorija/sati_dostupno.json docs/data/dani 2>/dev/null || true
           if git diff --cached --quiet; then echo "nema promena"; exit 0; fi
           git commit -q -m "podaci: čitanje $(TZ=Europe/Belgrade date '+%Y-%m-%d %H:%M')"
           for i in 1 2 3 4; do

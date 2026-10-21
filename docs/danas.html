@@ -11,16 +11,24 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610211300">
+  <link rel="stylesheet" href="assets/stil.css?v=202610211400">
 </head>
 <body data-strana="danas" data-putanja="Pregled|Danas uživo">
   <main class="sadrzaj danas" id="sadrzaj">
     <header class="zaglavlje-strane pojava">
       <div>
         <span class="eyebrow" id="danas-datum">Pregled · danas</span>
-        <h1>Danas <em>uživo</em></h1>
+        <h1 id="danas-naslov">Danas <em>uživo</em></h1>
       </div>
-      <div class="danas-uzivo" id="danas-uzivo" aria-live="polite"></div>
+      <div class="danas-desno">
+        <div class="danas-dan" role="group" aria-label="Izbor dana">
+          <button type="button" class="dugme malo" id="dan-pre" aria-label="Prethodni dan" title="Prethodni dan sa podacima">‹</button>
+          <input type="date" id="dan-izbor" aria-label="Dan">
+          <button type="button" class="dugme malo" id="dan-posle" aria-label="Sledeći dan" title="Sledeći dan sa podacima">›</button>
+          <button type="button" class="dugme malo primarno" id="dan-danas">Danas</button>
+        </div>
+        <div class="danas-uzivo" id="danas-uzivo" aria-live="polite"></div>
+      </div>
     </header>
 
     <p class="danas-obavestenje skriveno" id="danas-obavestenje" role="status"></p>
@@ -43,7 +51,7 @@
 
       <section class="kartica pojava">
         <div class="kartica-glava">
-          <div><span class="eyebrow">Mapa danas</span><h2>Koliko je izbrojano na svakom brojaču</h2></div>
+          <div><span class="eyebrow" id="mapa-oznaka">Mapa danas</span><h2>Koliko je izbrojano na svakom brojaču</h2></div>
         </div>
         <div class="mapa danas-mapa" id="mapa" role="region" aria-label="Mapa brojača sa današnjim brojem"></div>
         <div class="legenda-grafika" id="mapa-legenda"></div>
@@ -53,7 +61,7 @@
     <div class="danas-mreza dole">
       <section class="kartica pojava danas-vreme-kartica">
         <div class="kartica-glava">
-          <div><span class="eyebrow" id="vreme-datum">Vremenska prognoza</span><h2>Kakvo je vreme danas? <span id="vreme-info"></span></h2></div>
+          <div><span class="eyebrow" id="vreme-datum">Vremenska prognoza</span><h2><span id="vreme-naslov">Kakvo je vreme danas?</span> <span id="vreme-info"></span></h2></div>
           <div class="grupa-kontrola"><span class="eyebrow">Na grafiku</span><div class="padajuce" id="vreme-izbor"></div></div>
         </div>
         <div class="grafik danas-vreme-grafik" id="g-vreme"></div>
@@ -77,10 +85,10 @@
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610211300"></script>
-  <script src="assets/ljuska.js?v=202610211300"></script>
-  <script src="assets/pin3d.js?v=202610211300"></script>
-  <script src="assets/mapa-modul.js?v=202610211300"></script>
-  <script src="assets/danas.js?v=202610211300"></script>
+  <script src="assets/zajednicko.js?v=202610211400"></script>
+  <script src="assets/ljuska.js?v=202610211400"></script>
+  <script src="assets/pin3d.js?v=202610211400"></script>
+  <script src="assets/mapa-modul.js?v=202610211400"></script>
+  <script src="assets/danas.js?v=202610211400"></script>
 </body>
 </html>
