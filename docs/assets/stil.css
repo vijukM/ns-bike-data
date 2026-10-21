@@ -1064,3 +1064,65 @@ html.bez-skrola { overflow: hidden; }
 .danas-dan input[type="date"] { height: 32px; }
 .danas-dan button:disabled { opacity: .45; cursor: default; }
 @media (max-width: 760px) { .danas-desno { justify-items: start; } }
+/* ---------------------------------------------------------------- izbor datuma (assets/datum.js) */
+.izbor-datuma { position: relative; display: inline-flex; }
+.izbor-datuma-polje { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0; pointer-events: none; border: 0 !important; padding: 0 !important; }
+.izbor-datuma-dugme { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--t-base); font: 500 13px Inter, system-ui, sans-serif; cursor: pointer; white-space: nowrap; }
+.izbor-datuma-dugme:hover { border-color: var(--t-light); }
+.izbor-datuma-dugme[aria-expanded="true"] { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.izbor-datuma-dugme svg { width: 16px; height: 16px; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; flex: none; }
+.izbor-datuma-dugme b { font-weight: 600; color: var(--t-muted); margin-right: 2px; }
+.izbor-datuma-danas { font: 600 10px/1 "JetBrains Mono", monospace; font-style: normal; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--primary); background: var(--primary-soft); padding: 3px 6px; border-radius: 5px; }
+.izbor-datuma-panel { position: absolute; top: calc(100% + 8px); left: 0; z-index: 1400; width: 316px; padding: 14px; border-radius: 14px;
+  background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-lg); display: grid; gap: 10px;
+  animation: izd-ulaz .14s ease-out; }
+.izbor-datuma-panel.desno { left: auto; right: 0; }
+@keyframes izd-ulaz { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .izbor-datuma-panel { animation: none; } }
+.izd-glava { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.izd-naslov { display: flex; gap: 2px; }
+.izd-mesec, .izd-godina { border: 0; background: transparent; color: var(--t-base); font: 700 15px "Inter Tight", Inter, sans-serif; padding: 5px 8px; border-radius: 8px; cursor: pointer; }
+.izd-godina { color: var(--t-muted); }
+.izd-mesec:hover, .izd-godina:hover, .izd-mesec.aktivno, .izd-godina.aktivno { background: var(--bg-hover); color: var(--primary); }
+.izd-strelica { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--t-muted); cursor: pointer; }
+.izd-strelica:hover { color: var(--t-base); background: var(--bg-hover); }
+.izd-strelica svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.izd-strelica[data-k="-1"] svg { transform: rotate(180deg); }
+.izd-nedelja, .izd-mreza { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
+.izd-nedelja span { text-align: center; font: 600 10.5px/1 "JetBrains Mono", monospace; letter-spacing: .06em; color: var(--t-light); padding: 4px 0 6px; }
+.izd-nedelja span.vikend { color: var(--orange); }
+.izd-dan { position: relative; height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--t-base); cursor: pointer;
+  display: grid; place-items: center; padding: 0 0 5px; font: 500 13px Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; }
+.izd-dan.vikend { color: var(--orange); }
+.izd-dan:hover:not(.ugaseno) { background: var(--bg-hover); }
+.izd-dan.danas::after { content: ""; position: absolute; inset: 2px; border: 1.5px solid var(--primary); border-radius: 8px; pointer-events: none; }
+.izd-dan.izabran { background: var(--primary); color: #fff; font-weight: 700; }
+.izd-dan.izabran .izd-traka { background: rgb(255 255 255 / .75); }
+.izd-dan.ugaseno { color: var(--t-light); opacity: .38; cursor: not-allowed; }
+.izd-dan:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.izd-traka { position: absolute; left: 30%; right: 30%; bottom: 5px; height: 3px; border-radius: 2px; background: transparent; }
+.izd-traka.n0, .izd-legenda i.n0 { background: var(--g-top-1); }
+.izd-traka.n1, .izd-legenda i.n1 { background: var(--g-top-2); }
+.izd-traka.n2, .izd-legenda i.n2 { background: var(--g-top-3); }
+.izd-traka.n3, .izd-legenda i.n3 { background: var(--g-top-4); }
+.izd-traka.n4, .izd-legenda i.n4 { background: var(--g-top-5); }
+.izd-mreza-veliko { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 4px 0; }
+.izd-veliko { height: 44px; border: 1px solid var(--border-soft); border-radius: 10px; background: transparent; color: var(--t-base); font: 600 13px Inter, sans-serif; cursor: pointer; }
+.izd-veliko:hover:not(.ugaseno) { background: var(--bg-hover); border-color: var(--border); }
+.izd-veliko.izabran { background: var(--primary); border-color: var(--primary); color: #fff; }
+.izd-veliko.ugaseno { opacity: .35; cursor: not-allowed; }
+.izd-precice { display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border-soft); padding-top: 10px; }
+.izd-precica { border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: 600 12px Inter, sans-serif; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.izd-precica:hover { border-color: var(--primary); color: var(--primary); }
+.izd-dno { display: grid; gap: 6px; }
+.izd-opis { font-size: 12.5px; color: var(--t-muted); min-height: 18px; }
+.izd-opis b { color: var(--t-base); font-variant-numeric: tabular-nums; }
+.izd-legenda { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; color: var(--t-light); }
+.izd-legenda i { display: inline-block; width: 12px; height: 4px; border-radius: 2px; }
+@media (max-width: 520px) {
+  .izbor-datuma-panel { position: fixed; left: 8px; right: 8px; top: auto; bottom: max(8px, env(safe-area-inset-bottom, 0px)); width: auto; }
+  .izbor-datuma-panel.desno { left: 8px; right: 8px; }
+  .izd-dan { height: 42px; }
+}
