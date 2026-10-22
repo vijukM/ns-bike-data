@@ -64,7 +64,7 @@ const LJ = (() => {
       { id: "mapa", t: "Mapa brojača", href: "mapa.html", ik: "map" },
       { id: "dan", t: "Dan na mapi", href: "mapa.html?rezim=dan", ik: "clock" },
       { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna.html", ik: "flame", uskoro: true },
-      { id: "staze", t: "Biciklističke staze", href: "staze.html", ik: "route", uskoro: true }] },
+      { id: "staze", t: "Biciklističke staze", href: "staze.html", ik: "route", oznaka: "NOVO" }] },
     { grupa: "Podaci", stavke: [
       { id: "grafici", t: "Grafici", href: "grafici.html", ik: "chart" },
       { id: "stanice", t: "Stanice", href: "stanice.html", ik: "table", oznaka: "46", klasa: "plava" },

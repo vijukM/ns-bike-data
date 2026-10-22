@@ -86,30 +86,6 @@
       izvor: "satni prosek po brojaču iz istorije, koordinate brojača",
     },
 
-    staze: {
-      ik: "route", prioritet: 2, naslov: "Biciklističke <em>staze</em>",
-      uvod: "Mreža biciklističkih staza i traka u Novom Sadu: koliko ih ima, kakve su, gde su brojači i gde staze nedostaju.",
-      kpi: [["route", "Ukupno", "~120<sup>km</sup>", "staze i trake (procena)", "zelena"], ["layers", "Segmenata", "899", "iz OpenStreetMap-a", "plava"],
-        ["pin", "Brojača na stazi", "38<sup>/46</sup>", "do 15 m od staze", "ljubicasta"], ["alert", "Prekida", "24", "mesta gde se staza prekida", "narandzasta"]],
-      skice: [
-        { sirina: "pola", eyebrow: "Vrsta", naslov: "Kakve su staze", opcija: (b) => ({
-          ...NS.osnova(b), tooltip: { trigger: "item", formatter: (p) => `${p.name}: ${p.value} km` }, legend: { ...legenda(b), top: "bottom" },
-          series: [{ type: "pie", radius: ["48%", "74%"], center: ["50%", "44%"], itemStyle: { borderColor: b.povrsina, borderWidth: 3, borderRadius: 6 }, label: { show: false },
-            data: [{ name: "odvojena staza", value: 64, itemStyle: { color: "#4ade80" } }, { name: "traka na kolovozu", value: 31, itemStyle: { color: "#facc15" } },
-              { name: "zajednička sa pešacima", value: 25, itemStyle: { color: "#86b6ef" } }] }] }) },
-        { sirina: "pola", eyebrow: "Delovi grada", naslov: "Kilometara staza po delu grada", opcija: (b) => {
-          const d = [["Liman", 22], ["Novo naselje", 19], ["Centar", 15], ["Detelinara", 14], ["Grbavica", 11], ["Podbara", 8], ["Petrovaradin", 7]];
-          return { ...NS.osnova(b), tooltip: { ...tt(b), axisPointer: { type: "shadow" } }, grid: { left: 92, right: 20, top: 6, bottom: 20 },
-            xAxis: { type: "value", ...NS.osaY(b) }, yAxis: { type: "category", inverse: true, data: d.map((x) => x[0]), ...NS.osaX(b) },
-            series: [{ type: "bar", data: d.map((x) => x[1]), barWidth: 14, itemStyle: { color: "#4ade80", borderRadius: 7 } }] };
-        } },
-      ],
-      plan: [["Mapa staza po vrsti", "odvojene staze, trake i zajedničke površine, sa dužinama"],
-        ["Brojači na stazama", "na kojoj stazi stoji koji brojač i koliko biciklista ta staza nosi"],
-        ["Prekidi i nedostajuće veze", "gde se staza prekida ili delovi grada nisu povezani"], ["Izvor", "OpenStreetMap (Overpass), osvežava se jednom mesečno"]],
-      izvor: "OpenStreetMap — isti sloj staza koji je već na mapi",
-    },
-
     poredjenje: {
       ik: "compare", prioritet: 1, naslov: "Poređenje <em>stanica</em>",
       uvod: "Izaberi dve do četiri stanice i uporedi ih na istim graficima: po danu, po satu, po mesecima — i koliko se kreću zajedno.",

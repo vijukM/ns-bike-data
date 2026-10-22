@@ -1128,3 +1128,110 @@ html.bez-skrola { overflow: hidden; }
 }
 @media (min-width: 521px) { .izbor-datuma-panel.gore { top: auto; bottom: calc(100% + 8px); animation-name: izd-ulaz-gore; } }
 @keyframes izd-ulaz-gore { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ---------------------------------------------------------------- Biciklističke staze (staze.html) */
+.st-sastav { margin: 6px 0 22px; }
+.st-sastav-traka { display: flex; gap: 3px; height: 30px; max-width: 980px; }
+.st-sastav-traka button { flex: 0 1 0; min-width: 34px; border: 0; border-radius: 6px; background: var(--boja); color: #0b1120; font: 600 12px/1 "JetBrains Mono", monospace;
+  cursor: pointer; display: flex; align-items: center; justify-content: flex-start; padding: 0 10px; transition: opacity .2s, transform .2s; }
+.st-sastav-traka button:first-child { border-radius: 8px 4px 4px 8px; }
+.st-sastav-traka button:last-child { border-radius: 4px 8px 8px 4px; }
+.st-sastav-traka button[aria-pressed="false"] { opacity: .28; }
+.st-sastav-traka button:hover { transform: translateY(-1px); }
+.st-sastav-traka span { white-space: nowrap; overflow: hidden; }
+.st-sastav-legenda { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; margin-top: 10px; font-size: 13px; color: var(--t-muted); }
+.st-sastav-legenda button { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; color: inherit; font: inherit; padding: 2px 0; cursor: pointer; }
+.st-sastav-legenda button b { color: var(--t-base); font-variant-numeric: tabular-nums; }
+.st-sastav-legenda button[aria-pressed="false"] { opacity: .45; }
+.st-sastav-zbir { margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--t-light); display: inline-flex; align-items: center; gap: 4px; }
+.st-linija { display: inline-block; flex: none; width: 24px; height: 5px; border-radius: 3px; background: var(--boja); box-shadow: 0 0 0 1.5px var(--staza-obod); }
+.st-linija.isprekidana { background: repeating-linear-gradient(90deg, var(--boja) 0 6px, transparent 6px 10px); box-shadow: none; }
+.st-linija.mala { width: 16px; height: 4px; margin-right: 6px; vertical-align: 2px; }
+.st-tacka { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; flex: none; }
+
+.st-raspored { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; }
+.st-mapa { height: 640px; }
+.st-podloga { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.st-strana { height: 640px; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; scrollbar-width: thin; }
+.st-blok { padding-bottom: 16px; margin-bottom: 14px; border-bottom: 1px solid var(--border-soft); }
+.st-blok:last-child { border-bottom: 0; margin-bottom: 0; }
+.st-blok > .eyebrow { display: flex; align-items: center; gap: 2px; margin-bottom: 10px; }
+.st-vrsta, .st-klasa { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 8px; border-radius: 10px; cursor: pointer; }
+.st-klasa { grid-template-columns: auto minmax(0, 1fr) auto; cursor: default; }
+.st-vrsta:hover { background: var(--bg-hover); }
+.st-vrsta input { accent-color: var(--primary); margin: 0; }
+.st-vrsta b, .st-klasa b { font-weight: 600; font-size: 13px; }
+.st-vrsta small, .st-klasa small { display: block; font-size: 11.5px; color: var(--t-muted); line-height: 1.35; margin-top: 2px; }
+.st-vrsta.mala { grid-template-columns: auto auto minmax(0, 1fr); padding: 6px 8px; margin: -4px 0 6px; }
+.st-vrsta.mala span { font-size: 12.5px; }
+.st-vrsta-km { text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--t-muted); white-space: nowrap; }
+.st-vrsta-km b { font-size: 15px; color: var(--t-base); }
+.st-klasa > i { width: 14px; height: 14px; border-radius: 4px; }
+.st-red { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; text-align: left; border: 0; background: none;
+  color: inherit; font: inherit; padding: 7px 8px; border-radius: 9px; cursor: pointer; }
+.st-red:hover, .st-red:focus-visible { background: var(--bg-hover); outline: none; }
+.st-red.izabran { background: var(--primary-soft); }
+.st-red > span:first-child { display: grid; gap: 5px; min-width: 0; }
+.st-red-ime { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.st-red-ime small { display: block; font-weight: 400; font-size: 11.5px; color: var(--t-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-red-desno { font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--t-base); white-space: nowrap; }
+.st-traka-mini { display: block; height: 4px; border-radius: 2px; background: var(--border-soft); overflow: hidden; }
+.st-traka-mini i { display: block; height: 100%; border-radius: 2px; background: var(--primary); transform-origin: left; animation: st-rast .7s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes st-rast { from { transform: scaleX(0); } }
+.st-cip { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: var(--bg-muted); color: var(--t-muted); font-size: 10.5px; font-weight: 500; vertical-align: 1px; }
+.st-gradijent { display: grid; grid-template-columns: repeat(3, 1fr); font-size: 11px; color: var(--t-light); font-family: "JetBrains Mono", monospace; }
+.st-gradijent i { grid-column: 1 / -1; height: 10px; border-radius: 5px; background: var(--g); margin-bottom: 5px; }
+.st-gradijent span:nth-child(3) { text-align: center; }
+.st-gradijent span:last-child { text-align: right; }
+.st-slozena { display: flex; gap: 2px; height: 10px; margin: 10px 0 2px; border-radius: 5px; overflow: hidden; }
+.st-slozena.mala { height: 7px; width: 84px; margin: 0; border-radius: 4px; }
+.st-napomena { font-size: 12px; color: var(--t-muted); line-height: 1.5; margin: 10px 0 0; }
+.kartica-glava + .st-napomena { margin: -6px 0 10px; }
+
+.st-dole { align-items: start; }
+.st-tabela-omot { max-height: 700px; overflow-y: auto; overscroll-behavior: contain; border-radius: 10px; }
+.st-tabela-omot thead th { position: sticky; top: 0; z-index: 1; background: var(--bg-card); }
+.st-tabela td { padding: 9px 12px; }
+.st-tabela td b { font-weight: 600; }
+.st-tabela td small { display: block; font-size: 11px; color: var(--t-muted); }
+.st-tabela td.broj small { display: inline; }
+.st-tabela tbody tr { cursor: pointer; }
+.st-tabela tbody tr.izabran { background: var(--primary-soft); }
+.st-tabela tbody tr:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.st-tabela th[data-sort]:hover, .st-tabela th.sortirano { color: var(--t-base); }
+.st-tabela th.bez-sorta { cursor: default; }
+.st-tabela .strelica-sort { margin-left: 4px; font-size: 9px; color: var(--primary); }
+.st-strane { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; background: var(--bg-muted); color: var(--t-muted); }
+.st-strane-obe { background: var(--success-soft); color: var(--success); }
+.st-strane-delom { background: var(--warning-soft); color: var(--warning); }
+.st-pretraga { position: relative; width: 220px; max-width: 100%; align-self: center; }
+.st-pretraga svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--t-light); }
+.st-pretraga input { width: 100%; padding-left: 36px; }
+[dir="rtl"] .st-pretraga svg { left: auto; right: 12px; }
+.st-delovi-grafik { min-height: 400px; cursor: pointer; }
+
+.st-metod-mreza { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+.st-metod-mreza h3 { font-size: 13px; margin: 0 0 6px; }
+.st-metod-mreza p { font-size: 12.5px; color: var(--t-muted); line-height: 1.55; margin: 0; }
+.st-metod-mreza p b { color: var(--t-base); font-weight: 600; }
+
+.maplibregl-popup.kartica-staze .maplibregl-popup-content { padding: 10px 30px 10px 12px; font-size: 12.5px; }
+.kartica-staze .tt-red.sitno:empty { display: none; }
+.veza-dugme { border: 0; background: none; padding: 0; color: var(--primary); font: inherit; font-weight: 600; cursor: pointer; }
+.veza-dugme:hover { text-decoration: underline; }
+
+@media (max-width: 1100px) {
+  .st-raspored { grid-template-columns: minmax(0, 1fr); }
+  .st-strana { height: auto; max-height: 520px; }
+  .st-metod-mreza { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .st-mapa { height: 460px; }
+  .st-metod-mreza { grid-template-columns: minmax(0, 1fr); }
+  .st-pretraga { width: 100%; }
+  .st-sastav-zbir { margin-left: 0; }
+  .st-tabela .st-slozena.mala { width: 54px; }
+}
+.st-red-ime small.st-cip { display: inline-block; white-space: nowrap; vertical-align: middle; line-height: 1.5; margin-top: -2px; }
+.st-tabela td.broj { white-space: nowrap; }
+@media (max-width: 640px) { #st-mod, #dg-mera { flex-wrap: wrap; } }
