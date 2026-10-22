@@ -4,21 +4,75 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Biciklističke staze · Biciklisti Novog Sada</title>
-  <meta name="description" content="Mreža biciklističkih staza u Novom Sadu — uskoro.">
+  <meta name="description" content="Mreža biciklističkih staza u Novom Sadu: kakve su, koliko biciklista nose, koliko su daleko od svake ulice i gde se prekidaju.">
   <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark",z=JSON.parse(localStorage.getItem("ns-izgled")||"{}")||{};if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(!z.raspored&&localStorage.getItem("ns-meni-uzak")==="1")z.raspored="uzak";["boja","gustina","raspored","sirina"].forEach(function(k){if(z[k])d.dataset[k]=z[k]});if(z.smer)d.dir=z.smer}catch(e){}</script>
   <link rel="icon" href="assets/slike/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/stil.css?v=202610221000">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
+        integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/stil.css?v=202610221400">
 </head>
 <body data-strana="staze" data-putanja="Mapa|Biciklističke staze">
-  <!-- strana u izradi: sadržaj (skicu i plan) crta assets/uskoro.js -->
-  <main class="sadrzaj" id="sadrzaj"></main>
+  <main class="sadrzaj staze" id="sadrzaj">
+    <header class="zaglavlje-strane pojava">
+      <div>
+        <span class="eyebrow" id="st-nadnaslov">Mapa · OpenStreetMap</span>
+        <h1>Biciklističke <em>staze</em></h1>
+        <p class="uvod" id="st-uvod">Mreža biciklističkih staza Novog Sada: kakve su, koliko biciklista nose, koliko su daleko od svake ulice i gde se prekidaju.</p>
+      </div>
+    </header>
 
+    <section class="st-sastav pojava" id="st-sastav" aria-label="Mreža po vrsti staze"></section>
+
+    <section class="kartica pojava st-karta">
+      <div class="kartica-glava">
+        <div><span class="eyebrow" id="st-mod-oznaka">Mreža</span><h2 id="st-mod-naslov">Kakve su staze</h2><p class="opis" id="st-mod-opis"></p></div>
+        <div class="grupa-kontrola"><span class="eyebrow">Na mapi</span><div id="st-mod" role="group" aria-label="Šta mapa prikazuje"></div></div>
+      </div>
+      <div class="st-raspored">
+        <div class="st-mapa-omot">
+          <div class="mapa st-mapa" id="mapa" role="region" aria-label="Mapa biciklističkih staza"></div>
+          <div class="st-podloga"><span class="eyebrow">Tip mape</span><div id="podloga"></div></div>
+        </div>
+        <aside class="st-strana" id="st-strana" aria-live="polite"></aside>
+      </div>
+    </section>
+
+    <div class="mreza-2 st-dole">
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow" id="ul-oznaka">Pravci</span><h2>Ulice sa stazom<span id="ul-info"></span></h2></div>
+          <div class="pretraga st-pretraga"><svg class="ik" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="ul-pretraga" placeholder="Ulica…" aria-label="Pretraga ulica"></div>
+        </div>
+        <div class="tabela-omot st-tabela-omot"><table class="tabela st-tabela" id="ul-tabela"></table></div>
+      </section>
+
+      <section class="kartica pojava">
+        <div class="kartica-glava">
+          <div><span class="eyebrow">Delovi grada</span><h2 id="dg-naslov">Koliko ulica ima stazu</h2></div>
+          <div class="grupa-kontrola"><span class="eyebrow">Mera</span><div id="dg-mera"></div></div>
+        </div>
+        <p class="st-napomena" id="dg-opis"></p>
+        <div class="grafik st-delovi-grafik" id="dg-grafik"></div>
+      </section>
+    </div>
+
+    <section class="kartica pojava st-metod">
+      <div class="kartica-glava"><div><span class="eyebrow">O podacima</span><h2>Odakle su staze i kako je računato</h2></div></div>
+      <div class="st-metod-mreza" id="st-metod"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"
+          integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610221000"></script>
-  <script src="assets/ljuska.js?v=202610221000"></script>
-  <script src="assets/uskoro.js?v=202610221000"></script>
+  <script src="assets/zajednicko.js?v=202610221400"></script>
+  <script src="assets/ljuska.js?v=202610221400"></script>
+  <script src="assets/pin3d.js?v=202610221400"></script>
+  <script src="assets/mapa-modul.js?v=202610221400"></script>
+  <script src="assets/staze.js?v=202610221400"></script>
 </body>
 </html>
