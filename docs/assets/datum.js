@@ -97,9 +97,11 @@ const IZBOR_DATUMA = (() => {
       panel.remove(); panel = null;
       dugme.setAttribute("aria-expanded", "false");
       document.removeEventListener("pointerdown", van, true);
+      document.removeEventListener("keydown", esc);
       if (vratiFokus) dugme.focus();
     }
     const van = (e) => { if (panel && !omot.contains(e.target)) zatvori(false); };
+    const esc = (e) => { if (panel && e.key === "Escape" && !panel.contains(e.target)) { e.preventDefault(); zatvori(); } };
     function izaberi(d) {
       const [min, max] = granice();
       if (d < min || d > max) return;
@@ -121,20 +123,29 @@ const IZBOR_DATUMA = (() => {
       omot.appendChild(panel);
       dugme.setAttribute("aria-expanded", "true");
       document.addEventListener("pointerdown", van, true);
+      document.addEventListener("keydown", esc);
       panel.addEventListener("click", klik);
       panel.addEventListener("keydown", tastatura);
       panel.addEventListener("pointerover", (e) => { const c = e.target.closest("[data-d]"); if (c) opisDana(c.dataset.d); });
       panel.addEventListener("pointerleave", () => opisDana(fokus));
       panel.addEventListener("focusin", (e) => { const c = e.target.closest(".izd-dan"); if (c && c.dataset.d !== fokus) { fokus = c.dataset.d; opisDana(fokus); } });
       crtaj();
+      postavi();
       const P = await ucitajPodatke();
       podatakSerije = polje.dataset.serija ? await prometSerije(polje.dataset.serija) : null;
       if (panel) { panel.__p = P; crtaj(); }
-      // panel ne sme da izađe van ekrana desno
+      postavi();
+    }
+    /** Panel ne sme da izađe van ekrana: desno → poravnaj uz desnu ivicu; dole → otvori se nagore (ako gore ima mesta),
+        da se stranica ne produžava kad je izbor datuma pri dnu (npr. „Dan na mapi“). Na telefonu je panel sa dna ekrana. */
+    function postavi() {
       requestAnimationFrame(() => {
-        if (!panel) return;
-        const r = panel.getBoundingClientRect();
+        if (!panel || window.matchMedia("(max-width: 520px)").matches) return;
+        panel.classList.remove("gore");
+        const r = panel.getBoundingClientRect(), d = dugme.getBoundingClientRect();
         if (r.right > window.innerWidth - 8) panel.classList.add("desno");
+        const ispod = window.innerHeight - d.bottom, iznad = d.top;
+        if (r.height + 16 > ispod && iznad > ispod) panel.classList.add("gore");
       });
     }
     dugme.addEventListener("click", otvori);

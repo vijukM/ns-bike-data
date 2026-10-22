@@ -152,7 +152,9 @@
     el.innerHTML = MAPA.info(`Model ${model}: prosek 3 TFT mreže (medijana) i 3 XGBoost modela, učen na satnim podacima 2021–2026. `
       + (D.prognoza.zvanicna ? "Prikazana je zvanična prognoza iz ponoći (samo podaci do 24:00 juče). "
         : `Prikazano je izdanje u ${sat(P.izdato_utc)} (podaci do 24:00 juče + novija vremenska prognoza). `)
-      + "Interval 10–90 % je iz TFT-a. Greška na test godini sa pravom vremenskom prognozom: RMSE 12,71 biciklista po satu i brojaču.");
+      + "Interval 10–90 % je iz TFT-a. Greška na test godini sa pravom vremenskom prognozom: RMSE 12,71 biciklista po satu i brojaču."
+      + (D.prognoza.zvanicna && (D.prognoza.zvanicna.dopunjeni_sati || []).length
+        ? ` Sati ${D.prognoza.zvanicna.dopunjeni_sati.map((i) => oznake()[i].oznaka).join(", ")} nemaju zvaničnu prognozu (nije izdata), pa je prikazano poslednje izdanje objavljeno pre početka tog sata.` : ""));
   }
   /** Izbor „Svi brojači“ ili jedan brojač — isti izgled kao na strani Grafici (dugme + panel sa pretragom). */
   function izborBrojaca() {

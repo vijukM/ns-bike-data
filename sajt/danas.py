@@ -135,18 +135,38 @@ def stanje_serija(poslednje: pd.DataFrame) -> dict[str, dict]:
 
 # ---------------------------------------------------------------- prognoza i vreme
 
-def _prognoza_iz(fajlovi: list[Path], sati_utc: pd.DatetimeIndex) -> dict | None:
-    """Prognoza modela (ts = kraj sata UTC+1) → lokalni sati dana; za svaki sat poslednje izdanje iz `fajlovi`."""
+def _ucitaj_prognoze(fajlovi: list[Path], sati_utc: pd.DatetimeIndex) -> pd.DataFrame:
     if not fajlovi:
-        return None
+        return pd.DataFrame()
     p = pd.concat([pd.read_parquet(f) for f in fajlovi], ignore_index=True)
     p = p[~p["verzija_modela"].astype(str).str.startswith(STARI_MODELI)]
     if p.empty:
-        return None
+        return p
     p["pocetak_utc"] = (pd.to_datetime(p["ts"]) - pd.Timedelta(hours=2)).dt.tz_localize("UTC")   # kraj UTC+1 → početak UTC
-    p = p[p["pocetak_utc"].isin(sati_utc)].sort_values("izdato_utc").drop_duplicates(["stanica_id", "pocetak_utc"], keep="last")
+    return p[p["pocetak_utc"].isin(sati_utc)]
+
+
+def _prognoza_iz(fajlovi: list[Path], sati_utc: pd.DatetimeIndex, dopuna: list[Path] | None = None) -> dict | None:
+    """Prognoza modela (ts = kraj sata UTC+1) → lokalni sati dana; za svaki sat poslednje izdanje iz `fajlovi`.
+
+    dopuna: sati koje `fajlovi` nemaju uzimaju se iz ovih izdanja, ali samo iz izdanja objavljenog PRE početka tog
+    sata (prognoza i dalje data unapred). Primer: leti je lokalni sat 00–01 dana D sat 24 modela za dan D−1, pa
+    dolazi iz jučerašnje zvanične; kad ona nije izdata (21.10.2026, ispad Open-Meteo), uzima se poslednje
+    osvežavanje izdato pre ponoći."""
+    p = _ucitaj_prognoze(fajlovi, sati_utc)
+    dopunjeno = []
+    if dopuna:
+        d = _ucitaj_prognoze(dopuna, sati_utc)
+        if not d.empty:
+            d = d[pd.to_datetime(d["izdato_utc"], utc=True) < d["pocetak_utc"]]
+            ima = set(zip(p["stanica_id"], p["pocetak_utc"])) if not p.empty else set()
+            d = d[[(a, b) not in ima for a, b in zip(d["stanica_id"], d["pocetak_utc"])]]
+            if not d.empty:
+                dopunjeno = sorted({int(i) for i in np.searchsorted(sati_utc, d["pocetak_utc"].unique())})
+                p = pd.concat([p, d], ignore_index=True) if not p.empty else d
     if p.empty:
         return None
+    p = p.sort_values("izdato_utc").drop_duplicates(["stanica_id", "pocetak_utc"], keep="last")
     idx = {t: i for i, t in enumerate(sati_utc)}
     n = len(sati_utc)
     grad = {k: [None] * n for k in ("pred", "q10", "q90")}
@@ -161,7 +181,7 @@ def _prognoza_iz(fajlovi: list[Path], sati_utc: pd.DatetimeIndex) -> dict | None
             v[idx[t]] = round(float(x), 1)
         serije[s] = v
     return {"izdato_utc": str(p["izdato_utc"].max()), "verzija_modela": str(p["verzija_modela"].iloc[-1]),
-            "grad": grad, "serije": serije}
+            "grad": grad, "serije": serije, "dopunjeni_sati": dopunjeno}
 
 
 def prognoze(dan: date, sati_utc: pd.DatetimeIndex, koren: Path = PROGNOZE) -> dict:
@@ -169,7 +189,7 @@ def prognoze(dan: date, sati_utc: pd.DatetimeIndex, koren: Path = PROGNOZE) -> d
     dani = [dan - timedelta(days=1), dan, dan + timedelta(days=1)]
     zv = [f for d in dani if (f := koren / "zvanicne" / f"{d}.parquet").exists()]
     sva = [f for d in dani for f in sorted((koren / f"{d:%Y}" / f"{d:%m}" / f"{d:%d}").glob("*.parquet"))]
-    return {"zvanicna": _prognoza_iz(zv, sati_utc), "najnovija": _prognoza_iz(sva, sati_utc)}
+    return {"zvanicna": _prognoza_iz(zv, sati_utc, dopuna=sva), "najnovija": _prognoza_iz(sva, sati_utc)}
 
 
 def vreme(sati_utc: pd.DatetimeIndex, koren: Path = VREME) -> dict | None:

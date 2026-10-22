@@ -48,22 +48,29 @@ def napravi(koren: Path = konfig.PODACI, izlaz: Path = pi.IZLAZ) -> dict:
     poslednji = (d["pocetak_utc"].max() + pd.Timedelta(hours=1)).tz_localize("UTC").tz_convert(konfig.TZ)
     poslednji_dan = (poslednji - pd.Timedelta(minutes=1)).date()          # kraj poslednjeg sata, 24:00 = isti dan
     serije = sorted(d["stanica_id"].unique())
-    idx = d.set_index(["stanica_id", "pocetak_utc"])
+    # sat u mesecu kao ceo broj (nezavisno od preciznosti datetime64: us/ns se razlikuju među verzijama pandas-a,
+    # pa je reindex po vremenu u GitHub Actions dao prazne mesece)
+    t_ns = pd.to_datetime(d["pocetak_utc"]).dt.as_unit("ns").astype("int64")
     prazni = []
     for per in pd.period_range(OD_MESECA, pd.Period(poslednji_dan, freq="M"), freq="M"):
         pocetak, n, dani_meseca = pi._mreza_meseca(per.year, per.month)
-        mreza = pd.date_range(pocetak, periods=n, freq="h")
+        p0 = pd.Timestamp(pocetak).as_unit("ns").value
+        i = ((t_ns - p0) // 3_600_000_000_000).to_numpy()
+        u_mesecu = (i >= 0) & (i < n)
         obj = {"mesec": str(per), "pocetak_utc": pocetak.strftime("%Y-%m-%dT%H:%MZ"), "n": n, "dani": dani_meseca,
                "v": {}, "r": {}}
         validnih = np.zeros(n, dtype=int)
         for s in serije:
-            ms = idx.loc[s].reindex(mreza)
-            kod = ms["kod"].fillna(pi.KOD["nema_reda"]).astype(int).to_numpy()
-            if ms["y_A"].isna().all() and (kod == pi.KOD["nema_reda"]).all():
+            m = u_mesecu & (d["stanica_id"] == s).to_numpy()
+            y = np.full(n, np.nan)
+            kod = np.full(n, pi.KOD["nema_reda"], dtype=int)
+            y[i[m]] = d.loc[m, "y_A"].to_numpy(dtype=float)
+            kod[i[m]] = d.loc[m, "kod"].to_numpy(dtype=int)
+            if np.isnan(y).all() and (kod == pi.KOD["nema_reda"]).all():
                 continue                                   # serija bez ijednog podatka u mesecu (npr. ceo septembar)
-            obj["v"][s] = [pi._i(x) for x in ms["y_A"]]
+            obj["v"][s] = [pi._i(x) for x in y]
             obj["r"][s] = pi.razlozi_rle(kod)
-            validnih += ms["y_A"].notna().to_numpy()
+            validnih += ~np.isnan(y)
         for iso, i0, sati in dani_meseca:
             if date.fromisoformat(iso) <= poslednji_dan and not validnih[i0:i0 + sati].any():
                 prazni.append(iso)
