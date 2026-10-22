@@ -7,7 +7,7 @@ Ulazi (svi već postoje na sajtu): staze.geojson (OSM staze, trake, zajedničke 
 
 Šta se računa (sve u metrima, ravna projekcija oko 45,25° s. g. š. — greška < 0,1 % na ovom području):
   - dužina linija po vrsti i dužina pravaca: staze sa obe strane bulevara su dve linije, ali jedan pravac
-    (tačka staze koja ima paralelnu stazu druge deonice na 4–50 m popreko broji se kao 1/(1+n));
+    (tačka staze koja ima paralelnu stazu druge deonice na 2,5–50 m popreko broji se kao 1/(1+n));
   - naziv ulice svake deonice: najbliža paralelna ulica (do 35 m, pa do 80 m), većinom po dužini;
     deonice daleko od ulica (kej, nasipi, staze ka okolnim mestima) dobijaju naziv po najbližem mestu;
   - brojači: najbliža staza i ulica; deonice iste ulice do 1,5 km dobijaju najbliži brojač (opterećenje);
@@ -40,7 +40,9 @@ KLASE_PUTA = "asg"                       # autoput, sporedna, glavna (klasa „o
 A, SPOREDNA, GLAVNA = range(3)
 GRANICE_UDALJENOSTI = (100, 300, 600)   # m: klase 0..3 za „koliko je daleko najbliža staza“
 KORAK_STAZE, KORAK_PUTA = 5.0, 10.0
-PRAG_BROJAC_DEONICA = 1500              # m: deonica iste ulice dobija najbliži brojač ako je bliže od ovoga
+PRAG_BROJAC_DEONICA = 1500
+PRAG_DELA = 80                          # m: deo OSM deonice uz drugu ulicu kraći od ovoga ostaje u susednom delu
+PRAG_KRATKE = 60                        # m: kraća deonica je prelaz ili veza, naziv uzima od pravca koji nastavlja              # m: deonica iste ulice dobija najbliži brojač ako je bliže od ovoga
 
 log = logging.getLogger(__name__)
 
@@ -54,11 +56,11 @@ def u_lonlat(x: float, y: float) -> list[float]:
     return [round(x / KX, 5), round(y / KY, 5)]
 
 
-def progusti(koord, korak: float) -> list[tuple]:
-    """Tačke na sredinama komada dužine ≤ korak: (x, y, ux, uy, dužina komada)."""
+def progusti(koord, korak: float, segment: bool = False) -> list[tuple]:
+    """Tačke na sredinama komada dužine ≤ korak: (x, y, ux, uy, dužina komada[, indeks segmenta između temena])."""
     p = [u_m(c) for c in koord]
     out = []
-    for (ax, ay), (bx, by) in zip(p, p[1:]):
+    for s, ((ax, ay), (bx, by)) in enumerate(zip(p, p[1:])):
         L = math.hypot(bx - ax, by - ay)
         if L == 0:
             continue
@@ -66,7 +68,7 @@ def progusti(koord, korak: float) -> list[tuple]:
         n = max(1, math.ceil(L / korak))
         for j in range(n):
             t = (j + 0.5) / n * L
-            out.append((ax + ux * t, ay + uy * t, ux, uy, L / n))
+            out.append((ax + ux * t, ay + uy * t, ux, uy, L / n, s) if segment else (ax + ux * t, ay + uy * t, ux, uy, L / n))
     return out
 
 
@@ -129,13 +131,6 @@ def gradski_delovi(delovi: dict) -> list[tuple[str, list]]:
 
 # ---------------------------------------------------------------- analiza
 def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: dict, voda: dict | None = None) -> dict:
-    F = staze["features"]
-    vrste = [f["properties"]["t"] for f in F]
-
-    sp = np.array([(*p, i) for i, f in enumerate(F) for p in progusti(f["geometry"]["coordinates"], KORAK_STAZE)])
-    fs = sp[:, 5].astype(int)
-    ms = Mreza(sp[:, 0], sp[:, 1], 40)
-
     imena, im_idx, rp = [], {}, []
     for i, f in enumerate(putevi["features"]):
         k = f["properties"]["k"]
@@ -151,22 +146,16 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
     rk = rp[:, 7].astype(int)
     mr = Mreza(rp[:, 0], rp[:, 1], 40)
 
-    # 1) naziv ulice uz svaku tačku staze: najbliža paralelna ulica sa nazivom (35 m, pa 80 m)
-    ulica_t = np.full(len(sp), -1)
-    for i, (x, y, ux, uy, _, _) in enumerate(sp):
-        c = mr.blizu(x, y, 80)
-        c = c[rp[c, 6] >= 0]
-        if not len(c):
-            continue
-        d = np.hypot(rp[c, 0] - x, rp[c, 1] - y)
-        par = np.abs(rp[c, 2] * ux + rp[c, 3] * uy) > 0.8
-        for r in (35, 80):
-            ok = par & (d < r)
-            if ok.any():
-                ulica_t[i] = int(rp[c[ok][np.argmin(d[ok])], 6])
-                break
+    # 1) OSM deonica koja skreće u drugu ulicu („L“) deli se na delove, svaki deo nosi svoju ulicu
+    F, podela = podeli_deonice(staze["features"], rp, mr)
+    vrste = [f["properties"]["t"] for f in F]
+    kljuc = [f"{f['properties']['id']}:{f['properties']['deo']}" if "deo" in f["properties"] else str(f["properties"]["id"]) for f in F]
+    sp = np.array([(*p, i) for i, f in enumerate(F) for p in progusti(f["geometry"]["coordinates"], KORAK_STAZE)])
+    fs = sp[:, 5].astype(int)
+    ms = Mreza(sp[:, 0], sp[:, 1], 40)
+    ulica_t = np.array([ulica_tacke(rp, mr, x, y, ux, uy) for x, y, ux, uy, *_ in sp])
 
-    # 2) pravci: paralelna tačka druge deonice 4–50 m popreko i < 8 m uzduž → obe strane ulice su jedan pravac
+    # 2) pravci: paralelna tačka druge deonice 2,5–50 m popreko i < 8 m uzduž → obe strane ulice su jedan pravac
     tezina = np.ones(len(sp))
     for i, (x, y, ux, uy, _, f) in enumerate(sp):
         c = ms.blizu(x, y, 50)
@@ -175,7 +164,7 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
             continue
         dx, dy = sp[c, 0] - x, sp[c, 1] - y
         uz, po = np.abs(dx * ux + dy * uy), np.abs(-dx * uy + dy * ux)
-        ok = (np.abs(sp[c, 2] * ux + sp[c, 3] * uy) > 0.9) & (uz < 8) & (po > 4) & (po < 50)
+        ok = (np.abs(sp[c, 2] * ux + sp[c, 3] * uy) > 0.9) & (uz < 8) & (po > 2.5) & (po < 50)
         if ok.any():
             tezina[i] = 1 / (1 + len(set(fs[c[ok]].tolist())))
 
@@ -193,18 +182,33 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
             u, w = glas[f].most_common(1)[0]
             if w >= 0.5 * duz[f]:
                 ulica_f[f] = imena[u]
-    bez = [f for f in range(len(F)) if f not in ulica_f]
+    # kratke deonice (prelazi preko raskrsnice, veze na uglu) ne nose naziv ulice koju seku:
+    # nastavljaju pravac susedne paralelne deonice, a prelaz bez takvog nastavka nema naziv ulice
+    prelaz_f = kratke_deonice(F, sp, fs, ms, rp, mr, duz, imena, ulica_f)
+    bez = [f for f in range(len(F)) if f not in ulica_f and f not in prelaz_f]
     if bez:
-        tacke_mesta = [(f["geometry"]["coordinates"], f["properties"]["n"]) for f in mesta["features"]] + \
-            [(f["geometry"]["coordinates"], f["properties"]["n"]) for f in delovi["features"]
-             if f["geometry"]["type"] == "Point" and f["properties"]["v"] != "mz"]          # mesne zajednice nisu poznati nazivi
+        # nazivi: delovi grada i naselja (bez mesnih zajednica), parkovi i poznati objekti (bolnica, fakultet, stadion, kultura)
+        naselja = [(f["geometry"]["coordinates"], f["properties"]["n"]) for f in delovi["features"]
+                   if f["geometry"]["type"] == "Point" and f["properties"]["v"] != "mz"]
+        tacke_mesta = naselja + [(f["geometry"]["coordinates"], f["properties"]["n"]) for f in mesta["features"]
+                                 if f["properties"]["t"] in ("park", "b", "f", "s", "k") and f["properties"]["n"] != "Dečje igralište"]
         pm = np.array([u_m(c) for c, _ in tacke_mesta])
+        pn = np.array([u_m(c) for c, _ in naselja])
+        najblize = lambda x, y, p, lista: lista[int(np.argmin(np.hypot(p[:, 0] - x, p[:, 1] - y)))][1]   # noqa: E731
         obala = obala_dunava(voda) if voda else None
         mo = Mreza(obala[:, 0], obala[:, 1], 150) if obala is not None else None
         for grupa in povezane_grupe(F, bez):
             t = sp[np.isin(fs, grupa)]
             cx, cy = np.average(t[:, 0], weights=t[:, 4]), np.average(t[:, 1], weights=t[:, 4])
-            n = f"kod: {tacke_mesta[int(np.argmin(np.hypot(pm[:, 0] - cx, pm[:, 1] - cy)))][1]}"
+            n = f"kod: {najblize(cx, cy, pm, tacke_mesta)}"
+            if t[:, 4].sum() >= 1500:                                # duga staza van grada: od jednog do drugog naselja
+                ex = np.cov(t[:, 0], t[:, 1])
+                osa = np.linalg.eigh(ex)[1][:, -1]
+                pr = (t[:, 0] - cx) * osa[0] + (t[:, 1] - cy) * osa[1]
+                a_, b_ = t[np.argmin(pr)], t[np.argmax(pr)]
+                na, nb = najblize(a_[0], a_[1], pn, naselja), najblize(b_[0], b_[1], pn, naselja)
+                if na != nb:
+                    n = f"pravac: {' – '.join(sorted((na, nb)))}"
             if mo is not None:                                       # kej i nasip: većina deonice do 150 m od obale Dunava
                 uz = np.array([(np.hypot(obala[c, 0] - x, obala[c, 1] - y) < 150).any() for x, y in t[:, :2] for c in [mo.blizu(x, y, 150)]])
                 if t[uz, 4].sum() >= 0.5 * t[:, 4].sum():
@@ -312,12 +316,15 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
     for u, z in ulice.items():
         t = sp[np.isin(fs, z["f"])]
         bb = [b for b in brojaci if b["ulica"] == u]
+        km_ul, km_ul_staza = duzina_ulice(rp, im_idx.get(u), t)
         ulice_out.append({"n": u, "van_ulice": u not in im_idx, "km": round(z["km"], 2), "km_pravca": round(z["km_pravca"], 2),
                           "vrste": {k: round(v, 2) for k, v in z["vrste"].items()},
                           "obe_strane": round(z["km"] / z["km_pravca"], 2) if z["km_pravca"] else None,
                           "brojaci": [b["mesto"] for b in bb], "prosek": max((b["prosek"] for b in bb), default=None),
-                          "b": okvir(t)})
-    ulice_out.sort(key=lambda u: -u["km_pravca"])
+                          "km_ulice": km_ul, "km_ulice_staza": km_ul_staza,
+                          # dužina za prikaz i poređenje: deo ulice duž kog ide staza (za staze van ulica: dužina pravca)
+                          "km_staze": km_ul_staza if km_ul_staza else round(z["km_pravca"], 2), "b": okvir(t)})
+    ulice_out.sort(key=lambda u: -u["km_staze"])
     ui = {u["n"]: i for i, u in enumerate(ulice_out)}
 
     km = {k: round(float(sum(duz[f] for f in range(len(F)) if vrste[f] == k)) / 1000, 2) for k in "stz"}
@@ -334,6 +341,7 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
         "izvor": "© OpenStreetMap saradnici (ODbL); analiza: ns-bike-data",
         "ukupno": {"km": km, "km_linija": round(sum(km.values()), 1), "km_pravaca": round(float(duz_pravca.sum()) / 1000, 1),
                    "deonica": len(F), "ulica": sum(not u["van_ulice"] for u in ulice_out),
+                   "prelaza": len(prelaz_f), "km_prelaza": round(float(sum(duz[f] for f in prelaz_f)) / 1000, 2),
                    "grad": {"km_glavnih": round(float(w[gg].sum()) / 1000, 1), "pokr_glavnih": round(float(w[gg & pokr].sum() / w[gg].sum()), 3),
                             "km_ulica": round(float(w[gs].sum()) / 1000, 1), "pokr_ulica": round(float(w[gs & pokr].sum() / w[gs].sum()), 3),
                             "do_300": round(float(w[gs & (udalj <= 300)].sum() / w[gs].sum()), 3),
@@ -341,9 +349,13 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
                    "km_glavnih_ukupno": round(km_glavnih / 1000, 1)},
         "granice_udaljenosti": list(GRANICE_UDALJENOSTI),
         "ulice": ulice_out,
-        # OSM id deonice → [indeks ulice u „ulice“, mesto brojača ili null, dužina pravca / dužina linije]
-        "deonice": {str(F[f]["properties"]["id"]): [ui.get(ulica_f.get(f), -1), brojac_f.get(f), round(float(duz_pravca[f] / duz[f]), 2) if duz[f] else 1]
+        # OSM id deonice → [indeks ulice u „ulice“ (−1: nema), mesto brojača ili null, dužina pravca / dužina linije,
+        #                   prelaz: naziv ulice koju seče („“ ako je bez naziva) ili null ako nije prelaz]
+        "deonice": {kljuc[f]: [ui.get(ulica_f.get(f), -1), brojac_f.get(f), round(float(duz_pravca[f] / duz[f]), 2) if duz[f] else 1,
+                                                   (prelaz_f[f] or "") if f in prelaz_f else None]
                     for f in range(len(F))},
+        # OSM id deonice podeljene po ulicama → [[prvo teme, poslednje teme], …] za delove „id:0“, „id:1“, …
+        "podela": podela,
         "brojaci": brojaci,
         "delovi": delovi_out,
         "prekidi": prekidi,
@@ -351,6 +363,202 @@ def analiziraj(staze: dict, putevi: dict, delovi: dict, mesta: dict, stanice: di
         # jedan znak po obeležju putevi.geojson: klasa udaljenosti najbliže staze (0–3) ili „-“ (servisne, pešačke)
         "udaljenost_puteva": "".join(klasa_puta),
     }
+
+
+def duzina_ulice(rp, u: int | None, staza: np.ndarray) -> tuple[float | None, float | None]:
+    """(km ulice, km ulice uz koju ide staza te ulice): dvostruki kolovoz (paralelna tačka iste ulice 5–60 m popreko)
+    se računa jednom; ulica „ima stazu“ gde je paralelna staza na 45 m ili bliže."""
+    if u is None:
+        return None, None
+    r = rp[rp[:, 6] == u]
+    # istoimena ulica u drugom naselju (Dunavska, Svetosavska…) se ne računa: samo putevi povezani sa onim uz stazu
+    putevi_ = r[:, 5].astype(int)
+    mr0 = Mreza(r[:, 0], r[:, 1], 40)
+    roditelj = {p: p for p in set(putevi_.tolist())}
+
+    def koren(p):
+        while roditelj[p] != p:
+            roditelj[p] = roditelj[roditelj[p]]
+            p = roditelj[p]
+        return p
+    for p in roditelj:
+        idx = np.nonzero(putevi_ == p)[0]
+        for j in (idx[0], idx[-1]):
+            c = mr0.blizu(r[j, 0], r[j, 1], 40)
+            for q in set(putevi_[c[np.hypot(r[c, 0] - r[j, 0], r[c, 1] - r[j, 1]) < 40]].tolist()):
+                roditelj[koren(q)] = koren(p)
+    ms0 = Mreza(staza[:, 0], staza[:, 1], 45)
+    uz_stazu = {koren(int(putevi_[j])) for j in range(len(r))
+                if len(k := ms0.blizu(r[j, 0], r[j, 1], 45)) and (np.hypot(staza[k, 0] - r[j, 0], staza[k, 1] - r[j, 1]) < 45).any()}
+    r = r[np.array([koren(int(p)) in uz_stazu for p in putevi_])]
+    if not len(r):
+        return None, None
+    mr_ = Mreza(r[:, 0], r[:, 1], 60)
+    ms_ = Mreza(staza[:, 0], staza[:, 1], 45)
+    duz = sa_stazom = 0.0
+    for x, y, ux, uy, w, *_ in r:
+        c = mr_.blizu(x, y, 60)
+        dx, dy = r[c, 0] - x, r[c, 1] - y
+        dvostruk = ((np.abs(dx * ux + dy * uy) < 12) & (np.abs(-dx * uy + dy * ux) > 5) & (np.abs(-dx * uy + dy * ux) < 60)
+                    & (np.abs(r[c, 2] * ux + r[c, 3] * uy) > 0.9)).any()
+        w = w / 2 if dvostruk else w
+        duz += w
+        k = ms_.blizu(x, y, 45)
+        if len(k) and ((np.hypot(staza[k, 0] - x, staza[k, 1] - y) < 45) & (np.abs(staza[k, 2] * ux + staza[k, 3] * uy) > 0.8)).any():
+            sa_stazom += w
+    return round(duz / 1000, 2), round(sa_stazom / 1000, 2)
+
+
+def ulica_tacke(rp, mr, x, y, ux, uy) -> int:
+    """Ulica uz tačku staze: najbliža paralelna ulica do 35 m, pa do 80 m; −1 ako je najbliža bez naziva ili je nema.
+    (Staza uz ulicu bez naziva ne uzima naziv druge ulice koja je dalje.)"""
+    c = mr.blizu(x, y, 80)
+    if not len(c):
+        return -1
+    d = np.hypot(rp[c, 0] - x, rp[c, 1] - y)
+    par = np.abs(rp[c, 2] * ux + rp[c, 3] * uy) > 0.8
+    for r in (35, 80):
+        ok = par & (d < r)
+        if ok.any():
+            return int(rp[c[ok][np.argmin(d[ok])], 6])
+    return -1
+
+
+def podeli_deonice(F0: list, rp, mr) -> tuple[list, dict]:
+    """Deli OSM deonicu na delove po ulici uz koju ide (segment između temena = jedna ulica, delovi kraći od PRAG_DELA
+    se spajaju sa susedom). Vraća (delovi kao GeoJSON obeležja sa „deo“ ako je deonica podeljena, {id: [[i0, i1], …]})."""
+    out, podela = [], {}
+    for f in F0:
+        c = f["geometry"]["coordinates"]
+        tacke = progusti(c, KORAK_STAZE, segment=True)
+        glas = defaultdict(Counter)
+        duz = Counter()
+        for x, y, ux, uy, w, sg in tacke:
+            glas[sg][ulica_tacke(rp, mr, x, y, ux, uy)] += w
+            duz[sg] += w
+        # nizovi segmenata iste ulice: [ulica, dužina, prvi segment, poslednji segment]
+        nizovi = []
+        for sg in range(len(c) - 1):
+            u = glas[sg].most_common(1)[0][0] if glas[sg] else (nizovi[-1][0] if nizovi else -1)
+            if nizovi and nizovi[-1][0] == u:
+                nizovi[-1][1] += duz[sg]
+                nizovi[-1][3] = sg
+            else:
+                nizovi.append([u, duz[sg], sg, sg])
+        while len(nizovi) > 1:
+            i = min(range(len(nizovi)), key=lambda k: nizovi[k][1])
+            if nizovi[i][1] >= PRAG_DELA:
+                break
+            levo, desno = (nizovi[i - 1] if i > 0 else None), (nizovi[i + 1] if i + 1 < len(nizovi) else None)
+            cilj = levo if desno is None or (levo is not None and (levo[0] == desno[0] or levo[1] >= desno[1])) else desno
+            cilj[1] += nizovi[i][1]
+            cilj[2], cilj[3] = min(cilj[2], nizovi[i][2]), max(cilj[3], nizovi[i][3])
+            del nizovi[i]
+            k = 0
+            while k + 1 < len(nizovi):                                # susedni nizovi iste ulice postaju jedan
+                if nizovi[k][0] == nizovi[k + 1][0]:
+                    nizovi[k][1] += nizovi[k + 1][1]
+                    nizovi[k][3] = nizovi[k + 1][3]
+                    del nizovi[k + 1]
+                else:
+                    k += 1
+        if len(nizovi) == 1:
+            out.append(f)
+            continue
+        podela[str(f["properties"]["id"])] = [[n[2], n[3] + 1] for n in nizovi]
+        for k, n in enumerate(nizovi):
+            out.append({"type": "Feature", "properties": {**f["properties"], "deo": k},
+                        "geometry": {"type": "LineString", "coordinates": c[n[2]:n[3] + 2]}})
+    return out, podela
+
+
+def kratke_deonice(F, sp, fs, ms, rp, mr, duz, imena, ulica_f) -> dict[int, str | None]:
+    """Deonice kraće od PRAG_KRATKE: naziv dobijaju od susedne paralelne deonice (isti pravac kroz raskrsnicu).
+    Ako takve nema, a deonica poprečno seče ulicu, to je prelaz: briše se iz ulice_f i vraća {deonica: naziv ulice koju seče}.
+    Menja ulica_f."""
+    kratke = [f for f in range(len(F)) if duz[f] < PRAG_KRATKE]
+    smer = {}
+    for f in range(len(F)):
+        c = F[f]["geometry"]["coordinates"]
+        (ax, ay), (bx, by) = u_m(c[0]), u_m(c[-1])
+        L = math.hypot(bx - ax, by - ay)
+        smer[f] = ((bx - ax) / L, (by - ay) / L) if L else (0.0, 0.0)
+
+    def susedi(f):
+        """[(sused, |cos| ugla između deonice i suseda na mestu dodira)] — dodir krajem deonice do 6 m"""
+        out = {}
+        c = F[f]["geometry"]["coordinates"]
+        for kraj in (c[0], c[-1]):
+            x, y = u_m(kraj)
+            k = ms.blizu(x, y, 6)
+            k = k[(fs[k] != f) & (np.hypot(sp[k, 0] - x, sp[k, 1] - y) < 6)]
+            for j in k:
+                g = int(fs[j])
+                cos = abs(sp[j, 2] * smer[f][0] + sp[j, 3] * smer[f][1])
+                out[g] = max(out.get(g, 0), cos)
+        return out
+
+    def sece(f):
+        """naziv (ili „“) ulice koju deonica seče poprečno: tačka puta do 6 m, ugao > 60°"""
+        t = sp[fs == f]
+        for x, y, ux, uy, *_ in t:
+            r = mr.blizu(x, y, 6)
+            r = r[(np.hypot(rp[r, 0] - x, rp[r, 1] - y) < 6) & (np.abs(rp[r, 2] * ux + rp[r, 3] * uy) < 0.5)]
+            if len(r):
+                return imena[int(rp[r[0], 6])] if rp[r[0], 6] >= 0 else ""
+        return None
+
+    sus = {f: susedi(f) for f in kratke}
+    preseca = {f: sece(f) for f in kratke}
+    for f in kratke:
+        ulica_f.pop(f, None)
+    # nekoliko krugova: lanac kratkih deonica (prelaz iz dva dela) dobija naziv od duge deonice na kraju lanca
+    for _ in range(4):
+        novo = {}
+        for f in kratke:
+            if f in ulica_f:
+                continue
+            glas = Counter()
+            for g, cos in sus[f].items():
+                if cos > 0.8 and g in ulica_f and not ulica_f[g].startswith("kod: "):
+                    glas[ulica_f[g]] += duz[g]
+            if glas:
+                novo[f] = glas.most_common(1)[0][0]
+        if not novo:
+            break
+        ulica_f.update(novo)
+    prelazi = {}
+    for f in kratke:
+        if f in ulica_f:
+            continue
+        if preseca[f] is not None:
+            prelazi[f] = preseca[f] or None
+        else:                                                         # kratka staza bez nastavka i bez preseka: svoj naziv
+            t = sp[fs == f]
+            glas = Counter()
+            for x, y, ux, uy, w, _ in t:
+                r = mr.blizu(x, y, 35)
+                r = r[(rp[r, 6] >= 0) & (np.hypot(rp[r, 0] - x, rp[r, 1] - y) < 35) & (np.abs(rp[r, 2] * ux + rp[r, 3] * uy) > 0.8)]
+                if len(r):
+                    glas[int(rp[r[0], 6])] += w
+            if glas:
+                ulica_f[f] = imena[glas.most_common(1)[0][0]]
+    # „ulica“ sastavljena samo od komadića (ukupno < 80 m, sve deonice kratke) je veza na uglu: pripada najdužoj susednoj stazi
+    po_ulici = defaultdict(list)
+    for f, u in ulica_f.items():
+        po_ulici[u].append(f)
+    sitne = {u for u, fs_ in po_ulici.items() if sum(duz[f] for f in fs_) < 80 and all(duz[f] < PRAG_KRATKE for f in fs_)}
+    for u in sitne:
+        for f in po_ulici[u]:
+            ulica_f.pop(f, None)
+    for u in sitne:
+        for f in po_ulici[u]:
+            kand = [(duz[g], ulica_f[g]) for g in sus[f] if g in ulica_f and ulica_f[g] not in sitne]
+            if kand:
+                ulica_f[f] = max(kand)[1]
+            else:
+                prelazi[f] = preseca[f] or None
+    return prelazi
 
 
 def povezane_grupe(F: list, indeksi: list[int], prag: float = 15.0) -> list[list[int]]:

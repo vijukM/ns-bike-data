@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610221400">
+  <link rel="stylesheet" href="assets/stil.css?v=202610221800">
 </head>
 <body data-strana="staze" data-putanja="Mapa|Biciklističke staze">
   <main class="sadrzaj staze" id="sadrzaj">
@@ -19,11 +19,19 @@
       <div>
         <span class="eyebrow" id="st-nadnaslov">Mapa · OpenStreetMap</span>
         <h1>Biciklističke <em>staze</em></h1>
-        <p class="uvod" id="st-uvod">Mreža biciklističkih staza Novog Sada: kakve su, koliko biciklista nose, koliko su daleko od svake ulice i gde se prekidaju.</p>
       </div>
     </header>
 
-    <section class="st-sastav pojava" id="st-sastav" aria-label="Mreža po vrsti staze"></section>
+    <div class="mreza-2 st-gore">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Mreža po vrsti</span><h2>Kakve su staze</h2></div></div>
+        <div class="st-krug"><div class="grafik st-krug-grafik" id="pv-grafik" aria-label="Staze po vrsti: kilometri i procenti"></div><div class="st-krug-legenda" id="pv-legenda"></div></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Ulice i staze</span><h2>Koliko je daleko najbliža staza</h2></div></div>
+        <div class="st-krug"><div class="grafik st-krug-grafik" id="ud-grafik" aria-label="Ulice po udaljenosti od najbliže staze"></div><div class="st-krug-legenda" id="ud-legenda"></div></div>
+      </section>
+    </div>
 
     <section class="kartica pojava st-karta">
       <div class="kartica-glava">
@@ -69,10 +77,10 @@
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610221400"></script>
-  <script src="assets/ljuska.js?v=202610221400"></script>
-  <script src="assets/pin3d.js?v=202610221400"></script>
-  <script src="assets/mapa-modul.js?v=202610221400"></script>
-  <script src="assets/staze.js?v=202610221400"></script>
+  <script src="assets/zajednicko.js?v=202610221800"></script>
+  <script src="assets/ljuska.js?v=202610221800"></script>
+  <script src="assets/pin3d.js?v=202610221800"></script>
+  <script src="assets/mapa-modul.js?v=202610221800"></script>
+  <script src="assets/staze.js?v=202610221800"></script>
 </body>
 </html>

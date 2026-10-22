@@ -31,51 +31,93 @@
   const brojac = Object.fromEntries(A.brojaci.map((b) => [b.mesto, b]));
   const serijeMesta = {};
   for (const r of s.serije) (serijeMesta[r.mesto] = serijeMesta[r.mesto] || []).push(r);
-  /** naziv za prikaz: „kod: Rumenka“ → „Kod Rumenke“ se ne menja po padežima, pa ostaje „van ulica · Rumenka“ */
+  /** naziv za prikaz: staze van ulica nose naziv mesta („kod: Mišeluk“) ili oba kraja („pravac: Sajlovo – Rumenka“) */
   const ime = (n) => (n === "uz Dunav" ? { t: "Uz Dunav", sitno: "kej i nasip" }
-    : n.startsWith("kod: ") ? { t: n.slice(5), sitno: "van ulica, u blizini" } : { t: n, sitno: "" });
+    : n.startsWith("kod: ") ? { t: n.slice(5), sitno: "staza van ulica, u blizini" }
+      : n.startsWith("pravac: ") ? { t: n.slice(8), sitno: "staza van ulica" } : { t: n, sitno: "" });
   const imeTekst = (n) => { const x = ime(n); return x.sitno ? `${x.t} (${x.sitno})` : x.t; };
   const strane = (u) => (u.obe_strane >= 1.6 ? ["obe", "staza sa obe strane ulice"] : u.obe_strane >= 1.2 ? ["delom", "na delu ulice sa obe strane"] : ["jedna", "staza sa jedne strane (ili jedna dvosmerna)"]);
 
-  // deonice: OSM id → ulica, brojač, udeo pravca
+  // deonice: OSM id (ili „id:deo“ kad je OSM deonica podeljena po ulicama) → ulica, brojač, udeo pravca, prelaz
   const deonica = A.deonice;
+  const delovi_ = [];
   for (const f of G.features) {
-    const d = deonica[f.properties.id];
-    if (!d) continue;
-    f.properties.u = d[0];
-    if (d[1] != null) { f.properties.b = d[1]; f.properties.p = brojac[d[1]] ? brojac[d[1]].prosek : 0; }
-    f.properties.r = d[2];
+    const pd = A.podela[f.properties.id];
+    if (!pd) { delovi_.push([String(f.properties.id), f]); continue; }
+    pd.forEach(([a, b], k) => delovi_.push([`${f.properties.id}:${k}`, { type: "Feature", properties: { ...f.properties }, geometry: { type: "LineString", coordinates: f.geometry.coordinates.slice(a, b + 1) } }]));
   }
+  G = { ...G, features: delovi_.map(([k, f]) => {
+    const d = deonica[k];
+    if (d) {
+      f.properties.u = d[0];
+      if (d[1] != null) { f.properties.b = d[1]; f.properties.p = brojac[d[1]] ? brojac[d[1]].prosek : 0; }
+      f.properties.r = d[2];
+      if (d[3] != null) f.properties.pr = d[3];
+    }
+    return f;
+  }) };
   const duzinaF = (f) => MAPA.duzinaKm(f.geometry.coordinates);
   let kmSaBrojacem = 0;
   for (const f of G.features) if (f.properties.b != null) kmSaBrojacem += duzinaF(f) * (f.properties.r || 1);
 
-  // ---------------------------------------------------------------- uvod i sastav mreže
+  // ---------------------------------------------------------------- mreža u brojevima: krug po vrsti i krofna udaljenosti
   const datum = (iso) => NS.datum(iso.slice(0, 10));
   document.getElementById("st-nadnaslov").textContent = `Mapa · OpenStreetMap · stanje ${datum(A.staze_preuzeto_utc)}`;
   const udeo = (k) => U.km[k] / U.km_linija;
-  document.getElementById("st-uvod").innerHTML =
-    `Prema OpenStreetMap-u, Novi Sad ima <b>${km(U.km_pravaca, 0)} km</b> biciklističkih pravaca, odnosno <b>${km(U.km_linija, 0)} km</b> staza kad se dve strane bulevara računaju posebno. ` +
-    `Većina (${pct(udeo("s"))}) je odvojena od kolovoza, a trake na samom kolovozu čine tek <b>${km(U.km.t)} km</b>. ` +
-    `Staza prati <b>${pct(gr.pokr_glavnih)}</b> glavnih gradskih ulica, ali samo ${pct(gr.pokr_ulica)} svih — ipak je <b>${pct(gr.do_300)}</b> ulica na manje od 300 m od staze.`;
-
-  const sastav = document.getElementById("st-sastav");
+  const pvLegenda = document.getElementById("pv-legenda");
   function crtajSastav() {
-    sastav.innerHTML = `<div class="st-sastav-traka" role="group" aria-label="Vrste staza (klik: samo ta vrsta na mapi)">${VRSTE.map(([k, t]) =>
-      `<button type="button" data-t="${k}" style="flex-grow:${U.km[k]};--boja:var(${VRSTE.find((v) => v[0] === k)[3]})" aria-pressed="${vrsteNaMapi.has(k)}"
-        title="${t}: ${km(U.km[k])} km (${pct(udeo(k))})"><span>${pct(udeo(k))}</span></button>`).join("")}</div>
-      <div class="st-sastav-legenda">${VRSTE.map(([k, t, opis, boja]) => `<button type="button" data-t="${k}" aria-pressed="${vrsteNaMapi.has(k)}" title="${opis}">
-        <i class="st-linija${k === "z" ? " isprekidana" : ""}" style="--boja:var(${boja})"></i><span>${t}</span><b>${km(U.km[k])} km</b></button>`).join("")}
-        <span class="st-sastav-zbir">${km(U.km_linija)} km linija · ${km(U.km_pravaca)} km pravaca${LJ.info(`Staza sa obe strane bulevara su dve linije, ali jedan pravac. Pravac se računa tako što se deo staze koji ima paralelnu stazu na 4–50 m popreko broji samo jednom. ${NS.broj(U.deonica)} deonica iz OpenStreetMap-a.`)}</span></div>`;
+    pvLegenda.innerHTML = VRSTE.map(([k, t, opis, boja]) => `<button type="button" class="st-krug-red" data-t="${k}" aria-pressed="${vrsteNaMapi.has(k)}" title="${opis} — klik: samo ova vrsta na mapi">
+        <i class="st-linija${k === "z" ? " isprekidana" : ""}" style="--boja:var(${boja})"></i><span>${t}<small>${opis}</small></span>
+        <b>${km(U.km[k])}<small> km</small></b><em>${pct(udeo(k))}</em></button>`).join("") +
+      `<div class="st-krug-zbir"><span>Ukupno</span><b>${km(U.km_linija)}<small> km</small></b><em>100 %</em></div>
+      <p class="st-napomena">Kad se staze sa obe strane iste ulice računaju jednom, mreža ima <b>${km(U.km_pravaca, 0)} km</b> pravaca${LJ.info(`Na bulevaru sa stazom sa obe strane ucrtane su dve linije: ${km(U.km_linija, 0)} km je zbir svih linija, a ${km(U.km_pravaca, 0)} km dužina pravaca kojima se može voziti (deo staze sa paralelnom stazom na 2,5–50 m broji se jednom).`)}.</p>`;
+    if (typeof pv !== "undefined") pv.osvezi();
   }
+  let pv;
 
-  // ---------------------------------------------------------------- mapa
   const q = new URLSearchParams(location.search);
   const PRIKAZI = [["mreza", "Mreža"], ["promet", "Promet"], ["udaljenost", "Do staze"], ["prekidi", "Prekidi"]];
   let prikaz = PRIKAZI.some(([k]) => k === q.get("prikaz")) ? q.get("prikaz") : "mreza";
   let vrsteNaMapi = new Set(["s", "t", "z"]);
   let izabranaUlica = null, izabraniDeo = null, saRaskrsnicama = false;
   crtajSastav();
+  const tekstKm = (v) => `${km(v)} km`;
+  pv = NS.grafik(document.getElementById("pv-grafik"), (b) => ({
+    ...NS.osnova(b),
+    tooltip: { ...NS.osnova(b).tooltip, trigger: "item", formatter: (p) => `<b>${p.name}</b><br>${tekstKm(p.value)} · ${NS.broj(Math.round(p.percent))} %` },
+    series: [{ type: "pie", radius: ["0%", "66%"], center: ["54%", "52%"], startAngle: 120, selectedMode: false,
+      itemStyle: { borderColor: b.povrsina, borderWidth: 2 },
+      label: { position: "inside", color: "#0b1120", fontWeight: 700, fontSize: 12, lineHeight: 15, formatter: (p) => `${NS.broj(Math.round(p.percent))} %\n${km(p.value, p.percent < 8 ? 1 : 0)} km` },
+      labelLine: { length: 8, length2: 8, lineStyle: { color: b["ink-3"] } }, emphasis: { scaleSize: 5 }, animationType: "scale", animationDuration: 1100,
+      // male kriške (trake, ~4 %) dobijaju natpis spolja
+      data: VRSTE.map(([k, t, , boja]) => ({ name: t, value: U.km[k], k, itemStyle: { color: css(boja), opacity: vrsteNaMapi.has(k) ? 1 : 0.3 },
+        ...(udeo(k) < 0.08 ? { label: { position: "outside", color: b["ink-2"], fontWeight: 600, fontSize: 11.5, overflow: "none" } } : {}) })) }],
+  }));
+  pv.spreman.then(({ ec }) => ec.on("click", (p) => { if (p.data && p.data.k) izaberiVrstu(p.data.k); }));
+
+  const KLASE_KRATKO = ["do 100 m", "100–300 m", "300–600 m", "preko 600 m"];
+  const zbirUd = gr.udaljenost_km.reduce((a, x) => a + x, 0);
+  document.getElementById("ud-legenda").innerHTML = KLASE.map(([t, opis], i) => `<div class="st-krug-red"><i class="st-kvadrat" data-k="${i}"></i>
+      <span>${t}<small>${opis}</small></span><b>${km(gr.udaljenost_km[i], 0)}<small> km</small></b><em>${pct(gr.udaljenost_km[i] / zbirUd)}</em></div>`).join("") +
+    `<div class="st-krug-zbir"><span>Ulice u ${A.delovi.length} delova grada</span><b>${km(zbirUd, 0)}<small> km</small></b><em>100 %</em></div>
+    <p class="st-napomena">Staza ide uz <b>${pct(gr.pokr_glavnih)}</b> glavnih ulica i uz ${pct(gr.pokr_ulica)} svih ulica (na 30 m ili bliže).${LJ.info("Glavne ulice: primarne i sekundarne po OpenStreetMap-u (bulevari i glavne gradske saobraćajnice). Udaljenost se meri vazdušnom linijom od svakog dela ulice do najbliže staze; servisne i pešačke ulice se ne računaju.")}</p>`;
+  const bojiKvadrate = () => document.querySelectorAll("#ud-legenda .st-kvadrat").forEach((x) => { x.style.background = bojeKlasa()[+x.dataset.k]; });
+  bojiKvadrate();
+  const ud = NS.grafik(document.getElementById("ud-grafik"), (b) => {
+    const k = bojeKlasa(), blizu = (gr.udaljenost_km[0] + gr.udaljenost_km[1]) / zbirUd;
+    return {
+      ...NS.osnova(b),
+      tooltip: { ...NS.osnova(b).tooltip, trigger: "item", formatter: (p) => `<b>Najbliža staza ${KLASE_KRATKO[p.dataIndex]}</b><br>${km(p.value, 0)} km ulica · ${NS.broj(Math.round(p.percent))} %` },
+      title: { text: pct(blizu), subtext: "ulica do 300 m\nod staze", left: "center", top: "35%", itemGap: 6,
+        textStyle: { color: b.ink, fontSize: 24, fontWeight: 700, fontFamily: "Inter Tight, Inter, sans-serif" }, subtextStyle: { color: b["ink-3"], fontSize: 11, lineHeight: 14, align: "center" } },
+      series: [{ type: "pie", radius: ["66%", "88%"], center: ["50%", "50%"], startAngle: 90, padAngle: 1.5, itemStyle: { borderRadius: 5, borderColor: b.povrsina, borderWidth: 1 },
+        label: { show: false }, emphasis: { scaleSize: 4 },
+        animationType: "expansion", animationDuration: 1300,
+        data: gr.udaljenost_km.map((v, i) => ({ name: KLASE_KRATKO[i], value: v, itemStyle: { color: k[i] } })) }],
+    };
+  });
+  ud.spreman.then(({ ec }) => ec.on("click", () => { postaviPrikaz("udaljenost"); document.getElementById("mapa").scrollIntoView({ behavior: "smooth", block: "center" }); }));
+  document.addEventListener("tema", bojiKvadrate);
 
   const el = document.getElementById("mapa");
   const ctl = MAPA.napravi(el, s, { podlogaEl: document.getElementById("podloga") });
@@ -251,13 +293,14 @@
     const duz = duzinaF(f) * 1000;
     const b = o.b != null ? brojac[o.b] : null;
     const prviS = b ? b.serije[0] : null;
-    const x = u ? ime(u.n) : { t: "Staza", sitno: "" };
+    const prelaz = o.pr != null;
+    const x = u ? ime(u.n) : prelaz ? { t: o.pr ? `Prelaz preko ulice ${o.pr}` : "Prelaz / veza između staza", sitno: "kratka deonica koja spaja staze" } : { t: "Staza", sitno: "" };
     kartica.setLngLat(lngLat).setHTML(`<b>${x.t}</b>${x.sitno ? `<div class="tt-red sitno">${x.sitno}</div>` : ""}
       <div class="tt-red"><i class="st-linija mala${o.t === "z" ? " isprekidana" : ""}" style="--boja:var(${VRSTE.find((v) => v[0] === o.t)[3]})"></i>${VRSTA[o.t]} · deonica ${metri(Math.round(duz / 10) * 10)}</div>
       ${o.r < 0.75 ? `<div class="tt-red sitno">sa druge strane ulice ide još jedna staza</div>` : ""}
-      ${u ? `<div class="tt-red">cela ulica: <b>${km(u.km_pravca, 2)} km</b> pravca</div>` : ""}
+      ${u ? `<div class="tt-red">${u.km_ulice ? `staza duž <b>${km(u.km_staze, 2)} km</b> od ${km(u.km_ulice, 2)} km ulice` : `cela staza: <b>${km(u.km_staze, 2)} km</b>`}</div>` : ""}
       ${b ? `<div class="tt-red">brojač <a href="stanica.html?id=${prviS}">${b.naziv}</a>: <b>${NS.broj(b.prosek)}</b> / dan</div>
-        <div class="tt-red sitno">${o.b != null && b.ulica === (u && u.n) ? "najbliži brojač na istoj ulici" : ""}</div>` : `<div class="tt-red sitno">na ovoj deonici nema brojača</div>`}
+        <div class="tt-red sitno">${o.b != null && b.ulica === (u && u.n) ? "najbliži brojač na istoj ulici" : ""}</div>` : prelaz ? "" : `<div class="tt-red sitno">na ovoj deonici nema brojača</div>`}
       ${u ? `<div class="tt-red"><button type="button" class="veza-dugme" data-ulica="${o.u}">Istakni celu ulicu</button></div>` : ""}`).addTo(m);
     const d = kartica.getElement().querySelector("[data-ulica]");
     if (d) d.addEventListener("click", () => izaberiUlicu(+d.dataset.ulica, { leti: true }));
@@ -298,13 +341,13 @@
 
   function stranaMreza() {
     const naj = ulice.filter((u) => !u.van_ulice).slice(0, 8);
-    const maks = naj[0].km_pravca;
+    const maks = naj[0].km_staze;
     return `<div class="st-blok"><span class="eyebrow">Vrste staza</span>${VRSTE.map(([k, t, opis, boja]) =>
       `<label class="st-vrsta"><input type="checkbox" data-t="${k}" ${vrsteNaMapi.has(k) ? "checked" : ""}>
         <i class="st-linija${k === "z" ? " isprekidana" : ""}" style="--boja:var(${boja})"></i>
         <span><b>${t}</b><small>${opis}</small></span><span class="st-vrsta-km"><b>${km(U.km[k])}</b> km<small>${pct(udeo(k))}</small></span></label>`).join("")}</div>
-      <div class="st-blok"><span class="eyebrow">Najduži pravci${LJ.info("Dužina pravca: obe strane bulevara se računaju jednom. Klik vodi do ulice na mapi.")}</span>
-      ${naj.map((u) => red(`data-ulica="${u.i}"`, `<span class="st-red-ime">${u.n}</span><span class="st-traka-mini"><i style="width:${(u.km_pravca / maks) * 100}%"></i></span>`, `${km(u.km_pravca)} km`, izabranaUlica === u.i ? "izabran" : "")).join("")}</div>`;
+      <div class="st-blok"><span class="eyebrow">Najduže ulice sa stazom${LJ.info("Dužina dela ulice duž kog ide staza (sa jedne ili obe strane). Klik vodi do ulice na mapi.")}</span>
+      ${naj.map((u) => red(`data-ulica="${u.i}"`, `<span class="st-red-ime">${u.n}<small>${u.km_ulice ? `${pct(Math.min(1, u.km_ulice_staza / u.km_ulice))} ulice od ${km(u.km_ulice)} km` : ""}</small></span><span class="st-traka-mini"><i style="width:${(u.km_staze / maks) * 100}%"></i></span>`, `${km(u.km_staze)} km`, izabranaUlica === u.i ? "izabran" : "")).join("")}</div>`;
   }
   function stranaPromet() {
     const lista = [...A.brojaci].sort((x, y) => y.prosek - x.prosek);
@@ -358,15 +401,13 @@
     else if (d.dataset.kraj) otvoriPrekid("kraj", +d.dataset.kraj);
     else if (d.dataset.prekid) otvoriPrekid("prekid", +d.dataset.prekid);
   });
-  sastav.addEventListener("click", (e) => {
-    const d = e.target.closest("[data-t]");
-    if (!d) return;
-    const k = d.dataset.t;
-    // klik na vrstu: samo ta vrsta; ponovni klik na jedinu uključenu: sve
+  // klik na vrstu (krug ili legenda): samo ta vrsta na mapi; ponovni klik na jedinu uključenu: sve
+  function izaberiVrstu(k) {
     vrsteNaMapi = vrsteNaMapi.size === 1 && vrsteNaMapi.has(k) ? new Set(["s", "t", "z"]) : new Set([k]);
     crtajSastav();
     postaviPrikaz("mreza");
-  });
+  }
+  pvLegenda.addEventListener("click", (e) => { const d = e.target.closest("[data-t]"); if (d) izaberiVrstu(d.dataset.t); });
 
   function postaviPrikaz(p) {
     prikaz = p;
@@ -402,32 +443,34 @@
   // ---------------------------------------------------------------- tabela ulica
   let sort = { kol: "km", smer: -1 };
   const nUlica = ulice.filter((u) => !u.van_ulice).length;
-  document.getElementById("ul-oznaka").textContent = `Pravci · ${nUlica} ulica + ${ulice.length - nUlica} van ulica`;
-  document.getElementById("ul-info").outerHTML = LJ.info("Svaka deonica staze dobija naziv najbliže paralelne ulice. Pravac: obe strane ulice se računaju jednom. Brojač: najprometniji brojač na toj ulici, prosek biciklista dnevno (9/2025–8/2026).");
+  document.getElementById("ul-oznaka").textContent = `${nUlica} ulica + ${ulice.length - nUlica} staza van ulica`;
+  document.getElementById("ul-info").outerHTML = LJ.info("Svaki deo staze dobija naziv najbliže paralelne ulice; prelazi preko raskrsnica i kratke veze ne čine posebnu ulicu. Staza: dužina dela ulice duž kog ide staza. Ulica: dužina cele ulice (dvostruki kolovoz jednom). Brojač: najprometniji brojač na toj ulici, prosek biciklista dnevno (9/2025–8/2026).");
   function tabela() {
     const upit = bezK(document.getElementById("ul-pretraga").value.trim());
     const r = ulice.filter((u) => !upit || bezK(imeTekst(u.n)).includes(upit));
-    const kljuc = { ime: (u) => ime(u.n).t, km: (u) => u.km_pravca, strane: (u) => u.obe_strane, prosek: (u) => u.prosek }[sort.kol];
+    const kljuc = { ime: (u) => ime(u.n).t, km: (u) => u.km_staze, ulica: (u) => u.km_ulice, pokr: (u) => (u.km_ulice ? u.km_ulice_staza / u.km_ulice : null),
+      strane: (u) => u.obe_strane, prosek: (u) => u.prosek }[sort.kol];
     r.sort((a, b) => {
       const va = kljuc(a), vb = kljuc(b);
       if (sort.kol === "ime") return sort.smer * va.localeCompare(vb, "sr");
-      if (va == null && vb == null) return b.km_pravca - a.km_pravca;
+      if (va == null && vb == null) return b.km_staze - a.km_staze;
       if (va == null) return 1;
       if (vb == null) return -1;
-      return sort.smer * (va - vb) || b.km_pravca - a.km_pravca;
+      return sort.smer * (va - vb) || b.km_staze - a.km_staze;
     });
     const th = (kol, tekst, kl = "") => `<th data-sort="${kol}" class="${kl}${sort.kol === kol ? " sortirano" : ""}" aria-sort="${sort.kol === kol ? (sort.smer > 0 ? "ascending" : "descending") : "none"}">${tekst}${
       sort.kol === kol ? `<span class="strelica-sort">${sort.smer > 0 ? "▲" : "▼"}</span>` : ""}</th>`;
     const vrstaBar = (u) => { const z = u.km || 1; return `<span class="st-slozena mala" title="${VRSTE.filter(([k]) => u.vrste[k]).map(([k, t]) => `${t}: ${km(u.vrste[k], 2)} km`).join(" · ")}">${
       VRSTE.filter(([k]) => u.vrste[k]).map(([k, , , boja]) => `<i style="flex-grow:${u.vrste[k] / z};background:var(${boja})"></i>`).join("")}</span>`; };
-    document.getElementById("ul-tabela").innerHTML = `<thead><tr>${th("ime", "Ulica")}${th("km", "Pravac", "broj")}${th("strane", "Strane")}<th class="bez-sorta">Vrsta</th>${th("prosek", "Brojač", "broj")}</tr></thead><tbody>` +
+    document.getElementById("ul-tabela").innerHTML = `<thead><tr>${th("ime", "Ulica")}${th("km", "Staza", "broj")}${th("pokr", "Od ulice")}${th("strane", "Strane")}<th class="bez-sorta">Vrsta</th>${th("prosek", "Brojač", "broj")}</tr></thead><tbody>` +
       r.map((u) => {
         const x = ime(u.n), [st, stOpis] = strane(u);
         const b = u.brojaci.length ? u.brojaci.map((k) => brojac[k]).sort((a, c) => c.prosek - a.prosek)[0] : null;
         return `<tr data-u="${u.i}" tabindex="0" class="${u.i === izabranaUlica ? "izabran" : ""}"><td><b>${x.t}</b>${x.sitno ? `<small>${x.sitno}</small>` : ""}</td>
-          <td class="broj">${km(u.km_pravca, 2)}<small> km</small></td><td><span class="st-strane st-strane-${st}" title="${stOpis}">${st}</span></td><td>${vrstaBar(u)}</td>
+          <td class="broj">${km(u.km_staze, 2)}<small> km</small></td>
+          <td>${u.km_ulice ? `<span class="st-pokr" title="staza duž ${km(u.km_ulice_staza, 2)} od ${km(u.km_ulice, 2)} km ulice"><span class="st-traka-mini"><i style="width:${Math.min(1, u.km_ulice_staza / u.km_ulice) * 100}%"></i></span><small>${pct(Math.min(1, u.km_ulice_staza / u.km_ulice))} od ${km(u.km_ulice)} km</small></span>` : "<span class=\"sitno\">van ulica</span>"}</td><td><span class="st-strane st-strane-${st}" title="${stOpis}">${st}</span></td><td>${vrstaBar(u)}</td>
           <td class="broj">${b ? `<a href="stanica.html?id=${b.serije[0]}" title="${b.naziv}">${NS.broj(b.prosek)}</a>${u.brojaci.length > 1 ? `<small> +${u.brojaci.length - 1}</small>` : ""}` : "<span class=\"sitno\">—</span>"}</td></tr>`;
-      }).join("") + (r.length ? "" : `<tr><td colspan="5" class="sitno">Nema ulice „${document.getElementById("ul-pretraga").value}“ sa stazom.</td></tr>`) + "</tbody>";
+      }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema ulice „${document.getElementById("ul-pretraga").value}“ sa stazom.</td></tr>`) + "</tbody>";
   }
   const tab = document.getElementById("ul-tabela");
   tab.addEventListener("click", (e) => {
@@ -484,7 +527,7 @@
   const OSM_IZMENA = "https://www.openstreetmap.org/edit#map=14/45.2551/19.8452";
   document.getElementById("st-metod").innerHTML = [
     ["Izvor", `<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap saradnici</a> (ODbL), preuzeto ${datum(A.staze_preuzeto_utc)} preko Overpass API-ja. Tri vrste: <b>izdvojena staza</b> (cycleway, track), <b>traka</b> (cycleway=lane) i <b>zajednička površina</b> (pešačka sa bicycle=designated). Ulice i delovi grada su iz istog izvora (${datum(A.putevi_preuzeto_utc)}).`],
-    ["Pravci i ulice", `Staze sa obe strane bulevara su dve linije, ali jedan pravac: deo staze koji ima paralelnu stazu na 4–50 m broji se jednom. Svaka deonica dobija naziv najbliže paralelne ulice (do 35 m, pa do 80 m); deonice daleko od ulica nazvane su po najbližem mestu.`],
+    ["Pravci i ulice", `Staze sa obe strane bulevara su dve linije, ali jedan pravac: deo staze koji ima paralelnu stazu na 2,5–50 m broji se jednom. Svaki deo staze dobija naziv najbliže paralelne ulice (do 35 m, pa do 80 m; ako je najbliža ulica bez naziva, ne uzima tuđi naziv), a OSM deonica koja skreće u drugu ulicu deli se. Prelazi preko raskrsnica i veze kraće od 60 m pripadaju pravcu koji nastavljaju. Staze daleko od ulica nazvane su po najbližem mestu ili naselju.`],
     ["Promet", `Prosek biciklista dnevno sa brojača (kompletni dani, 1. 9. 2025. – 31. 8. 2026.), zbir obe strane ulice. Deonica dobija najbliži brojač na istoj ulici, ako je bliži od 1,5 km — to je procena prometa na toj ulici, ne merenje na svakoj deonici.`],
     ["Udaljenost i prekidi", `Udaljenost se meri vazdušnom linijom od svakog dela ulice do najbliže staze. Prekid je kraj staze bez veze, a staza se nastavlja istim pravcem 15–150 m dalje; kraj je mesto gde se ista glavna ulica nastavlja bar 250 m bez staze. OpenStreetMap ponekad nema ucrtan prelaz ili kratak deo staze, pa su ovo mesta za proveru. <a href="${OSM_IZMENA}" target="_blank" rel="noopener">Ispravi na OpenStreetMap-u ↗</a>`],
   ].map(([n, t]) => `<div><h3>${n}</h3><p>${t}</p></div>`).join("");

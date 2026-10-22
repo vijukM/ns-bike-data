@@ -1130,20 +1130,6 @@ html.bez-skrola { overflow: hidden; }
 @keyframes izd-ulaz-gore { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
 /* ---------------------------------------------------------------- Biciklističke staze (staze.html) */
-.st-sastav { margin: 6px 0 22px; }
-.st-sastav-traka { display: flex; gap: 3px; height: 30px; max-width: 980px; }
-.st-sastav-traka button { flex: 0 1 0; min-width: 34px; border: 0; border-radius: 6px; background: var(--boja); color: #0b1120; font: 600 12px/1 "JetBrains Mono", monospace;
-  cursor: pointer; display: flex; align-items: center; justify-content: flex-start; padding: 0 10px; transition: opacity .2s, transform .2s; }
-.st-sastav-traka button:first-child { border-radius: 8px 4px 4px 8px; }
-.st-sastav-traka button:last-child { border-radius: 4px 8px 8px 4px; }
-.st-sastav-traka button[aria-pressed="false"] { opacity: .28; }
-.st-sastav-traka button:hover { transform: translateY(-1px); }
-.st-sastav-traka span { white-space: nowrap; overflow: hidden; }
-.st-sastav-legenda { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; margin-top: 10px; font-size: 13px; color: var(--t-muted); }
-.st-sastav-legenda button { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; color: inherit; font: inherit; padding: 2px 0; cursor: pointer; }
-.st-sastav-legenda button b { color: var(--t-base); font-variant-numeric: tabular-nums; }
-.st-sastav-legenda button[aria-pressed="false"] { opacity: .45; }
-.st-sastav-zbir { margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--t-light); display: inline-flex; align-items: center; gap: 4px; }
 .st-linija { display: inline-block; flex: none; width: 24px; height: 5px; border-radius: 3px; background: var(--boja); box-shadow: 0 0 0 1.5px var(--staza-obod); }
 .st-linija.isprekidana { background: repeating-linear-gradient(90deg, var(--boja) 0 6px, transparent 6px 10px); box-shadow: none; }
 .st-linija.mala { width: 16px; height: 4px; margin-right: 6px; vertical-align: 2px; }
@@ -1229,9 +1215,32 @@ html.bez-skrola { overflow: hidden; }
   .st-mapa { height: 460px; }
   .st-metod-mreza { grid-template-columns: minmax(0, 1fr); }
   .st-pretraga { width: 100%; }
-  .st-sastav-zbir { margin-left: 0; }
   .st-tabela .st-slozena.mala { width: 54px; }
 }
 .st-red-ime small.st-cip { display: inline-block; white-space: nowrap; vertical-align: middle; line-height: 1.5; margin-top: -2px; }
 .st-tabela td.broj { white-space: nowrap; }
 @media (max-width: 640px) { #st-mod, #dg-mera { flex-wrap: wrap; } }
+
+.st-gore { margin-bottom: 22px; align-items: stretch; }
+.st-krug { display: grid; grid-template-columns: minmax(200px, 0.9fr) minmax(0, 1.1fr); gap: 18px; align-items: center; }
+.st-krug-grafik { height: 250px; }
+.st-krug-legenda { display: grid; gap: 2px; }
+.st-krug-red, .st-krug-zbir { display: grid; grid-template-columns: auto minmax(0, 1fr) auto 48px; gap: 10px; align-items: center; padding: 8px; border-radius: 9px;
+  border: 0; background: none; color: inherit; font: inherit; text-align: left; width: 100%; }
+button.st-krug-red { cursor: pointer; }
+button.st-krug-red:hover { background: var(--bg-hover); }
+button.st-krug-red[aria-pressed="false"] { opacity: .45; }
+.st-krug-red span { font-size: 13px; font-weight: 600; min-width: 0; }
+.st-krug-red span small { display: block; font-weight: 400; font-size: 11.5px; color: var(--t-muted); margin-top: 2px; line-height: 1.35; }
+.st-krug-red b, .st-krug-zbir b { font-size: 16px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.st-krug-red b small, .st-krug-zbir b small { font-size: 11.5px; font-weight: 500; color: var(--t-muted); }
+.st-krug-red em, .st-krug-zbir em { font-style: normal; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--t-muted); text-align: right; }
+.st-krug-zbir { border-top: 1px solid var(--border-soft); border-radius: 0; margin-top: 4px; padding-top: 10px; grid-template-columns: minmax(0, 1fr) auto 48px; }
+.st-krug-zbir span { font-size: 12px; color: var(--t-muted); }
+.st-krug .st-napomena { margin: 6px 8px 0; }
+.st-krug .st-napomena b { color: var(--t-base); }
+.st-kvadrat { width: 14px; height: 14px; border-radius: 4px; }
+.st-pokr { display: grid; gap: 4px; min-width: 110px; }
+.st-pokr small { font-size: 11px; color: var(--t-muted); white-space: nowrap; }
+@media (max-width: 1250px) and (min-width: 901px) { .st-krug { grid-template-columns: minmax(0, 1fr); } .st-krug-grafik { height: 220px; } }
+@media (max-width: 520px) { .st-krug { grid-template-columns: minmax(0, 1fr); } .st-krug-grafik { height: 230px; } }
