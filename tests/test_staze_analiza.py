@@ -86,3 +86,36 @@ def test_bez_naziva_po_mestu():
     r = sa.analiziraj(st, pu, de, me, sn)
     u = r["ulice"][r["deonice"]["5"][0]]
     assert u["n"] == "kod: Park" and u["van_ulice"]
+
+
+def test_prelaz_nije_ulica():
+    # kratka deonica preko bulevara (x=500, od y=−12 do y=12) spaja dve strane: prelaz, ne „Poprečna“ ulica
+    st, pu, de, me, sn = podaci()
+    st["features"].append(staza(6, "s", (500, -12), (500, 12)))
+    pu["features"].append(put("s", "Poprečna", (500, -300), (500, 300)))
+    r = sa.analiziraj(st, pu, de, me, sn)
+    assert "Poprečna" not in {u["n"] for u in r["ulice"]}
+    d = r["deonice"]["6"]
+    assert d[0] == -1 and d[3] == "Bulevar"                                    # prelaz preko Bulevara
+    assert r["ukupno"]["prelaza"] == 1
+
+
+def test_l_deonica_se_deli_po_ulicama():
+    # jedna OSM deonica: 400 m uz Severnu, pa skreće 300 m niz Zapadnu
+    st, pu, de, me, sn = podaci()
+    st["features"].append(staza(7, "s", (900, 405), (1300, 405), (1305, 100)))
+    pu["features"] += [put("s", "Severna", (800, 400), (1400, 400)), put("s", "Zapadna", (1300, 400), (1300, 50))]
+    r = sa.analiziraj(st, pu, de, me, sn)
+    assert r["podela"]["7"] == [[0, 1], [1, 2]]
+    imena = {r["ulice"][r["deonice"][k][0]]["n"] for k in ("7:0", "7:1")}
+    assert imena == {"Severna", "Zapadna"}
+
+
+def test_staza_uz_ulicu_bez_naziva():
+    # staza uz bezimeni put (10 m), a ulica sa nazivom je 60 m dalje: ne uzima njen naziv
+    st, pu, de, me, sn = podaci()
+    st["features"].append(staza(8, "s", (0, 1010), (600, 1010)))
+    pu["features"] += [put("s", None, (0, 1000), (600, 1000)), put("s", "Daleka2", (0, 1070), (600, 1070))]
+    r = sa.analiziraj(st, pu, de, me, sn)
+    u = r["ulice"][r["deonice"]["8"][0]]
+    assert u["van_ulice"] and u["n"] != "Daleka2"
