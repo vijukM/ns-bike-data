@@ -56,3 +56,20 @@ def test_prognoza_po_lokalnom_satu_bez_starog_modela(tmp_path):
     p = danas.prognoze(date(2026, 10, 20), danas.sati_dana(date(2026, 10, 20)), tmp_path)["zvanicna"]
     assert p["grad"]["pred"][8] == 15.0 and p["grad"]["pred"][9] == 20.0 and p["serije"]["a"][8] == 10.0
     assert p["grad"]["pred"][10] is None                                   # E28 se ne prikazuje
+
+
+def test_zvanicna_dopuna_samo_iz_ranijeg_izdanja(tmp_path):
+    # leti: lokalni sat 00–01 dana D = sat 24 modela za D−1 (ts D 00:00 UTC+1); zvanična za D−1 ne postoji
+    zv = tmp_path / "zvanicne"; zv.mkdir()
+    pd.DataFrame({"stanica_id": ["a"], "ts": pd.to_datetime(["2026-10-22 02:00"]), "pred": [5.0], "q10": [1.0], "q90": [9.0],
+                  "izdato_utc": "2026-10-21T23:03:00Z", "verzija_modela": "E31"}).to_parquet(zv / "2026-10-22.parquet")
+    f = tmp_path / "2026" / "10" / "21"; f.mkdir(parents=True)
+    pd.DataFrame({"stanica_id": ["a"], "ts": pd.to_datetime(["2026-10-22 00:00"]), "pred": [27.0], "q10": [1.0], "q90": [40.0],
+                  "izdato_utc": "2026-10-21T17:03:00Z", "verzija_modela": "E31"}).to_parquet(f / "2026-10-21_1903_osvezavanje.parquet")
+    g = tmp_path / "2026" / "10" / "22"; g.mkdir(parents=True)
+    pd.DataFrame({"stanica_id": ["a"], "ts": pd.to_datetime(["2026-10-22 03:00"]), "pred": [99.0], "q10": [1.0], "q90": [99.0],
+                  "izdato_utc": "2026-10-22T05:03:00Z", "verzija_modela": "E31"}).to_parquet(g / "2026-10-22_0703_osvezavanje.parquet")
+    p = danas.prognoze(date(2026, 10, 22), danas.sati_dana(date(2026, 10, 22)), tmp_path)["zvanicna"]
+    # ts 00:00 UTC+1 → lokalno 00–01 (indeks 0), 02:00 → 02–03 (2), 03:00 → 03–04 (3)
+    assert p["serije"]["a"][0] == 27.0 and p["serije"]["a"][2] == 5.0 and p["dopunjeni_sati"] == [0]
+    assert p["serije"]["a"][3] is None          # izdanje u 07:03 je posle početka sata 03–04 → ne sme u zvaničnu
