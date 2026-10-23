@@ -60,64 +60,46 @@
   let kmSaBrojacem = 0;
   for (const f of G.features) if (f.properties.b != null) kmSaBrojacem += duzinaF(f) * (f.properties.r || 1);
 
-  // ---------------------------------------------------------------- mreža u brojevima: krug po vrsti i krofna udaljenosti
+  // ---------------------------------------------------------------- stanje i krofna „Kakve su staze“ (bočna strana, prikaz Mreža)
   const datum = (iso) => NS.datum(iso.slice(0, 10));
   document.getElementById("st-nadnaslov").textContent = `Mapa · OpenStreetMap · stanje ${datum(A.staze_preuzeto_utc)}`;
   const udeo = (k) => U.km[k] / U.km_linija;
-  const pvLegenda = document.getElementById("pv-legenda");
-  function crtajSastav() {
-    pvLegenda.innerHTML = VRSTE.map(([k, t, opis, boja]) => `<button type="button" class="st-krug-red" data-t="${k}" aria-pressed="${vrsteNaMapi.has(k)}" title="${opis} — klik: samo ova vrsta na mapi">
-        <i class="st-linija${k === "z" ? " isprekidana" : ""}" style="--boja:var(${boja})"></i><span>${t}<small>${opis}</small></span>
-        <b>${km(U.km[k])}<small> km</small></b><em>${pct(udeo(k))}</em></button>`).join("") +
-      `<div class="st-krug-zbir"><span>Ukupno</span><b>${km(U.km_linija)}<small> km</small></b><em>100 %</em></div>
-      <p class="st-napomena">Kad se staze sa obe strane iste ulice računaju jednom, mreža ima <b>${km(U.km_pravaca, 0)} km</b> pravaca${LJ.info(`Na bulevaru sa stazom sa obe strane ucrtane su dve linije: ${km(U.km_linija, 0)} km je zbir svih linija, a ${km(U.km_pravaca, 0)} km dužina pravaca kojima se može voziti (deo staze sa paralelnom stazom na 2,5–50 m broji se jednom).`)}.</p>`;
-    if (typeof pv !== "undefined") pv.osvezi();
-  }
-  let pv;
-
   const q = new URLSearchParams(location.search);
   const PRIKAZI = [["mreza", "Mreža"], ["promet", "Promet"], ["udaljenost", "Do staze"], ["prekidi", "Prekidi"]];
   let prikaz = PRIKAZI.some(([k]) => k === q.get("prikaz")) ? q.get("prikaz") : "mreza";
   let vrsteNaMapi = new Set(["s", "t", "z"]);
   let izabranaUlica = null, izabraniDeo = null, saRaskrsnicama = false;
-  crtajSastav();
-  const tekstKm = (v) => `${km(v)} km`;
-  pv = NS.grafik(document.getElementById("pv-grafik"), (b) => ({
-    ...NS.osnova(b),
-    tooltip: { ...NS.osnova(b).tooltip, trigger: "item", formatter: (p) => `<b>${p.name}</b><br>${tekstKm(p.value)} · ${NS.broj(Math.round(p.percent))} %` },
-    series: [{ type: "pie", radius: ["0%", "66%"], center: ["54%", "52%"], startAngle: 120, selectedMode: false,
-      itemStyle: { borderColor: b.povrsina, borderWidth: 2 },
-      label: { position: "inside", color: "#0b1120", fontWeight: 700, fontSize: 12, lineHeight: 15, formatter: (p) => `${NS.broj(Math.round(p.percent))} %\n${km(p.value, p.percent < 8 ? 1 : 0)} km` },
-      labelLine: { length: 8, length2: 8, lineStyle: { color: b["ink-3"] } }, emphasis: { scaleSize: 5 }, animationType: "scale", animationDuration: 1100,
-      // male kriške (trake, ~4 %) dobijaju natpis spolja
-      data: VRSTE.map(([k, t, , boja]) => ({ name: t, value: U.km[k], k, itemStyle: { color: css(boja), opacity: vrsteNaMapi.has(k) ? 1 : 0.3 },
-        ...(udeo(k) < 0.08 ? { label: { position: "outside", color: b["ink-2"], fontWeight: 600, fontSize: 11.5, overflow: "none" } } : {}) })) }],
-  }));
-  pv.spreman.then(({ ec }) => ec.on("click", (p) => { if (p.data && p.data.k) izaberiVrstu(p.data.k); }));
 
-  const KLASE_KRATKO = ["do 100 m", "100–300 m", "300–600 m", "preko 600 m"];
-  const zbirUd = gr.udaljenost_km.reduce((a, x) => a + x, 0);
-  document.getElementById("ud-legenda").innerHTML = KLASE.map(([t, opis], i) => `<div class="st-krug-red"><i class="st-kvadrat" data-k="${i}"></i>
-      <span>${t}<small>${opis}</small></span><b>${km(gr.udaljenost_km[i], 0)}<small> km</small></b><em>${pct(gr.udaljenost_km[i] / zbirUd)}</em></div>`).join("") +
-    `<div class="st-krug-zbir"><span>Ulice u ${A.delovi.length} delova grada</span><b>${km(zbirUd, 0)}<small> km</small></b><em>100 %</em></div>
-    <p class="st-napomena">Staza ide uz <b>${pct(gr.pokr_glavnih)}</b> glavnih ulica i uz ${pct(gr.pokr_ulica)} svih ulica (na 30 m ili bliže).${LJ.info("Glavne ulice: primarne i sekundarne po OpenStreetMap-u (bulevari i glavne gradske saobraćajnice). Udaljenost se meri vazdušnom linijom od svakog dela ulice do najbliže staze; servisne i pešačke ulice se ne računaju.")}</p>`;
-  const bojiKvadrate = () => document.querySelectorAll("#ud-legenda .st-kvadrat").forEach((x) => { x.style.background = bojeKlasa()[+x.dataset.k]; });
-  bojiKvadrate();
-  const ud = NS.grafik(document.getElementById("ud-grafik"), (b) => {
-    const k = bojeKlasa(), blizu = (gr.udaljenost_km[0] + gr.udaljenost_km[1]) / zbirUd;
-    return {
-      ...NS.osnova(b),
-      tooltip: { ...NS.osnova(b).tooltip, trigger: "item", formatter: (p) => `<b>Najbliža staza ${KLASE_KRATKO[p.dataIndex]}</b><br>${km(p.value, 0)} km ulica · ${NS.broj(Math.round(p.percent))} %` },
-      title: { text: pct(blizu), subtext: "ulica do 300 m\nod staze", left: "center", top: "35%", itemGap: 6,
-        textStyle: { color: b.ink, fontSize: 24, fontWeight: 700, fontFamily: "Inter Tight, Inter, sans-serif" }, subtextStyle: { color: b["ink-3"], fontSize: 11, lineHeight: 14, align: "center" } },
-      series: [{ type: "pie", radius: ["66%", "88%"], center: ["50%", "50%"], startAngle: 90, padAngle: 1.5, itemStyle: { borderRadius: 5, borderColor: b.povrsina, borderWidth: 1 },
-        label: { show: false }, emphasis: { scaleSize: 4 },
-        animationType: "expansion", animationDuration: 1300,
-        data: gr.udaljenost_km.map((v, i) => ({ name: KLASE_KRATKO[i], value: v, itemStyle: { color: k[i] } })) }],
-    };
+  // isti izgled kao krofna „Stanje brojača“ na mapi brojača; element se premešta u bočnu stranu pri svakom crtanju
+  const krofnaEl = document.createElement("div");
+  krofnaEl.className = "grafik krofna st-krofna";
+  krofnaEl.title = "Klik na deo grafika: samo ta vrsta staze na mapi";
+  let krofna = null;
+  const opcijeKrofne = (b) => ({
+    animationType: "expansion", animationDuration: 2600, animationEasing: "cubicInOut",
+    textStyle: { fontFamily: "Inter, system-ui, sans-serif" },
+    tooltip: { trigger: "item", backgroundColor: b.povrsina, borderColor: b.osa, textStyle: { color: b.ink },
+      formatter: (p) => `<b>${p.name}</b><br>${km(p.value)} km (${NS.broj(Math.round(p.percent))} %)<br><span style="color:${b["ink-2"]}">${VRSTE.find((v) => v[1] === p.name)[2]}</span>` },
+    legend: { orient: "vertical", bottom: 0, left: "center", icon: "circle", itemWidth: 9, itemHeight: 9, itemGap: 8, selectedMode: false,
+      textStyle: { color: b["ink-2"], fontSize: 12, rich: { km: { color: b.ink, fontWeight: 600, fontSize: 12, padding: [0, 0, 0, 6] }, p: { color: b["ink-3"], fontSize: 11.5 } } },
+      formatter: (n) => { const k = VRSTE.find((v) => v[1] === n)[0]; return `${n}{km|${km(U.km[k])} km}{p|  ${pct(udeo(k))}}`; } },
+    title: { text: km(U.km_linija, 0), subtext: "km staza", left: "49.5%", top: "27%", textAlign: "center",
+      textStyle: { color: b.ink, fontSize: 28, fontWeight: 700, fontFamily: "Inter Tight, Inter, sans-serif" }, subtextStyle: { color: b["ink-3"], fontSize: 12 } },
+    series: [{ type: "pie", radius: ["52%", "78%"], center: ["50%", "36%"], padAngle: 2, itemStyle: { borderRadius: 6, borderColor: b.povrsina, borderWidth: 2 },
+      label: { show: false }, emphasis: { scaleSize: 6, label: { show: false } },
+      data: VRSTE.map(([k, t, , boja]) => ({ name: t, value: U.km[k], k, itemStyle: { color: css(boja), opacity: vrsteNaMapi.has(k) ? 1 : 0.28 } })) }],
   });
-  ud.spreman.then(({ ec }) => ec.on("click", () => { postaviPrikaz("udaljenost"); document.getElementById("mapa").scrollIntoView({ behavior: "smooth", block: "center" }); }));
-  document.addEventListener("tema", bojiKvadrate);
+  /** posle crtanja bočne strane: krofna na svoje mesto (prvi put se pravi, posle se samo premesti i osveži) */
+  function postaviKrofnu() {
+    const mesto = document.getElementById("st-krofna-mesto");
+    if (!mesto) return;
+    mesto.replaceWith(krofnaEl);
+    if (!krofna) {
+      krofna = NS.grafik(krofnaEl, opcijeKrofne, { odmah: true });
+      krofna.spreman.then(({ ec }) => ec.on("click", (p) => { if (p.data && p.data.k) izaberiVrstu(p.data.k); }));
+    } else if (krofna.ec) { krofna.ec.resize(); krofna.osvezi(); }
+  }
+  const crtajSastav = () => { if (krofna && krofna.ec) krofna.osvezi(); };
 
   const el = document.getElementById("mapa");
   const ctl = MAPA.napravi(el, s, { podlogaEl: document.getElementById("podloga") });
@@ -323,32 +305,30 @@
 
   // ---------------------------------------------------------------- bočna strana (zavisi od prikaza)
   const strana = document.getElementById("st-strana");
-  const OPISI = {
-    mreza: ["Mreža", "Kakve su staze", "Klikni na stazu za ulicu, vrstu i dužinu. Pređi mišem preko staze da se istakne cela ulica."],
-    promet: ["Promet", "Koliko biciklista nosi staza", "Deonica je obojena po proseku najbližeg brojača na istoj ulici (do 1,5 km). Sive deonice nemaju brojač u blizini."],
-    udaljenost: ["Do staze", "Koliko je daleko najbliža staza", "Svaka ulica je obojena po tome koliko je od nje udaljena najbliža biciklistička staza (vazdušnom linijom)."],
-    prekidi: ["Prekidi", "Gde se staza prekida", "Mesta gde staza stane, a ulica ili staza se nastavljaju. Spisak je iz podataka OpenStreetMap-a — vredi ga proveriti na licu mesta."],
-  };
   function crtajStranu() {
-    const [oznaka, naslov, opis] = OPISI[prikaz];
-    document.getElementById("st-mod-oznaka").textContent = oznaka;
-    document.getElementById("st-mod-naslov").textContent = naslov;
-    document.getElementById("st-mod-opis").textContent = opis;
     strana.innerHTML = { mreza: stranaMreza, promet: stranaPromet, udaljenost: stranaUdaljenost, prekidi: stranaPrekidi }[prikaz]();
     strana.scrollTop = 0;
+    if (prikaz === "mreza") postaviKrofnu();
   }
   const red = (attr, levo, desno, klasa = "") => `<button type="button" class="st-red ${klasa}" ${attr}><span>${levo}</span><span class="st-red-desno">${desno}</span></button>`;
 
   function stranaMreza() {
-    const naj = ulice.filter((u) => !u.van_ulice).slice(0, 8);
-    const maks = naj[0].km_staze;
     return `<div class="st-blok"><span class="eyebrow">Vrste staza</span>${VRSTE.map(([k, t, opis, boja]) =>
       `<label class="st-vrsta"><input type="checkbox" data-t="${k}" ${vrsteNaMapi.has(k) ? "checked" : ""}>
         <i class="st-linija${k === "z" ? " isprekidana" : ""}" style="--boja:var(${boja})"></i>
-        <span><b>${t}</b><small>${opis}</small></span><span class="st-vrsta-km"><b>${km(U.km[k])}</b> km<small>${pct(udeo(k))}</small></span></label>`).join("")}</div>
-      <div class="st-blok"><span class="eyebrow">Najduže ulice sa stazom${LJ.info("Dužina dela ulice duž kog ide staza (sa jedne ili obe strane). Klik vodi do ulice na mapi.")}</span>
-      ${naj.map((u) => red(`data-ulica="${u.i}"`, `<span class="st-red-ime">${u.n}<small>${u.km_ulice ? `${pct(Math.min(1, u.km_ulice_staza / u.km_ulice))} ulice od ${km(u.km_ulice)} km` : ""}</small></span><span class="st-traka-mini"><i style="width:${(u.km_staze / maks) * 100}%"></i></span>`, `${km(u.km_staze)} km`, izabranaUlica === u.i ? "izabran" : "")).join("")}</div>`;
+        <span><b>${t}</b><small>${opis}</small></span></label>`).join("")}</div>
+      <div class="st-blok krofna-okvir"><span class="eyebrow">Kakve su staze</span><div id="st-krofna-mesto"></div>
+        <p class="st-napomena">Kad se staze sa obe strane iste ulice računaju jednom, mreža ima <b>${km(U.km_pravaca, 0)} km</b> pravaca${LJ.info(`Na bulevaru sa stazom sa obe strane ucrtane su dve linije: ${km(U.km_linija, 0)} km je zbir svih linija, a ${km(U.km_pravaca, 0)} km dužina pravaca kojima se može voziti (deo staze sa paralelnom stazom na 2,5–50 m broji se jednom).`)}.</p></div>`;
   }
+  // najduže ulice sa stazom (kartica ispod mape)
+  function crtajNajduze() {
+    const naj = ulice.filter((u) => !u.van_ulice).slice(0, 12);
+    const maks = naj[0].km_staze;
+    document.getElementById("st-najduze").innerHTML = naj.map((u) => red(`data-ulica="${u.i}"`, `<span class="st-red-ime">${u.n}<small>${u.km_ulice ? `${pct(Math.min(1, u.km_ulice_staza / u.km_ulice))} ulice od ${km(u.km_ulice)} km` : ""}</small></span><span class="st-traka-mini"><i style="width:${(u.km_staze / maks) * 100}%"></i></span>`, `${km(u.km_staze)} km`, izabranaUlica === u.i ? "izabran" : "")).join("");
+  }
+  document.getElementById("nj-info").outerHTML = LJ.info("Dužina dela ulice duž kog ide staza (sa jedne ili obe strane); staze van ulica nisu u spisku. Klik vodi do ulice na mapi.");
+  document.getElementById("st-najduze").addEventListener("click", (e) => { const d = e.target.closest("[data-ulica]"); if (d) izaberiUlicu(+d.dataset.ulica, { leti: true, skrol: true }); });
+
   function stranaPromet() {
     const lista = [...A.brojaci].sort((x, y) => y.prosek - x.prosek);
     const maks = lista[0].prosek;
@@ -404,10 +384,8 @@
   // klik na vrstu (krug ili legenda): samo ta vrsta na mapi; ponovni klik na jedinu uključenu: sve
   function izaberiVrstu(k) {
     vrsteNaMapi = vrsteNaMapi.size === 1 && vrsteNaMapi.has(k) ? new Set(["s", "t", "z"]) : new Set([k]);
-    crtajSastav();
     postaviPrikaz("mreza");
   }
-  pvLegenda.addEventListener("click", (e) => { const d = e.target.closest("[data-t]"); if (d) izaberiVrstu(d.dataset.t); });
 
   function postaviPrikaz(p) {
     prikaz = p;
@@ -427,6 +405,7 @@
     if (skrol) el.scrollIntoView({ behavior: LJ && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
     crtajStranu();
     tabela();
+    crtajNajduze();
   }
   async function izaberiDeo(n) {
     izabraniDeo = n;
@@ -535,6 +514,7 @@
   // ---------------------------------------------------------------- početak
   crtajStranu();
   tabela();
+  crtajNajduze();
   primeniPrikaz();
   const trazena = q.get("ulica");
   if (trazena) { const i = ulice.findIndex((u) => bezK(u.n) === bezK(trazena)); if (i >= 0) spremna.then(() => izaberiUlicu(i, { leti: true })); }

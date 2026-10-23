@@ -1137,8 +1137,7 @@ html.bez-skrola { overflow: hidden; }
 
 .st-raspored { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; }
 .st-mapa { height: 640px; }
-.st-podloga { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-.st-strana { height: 640px; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; scrollbar-width: thin; }
+.st-strana { height: 0; min-height: 100%; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; scrollbar-width: thin; }
 .st-blok { padding-bottom: 16px; margin-bottom: 14px; border-bottom: 1px solid var(--border-soft); }
 .st-blok:last-child { border-bottom: 0; margin-bottom: 0; }
 .st-blok > .eyebrow { display: flex; align-items: center; gap: 2px; margin-bottom: 10px; }
@@ -1175,7 +1174,7 @@ html.bez-skrola { overflow: hidden; }
 .kartica-glava + .st-napomena { margin: -6px 0 10px; }
 
 .st-dole { align-items: start; }
-.st-tabela-omot { max-height: 700px; overflow-y: auto; overscroll-behavior: contain; border-radius: 10px; }
+.st-tabela-omot { max-height: 440px; overflow-y: auto; overscroll-behavior: contain; border-radius: 10px; }
 .st-tabela-omot thead th { position: sticky; top: 0; z-index: 1; background: var(--bg-card); }
 .st-tabela td { padding: 9px 12px; }
 .st-tabela td b { font-weight: 600; }
@@ -1195,8 +1194,9 @@ html.bez-skrola { overflow: hidden; }
 .st-pretraga input { width: 100%; padding-left: 36px; }
 [dir="rtl"] .st-pretraga svg { left: auto; right: 12px; }
 .st-delovi-grafik { min-height: 400px; cursor: pointer; }
+.st-delovi-omot { max-height: 440px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 
-.st-metod-mreza { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+.st-metod-mreza { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 22px; }
 .st-metod-mreza h3 { font-size: 13px; margin: 0 0 6px; }
 .st-metod-mreza p { font-size: 12.5px; color: var(--t-muted); line-height: 1.55; margin: 0; }
 .st-metod-mreza p b { color: var(--t-base); font-weight: 600; }
@@ -1208,7 +1208,7 @@ html.bez-skrola { overflow: hidden; }
 
 @media (max-width: 1100px) {
   .st-raspored { grid-template-columns: minmax(0, 1fr); }
-  .st-strana { height: auto; max-height: 520px; }
+  .st-strana { height: auto; min-height: 0; max-height: 620px; }
   .st-metod-mreza { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
@@ -1221,26 +1221,10 @@ html.bez-skrola { overflow: hidden; }
 .st-tabela td.broj { white-space: nowrap; }
 @media (max-width: 640px) { #st-mod, #dg-mera { flex-wrap: wrap; } }
 
-.st-gore { margin-bottom: 22px; align-items: stretch; }
-.st-krug { display: grid; grid-template-columns: minmax(200px, 0.9fr) minmax(0, 1.1fr); gap: 18px; align-items: center; }
-.st-krug-grafik { height: 250px; }
-.st-krug-legenda { display: grid; gap: 2px; }
-.st-krug-red, .st-krug-zbir { display: grid; grid-template-columns: auto minmax(0, 1fr) auto 48px; gap: 10px; align-items: center; padding: 8px; border-radius: 9px;
-  border: 0; background: none; color: inherit; font: inherit; text-align: left; width: 100%; }
-button.st-krug-red { cursor: pointer; }
-button.st-krug-red:hover { background: var(--bg-hover); }
-button.st-krug-red[aria-pressed="false"] { opacity: .45; }
-.st-krug-red span { font-size: 13px; font-weight: 600; min-width: 0; }
-.st-krug-red span small { display: block; font-weight: 400; font-size: 11.5px; color: var(--t-muted); margin-top: 2px; line-height: 1.35; }
-.st-krug-red b, .st-krug-zbir b { font-size: 16px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-.st-krug-red b small, .st-krug-zbir b small { font-size: 11.5px; font-weight: 500; color: var(--t-muted); }
-.st-krug-red em, .st-krug-zbir em { font-style: normal; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--t-muted); text-align: right; }
-.st-krug-zbir { border-top: 1px solid var(--border-soft); border-radius: 0; margin-top: 4px; padding-top: 10px; grid-template-columns: minmax(0, 1fr) auto 48px; }
-.st-krug-zbir span { font-size: 12px; color: var(--t-muted); }
-.st-krug .st-napomena { margin: 6px 8px 0; }
-.st-krug .st-napomena b { color: var(--t-base); }
-.st-kvadrat { width: 14px; height: 14px; border-radius: 4px; }
 .st-pokr { display: grid; gap: 4px; min-width: 110px; }
 .st-pokr small { font-size: 11px; color: var(--t-muted); white-space: nowrap; }
-@media (max-width: 1250px) and (min-width: 901px) { .st-krug { grid-template-columns: minmax(0, 1fr); } .st-krug-grafik { height: 220px; } }
-@media (max-width: 520px) { .st-krug { grid-template-columns: minmax(0, 1fr); } .st-krug-grafik { height: 230px; } }
+.st-krofna { height: 300px; cursor: pointer; }
+.st-strana .krofna-okvir { border-top: 0; margin-top: 0; padding-top: 0; }
+.st-strana .krofna-okvir .st-napomena { margin-top: 4px; }
+.st-strana .krofna-okvir .st-napomena b { color: var(--t-base); }
+.st-dole + .st-dole { margin-top: 22px; }
