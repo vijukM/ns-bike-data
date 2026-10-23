@@ -1228,3 +1228,70 @@ html.bez-skrola { overflow: hidden; }
 .st-strana .krofna-okvir .st-napomena { margin-top: 4px; }
 .st-strana .krofna-okvir .st-napomena b { color: var(--t-base); }
 .st-dole + .st-dole { margin-top: 22px; }
+
+/* ---------------------------------------------------------------- meni: grupe se otvaraju i zatvaraju; bez trake za skrol */
+.meni { scrollbar-width: none; }
+.meni::-webkit-scrollbar { display: none; }
+.meni .grupa-glava { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: none; color: var(--t-light); font: inherit;
+  padding: 6px 10px; border-radius: 8px; cursor: pointer; text-align: left; }
+.meni .grupa-glava:hover { background: var(--bg-hover); color: var(--t-base); }
+.meni .grupa-glava:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.meni .grupa-glava .eyebrow { flex: 1; padding: 0; color: inherit; }
+.meni .grupa-ikona { display: none; }
+.meni .grupa-strelica { width: 14px; height: 14px; flex: none; transition: transform .22s ease; }
+.meni .grupa.otvorena .grupa-strelica { transform: rotate(90deg); }
+.meni .grupa-broj { display: none; font: 600 9.5px/1 "JetBrains Mono", monospace; padding: 3px 6px; border-radius: 999px; background: var(--bg-muted); color: var(--t-muted); }
+.meni .grupa:not(.otvorena) .grupa-broj { display: inline-block; }
+.meni .grupa-telo { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .25s ease; }
+.meni .grupa:not(.otvorena) .grupa-telo { grid-template-rows: 0fr; }
+.meni .grupa-unutra { min-height: 0; overflow: hidden; margin: 0 -12px; padding: 0 12px; }
+.meni .grupa:not(.otvorena) .grupa-unutra { visibility: hidden; transition: visibility 0s .25s; }
+.ljuska.uzak .meni .grupa-glava { display: none; }
+.ljuska.uzak .meni .grupa-telo { grid-template-rows: 1fr; }
+.ljuska.uzak .meni .grupa-unutra { visibility: visible; }
+@media (max-width: 960px) { .ljuska.uzak .meni .grupa-glava { display: flex; } }
+@media (prefers-reduced-motion: reduce) { .meni .grupa-telo, .meni .grupa-strelica { transition: none; } }
+
+/* predlog A — „linija“: stavke vise o tankoj liniji ispod naslova grupe, kao grane */
+.ljuska:not(.uzak) .meni[data-stil="linija"] .grupa-unutra > a.stavka { margin-left: 22px; }
+.ljuska:not(.uzak) .meni[data-stil="linija"] .grupa-unutra { position: relative; }
+.ljuska:not(.uzak) .meni[data-stil="linija"] .grupa-unutra::before { content: ""; position: absolute; left: 21px; top: 0; bottom: 18px; width: 1px; background: var(--border); }
+.ljuska:not(.uzak) .meni[data-stil="linija"] a.stavka::after { content: ""; position: absolute; left: -12px; top: 50%; width: 9px; height: 1px; background: var(--border); }
+.ljuska:not(.uzak) .meni[data-stil="linija"] a.stavka.aktivna::before { left: -13px; top: 7px; bottom: 7px; width: 3px; border-radius: 3px; }
+.ljuska:not(.uzak) .meni[data-stil="linija"] a.stavka.aktivna::after { background: var(--primary); }
+
+/* predlog B — „kartica“: svaka grupa je blaga kartica, zatvorena grupa je samo traka sa naslovom i brojem stavki */
+.ljuska:not(.uzak) .meni[data-stil="kartica"] .grupa { margin-top: 10px; padding: 4px 6px; border-radius: 12px; border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--bg-muted) 45%, transparent); }
+.ljuska:not(.uzak) .meni[data-stil="kartica"] .grupa.otvorena { padding-bottom: 6px; }
+.ljuska:not(.uzak) .meni[data-stil="kartica"] .grupa-unutra { margin: 0 -6px; padding: 0 6px; }
+.ljuska:not(.uzak) .meni[data-stil="kartica"] a.stavka.aktivna::before { left: -6px; }
+.ljuska:not(.uzak) .meni[data-stil="kartica"] a.stavka:hover { background: var(--bg-card); }
+
+/* predlog C — „boja“: svaka grupa ima svoju boju (ikonica naslova, linija i ikonice stavki) */
+.ljuska:not(.uzak) .meni[data-stil="boja"] .grupa-ikona { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; flex: none;
+  color: var(--grupa-boja); background: color-mix(in srgb, var(--grupa-boja) 16%, transparent); }
+.ljuska:not(.uzak) .meni[data-stil="boja"] .grupa-ikona svg { width: 14px; height: 14px; }
+.ljuska:not(.uzak) .meni[data-stil="boja"] .grupa-glava { padding-left: 6px; }
+.ljuska:not(.uzak) .meni[data-stil="boja"] .grupa-unutra { position: relative; }
+.ljuska:not(.uzak) .meni[data-stil="boja"] .grupa-unutra::before { content: ""; position: absolute; left: 29px; top: 0; bottom: 14px; width: 2px; border-radius: 2px;
+  background: color-mix(in srgb, var(--grupa-boja) 35%, transparent); }
+.ljuska:not(.uzak) .meni[data-stil="boja"] .grupa-unutra > a.stavka { margin-left: 26px; }
+.ljuska:not(.uzak) .meni[data-stil="boja"] a.stavka svg.ik { color: var(--grupa-boja); opacity: .85; }
+.ljuska:not(.uzak) .meni[data-stil="boja"] a.stavka.aktivna { background: color-mix(in srgb, var(--grupa-boja) 14%, transparent); color: var(--t-base); }
+.ljuska:not(.uzak) .meni[data-stil="boja"] a.stavka.aktivna::before { left: -9px; top: 6px; bottom: 6px; width: 2px; background: var(--grupa-boja); }
+
+/* predlog D — „stepenik“: naslov grupe je kao stavka (ikonica, krupnije), ispod su podstranice sa tačkama, bez ikonica — najkraći meni */
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa { margin-top: 4px; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-glava { padding: 8px 10px; color: var(--t-muted); }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-glava .eyebrow { font-family: Inter, system-ui, sans-serif; font-size: 13.5px; letter-spacing: 0; text-transform: none; font-weight: 600; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-ikona { display: grid; place-items: center; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-ikona svg { width: 18px; height: 18px; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa:has(a.aktivna) .grupa-glava { color: var(--t-base); }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-unutra > a.stavka { margin-left: 16px; padding: 5px 10px 5px 18px; font-size: 13px; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-unutra > a.stavka > svg.ik { display: none; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] a.stavka::after { content: ""; position: absolute; left: 1px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--border); }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] a.stavka.aktivna::after { background: var(--primary); box-shadow: 0 0 0 3px var(--primary-ring); }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] a.stavka.aktivna::before { display: none; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-unutra { position: relative; }
+.ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-unutra::before { content: ""; position: absolute; left: 31px; top: 0; bottom: 14px; width: 1px; background: var(--border-soft); }

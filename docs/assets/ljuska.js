@@ -426,6 +426,18 @@ const LJ = (() => {
   });
 
   // ---------------------------------------------------------------- postavljanje
+  // grupe menija: ikonica i boja grupe (boja se vidi u nekim stilovima menija), zatvorene grupe, stil povezivanja grupe i stavki
+  const IKONE_GRUPA = { Pregled: "home", Mapa: "map", Podaci: "table", Analize: "chart", Prognoza: "cloud", Projekat: "info" };
+  for (const g of MENI) g.ik = IKONE_GRUPA[g.grupa] || g.stavke[0].ik;
+  const BOJE_GRUPA = ["--primary", "--success", "--purple", "--orange", "--teal", "--t-muted"];
+  const zatvoreneGrupe = new Set((() => { try { return JSON.parse(localStorage.getItem("ns-meni-zatvoreno") || "[]"); } catch (e) { return []; } })());
+  const STILOVI_MENIJA = ["linija", "kartica", "boja", "stepenik"];
+  function stilMenija() {
+    // probni prikaz predloga: ?meni=linija|kartica|boja|stepenik (pamti se dok se ne izabere konačan)
+    let st = new URLSearchParams(location.search).get("meni");
+    try { if (STILOVI_MENIJA.includes(st)) localStorage.setItem("ns-meni-stil", st); else st = localStorage.getItem("ns-meni-stil"); } catch (e) { /* */ }
+    return STILOVI_MENIJA.includes(st) ? st : "linija";
+  }
   const videno = () => { try { return localStorage.getItem("ns-prilagodi-videno") === "1"; } catch (e) { return true; } };
   function postavi() {
     const body = document.body;
@@ -438,13 +450,22 @@ const LJ = (() => {
 
     const meni = document.createElement("aside");
     meni.className = "meni";
+    meni.dataset.stil = stilMenija();
     meni.setAttribute("aria-label", "Glavni meni");
     meni.innerHTML = `<a class="brend" href="index.html"><img src="assets/slike/logo.png" alt="">
         <span><b>Biciklisti NS</b><small>istorija · 2021–2026</small></span></a>` +
-      MENI.map((g) => `<nav class="grupa"><span class="eyebrow">${g.grupa}</span>${g.stavke.map((x) =>
-        `<a class="stavka ${x.id === strana ? "aktivna" : ""}" href="${x.href}" ${x.spolja ? 'target="_blank" rel="noopener"' : ""}
+      MENI.map((g, gi) => {
+        // grupa se otvara i zatvara strelicom; zatvorene grupe se pamte, a grupa sa trenutnom stranom je uvek otvorena pri učitavanju
+        const sadrziStranu = g.stavke.some((x) => x.id === strana);
+        const otvorena = sadrziStranu || !zatvoreneGrupe.has(g.grupa);
+        return `<nav class="grupa${otvorena ? " otvorena" : ""}" data-grupa="${g.grupa}" style="--grupa-boja:var(${BOJE_GRUPA[gi % BOJE_GRUPA.length]})">
+        <button type="button" class="grupa-glava" aria-expanded="${otvorena}" aria-controls="meni-grupa-${gi}">
+          <span class="grupa-ikona">${ik(g.ik)}</span><span class="eyebrow">${g.grupa}</span><span class="grupa-broj">${g.stavke.length}</span>${ik("chevron", "grupa-strelica")}</button>
+        <div class="grupa-telo" id="meni-grupa-${gi}"><div class="grupa-unutra">${g.stavke.map((x) =>
+        `<a class="stavka ${x.id === strana ? "aktivna" : ""}" href="${x.href}" ${x.spolja ? 'target="_blank" rel="noopener"' : ""} ${otvorena ? "" : 'tabindex="-1"'}
           ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}>${ik(x.ik)}<span class="tekst">${x.t}</span>
-          ${x.uzivo ? uzivoZnak() : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</nav>`).join("") +
+          ${x.uzivo ? uzivoZnak() : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</div></div></nav>`;
+      }).join("") +
       `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad</span></div></div>`;
 
     const glavno = document.createElement("div");
@@ -468,6 +489,16 @@ const LJ = (() => {
     ljuska.append(meni, glavno);
 
     // događaji
+    meni.addEventListener("click", (e) => {
+      const d = e.target.closest(".grupa-glava");
+      if (!d) return;
+      const g = d.closest(".grupa"), otvori = !g.classList.contains("otvorena");
+      g.classList.toggle("otvorena", otvori);
+      d.setAttribute("aria-expanded", String(otvori));
+      g.querySelectorAll("a.stavka").forEach((a) => (otvori ? a.removeAttribute("tabindex") : a.setAttribute("tabindex", "-1")));
+      if (otvori) zatvoreneGrupe.delete(g.dataset.grupa); else zatvoreneGrupe.add(g.dataset.grupa);
+      try { localStorage.setItem("ns-meni-zatvoreno", JSON.stringify([...zatvoreneGrupe])); } catch (x) { /* */ }
+    });
     document.getElementById("meni-dugme").addEventListener("click", () => {
       if (window.matchMedia("(max-width: 960px)").matches) ljuska.classList.toggle("otvoren");
       else if (izgled.raspored === "bocni" || izgled.raspored === "uzak") primeniIzgled({ raspored: izgled.raspored === "uzak" ? "bocni" : "uzak" });
