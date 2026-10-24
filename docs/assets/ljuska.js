@@ -438,6 +438,10 @@ const LJ = (() => {
     try { if (STILOVI_MENIJA.includes(st)) localStorage.setItem("ns-meni-stil", st); else st = localStorage.getItem("ns-meni-stil"); } catch (e) { /* */ }
     return STILOVI_MENIJA.includes(st) ? st : "linija";
   }
+  // znak (bicikl sa ramom NS) + natpis „NaSicu“; natpis ima verziju za tamnu i za svetlu temu (assets/slike/brend)
+  const BREND = `<img class="brend-znak" src="assets/slike/brend/znak-bicikl.svg" alt="">
+    <span class="brend-tekst"><img class="natpis natpis-tamna" src="assets/slike/brend/natpis-tamna.svg" alt="NaSicu">
+    <img class="natpis natpis-svetla" src="assets/slike/brend/natpis-svetla.svg" alt="NaSicu"><small>biciklisti Novog Sada</small></span>`;
   const videno = () => { try { return localStorage.getItem("ns-prilagodi-videno") === "1"; } catch (e) { return true; } };
   function postavi() {
     const body = document.body;
@@ -452,8 +456,8 @@ const LJ = (() => {
     meni.className = "meni";
     meni.dataset.stil = stilMenija();
     meni.setAttribute("aria-label", "Glavni meni");
-    meni.innerHTML = `<a class="brend" href="index.html"><img src="assets/slike/logo.png" alt="">
-        <span><b>Biciklisti NS</b><small>istorija · 2021–2026</small></span></a>` +
+    meni.innerHTML = `<a class="brend" href="index.html" aria-label="NaSicu — početna">${BREND}
+        <img class="brend-ns" src="assets/slike/brend/ikonica-ns.svg" alt=""></a>` +
       MENI.map((g, gi) => {
         // grupa se otvara i zatvara strelicom; zatvorene grupe se pamte, a grupa sa trenutnom stranom je uvek otvorena pri učitavanju
         const sadrziStranu = g.stavke.some((x) => x.id === strana);
@@ -474,7 +478,7 @@ const LJ = (() => {
     gornja.className = "gornja";
     gornja.innerHTML = `
       <button class="ikonica-dugme" id="meni-dugme" aria-label="Meni">${ik("menu")}</button>
-      <a class="brend-gornji" href="index.html"><img src="assets/slike/logo.png" alt=""><b>Biciklisti NS</b></a>
+      <a class="brend-gornji" href="index.html" aria-label="NaSicu — početna">${BREND}</a>
       <nav class="putanja" aria-label="Putanja">${putanja.map((p, i) => i === putanja.length - 1 ? `<b>${p}</b>`
         : `<span class="${i ? "srednje" : ""}">${p}</span>${ik("chevron", i ? "srednje" : "")}`).join("")}</nav>
       <span class="razmak"></span>

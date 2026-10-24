@@ -215,7 +215,6 @@
       const ob = document.getElementById("danas-obavestenje");
       ob.classList.toggle("skriveno", !prazan(D.datum));
       ob.textContent = "Za ovaj dan nema podataka — između istorije (do 31. 8. 2026.) i čitanja brojača uživo (od 9. 10. 2026.).";
-      document.title = `${NS.datum(D.datum)} · Pregled dana · Biciklisti Novog Sada`;
       return;
     }
     document.getElementById("danas-naslov").innerHTML = "Danas <em>uživo</em>";
@@ -232,7 +231,6 @@
     const danasLok = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
     ob.classList.toggle("skriveno", D.datum === danasLok);
     if (D.datum !== danasLok) ob.textContent = `Prikazan je ${NS.datum(D.datum)} — prvo čitanje za danas stiže u 00:02 posle ponoći.`;
-    document.title = `${NS.broj(D.danas)} · Danas uživo · Biciklisti Novog Sada`;
   }
 
   // ---------------------------------------------------------------- KPI

@@ -1,0 +1,28 @@
+{
+  "name": "NaSicu",
+  "short_name": "NaSicu",
+  "description": "Biciklisti Novog Sada: brojači uživo, mapa, staze, istorija i prognoza.",
+  "lang": "sr-Latn",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#04162F",
+  "theme_color": "#04162F",
+  "icons": [
+    {
+      "src": "assets/slike/brend/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/slike/brend/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/slike/brend/ikonica-ns.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

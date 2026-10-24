@@ -1,4 +1,4 @@
-/* Biciklisti Novog Sada — izgled po uzoru na Adminator 2026 (MIT): levi meni, gornja traka, kartice.
+/* NaSicu (biciklisti Novog Sada) — izgled po uzoru na Adminator 2026 (MIT): levi meni, gornja traka, kartice.
    Boje su tokeni; podrazumevana tema je tamna (data-theme na <html>, bira se u gornjoj traci i pamti). */
 
 /* razmera sajta: na računaru sve je kao na 90 % zuma pregledača (manje i prozračnije); na telefonu ostaje 100 %.
@@ -1295,3 +1295,25 @@ html.bez-skrola { overflow: hidden; }
 .ljuska:not(.uzak) .meni[data-stil="stepenik"] a.stavka.aktivna::before { display: none; }
 .ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-unutra { position: relative; }
 .ljuska:not(.uzak) .meni[data-stil="stepenik"] .grupa-unutra::before { content: ""; position: absolute; left: 31px; top: 0; bottom: 14px; width: 1px; background: var(--border-soft); }
+
+/* ---------------------------------------------------------------- NaSicu: znak i natpis u meniju i gornjoj traci */
+.meni .brend { gap: 10px; padding: 2px 6px 16px 4px; }
+.meni .brend img.brend-znak { width: 62px; height: auto; flex: none; }
+.meni .brend .brend-tekst { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.meni .brend img.natpis { width: 112px; height: auto; display: block; }
+.meni .brend .brend-tekst small { font: 500 9.5px/1.2 "JetBrains Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-light); white-space: nowrap; }
+.meni .brend img.brend-ns { display: none; width: 40px; height: 40px; }
+:root[data-theme="light"] .natpis-tamna, :root:not([data-theme="light"]) .natpis-svetla { display: none !important; }
+.ljuska.uzak .meni .brend { justify-content: center; padding: 2px 0 16px; }
+.ljuska.uzak .meni .brend img.brend-znak, .ljuska.uzak .meni .brend .brend-tekst { display: none; }
+.ljuska.uzak .meni .brend img.brend-ns { display: block; }
+@media (max-width: 960px) {
+  .ljuska.uzak .meni .brend img.brend-znak, .ljuska.uzak .meni .brend .brend-tekst { display: flex; }
+  .ljuska.uzak .meni .brend img.brend-ns { display: none; }
+}
+.brend-gornji img.brend-znak { width: 44px; height: auto; }
+.brend-gornji .brend-tekst { display: flex; align-items: center; }
+.brend-gornji img.natpis { width: 84px; height: auto; display: block; }
+.brend-gornji .brend-tekst small { display: none; }
+/* nadnaslovi grupa bliže levoj ivici */
+.meni .grupa-glava { padding: 6px 8px 6px 2px; }
