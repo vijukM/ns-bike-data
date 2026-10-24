@@ -1,7 +1,8 @@
 # Kontekst modela za ns-bike-data (odgovori na pitanja Claude Code-a)
 
-Izvor istine: Google Drive `master-rad/` (kod `src/`, config `configs/config_E31.yaml`, rezultati `runs/`).
-Stanje: 20.10.2026. **Konačni model = E31 (model-v2)**; zamenio je E28 (model-v1) posle dve ispravke vremena (tačka 4b).
+Izvor istine: Google Drive `master-rad/` (kod `src/`, config `configs/config_E32.yaml`, rezultati `runs/`).
+Stanje: 25.10.2026. **Konačni model = E32 (model-v3)** = E31 (model-v2: meteo u UTC+1 i stvarnom vremenu, tačka 4b)
++ **čišćenje po Status oznakama uređaja** (tačka 5, razlog `status_petlja`). Model-v2 je zamenio E28 (model-v1).
 
 **Najvažnije u jednoj rečenici:** ne reimplementirati obeležja — nove satne podatke prevesti u format
 istorijskog mastera (`stanica_id, ts, y_A, razlog_A`), dodati ih na kraj mastera i pozvati postojeće
@@ -105,8 +106,18 @@ Bez interpolacije, samo NaN + razlog. Vrednosti `razlog_A` (redosled primene):
 | `skok`, `skok_okolina` | (E3) y > max(50, 4 × p90 za stanicu/sat/mesec); okolina ±3 h ako y > max(30, 2 × p90); **dan sa skokom na ≥ 3 stanice = gradski događaj → ne dira se** |
 | `otkaz_smera` | (E3, samo STARI dvosmerni) slabiji smer < 2% dnevnog zbira, ≥ 3 dana zaredom, uz ≥ 50 bicikala/dan → ti dani NaN |
 | `odluka_nan`, `odluka_ok`, `odluka_zameni`, `stanica_izbacena` | ručne odluke iz `odluke.xlsx` (31 odluka, sve za nizove nula) |
+| `status_petlja` | (E32, model-v3) uređaj prijavio kvar petlje (`Status`: E, B ili F) **na poziciji koja je za tu stanicu „loša“** i brojač broji < 0,5 od uobičajenog (medijana iste stanice/sata/vrste dana/meseca iz čistih sati) → NaN. Kod: `src/ciscenje_status.py`. |
 
-Prave nule (noću, snežni dani januara 2026) ostaju. Konačni master: `data/processed/master_v4_E3.parquet`.
+Prave nule (noću, snežni dani januara 2026) ostaju. Master za model-v2: `data/processed/master_v4_E3.parquet`;
+**za model-v3: `data/processed/master_v4_E32.parquet`** (= E3 + `status_petlja`).
+
+**Status niz (P6, 23.10.2026):** `Status` je niz od 16 mesta; svako slovo ima fiksnu poziciju: R = 0, L = 1, M = 2,
+F = 3 (greška frekventnog modula, stari brojači), P = 5; **E/B u parovima (8,9), (10,11), (12,13), (14,15)** = 4 petlje
+(E greška, B prekid). Ista oznaka na kolovoznoj petlji je bezopasna (npr. 22a broji normalno), pa se gleda pozicija:
+sati sa oznakom na „lošoj“ poziciji imaju medijanu odnosa 0,13, na „dobroj“ 1,60. E32 je izbacio 14.634 sata (0,89%):
+36b 9.642 (22% njegovih sati), 42a 2.648, 25a 1.639, 26 339, ostale stanice 0–186.
+**Za uživo:** isto pravilo bi zahtevalo Status niz iz feed-a (`state`/`stateDesc`), čiji format još nije proveren; dok se
+ne potvrdi da je isti kao u istoriji, uživo ne čistiti po statusu, a 36b i 42a označiti kao nepouzdane.
 Napomena: čišćenje je kod nekih serija u 2026. izbacilo mnogo (29b: sirovo 182 hiljade, očišćeno 118 hiljada; 28: 305 / 183 hiljade).
 
 ### 6. Oblik master fajla
@@ -135,8 +146,8 @@ torch 2.11.0+cu130, lightning 2.6.6, pytorch-forecasting 1.8.0 (TFT); XGBoost (C
 pandas 2.x, numpy, pyarrow. Verzije iz `runs/tft/*_E27_seed42/izvestaj.md`.
 
 ### 8. Ulaz i horizont
-**Konačni model (model-v2) = 0,5 × TFT E31t (prosek 3 seed-a, medijana) + 0,5 × XGBoost E31 (prosek 3 seed-a).**
-(Isti hiperparametri, obeležja i podešavanja kao ranije E28 = TFT E27 + XGBoost E26b; razlika je samo vreme meteo podataka, tačka 4b.)
+**Konačni model (model-v3) = 0,5 × TFT E32t (prosek 3 seed-a, medijana) + 0,5 × XGBoost E32 (prosek 3 seed-a).**
+(Isti hiperparametri, obeležja i konvencije vremena kao model-v2 = E31; razlika je samo očišćen master, tačka 5.)
 - Prognoza se izdaje **u ponoć** (kraj dana D−1) za **24 sata dana D** (01:00 … 24:00).
 - TFT: enkoder **168 h** (poslednjih 7 dana do ponoći), dekoder **24 h**; `min_encoder_length = max_encoder_length = 168`.
 - XGBoost: jedan red po satu, istorija **najmanje 24 h stara** (`min_lag_sati: 24`).
@@ -191,6 +202,23 @@ Za model-v2: format kao `model/meteo_istorija_utc1.parquet` (`ts` = kraj sata UT
 | (stari E28: izmereno / prognoza) | 12,04 / 12,85 | | | | | |
 
 Izvor: `runs/ansambli/20261019-054540_E31_ansambl`, poređenja `*_E31_odluka`, `*_E31_vs_E28`.
+(Tabela iznad = model-v2 na skupu sati E31. Važeći model-v3 je u tabeli ispod.)
+
+**Model-v3 (E32, 25.10.2026)** — test na 374.450 sati (validni u E32; isti sati za sve):
+
+| model | RMSE | MAE | R² | WAPE | bias | dnevni MAE |
+|---|---|---|---|---|---|---|
+| XGBoost E32 (3 seed-a) | 12,47 | 7,19 | 0,923 | 20,6% | −0,57 | 87,1 |
+| TFT E32t (3 seed-a) | 11,83 | 6,74 | 0,931 | 19,3% | −0,69 | 76,5 |
+| **konačni E32** | **11,84** | 6,79 | **0,931** | 19,4% | −0,63 | 77,5 |
+| **konačni E32, sa stvarnom prognozom vremena** | **12,57** | 7,11 | 0,922 | 20,3% | −0,77 | 86,7 |
+| (E31 na istim satima: izmereno / prognoza) | 11,95 / 12,67 | | | | | |
+
+Izvor: `runs/ansambli/20261024-220440_E32_ansambl`, `runs/ansambli/20261024-220357_E32_odluka`.
+- E32 vs E31 na istim satima: ansambl −0,9% (izmereno), −0,8% (prognoza); bolji leto i zima i u skoro svim satima.
+- 5.900 test sati izbačenih u E32 imalo je medijanu y = 0 (brojač u kvaru), a greška E31 na njima RMSE 14,9.
+- **Za uživo je referentna vrednost 12,57** (sa prognozom). Ansambl bolji od XGBoost-a na 46/46 stanica.
+- Odluka: E32 je ispravka podataka, usvojen po pravilu zapisanom unapred (val nije uporediv jer je skup sati drugačiji).
 **Za uživo je referentna vrednost 12,71** (sa prognozom; E28 je imao 12,85 jer prognoza i trening nisu imali isto vreme).
 Izbor: pravilo po validaciji dalo je praktično nerešeno E31 vs E30 (dval = +0,01%); odabran E31 jer je jedini fizički
 tačno poravnat (P3, P4) i jer aplikacija tada koristi prognozu bez ikakvog pomeranja.
@@ -199,7 +227,10 @@ tačno poravnat (P3, P4) i jer aplikacija tada koristi prognozu bez ikakvog pome
 
 ## C. Upotreba u aplikaciji
 
-### 13. Čuvanje i učitavanje (model-v2: sve je u paketu `model.zip`, Release `model-v2`, notebook A2)
+### 13. Čuvanje i učitavanje (model-v3: sve je u paketu `model.zip`, Release `model-v3`, notebook A3; isti format kao model-v2)
+- Model-v3 paket: XGBoost E32 (test ansambl 12,470), TFT E32t run-ovi `20261023-114407_E32t_seed42`, `20261023-114650_E32t_seed1`,
+  `20261024-194844_E32t_seed2`; `config_E32.yaml`; `istorija.parquet` ima i razlog `status_petlja`; referenca 25–31.08.2026 (RMSE 12,81).
+  Format fajlova i učitavanje isti kao model-v2 → aplikacija menja samo Release tag.
 - `xgb_seed{42,1,2}.ubj`, `tft_seed{42,1,2}.ckpt`, `obelezja.json` (uklj. `meteo_konvencija`), `skale.json`, `istorija.parquet`,
   `p90.parquet`, `meteo_istorija_utc1.parquet`, `praznici.csv`, `referenca.parquet` (25–31.08.2026: obeležja + predikcije
   po seed-u, za test podudarnosti), `izvor/`. Ispod je stari opis (model-v1), samo za istoriju.
@@ -251,7 +282,7 @@ Predikcija uvek radi, ali kvalitet pada sa brojem rupa. Serija bez podataka posl
 - **Predikcije se upisuju unapred** (pre dana D) da bi prospektivna ocena bila poštena.
 
 ### 17. Ponovno treniranje
-Nema ga do kraja rada (model-v2 = E31 zamrznut, treniran do 31.08.2026; dinamička skala sama prati promenu nivoa).
+Nema ga do kraja rada (model-v3 = E32 zamrznut, treniran do 31.08.2026; dinamička skala sama prati promenu nivoa).
 Eventualno posle godinu dana novih podataka (budući rad).
 
 ### 18. Na šta paziti pri spajanju scraper → istorija
