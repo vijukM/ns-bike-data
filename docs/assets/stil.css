@@ -1298,7 +1298,7 @@ html.bez-skrola { overflow: hidden; }
 
 /* ---------------------------------------------------------------- NaSicu: znak i natpis u meniju i gornjoj traci */
 .meni .brend { gap: 10px; padding: 2px 6px 16px 4px; }
-.meni .brend img.brend-znak { width: 62px; height: auto; flex: none; }
+.meni .brend img.brend-znak { width: 64px; height: 40px; object-fit: cover; flex: none; }     /* NaSicu_ikonica_bicikl.svg je kvadrat: bicikl po sredini */
 .meni .brend .brend-tekst { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .meni .brend img.natpis { width: 112px; height: auto; display: block; }
 .meni .brend .brend-tekst small { font: 500 9.5px/1.2 "JetBrains Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-light); white-space: nowrap; }
@@ -1311,7 +1311,7 @@ html.bez-skrola { overflow: hidden; }
   .ljuska.uzak .meni .brend img.brend-znak, .ljuska.uzak .meni .brend .brend-tekst { display: flex; }
   .ljuska.uzak .meni .brend img.brend-ns { display: none; }
 }
-.brend-gornji img.brend-znak { width: 44px; height: auto; }
+.brend-gornji img.brend-znak { width: 46px; height: 29px; object-fit: cover; }
 .brend-gornji .brend-tekst { display: flex; align-items: center; }
 .brend-gornji img.natpis { width: 84px; height: auto; display: block; }
 .brend-gornji .brend-tekst small { display: none; }

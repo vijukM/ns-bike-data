@@ -439,7 +439,7 @@ const LJ = (() => {
     return STILOVI_MENIJA.includes(st) ? st : "linija";
   }
   // znak (bicikl sa ramom NS) + natpis „NaSicu“; natpis ima verziju za tamnu i za svetlu temu (assets/slike/brend)
-  const BREND = `<img class="brend-znak" src="assets/slike/brend/znak-bicikl.svg" alt="">
+  const BREND = `<img class="brend-znak" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="">
     <span class="brend-tekst"><img class="natpis natpis-tamna" src="assets/slike/brend/natpis-tamna.svg" alt="NaSicu">
     <img class="natpis natpis-svetla" src="assets/slike/brend/natpis-svetla.svg" alt="NaSicu"><small>biciklisti Novog Sada</small></span>`;
   const videno = () => { try { return localStorage.getItem("ns-prilagodi-videno") === "1"; } catch (e) { return true; } };
@@ -457,7 +457,7 @@ const LJ = (() => {
     meni.dataset.stil = stilMenija();
     meni.setAttribute("aria-label", "Glavni meni");
     meni.innerHTML = `<a class="brend" href="index.html" aria-label="NaSicu — početna">${BREND}
-        <img class="brend-ns" src="assets/slike/brend/ikonica-ns.svg" alt=""></a>` +
+        <img class="brend-ns" src="assets/slike/brend/NaSicu_ikonica_NS.svg" alt=""></a>` +
       MENI.map((g, gi) => {
         // grupa se otvara i zatvara strelicom; zatvorene grupe se pamte, a grupa sa trenutnom stranom je uvek otvorena pri učitavanju
         const sadrziStranu = g.stavke.some((x) => x.id === strana);
