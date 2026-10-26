@@ -73,3 +73,13 @@ def test_zvanicna_dopuna_samo_iz_ranijeg_izdanja(tmp_path):
     # ts 00:00 UTC+1 → lokalno 00–01 (indeks 0), 02:00 → 02–03 (2), 03:00 → 03–04 (3)
     assert p["serije"]["a"][0] == 27.0 and p["serije"]["a"][2] == 5.0 and p["dopunjeni_sati"] == [0]
     assert p["serije"]["a"][3] is None          # izdanje u 07:03 je posle početka sata 03–04 → ne sme u zvaničnu
+
+
+def test_poslednji_sat_iz_juce_kad_brojac_predje_u_novi_dan(tmp_path):
+    # čitanje u 00:05 zatekne brojač već u novom danu (danas 0): zbir dana je u „juče“ → sat 23–24 nije prazan
+    citanje(tmp_path, "2026-10-20 21:02:30", [{"serija": "a", "direction": "1", "vreme_brojaca": "22:56:00", "danas": 50}])
+    citanje(tmp_path, "2026-10-20 22:05:10", [{"serija": "a", "direction": "1", "vreme_brojaca": "00:01:30", "danas": 0,
+                                               "datum_brojaca": "2026-10-21", "juce": 58}])
+    c = danas.citanja_dana(date(2026, 10, 20), tmp_path)
+    s = danas.satno_danas(c, danas.sati_dana(date(2026, 10, 20)))
+    assert s["a"][23] == 8
