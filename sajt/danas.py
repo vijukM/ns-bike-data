@@ -39,6 +39,7 @@ ISKLJUCENE = {"28": "brojač neispravan od 04/2026"}       # kao prognoza_bicikl
 KASNI_MIN, TOLERANCIJA_MIN, STAROST_MIN, NULA_JUCE = 70, 10, 20, 50
 # prognoze model-v1 (E28) su do 20.10.2026 imale pomeren sat (novi podaci u lokalnom vremenu) — ne prikazuju se
 STARI_MODELI = ("E28",)
+PRELAZ_PONOC = "00:20:00"     # čitanje sa vremenom brojača pre ovoga (novi dan) nosi zbir prethodnog dana u „juče“
 
 
 # ---------------------------------------------------------------- vreme dana
@@ -57,7 +58,11 @@ def oznake(sati_utc: pd.DatetimeIndex) -> list[str]:
 # ---------------------------------------------------------------- biciklisti
 
 def citanja_dana(dan: date, koren: Path = konfig.PODACI) -> pd.DataFrame:
-    """Sva čitanja koja se tiču dana D: folder D i prvo čitanje posle ponoći (folder D+1, ako postoji)."""
+    """Sva čitanja koja se tiču dana D: folder D i prvo čitanje posle ponoći (folder D+1, ako postoji).
+
+    Ako je brojač pri prvom čitanju posle ponoći već prešao u novi dan (sat brojača kasni nekoliko minuta, pa
+    čitanje u 00:05 zatekne „danas: 0“), zbir dana D je u polju „juče“: to čitanje se računa kao stanje u
+    23:59:59 dana D, inače bi poslednji sat (23–24) ostao prazan."""
     delovi = []
     for d in (dan, dan + timedelta(days=1)):
         for f in sorted((koren / f"{d:%Y}" / f"{d:%m}" / f"{d:%d}").glob("[0-9][0-9][0-9][0-9].csv")):
@@ -65,6 +70,12 @@ def citanja_dana(dan: date, koren: Path = konfig.PODACI) -> pd.DataFrame:
     if not delovi:
         return pd.DataFrame()
     c = pd.concat(delovi, ignore_index=True)
+    sutra = c[(c["datum_brojaca"] == (dan + timedelta(days=1)).isoformat()) & c["juce"].notna()
+              & (c["vreme_brojaca"].astype(str) < PRELAZ_PONOC)]
+    if not sutra.empty:
+        sutra = sutra.sort_values("vreme_citanja_utc").drop_duplicates(["serija", "direction"], keep="first")
+        sutra = sutra.assign(datum_brojaca=dan.isoformat(), vreme_brojaca="23:59:59", danas=sutra["juce"])
+        c = pd.concat([c, sutra], ignore_index=True)
     return c[c["datum_brojaca"] == dan.isoformat()].reset_index(drop=True)
 
 
