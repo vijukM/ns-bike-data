@@ -37,8 +37,9 @@ def test_rupa_i_istorija_nepromenjena():
     rupa = df[(df["ts"] > "2026-09-01 00:00") & (df["ts"] < "2026-10-09 01:00")]
     assert len(rupa) == 38 * 24 and rupa["y_A"].isna().all() and set(rupa["razlog_A"]) == {"nema_reda"}
     assert df["ts"].is_monotonic_increasing and df["ts"].diff().dropna().eq(pd.Timedelta(hours=1)).all()
-    pd.testing.assert_frame_equal(df[df["ts"] <= "2026-09-01 00:00"].reset_index(drop=True),
+    pd.testing.assert_frame_equal(df.loc[df["ts"] <= "2026-09-01 00:00", list(ist.columns)].reset_index(drop=True),
                                   ist.reset_index(drop=True), check_dtype=False)
+    assert df["y_procena"].isna().all() and df["y_jedan_smer"].isna().all()
     assert set(df.loc[df["ts"] >= "2026-10-09 01:00", "razlog_A"]) == {"ok"}
 
 
@@ -128,6 +129,7 @@ def test_ok_jedan_smer_kad_je_odobren(monkeypatch):
 def test_serija_28_iskljucena_i_povratak(monkeypatch, tmp_path):
     import prognoza_biciklista.priprema as pr
     monkeypatch.setattr(pr, "LOG", tmp_path / "log")
+    monkeypatch.setattr(pr, "KVAR_SMERA", {})                 # staro ponašanje: bez dopune kvara smera
     ist, novo = osnovno(("28",))
     # bez povratka: sve novo je NaN otkaz_smera
     df, _ = pr.pripremi(ist, novo, smerovi_za(novo, "28", 0.0), p90_konst(("28",)))
@@ -176,3 +178,25 @@ def test_scraper_u_oznaku_modela_utc1():
     assert x["ts"].astype(str).tolist() == ["2026-10-19 07:00:00", "2026-11-19 08:00:00", "2026-10-25 01:00:00",
                                             "2026-10-25 02:00:00", "2026-10-19 00:00:00"]
     assert x["datum"].tolist()[-1] == "2026-10-18" and x["sat"].tolist() == [7, 8, 1, 2, 24]
+
+
+def test_kvar_smera_28_procena_bez_ocene(tmp_path, monkeypatch):
+    # 28 je brojao samo smer 11 do popravke (prvi ispravan sat ts 2026-10-12 13:00): y_A NaN, razlog kvar_smera,
+    # y_jedan_smer = smer 11, y_procena = smer 11 / udeo; od popravke validno
+    import prognoza_biciklista.priprema as pr
+    monkeypatch.setattr(pr, "LOG", tmp_path / "log")
+    u = tmp_path / "udeo.csv"
+    pd.DataFrame([(v, h, 0.5, "A01") for v in (0, 1) for h in range(1, 25)], columns=["vikend", "sat", "udeo", "smer"]).to_csv(u, index=False)
+    monkeypatch.setattr(pr, "KVAR_SMERA", {"28": {"od": "2026-10-09", "do": "2026-10-12 13:00", "smer": "11", "udeo": u, "opis": ""}})
+    monkeypatch.setattr(pr, "ISKLJUCENE", {"28": {**pr.ISKLJUCENE["28"], "do": "2026-10-12 13:00"}})
+    ist, novo = osnovno(("28",))
+    fiksno = novo["ts"] >= "2026-10-12 13:00"
+    novo.loc[~fiksno, "y_A"] *= 0.5                          # pre popravke feed = samo smer 11
+    sm = smerovi_za(novo, "28", 0.5)
+    sm.loc[(sm["direction"] == "21") & (pd.to_datetime(sm["datum"]) + pd.to_timedelta(sm["sat"], unit="h") < "2026-10-12 13:00"), "y_A"] = 0
+    df, izv = pr.pripremi(ist, novo, sm, p90_konst(("28",)))
+    d = df.set_index("ts")
+    r = d.loc["2026-10-10 15:00"]                             # sat 14–15: profil 70 → smer 11 = 35 → procena 70
+    assert r["razlog_A"] == "kvar_smera" and np.isnan(r["y_A"]) and r["y_jedan_smer"] == 17.5 and r["y_procena"] == 35
+    assert d.loc["2026-10-12 12:00", "razlog_A"] == "kvar_smera" and d.loc["2026-10-12 13:00", "razlog_A"] == "ok"
+    assert izv["kvar_smera"] == int(((df["ts"] > "2026-10-09") & (df["ts"] < "2026-10-12 13:00") & df["y_jedan_smer"].notna()).sum())
