@@ -1298,9 +1298,9 @@ html.bez-skrola { overflow: hidden; }
 
 /* ---------------------------------------------------------------- NaSicu: znak i natpis u meniju i gornjoj traci */
 .meni .brend { gap: 10px; padding: 2px 6px 16px 4px; }
-.meni .brend img.brend-znak { width: 64px; height: 40px; object-fit: cover; flex: none; }     /* NaSicu_ikonica_bicikl.svg je kvadrat: bicikl po sredini */
+.meni .brend img.brend-znak { width: 80px; height: 50px; object-fit: cover; flex: none; }     /* NaSicu_ikonica_bicikl.svg je kvadrat: bicikl po sredini */
 .meni .brend .brend-tekst { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.meni .brend img.natpis { width: 112px; height: auto; display: block; }
+.meni .brend img.natpis { width: 140px; height: auto; display: block; }
 .meni .brend .brend-tekst small { font: 500 9.5px/1.2 "JetBrains Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-light); white-space: nowrap; }
 .meni .brend img.brend-ns { display: none; width: 40px; height: 40px; }
 :root[data-theme="light"] .natpis-tamna, :root:not([data-theme="light"]) .natpis-svetla { display: none !important; }

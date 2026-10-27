@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NaSicu</title>
-  <meta name="description" content="Mapa 46 brojača biciklista u Novom Sadu sa stanjem brojača, biciklističkim stazama i prikazom jednog dana sat po sat.">
+  <meta name="description" content="Mapa 46 brojača biciklista u Novom Sadu sa stanjem brojača i biciklističkim stazama.">
   <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark",z=JSON.parse(localStorage.getItem("ns-izgled")||"{}")||{};if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(!z.raspored&&localStorage.getItem("ns-meni-uzak")==="1")z.raspored="uzak";["boja","gustina","raspored","sirina"].forEach(function(k){if(z[k])d.dataset[k]=z[k]});if(z.smer)d.dir=z.smer}catch(e){}</script>
   <link rel="icon" href="assets/slike/brend/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="assets/slike/brend/NaSicu_ikonica_NS.svg">
@@ -19,10 +19,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610271400">
+  <link rel="stylesheet" href="assets/stil.css?v=202610271600">
 </head>
 <body data-strana="mapa" data-putanja="Mapa|Mapa brojača">
-  <script>if (/rezim=dan/.test(location.search)) { document.body.dataset.strana = "dan"; document.body.dataset.putanja = "Mapa|Dan na mapi"; }</script>
+  <script>/* „Dan na mapi“ je sada na strani Danas uživo (dugme „Pusti dan“): stari linkovi vode tamo */
+    (function () { var q = new URLSearchParams(location.search); if (q.get("rezim") === "dan") location.replace("danas.html" + (q.get("dan") ? "?dan=" + q.get("dan") : "")); })();</script>
   <main class="sadrzaj" id="sadrzaj">
     <header class="zaglavlje-strane pojava">
       <div>
@@ -36,29 +37,11 @@
       <div class="mapa-raspored">
         <div>
           <div class="mapa-alat">
-            <div class="grupa-kontrola"><span class="eyebrow">Prikaz</span><div id="rezim"></div></div>
             <div class="grupa-kontrola"><span class="eyebrow">Tip mape</span><div id="podloga"></div></div>
             <div class="grupa-kontrola"><span class="eyebrow">Na mapi</span><div id="staze-cip"></div></div>
           </div>
           <div id="legenda-mape" style="margin-bottom:14px"></div>
           <div class="mapa velika" id="mapa" role="region" aria-label="Mapa brojača"></div>
-          <div class="dan-panel skriveno" id="dan-panel">
-            <div class="dan-glava">
-              <p class="sitno"><b>Svi brojači</b> u gradu, sat po sat: broj na pinu je jedan brojač, grafik desno je zbir grada.</p>
-              <a class="dugme malo" href="danas.html">Danas uživo, po brojaču <svg class="ik" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-            </div>
-            <div>
-              <div class="kontrole">
-                <input type="date" id="dan-datum" min="2021-01-01" aria-label="Dan">
-                <button class="dugme malo" type="button" id="dan-pre" aria-label="Prethodni dan">‹</button>
-                <button class="dugme malo" type="button" id="dan-posle" aria-label="Sledeći dan">›</button>
-                <button class="dugme malo primarno" type="button" id="dan-pusti"></button>
-              </div>
-              <div class="kontrole" style="margin-top:12px"><span class="eyebrow">Sat</span><input type="range" id="dan-sat" min="0" max="23" value="7" aria-label="Sat"></div>
-              <p class="stanje-dana" id="dan-stanje" aria-live="polite"></p>
-            </div>
-            <div><div class="grafik nizak" id="dan-grafik"></div></div>
-          </div>
         </div>
         <aside>
           <div class="alat-tabele" style="margin-bottom:10px">
@@ -82,11 +65,11 @@
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610271400"></script>
-  <script src="assets/datum.js?v=202610271400"></script>
-  <script src="assets/ljuska.js?v=202610271400"></script>
-  <script src="assets/pin3d.js?v=202610271400"></script>
-  <script src="assets/mapa-modul.js?v=202610271400"></script>
-  <script src="assets/mapa.js?v=202610271400"></script>
+  <script src="assets/zajednicko.js?v=202610271600"></script>
+  <script src="assets/datum.js?v=202610271600"></script>
+  <script src="assets/ljuska.js?v=202610271600"></script>
+  <script src="assets/pin3d.js?v=202610271600"></script>
+  <script src="assets/mapa-modul.js?v=202610271600"></script>
+  <script src="assets/mapa.js?v=202610271600"></script>
 </body>
 </html>
