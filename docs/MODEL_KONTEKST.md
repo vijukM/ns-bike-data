@@ -313,3 +313,18 @@ g) Događaji (masovna okupljanja) i kvarovi brojača nisu greška scraper-a. Ne 
 
 h) **`state = 0` („Nema podataka")** sa svežim vremenom brojača i `danas = 0` (29a, 12.10.2026) mora biti NaN
    (`nema_podataka`), a ne prava nula. `state = 6` („Nema saobraćaja") je validna nula.
+
+i) **28: kvar smera do popravke 23.10.2026 — URAĐENO (27.10.2026).** Od 09.10 do popravke brojao je samo A01
+   (= smer 11), potvrđeno od održavanja. Prvi sat sa oba smera: ts **2026-10-23 13:00** (UTC+1) = 13–14 h lokalno;
+   u 12–13 h popravka je bila u toku (smer 21: 14), pa i taj sat ide u kvar, sa izmerenim smerom 11.
+   Provera: radni dani posle / 7 radnih dana pre (isti sati) = 1,74 (posle su bili samo 23.10 popodne i 26.10);
+   zbir procena / izmereno na 331 sat kvara = 1,874 (≈ 1 / 0,535); na 84 sata sa oba smera procena = 0,975 (radni dan)
+   i 0,954 (vikend) stvarnog zbira.
+   - `priprema.KVAR_SMERA`: ti sati → `razlog_A = kvar_smera`, `y_A = NaN`, `y_jedan_smer` = izmereni smer,
+     `y_procena = y_jedan_smer / udeo[vikend, sat]` (`prognoza_biciklista/udeo_smera_28.csv`), ceo broj.
+     `ISKLJUCENE["28"]` važi do prvog ispravnog sata.
+   - **Dopuna je samo za prikaz i ulaz, ne za ocenu:** `obelezja.napravi` koristi `y_procena` u lag-ovima, roll-u,
+     `isti_sat_7d` i dinamičkoj skali; cilj (`y`, `yn`, TFT enkoder) i ocena (zbirna i po stanici, samo `razlog_A = ok`)
+     ne vide procenu.
+   - Sajt (Danas uživo i arhiva dana): stubac = izmereni smer + dopuna (procena − izmereno) drugom bojom, uz napomenu;
+     sati kvara ne ulaze u zbir grada, a od popravke 28 ponovo ulazi.
