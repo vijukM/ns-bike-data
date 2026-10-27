@@ -53,3 +53,12 @@ def test_rezime_samo_aktuelni_model():
     x = pd.DataFrame([{**red, "verzija_modela": "v1"}, {**red, "prognoza": 48.0, "verzija_modela": "v2"}])
     assert rezime_dana(x, "v2")["n"] == 1 and rezime_dana(x, "v2")["RMSE"] == 2
     assert rezime_dana(pd.DataFrame([red]), "v2") is None
+
+
+def test_kvar_smera_se_ne_ocenjuje():
+    import pandas as pd
+    from prognoza_biciklista.poredjenje import zvanicne_modela
+    x = pd.DataFrame({"vrsta": "zvanicna", "verzija_modela": "M", "razlog_A": ["ok", "kvar_smera", "kvar_smera"],
+                      "stvarno": [10.0, float("nan"), 50.0], "stanica_id": ["15a", "28", "28"]})
+    z = zvanicne_modela(x, "M")
+    assert list(z["razlog_A"]) == ["ok"]

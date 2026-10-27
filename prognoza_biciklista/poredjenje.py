@@ -90,7 +90,9 @@ def uporedi_dan(dan: pd.Timestamp, stvarno: pd.DataFrame) -> pd.DataFrame:
 
 
 def zvanicne_modela(x: pd.DataFrame, verzija: str) -> pd.DataFrame:
-    """Zvanične prognoze aktuelnog modela sa validnim stvarnim vrednostima (stariji CSV bez kolone = stari model)."""
+    """Zvanične prognoze aktuelnog modela sa validnim stvarnim vrednostima (stariji CSV bez kolone = stari model).
+    Sati kvara smera (razlog kvar_smera, priprema.KVAR_SMERA) se ne ocenjuju — ni izmereno ni procena; isto važi
+    i za ocenu po stanici (po_stanici koristi ovaj filter)."""
     v = x["verzija_modela"] if "verzija_modela" in x else pd.Series("", index=x.index)
     return x[(x["vrsta"] == "zvanicna") & (v == verzija) & (x["razlog_A"] == "ok") & x["stvarno"].notna()]
 
