@@ -62,7 +62,6 @@ const LJ = (() => {
       { id: "danas", t: "Danas uživo", href: "danas.html", ik: "activity", uzivo: true }] },
     { grupa: "Mapa", stavke: [
       { id: "mapa", t: "Mapa brojača", href: "mapa.html", ik: "map" },
-      { id: "dan", t: "Dan na mapi", href: "mapa.html?rezim=dan", ik: "clock" },
       { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna.html", ik: "flame", uskoro: true },
       { id: "staze", t: "Biciklističke staze", href: "staze.html", ik: "route", oznaka: "NOVO" }] },
     { grupa: "Podaci", stavke: [
@@ -441,7 +440,7 @@ const LJ = (() => {
   // znak (bicikl sa ramom NS) + natpis „NaSicu“; natpis ima verziju za tamnu i za svetlu temu (assets/slike/brend)
   const BREND = `<img class="brend-znak" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="">
     <span class="brend-tekst"><img class="natpis natpis-tamna" src="assets/slike/brend/natpis-tamna.svg" alt="NaSicu">
-    <img class="natpis natpis-svetla" src="assets/slike/brend/natpis-svetla.svg" alt="NaSicu"><small>biciklisti Novog Sada</small></span>`;
+    <img class="natpis natpis-svetla" src="assets/slike/brend/natpis-svetla.svg" alt="NaSicu"></span>`;
   const videno = () => { try { return localStorage.getItem("ns-prilagodi-videno") === "1"; } catch (e) { return true; } };
   function postavi() {
     const body = document.body;

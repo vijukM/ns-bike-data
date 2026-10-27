@@ -235,7 +235,7 @@
     const pd = poredjenje(D.grad, D.prosek_isti_dan);
     const doSata = D.sati_gotovo < D.sati.length ? `${D.sati[D.sati_gotovo]} h` : "ponoći";
     document.getElementById("cilj-oznaka").textContent = D.uzivo ? `Danas do ${doSata} · uživo` : `${NS.datum(D.datum)} · ceo dan`;
-    document.getElementById("cilj-naslov").textContent = D.uzivo ? "Koliko je biciklista danas prošlo" : "Koliko je biciklista prošlo tog dana";
+    document.getElementById("cilj-naslov").textContent = D.uzivo ? "Koliko su brojači izbrojali danas?" : "Koliko su brojači izbrojali tog dana?";
     const izbr = D.danas || 0;
     const meta = P ? zbir(P.grad.pred) : null;
     const q = P && P.grad.q10 ? [zbir(P.grad.q10), zbir(P.grad.q90)] : null;
@@ -486,6 +486,40 @@
       <span><img src="${NS.pin("ne_radi")}" alt="">0 ili bez podataka</span>`;
   }
 
+  /** „Pusti dan“: mapa sat po sat (svakih PUSTI_MS), pinovi pokazuju broj u tom satu, a boja razliku od prognoze za taj sat. */
+  const PUSTI_MS = 1000;
+  let tajmer = null;
+  const pustiEl = document.getElementById("mapa-pusti");
+  const dugmePusti = (igra) => { pustiEl.innerHTML = `${LJ.ik(igra ? "pause" : "play")}${igra ? "Zaustavi" : "Pusti dan"}`; };
+  dugmePusti(false);
+  function mapaSat(i) {
+    const P = prognoza(), o = oznake()[i], v = {};
+    for (const [k, x] of Object.entries(D.serije)) {
+      const n = x.sati[i], p = P && P.serije[k] ? P.serije[k][i] : null;
+      const odst = x.stanje === "radi" && n != null && p != null ? pct(n, p) : null;
+      v[k] = { stanje: x.stanje === "neispravan" || n == null ? "ne_radi" : (STANJE[x.stanje] || [])[2] || "radi", broj: n == null ? null : NS.broj(n), ton: ton(odst),
+        tekst: `<div class="tt-red">${o.oznaka}: <b>${n == null ? "—" : NS.broj(n)}</b> biciklista</div>`
+          + (p != null ? `<div class="tt-red">prognoza za taj sat ${NS.broj(Math.round(p))}${odst != null ? ` · <b>${znak(odst)}</b>` : ""}</div>` : "") };
+    }
+    ctl.prikaziVrednosti(v);
+    const zbirSata = D.grad[i];
+    document.getElementById("mapa-oznaka").textContent = `${o.oznaka}${zbirSata != null ? ` · ${NS.broj(zbirSata)} na svim brojačima` : ""}`;
+  }
+  function zaustavi(vrati = true) {
+    if (!tajmer) return;
+    clearInterval(tajmer); tajmer = null; dugmePusti(false);
+    if (vrati) { mapaVrednosti(); document.getElementById("mapa-oznaka").textContent = D.uzivo ? "Mapa danas" : `Mapa · ${NS.datum(D.datum)}`; }
+  }
+  pustiEl.addEventListener("click", () => {
+    if (tajmer) { zaustavi(); return; }
+    const n = D.uzivo ? D.sati_gotovo : D.sati.length;
+    if (!n) { LJ.tost("Još nema završenog sata.", "info"); return; }
+    let i = 0;
+    dugmePusti(true);
+    mapaSat(i);
+    tajmer = setInterval(() => { if (++i >= n) { zaustavi(); return; } mapaSat(i); }, PUSTI_MS);
+  });
+
   // ---------------------------------------------------------------- mini kartice
   async function mini() {
     const max = D.grad.slice(0, D.sati_gotovo).reduce((m, v, i) => (v != null && (m < 0 || v > D.grad[m]) ? i : m), -1);
@@ -547,7 +581,7 @@
 
   function nacrtajSve() {
     zaglavlje(); cilj(); izborBrojaca(); infoPrognoze(); tabela(); opisVremena(); mini();
-    if (ctl) mapaVrednosti();
+    if (ctl) { zaustavi(false); mapaVrednosti(); }
     for (const x of Object.values(g)) x.osvezi();
   }
 

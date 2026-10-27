@@ -233,7 +233,7 @@
     }
     document.getElementById("dan-cinjenice").innerHTML = html;
     document.getElementById("dan-linkovi").innerHTML =
-      `<a class="dugme malo" href="mapa.html?rezim=dan&dan=${iso}${izbor !== "grad" ? `&id=${encodeURIComponent(izbor)}` : ""}">${LJ.ik("map")}Dan na mapi</a>` +
+      `<a class="dugme malo" href="danas.html?dan=${iso}">${LJ.ik("map")}Dan sat po sat</a>` +
       (izbor !== "grad" ? `<a class="dugme malo" href="stanica.html?id=${encodeURIComponent(izbor)}&dan=${iso}">${LJ.ik("pin")}Otvori stanicu</a>` : "");
     if (danGraf) danGraf.osvezi(); else crtajDan();
     if (skroluj) document.getElementById("izabrani-dan").scrollIntoView({ behavior: "smooth", block: "start" });
