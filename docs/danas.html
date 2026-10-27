@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202610271000">
+  <link rel="stylesheet" href="assets/stil.css?v=202610271400">
 </head>
 <body data-strana="danas" data-putanja="Pregled|Danas uživo">
   <main class="sadrzaj danas" id="sadrzaj">
@@ -40,8 +40,6 @@
     </header>
 
     <p class="danas-obavestenje skriveno" id="danas-obavestenje" role="status"></p>
-
-    <section class="kpi-mreza" id="kpi" aria-label="Danas u brojkama"></section>
 
     <div class="danas-mreza">
       <section class="kartica pojava">
@@ -67,6 +65,7 @@
     </div>
 
     <div class="danas-mreza dole">
+      <div class="danas-levo">
       <section class="kartica pojava danas-vreme-kartica">
         <div class="kartica-glava">
           <div><span class="eyebrow" id="vreme-datum">Vremenska prognoza</span><h2><span id="vreme-naslov">Kakvo je vreme danas?</span> <span id="vreme-info"></span></h2></div>
@@ -76,7 +75,15 @@
         <div class="legenda-grafika" id="vreme-legenda" style="margin:8px 0 0"></div>
       </section>
 
-      <section class="kartica pojava">
+      <section class="kartica pojava danas-cilj-kartica" aria-label="Dan prema prognozi">
+        <div class="kartica-glava">
+          <div><span class="eyebrow" id="cilj-oznaka">Danas · uživo</span><h2 id="cilj-naslov">Koliko je biciklista prošlo</h2></div>
+        </div>
+        <div id="cilj"></div>
+      </section>
+      </div>
+
+      <section class="kartica pojava danas-tabela-kartica">
         <div class="kartica-glava">
           <div><span class="eyebrow" id="t-oznaka">Brojači · danas</span><h2>Svaki brojač prema svojoj prognozi</h2></div>
           <div class="pretraga danas-pretraga"><svg class="ik" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -93,11 +100,11 @@
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202610271000"></script>
-  <script src="assets/datum.js?v=202610271000"></script>
-  <script src="assets/ljuska.js?v=202610271000"></script>
-  <script src="assets/pin3d.js?v=202610271000"></script>
-  <script src="assets/mapa-modul.js?v=202610271000"></script>
-  <script src="assets/danas.js?v=202610271000"></script>
+  <script src="assets/zajednicko.js?v=202610271400"></script>
+  <script src="assets/datum.js?v=202610271400"></script>
+  <script src="assets/ljuska.js?v=202610271400"></script>
+  <script src="assets/pin3d.js?v=202610271400"></script>
+  <script src="assets/mapa-modul.js?v=202610271400"></script>
+  <script src="assets/danas.js?v=202610271400"></script>
 </body>
 </html>

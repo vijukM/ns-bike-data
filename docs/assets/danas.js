@@ -146,15 +146,8 @@
   }
   function infoPrognoze() {
     const P = prognoza(), el = document.getElementById("prognoza-info");
-    if (!P) { el.innerHTML = MAPA.info(D.uzivo ? "Prognoza za danas još nije izdata. Zvanična se izdaje u 01:03, osvežene u 07:03, 13:03 i 19:03."
-      : "Za ovaj dan nema prognoze modela-v2: prognoze se čuvaju od 21. 10. 2026."); return; }
-    const model = String(P.verzija_modela).replace(/ x /g, " × ").replace(/0,5/g, "0,5");
-    el.innerHTML = MAPA.info(`Model ${model}: prosek 3 TFT mreže (medijana) i 3 XGBoost modela, učen na satnim podacima 2021–2026. `
-      + (D.prognoza.zvanicna ? "Prikazana je zvanična prognoza iz ponoći (samo podaci do 24:00 juče). "
-        : `Prikazano je izdanje u ${sat(P.izdato_utc)} (podaci do 24:00 juče + novija vremenska prognoza). `)
-      + "Interval 10–90 % je iz TFT-a. Greška na test godini sa pravom vremenskom prognozom: RMSE 12,71 biciklista po satu i brojaču."
-      + (D.prognoza.zvanicna && (D.prognoza.zvanicna.dopunjeni_sati || []).length
-        ? ` Sati ${D.prognoza.zvanicna.dopunjeni_sati.map((i) => oznake()[i].oznaka).join(", ")} nemaju zvaničnu prognozu (nije izdata), pa je prikazano poslednje izdanje objavljeno pre početka tog sata.` : ""));
+    if (!P) { el.innerHTML = MAPA.info(D.uzivo ? "Prognoza za danas još nije izdata (prva u 01:03)." : "Za ovaj dan nema prognoze."); return; }
+    el.innerHTML = MAPA.info(D.prognoza.zvanicna ? "Prognoza modela iz ponoći, za svaki sat i brojač." : `Prognoza modela, izdata u ${sat(P.izdato_utc)}.`);
   }
   /** Izbor „Svi brojači“ ili jedan brojač — isti izgled kao na strani Grafici (dugme + panel sa pretragom). */
   function izborBrojaca() {
@@ -205,7 +198,7 @@
     izbor.value = D.datum;
     document.getElementById("dan-pre").disabled = D.datum <= izbor.min;
     document.getElementById("dan-posle").disabled = D.datum >= izbor.max;
-    document.getElementById("dan-danas").disabled = !!D.uzivo;
+    document.getElementById("dan-danas").hidden = !!D.uzivo;          // „Danas“ samo kad nije prikazan današnji dan
     if (!D.uzivo) {
       const [dan, datum] = NS.datumDug(D.datum).split(", ");
       document.getElementById("danas-datum").textContent = `Pregled dana · ${D.izvor === "istorija" ? "istorija" : "konačni podaci"}`;
@@ -233,66 +226,50 @@
     if (D.datum !== danasLok) ob.textContent = `Prikazan je ${NS.datum(D.datum)} — prvo čitanje za danas stiže u 00:02 posle ponoći.`;
   }
 
-  // ---------------------------------------------------------------- KPI
-  function kpiProsli() {
-    const P = prognoza();
+  // ---------------------------------------------------------------- dan prema prognozi (traka: izbrojano → prognoza za ceo dan)
+  function cilj() {
+    const P = prognoza(), N = D.uzivo ? najnovija() : null;
     const ser = Object.values(D.serije);
     const javlja = ser.filter((x) => x.stanje === "radi").length;
     const p = poredjenje(D.grad, P && P.grad.pred);
-    const pr = poredjenje(D.grad, D.prosek_isti_dan);
-    const dan = NS.datumDug(D.datum).split(",")[0].toLowerCase();
-    const problemi = {};
-    for (const [k, x] of Object.entries(D.serije)) if (x.stanje !== "radi") (problemi[x.stanje] = problemi[x.stanje] || []).push(k);
-    const k = (boja, ikona, naslov, delta, vrednost, dole) => `<div class="kpi ${boja}"><div class="vrh"><span class="kvadrat">${LJ.ik(ikona)}</span>
-      <span class="naslov">${naslov}</span>${delta ? `<span class="kpi-delta">${delta}</span>` : ""}</div><div class="vrednost">${vrednost}</div><div class="dole">${dole}</div></div>`;
-    const boja = (x) => (x == null ? "c-plava" : x > 5 ? "c-zelena" : x < -5 ? "c-narandzasta" : "c-plava");
-    document.getElementById("kpi").innerHTML = [
-      k("c-plava", "activity", "Ceo dan", D.izvor === "istorija" ? "istorija" : "konačno", NS.broj(D.danas),
-        `na <b>${javlja}/${ser.length}</b> brojača${D.juce != null ? ` · dan pre <b>${NS.broj(D.juce)}</b>` : ""}`),
-      k(boja(p.pct), "chart", "Prema prognozi", p.pct == null ? "" : D.prognoza.zvanicna ? "iz ponoći" : "osvežena",
-        p.pct == null ? "—" : `${znak(p.pct).replace(" %", "")}<sup>%</sup>`,
-        p.pct == null ? (D.izvor === "istorija" ? "prognoza se izdaje od 10/2026" : "za ovaj dan nema prognoze model-v2 (od 21. 10. 2026.)")
-          : `prognoza za iste sate: <b>${NS.broj(Math.round(p.prog))}</b>`),
-      k(boja(pr.pct), "target", `Prema prosečnom danu`, "", pr.pct == null ? "—" : `${znak(pr.pct).replace(" %", "")}<sup>%</sup>`,
-        pr.pct == null ? "nema proseka" : `prosečan ${dan} u ovom mesecu: <b>${NS.broj(Math.round(pr.prog))}</b>${MAPA.info("Isti sati, prosek istog dana u nedelji i istog meseca, 9/2024–8/2026, bez praznika.")}`),
-      k(javlja === ser.length ? "c-zelena" : "c-narandzasta", "pin", "Brojači", "", `${javlja}<sup>/${ser.length}</sup>`,
-        Object.keys(problemi).length ? Object.entries(problemi).map(([st, l]) => `${STANJE[st][0]}: <b>${l.join(", ")}</b>`).join(" · ") : "svi su radili"),
-    ].join("");
-  }
-  function kpi() {
-    if (!D.uzivo) { kpiProsli(); return; }
-    const P = prognoza(), N = najnovija();
-    const ser = Object.values(D.serije);
-    const javlja = ser.filter((x) => x.stanje === "radi").length;
-    const p = poredjenje(D.grad, P && P.grad.pred);
+    const pd = poredjenje(D.grad, D.prosek_isti_dan);
     const doSata = D.sati_gotovo < D.sati.length ? `${D.sati[D.sati_gotovo]} h` : "ponoći";
-    let ostatak, intervalTxt, izvorOstatka;
-    if (N) {
-      const od = D.sati_gotovo;
-      ostatak = zbir(N.grad.pred.slice(od));
-      intervalTxt = `${NS.broj(D.danas + zbir(N.grad.q10.slice(od)))} – ${NS.broj(D.danas + zbir(N.grad.q90.slice(od)))}`;
-      izvorOstatka = `izbrojano + prognoza (izdata u ${sat(N.izdato_utc)})`;
-    } else if (D.prosek_isti_dan) {
-      ostatak = zbir(D.prosek_isti_dan.slice(D.sati_gotovo));
-      izvorOstatka = "izbrojano + prosečan isti dan";
+    document.getElementById("cilj-oznaka").textContent = D.uzivo ? `Danas do ${doSata} · uživo` : `${NS.datum(D.datum)} · ceo dan`;
+    document.getElementById("cilj-naslov").textContent = D.uzivo ? "Koliko je biciklista danas prošlo" : "Koliko je biciklista prošlo tog dana";
+    const izbr = D.danas || 0;
+    const meta = P ? zbir(P.grad.pred) : null;
+    const q = P && P.grad.q10 ? [zbir(P.grad.q10), zbir(P.grad.q90)] : null;
+    let ocek = null, ocekInt = null;
+    if (D.uzivo && N) {
+      ocek = izbr + zbir(N.grad.pred.slice(D.sati_gotovo));
+      ocekInt = [izbr + zbir(N.grad.q10.slice(D.sati_gotovo)), izbr + zbir(N.grad.q90.slice(D.sati_gotovo))];
     }
+    // skala ostavlja mesta i kad izbrojano prebaci prognozu
+    const max = Math.max(izbr, meta || 0, q ? q[1] : 0, ocek || 0) * 1.08 || 1;
+    const x = (v) => `${Math.min(100, (100 * v) / max).toFixed(2)}%`;
     const problemi = {};
-    for (const [k, x] of Object.entries(D.serije)) if (x.stanje !== "radi") (problemi[x.stanje] = problemi[x.stanje] || []).push(k);
-    const k = (boja, ikona, naslov, delta, vrednost, dole) => `<div class="kpi ${boja}"><div class="vrh"><span class="kvadrat">${LJ.ik(ikona)}</span>
-      <span class="naslov">${naslov}</span>${delta ? `<span class="kpi-delta">${delta}</span>` : ""}</div><div class="vrednost">${vrednost}</div><div class="dole">${dole}</div></div>`;
-    document.getElementById("kpi").innerHTML = [
-      k("c-plava", "activity", `Danas do ${doSata}`, "uživo", NS.broj(D.danas),
-        `na <b>${javlja}/${ser.length}</b> brojača · juče ceo dan <b>${NS.broj(D.juce)}</b>`),
-      k(p.pct == null ? "c-plava" : p.pct > 5 ? "c-zelena" : p.pct < -5 ? "c-narandzasta" : "c-plava", "chart", "Prema prognozi",
-        P ? (D.prognoza.zvanicna ? "iz ponoći" : "osvežena") : "",
-        p.pct == null ? "—" : `${znak(p.pct).replace(" %", "")}<sup>%</sup>`,
-        p.pct == null ? (P ? "još nema završenog sata sa prognozom" : "prognoza za danas još nije izdata")
-          : `prognoza za iste sate: <b>${NS.broj(Math.round(p.prog))}</b>${MAPA.info("Poređenje samo za sate koji su prošli i za koje postoje i izbrojano i prognoza. Zvanična prognoza je izdata u ponoć, samo iz podataka do 24:00 juče.")}`),
-      k("c-ljubicasta", "target", "Očekuje se do ponoći", "", ostatak == null ? "—" : `~${NS.broj(Math.round((D.danas + ostatak) / 10) * 10)}`,
-        ostatak == null ? "nema prognoze ni proseka" : `${izvorOstatka}${intervalTxt ? ` · <b>${intervalTxt}</b>${MAPA.info("Raspon je zbir intervala 10–90 % po brojačima, pa je širi od stvarne nesigurnosti za ceo grad.")}` : ""}`),
-      k(javlja === ser.length ? "c-zelena" : "c-narandzasta", "pin", "Brojači", "", `${javlja}<sup>/${ser.length}</sup>`,
-        Object.keys(problemi).length ? Object.entries(problemi).map(([st, l]) => `${STANJE[st][0]}: <b>${l.join(", ")}</b>`).join(" · ") : "svi javljaju"),
-    ].join("");
+    for (const [k, v] of Object.entries(D.serije)) if (v.stanje !== "radi") (problemi[v.stanje] = problemi[v.stanje] || []).push(k);
+    const cinj = (naslov, vrednost, dole) => `<div><dt>${naslov}</dt><dd><b>${vrednost}</b>${dole ? `<small>${dole}</small>` : ""}</dd></div>`;
+    document.getElementById("cilj").innerHTML = `
+      <div class="cilj-brojke"><b>${NS.broj(izbr)}</b><span>${meta != null ? `od <b>${NS.broj(Math.round(meta))}</b> po prognozi · ${NS.broj(Math.round((100 * izbr) / meta))} %`
+        : D.izvor === "istorija" ? "za ovaj dan nema prognoze" : "prognoza za ovaj dan nije izdata"}</span></div>
+      <div class="cilj-traka" role="img" aria-label="Izbrojano ${NS.broj(izbr)}${meta != null ? `, prognoza ${NS.broj(Math.round(meta))}` : ""}">
+        ${q ? `<span class="cilj-interval" style="left:${x(q[0])};width:calc(${x(q[1])} - ${x(q[0])})"></span>` : ""}
+        <span class="cilj-izbrojano" style="width:${x(izbr)}"></span>
+        ${D.uzivo && p.n ? `<span class="cilj-sada" style="left:${x(p.prog)}" title="prognoza do ${doSata}: ${NS.broj(Math.round(p.prog))}"></span>` : ""}
+        ${meta != null ? `<span class="cilj-meta" style="left:${x(meta)}" title="prognoza za ceo dan: ${NS.broj(Math.round(meta))}"></span>` : ""}
+      </div>
+      <div class="legenda-grafika cilj-legenda"><span><i class="cilj-l-izbr"></i>izbrojano</span>
+        ${meta != null ? `<span><i class="cilj-l-meta"></i>prognoza za ceo dan</span>` : ""}
+        ${q ? `<span><i class="cilj-l-int"></i>interval 10–90 %</span>` : ""}
+        ${D.uzivo && p.n ? `<span><i class="cilj-l-sada"></i>prognoza do ${doSata}</span>` : ""}</div>
+      <dl class="cilj-cinjenice">
+        ${cinj("Prema prognozi", p.pct == null ? "—" : znak(p.pct), p.pct == null ? "" : `za iste sate: ${NS.broj(Math.round(p.prog))}`)}
+        ${D.uzivo ? cinj("Očekuje se do ponoći", ocek == null ? "—" : `~${NS.broj(Math.round(ocek / 10) * 10)}`, ocekInt ? `${NS.broj(ocekInt[0])} – ${NS.broj(ocekInt[1])}` : "")
+          : cinj("Prema prosečnom danu", pd.pct == null ? "—" : znak(pd.pct), pd.pct == null ? "" : `prosečan dan: ${NS.broj(Math.round(pd.prog))}`)}
+        ${cinj("Brojači", `${javlja}/${ser.length}`, Object.keys(problemi).length ? Object.entries(problemi).map(([st, l]) => `${STANJE[st][0]}: ${l.join(", ")}`).join(" · ") : D.uzivo ? "svi javljaju" : "svi su radili")}
+        ${D.juce != null ? cinj(D.uzivo ? "Juče, ceo dan" : "Dan pre", NS.broj(D.juce), "") : ""}
+      </dl>`;
   }
 
   // ---------------------------------------------------------------- glavni grafik
@@ -312,7 +289,7 @@
   }
   function crtajGlavni(b) {
     const n = nizovi(), P = prognoza(), x = oznake();
-    const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"], dop: b["bicikl-blago"] };
+    const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"], dop: b.bicikl };
     document.getElementById("g-oznaka").textContent = izabrana ? `Brojač ${izabrana} · ${(s.serije.find((r) => r.serija === izabrana) || {}).naziv || ""}` : `Ceo grad · ${zbirno ? "zbirno od ponoći" : "sat po sat"}`;
     const kad = D.uzivo ? "Danas" : "Tog dana";
     document.getElementById("g-naslov").textContent = izabrana ? `${kad} prema prognozi za ovaj brojač` : `${kad} prema prognozi i prosečnom istom danu`;
@@ -322,7 +299,7 @@
       `<span><i style="background:${boja.stv}"></i>izbrojano</span>`,
       n.pr ? `<span><i style="background:${boja.pr}"></i>prognoza (${D.prognoza.zvanicna ? "iz ponoći" : `izdata u ${sat(P.izdato_utc)}`})</span>` : "",
       n.q ? `<span><i style="background:${boja.pr};opacity:.3"></i>interval 10–90 %</span>` : "",
-      n.dop ? `<span><i style="background:${boja.dop}"></i>procena: drugi smer nije radio (potvrđeno od održavanja), dopuna po istorijskom odnosu smerova</span>` : "",
+      n.dop ? `<span><i class="srafura-dopuna" style="--b:${boja.dop}"></i>procena za drugi smer koji nije brojao bicikliste</span>` : "",
       n.dopZbirno ? `<span class="sitno">zbir uključuje procenu za sate kad drugi smer nije radio</span>` : "",
       n.pros ? `<span><i class="isprekidano" style="border-color:${boja.pros}"></i>prosečan ${NS.datumDug(D.datum).split(",")[0].toLowerCase()} u ovom mesecu</span>` : "",
       saPrognozom && !P ? `<span class="sitno">prognoza za danas još nije izdata</span>` : "",
@@ -334,7 +311,8 @@
       ...linijaSada(b),
     ];
     if (n.dop) serije.push({ name: "dopuna (procena)", type: "bar", data: n.dop, barMaxWidth: 22, stack: "stubac", z: 3,
-      itemStyle: { color: boja.dop, borderRadius: [4, 4, 0, 0], decal: { symbol: "rect", dashArrayX: [1, 0], dashArrayY: [3, 4], rotation: -0.6, color: "rgba(255,255,255,0.35)" } } });
+      itemStyle: { color: boja.dop, opacity: 0.45, borderRadius: [4, 4, 0, 0],
+        decal: { symbol: "rect", dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: Math.PI / 4, color: "rgba(255,255,255,0.55)" } } });
     if (n.pr) serije.push({ name: "prognoza", type: "line", data: n.pr, symbol: "none", smooth: 0.3, lineStyle: { color: boja.pr, width: 2.5 }, itemStyle: { color: boja.pr }, z: 4 });
     if (n.q) serije.push(
       { name: "q10", type: "line", data: n.q[0], stack: "int", symbol: "none", lineStyle: { opacity: 0 }, silent: true, tooltip: { show: false } },
@@ -407,7 +385,7 @@
     const omot = document.getElementById("vreme-izbor");
     const natpis = () => {
       const n = VREME.filter((v) => vremeIzbor.has(v.k) && imaVreme(v)).length;
-      omot.querySelector(".izbor-dugme").textContent = `${n ? `${n} ${n === 1 ? "veličina" : n < 5 ? "veličine" : "veličina"}` : "ništa"} ▾`;
+      omot.querySelector(".izbor-dugme").textContent = `${n ? `${n} ${n === 1 ? "parametar" : n < 5 ? "parametra" : "parametara"}` : "ništa"} ▾`;
     };
     if (!omot.querySelector(".izbor-dugme")) {
       omot.innerHTML = `<button type="button" class="dugme malo izbor-dugme" aria-haspopup="true"></button>`;
@@ -568,7 +546,7 @@
   document.getElementById("tabela").addEventListener("keydown", (e) => { if (e.key === "Enter") { const tr = e.target.closest("tr[data-s]"); if (tr) izaberi(tr.dataset.s === izabrana ? null : tr.dataset.s); } });
 
   function nacrtajSve() {
-    zaglavlje(); kpi(); izborBrojaca(); infoPrognoze(); tabela(); opisVremena(); mini();
+    zaglavlje(); cilj(); izborBrojaca(); infoPrognoze(); tabela(); opisVremena(); mini();
     if (ctl) mapaVrednosti();
     for (const x of Object.values(g)) x.osvezi();
   }

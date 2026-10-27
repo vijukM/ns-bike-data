@@ -1317,3 +1317,33 @@ html.bez-skrola { overflow: hidden; }
 .brend-gornji .brend-tekst small { display: none; }
 /* nadnaslovi grupa bliže levoj ivici */
 .meni .grupa-glava { padding: 6px 8px 6px 2px; }
+
+/* Danas uživo: levo vreme + traka „dan prema prognozi“, desno tabela iste visine */
+.danas-levo { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.danas-levo .danas-vreme-grafik { flex: none; height: 240px; }
+.danas-tabela-kartica { display: flex; flex-direction: column; min-height: 0; }
+.danas-tabela-kartica .danas-tabela-omot { flex: 1 1 0; max-height: none; min-height: 320px; }
+@media (max-width: 1200px) { .danas-tabela-kartica .danas-tabela-omot { flex: none; max-height: 420px; } }
+.srafura-dopuna { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--b) 45%, transparent) 0 3px, color-mix(in srgb, var(--b) 85%, white) 3px 5px) !important; }
+.cilj-brojke { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.cilj-brojke > b { font: 700 32px/1 "Inter Tight", Inter, sans-serif; letter-spacing: -.02em; }
+.cilj-brojke span { color: var(--t-muted); font-size: 13px; }
+.cilj-brojke span b { color: var(--t-base); }
+.cilj-traka { position: relative; height: 22px; border-radius: 11px; background: var(--bg-muted); margin: 6px 0 12px; }
+.cilj-traka > span { position: absolute; top: 0; bottom: 0; }
+.cilj-interval { background: color-mix(in srgb, var(--warning) 22%, transparent); border-left: 1px dashed color-mix(in srgb, var(--warning) 60%, transparent);
+  border-right: 1px dashed color-mix(in srgb, var(--warning) 60%, transparent); }
+.cilj-izbrojano { left: 0; border-radius: 11px; background: linear-gradient(90deg, var(--g-bicikl-blago), var(--g-bicikl)); transition: width .8s cubic-bezier(.2,.7,.2,1); }
+.cilj-meta { width: 3px; margin-left: -1.5px; top: -5px !important; bottom: -5px !important; border-radius: 2px; background: var(--warning); }
+.cilj-sada { width: 2px; margin-left: -1px; top: -3px !important; bottom: -3px !important; background: var(--t-base); opacity: .7; }
+.cilj-legenda i { display: inline-block; width: 12px; height: 8px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+.cilj-l-izbr { background: var(--g-bicikl); }
+.cilj-l-meta { width: 3px !important; height: 12px !important; background: var(--warning); }
+.cilj-l-int { background: color-mix(in srgb, var(--warning) 30%, transparent); }
+.cilj-l-sada { width: 2px !important; height: 12px !important; background: var(--t-base); opacity: .7; }
+.cilj-cinjenice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--border-soft); }
+.cilj-cinjenice dt { font-size: 11.5px; color: var(--t-muted); }
+.cilj-cinjenice dd { margin: 2px 0 0; }
+.cilj-cinjenice dd b { font: 600 17px/1.2 "Inter Tight", Inter, sans-serif; }
+.cilj-cinjenice dd small { display: block; font-size: 11.5px; color: var(--t-muted); }
+#dan-danas[hidden] { display: none; }
