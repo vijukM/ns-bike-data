@@ -28,6 +28,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from prognoza_biciklista.priprema import KVAR_SMERA, procena_iz_smera, udeo_smera
 from scraper import konfig
 
 log = logging.getLogger(__name__)
@@ -35,7 +36,9 @@ log = logging.getLogger(__name__)
 IZLAZ = konfig.KOREN / "docs" / "data" / "danas.json"
 PROGNOZE = konfig.KOREN / "podaci" / "prognoza_biciklista"
 VREME = konfig.KOREN / "podaci" / "vremenska_prognoza" / "za_model"
-ISKLJUCENE = {"28": "brojač neispravan od 04/2026"}       # kao prognoza_biciklista.priprema.ISKLJUCENE
+# isključene serije (kao prognoza_biciklista.priprema.ISKLJUCENE): opis i dan popravke (od tog dana serija se prikazuje
+# i ulazi u zbir grada; sati kvara pre popravke tog dana ne ulaze u zbir — vidi KVAR_SMERA)
+ISKLJUCENE = {"28": ("drugi smer nije brojao do popravke 23. 10. 2026. — stubac je izmereni smer + procena", date(2026, 10, 23))}
 KASNI_MIN, TOLERANCIJA_MIN, STAROST_MIN, NULA_JUCE = 70, 10, 20, 50
 # prognoze model-v1 (E28) su do 20.10.2026 imale pomeren sat (novi podaci u lokalnom vremenu) — ne prikazuju se
 STARI_MODELI = ("E28",)
@@ -121,7 +124,7 @@ def satno_danas(c: pd.DataFrame, sati_utc: pd.DatetimeIndex) -> dict[str, list]:
     return {s: [x if x is None or x >= 0 else None for x in v] for s, v in serije.items()}
 
 
-def stanje_serija(poslednje: pd.DataFrame) -> dict[str, dict]:
+def stanje_serija(poslednje: pd.DataFrame, iskljucene=frozenset(ISKLJUCENE)) -> dict[str, dict]:
     citanje = pd.to_datetime(poslednje["vreme_citanja_utc"], utc=True).max()
     cit_lok = citanje.tz_convert(konfig.TZ).tz_localize(None)
     out = {}
@@ -130,7 +133,7 @@ def stanje_serija(poslednje: pd.DataFrame) -> dict[str, dict]:
         danas = None if nema else int(g["danas"].sum())
         juce = int(g["juce"].sum()) if g["juce"].notna().all() else None
         brojac = pd.to_datetime(g["datum_brojaca"] + " " + g["vreme_brojaca"].astype(str)).min()
-        if s in ISKLJUCENE:
+        if s in iskljucene:
             st = "neispravan"
         elif nema:
             st = "nema_podataka"
@@ -280,16 +283,19 @@ def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = Fals
     gotovo = int(((sati_utc + pd.Timedelta(hours=1)) <= poslednji_kraj).sum()) if poslednji_kraj is not None else 0
     if ceo_dan:                                                # prošli dan: svi sati su završeni (prazni = nema podataka)
         gotovo = len(sati_utc)
-    st = stanje_serija(poslednje)
+    iskljucene = {s for s, (_, popravka) in ISKLJUCENE.items() if dan < popravka}
+    st = stanje_serija(poslednje, iskljucene)
     serije = {s: {**v, "sati": satno.get(s, [None] * len(sati_utc))} for s, v in sorted(st.items())}
-    for s in ISKLJUCENE:
+    for s in iskljucene:
         if s in serije:
-            serije[s]["napomena"] = ISKLJUCENE[s]
-    # gradski sat = zbir serija koje imaju taj sat (bez isključenih); null ako nijedna nema
+            serije[s]["napomena"] = ISKLJUCENE[s][0]
+    dopuni_kvar_smera(serije, c, sati_utc)
+    # gradski sat = zbir serija koje imaju taj sat (bez isključenih i bez sati kvara smera); null ako nijedna nema
     ukljucene = [s for s, v in serije.items() if v["stanje"] != "neispravan"]
     grad = []
     for i in range(len(sati_utc)):
-        v = [serije[s]["sati"][i] for s in ukljucene if serije[s]["sati"][i] is not None]
+        v = [serije[s]["sati"][i] for s in ukljucene if serije[s]["sati"][i] is not None
+             and (serije[s].get("dopuna") or [None] * len(sati_utc))[i] is None]
         grad.append(int(sum(v)) if v else None)
     cit = pd.Timestamp(poslednje_citanje).tz_convert(konfig.TZ) if pd.Timestamp(poslednje_citanje).tzinfo \
         else pd.Timestamp(poslednje_citanje, tz="UTC").tz_convert(konfig.TZ)
@@ -305,6 +311,22 @@ def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = Fals
         "serije": serije, "prognoza": prognoze(dan, sati_utc), "vreme": vreme(sati_utc),
         "prosek_isti_dan": prosek_dana(dan, sati_utc),
     }
+
+
+def dopuni_kvar_smera(serije: dict, c: pd.DataFrame, sati_utc: pd.DatetimeIndex) -> None:
+    """Sati pre popravke (prognoza_biciklista.priprema.KVAR_SMERA): stubac = izmereni smer (sati) + dopuna
+    (procena − izmereno), procena = izmereni smer / udeo smera u zbiru — isto kao ulaz modela; samo za prikaz."""
+    ts = pd.Series(sati_utc.tz_convert(None) + pd.Timedelta(hours=2))      # oznaka modela: kraj sata, UTC+1
+    for s, k in KVAR_SMERA.items():
+        kvar = ((ts > pd.Timestamp(k["od"])) & (ts < pd.Timestamp(k["do"]))).to_numpy()
+        if s not in serije or not kvar.any():
+            continue
+        smer = satno_danas(c[(c["serija"] == s) & (c["direction"] == k["smer"])], sati_utc).get(s, [None] * len(ts))
+        jedan = pd.Series([v if kv else None for v, kv in zip(smer, kvar)], dtype="float64")
+        procena = procena_iz_smera(ts, jedan, udeo_smera(k["udeo"]))
+        serije[s]["sati"] = [None if kv and pd.isna(j) else int(j) if kv else v for v, j, kv in zip(serije[s]["sati"], jedan, kvar)]
+        serije[s]["dopuna"] = [int(p - j) if kv and pd.notna(p) else None for p, j, kv in zip(procena, jedan, kvar)]
+        serije[s]["dopuna_opis"] = k["opis"]
 
 
 ARHIVA = konfig.KOREN / "docs" / "data" / "dani"

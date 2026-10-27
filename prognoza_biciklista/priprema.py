@@ -16,8 +16,12 @@ Pravila (redosled primene; vrednost → NaN uz razlog):
   otkaz_smera    stari dvosmerni: slabiji smer < 2 % dnevnog zbira, ≥ 3 dana zaredom (zbir ≥ 50/dan) → NaN.
                  (Pravilo ok_jedan_smer — zbir ≥ 60 % očekivanog → validno — postoji, ali je isključeno dok ga
                  korisnik ne odobri: OK_JEDAN_SMER_ODOBRENO.)
-  iskljucene     ISKLJUCENE: serija 28 NaN (otkaz_smera) od 18.04.2026; automatski povratak kad smer 21 ≥ 3 dana
-                 zaredom ima 35–60 % dnevnog zbira (zapis u podaci/prognoza_biciklista/iskljucene_serije.log)
+  iskljucene     ISKLJUCENE: serija 28 NaN (otkaz_smera) od 18.04.2026 do popravke (`do`, prvi ispravan sat);
+                 automatski povratak i ranije, kad smer 21 ≥ 3 dana zaredom ima 35–60 % dnevnog zbira
+                 (zapis u podaci/prognoza_biciklista/iskljucene_serije.log)
+  kvar_smera     KVAR_SMERA: novi sati pre popravke, kad je brojao samo jedan smer (potvrđeno od održavanja):
+                 y_A = NaN (ne ocenjuje se), y_jedan_smer = izmereni smer, y_procena = y_jedan_smer / udeo smera
+                 (vrsta dana, sat) — samo za ulaz modela (lag, roll, dinamička skala) i prikaz na sajtu.
 """
 from __future__ import annotations
 
@@ -55,8 +59,18 @@ OK_JEDAN_SMER_ODOBRENO = False
 # Isključene serije (odluka korisnika). Serija je NaN sa datim razlogom, osim ako se brojač automatski vrati:
 # smer `smer_povratak` ≥ 3 uzastopna dana sa udelom 35–60 % dnevnog zbira → od prvog takvog dana ponovo uključena.
 ISKLJUCENE = {
-    "28": {"od": "2026-04-18", "razlog": "otkaz_smera", "opis": "brojač neispravan od 04/2026 (smer 21 ne broji, "
-           "smer 11 broji samo svoj smer)", "smer_povratak": "21"},
+    "28": {"od": "2026-04-18", "do": "2026-10-23 13:00", "razlog": "otkaz_smera", "opis": "brojač neispravan od 04/2026 "
+           "(smer 21 ne broji, smer 11 broji samo svoj smer)", "smer_povratak": "21"},
+}
+
+# Kvar jednog smera sa poznatim krajem (ts = kraj sata UTC+1). 28 (stari brojač, zbir A01 + A02): od početka podataka
+# uživo do popravke u petak 23.10.2026 brojao je samo A01 = smer 11. Prvi sat sa oba smera je 13–14 h lokalno (CEST)
+# = ts 13:00; u satu 12–13 je popravka bila u toku (smer 21: 14), pa i on ide u kvar, sa izmerenim smerom 11.
+# Provera skoka (27.10.2026): radni dani posle / 7 radnih dana pre, isti sati = 1,74 (samo 23.10 popodne i 26.10);
+# na 84 sata sa oba smera procena smer 11 / udeo daje 0,975 (radni dan) i 0,954 (vikend) stvarnog zbira.
+KVAR_SMERA = {
+    "28": {"od": "2026-10-09", "do": "2026-10-23 13:00", "smer": "11", "udeo": KOREN / "prognoza_biciklista" / "udeo_smera_28.csv",
+           "opis": "procena: drugi smer nije radio (potvrđeno od održavanja), dopuna po istorijskom odnosu smerova"},
 }
 POVRATAK_UDEO, POVRATAK_DANA = (0.35, 0.60), 3
 LOG = konfig.KOREN / "podaci" / "prognoza_biciklista" / "iskljucene_serije.log"
@@ -222,6 +236,8 @@ def pravilo_iskljucene(df: pd.DataFrame, smerovi: pd.DataFrame) -> int:
     for st, pod in ISKLJUCENE.items():
         povratak = povratak_serije(smerovi, st, pod["smer_povratak"])
         maska = (df["stanica_id"] == st) & (df["ts"] > pd.Timestamp(pod["od"]))
+        if pod.get("do"):                                   # popravljen: od prvog ispravnog sata ponovo validna
+            maska &= df["ts"] < pd.Timestamp(pod["do"])
         if povratak is not None:
             maska &= df["dan"] < povratak
             poruka = f"serija {st} ponovo uključena od {povratak.date()} (smer {pod['smer_povratak']} broji 35–60 %)"
@@ -233,6 +249,42 @@ def pravilo_iskljucene(df: pd.DataFrame, smerovi: pd.DataFrame) -> int:
                     with open(log_fajl, "a", encoding="utf-8") as f:
                         f.write(f"{pd.Timestamp.now(tz=konfig.TZ):%Y-%m-%d %H:%M}\t{poruka}\n")
         n += _postavi(df, maska, pod["razlog"])
+    return n
+
+
+def udeo_smera(putanja: Path) -> dict[tuple[int, int], float]:
+    """(vikend 0/1, sat 1–24 = kraj sata UTC+1) → udeo smera u zbiru (istorija)."""
+    u = pd.read_csv(putanja)
+    return {(int(v), int(h)): float(x) for v, h, x in zip(u["vikend"], u["sat"], u["udeo"])}
+
+
+def procena_iz_smera(ts: pd.Series, y_jedan: pd.Series, udeo: dict[tuple[int, int], float]) -> pd.Series:
+    """y_procena = y_jedan_smer / udeo[vikend, sat] (ts = kraj sata UTC+1; dan i sat iz ts − 1 h), ceo broj."""
+    pocetak = ts - pd.Timedelta(hours=1)
+    u = [udeo.get((int(d >= 5), int(h) + 1)) for d, h in zip(pocetak.dt.dayofweek, pocetak.dt.hour)]
+    return (y_jedan / pd.Series(u, index=y_jedan.index, dtype="float64")).round()
+
+
+def pravilo_kvar_smera(df: pd.DataFrame, smerovi: pd.DataFrame) -> int:
+    """KVAR_SMERA: novi sati serije pre popravke → razlog kvar_smera, y_A NaN (bez ocene), y_jedan_smer i y_procena."""
+    n = 0
+    for st, k in KVAR_SMERA.items():
+        m = (df["stanica_id"] == st) & df["novo"] & df["y_sirovo"].notna() & \
+            (df["ts"] > pd.Timestamp(k["od"])) & (df["ts"] < pd.Timestamp(k["do"]))
+        if not m.any():
+            continue
+        jedan = df.loc[m, "y_sirovo"].astype("float64")
+        if not smerovi.empty:                               # izmereni smer; zbir iz feed-a ako smera nema
+            sm = smerovi[(smerovi["serija"] == st) & (smerovi["direction"] == k["smer"])]
+            po_ts = pd.Series(sm["y_A"].to_numpy(dtype="float64"),
+                              index=pd.to_datetime(sm["datum"]) + pd.to_timedelta(sm["sat"].astype(int), unit="h"))
+            po_ts = po_ts[~po_ts.index.duplicated()]
+            jedan = df.loc[m, "ts"].map(po_ts).fillna(jedan)
+        df.loc[m, "y_jedan_smer"] = jedan
+        df.loc[m, "y_procena"] = procena_iz_smera(df.loc[m, "ts"], jedan, udeo_smera(k["udeo"]))
+        df.loc[m, "y_A"] = np.nan
+        df.loc[m, "razlog_A"] = "kvar_smera"
+        n += int(m.sum())
     return n
 
 
@@ -254,6 +306,9 @@ def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
     df.loc[df["razlog_A"].eq("ok") & df["y_A"].isna(), "razlog_A"] = "nema_reda"
     df["dan"], df["sat"] = _dan_i_sat(df["ts"])
     df["mesec"] = (df["ts"] - pd.Timedelta(hours=1)).dt.month   # mesec početka sata (kao sat_pocetak)
+    df["y_sirovo"] = df["y_A"].astype("float64")                # vrednost iz feed-a, pre čišćenja
+    df["y_jedan_smer"] = np.nan
+    df["y_procena"] = np.nan
 
     izvestaj = {
         "outlier": pravilo_outlier(df),
@@ -262,9 +317,11 @@ def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
         "skok": pravilo_skok(df, p90),
         "otkaz_smera": pravilo_otkaz_smera(df, smerovi),
         "iskljucene": pravilo_iskljucene(df, smerovi),
+        "kvar_smera": pravilo_kvar_smera(df, smerovi),
     }
     izvestaj["ok_jedan_smer"] = int((df["novo"] & df["razlog_A"].eq("ok_jedan_smer")).sum())
     df["y_A"] = df["y_A"].astype("float64")
+    kolone += ["y_jedan_smer", "y_procena"]                    # samo za kvar_smera (ulaz modela i prikaz), inače NaN
     return df[kolone].sort_values(["stanica_id", "ts"]).reset_index(drop=True), izvestaj
 
 

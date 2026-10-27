@@ -89,16 +89,20 @@ def _istorija(g: pd.Series, ime: str, L: int) -> pd.Series:
 def napravi(master: pd.DataFrame, meteo: pd.DataFrame, paket: Paket) -> pd.DataFrame:
     """Kao features.napravi sa config_E31 (cilj A, dinamička skala 720 h, fiksna skala iz skale.json)."""
     ob, L = paket.ob, paket.L
-    df = master[["stanica_id", "ts", "y_A", "razlog_A"]].rename(columns={"y_A": "y", "razlog_A": "razlog"})
+    kolone = ["stanica_id", "ts", "y_A", "razlog_A"] + (["y_procena"] if "y_procena" in master else [])
+    df = master[kolone].rename(columns={"y_A": "y", "razlog_A": "razlog"})
     df = df.sort_values(["stanica_id", "ts"]).reset_index(drop=True)
+    # ulaz iz prošlosti (lag, roll, dinamička skala): izmereno, a za sate kvara smera procena (priprema.KVAR_SMERA);
+    # cilj y i ocena ostaju bez procene
+    df["y_ulaz"] = df["y"].fillna(df["y_procena"].where(df["razlog"] == "kvar_smera")) if "y_procena" in df else df["y"]
     df["skala_fiksna"] = df["stanica_id"].map(paket.skale).clip(lower=1.0)
     w = int(ob["skala_prozor_sati"])
-    dyn = df.groupby("stanica_id", sort=False)["y"].transform(
+    dyn = df.groupby("stanica_id", sort=False)["y_ulaz"].transform(
         lambda s: s.shift(L).rolling(w, min_periods=max(1, w // 4)).mean())
     df["skala"] = dyn.fillna(df["skala_fiksna"]).clip(lower=float(ob["skala_clip_min"]))
     df["nivo_stanice"] = df["skala"] / df["skala_fiksna"]
     df["yn"] = df["y"] / df["skala"]
-    g = df.groupby("stanica_id", sort=False)["y"]
+    g = df.groupby("stanica_id", sort=False)["y_ulaz"]
     for ime in ob["istorija"]:
         df[ime] = g.transform(lambda s, ime=ime: _istorija(s, ime, L)) / df["skala"]
 

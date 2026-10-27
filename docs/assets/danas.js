@@ -302,14 +302,17 @@
     const pr = P ? (izabrana ? P.serije[izabrana] : P.grad.pred) : null;
     const q = P && !izabrana ? [P.grad.q10, P.grad.q90] : null;
     const pros = izabrana ? null : D.prosek_isti_dan;
+    // kvar jednog smera (npr. 28 do 23. 10. 2026.): stubac = izmereni smer + dopuna (procena), samo za prikaz
+    const dop = izabrana && D.serije[izabrana].dopuna && D.serije[izabrana].dopuna.some((v) => v != null) ? D.serije[izabrana].dopuna : null;
     const proslo = stv.map((v, i) => (i < D.sati_gotovo ? v : null));
-    if (!zbirno) return { stv: proslo, pr, q, pros };
+    if (!zbirno) return { stv: proslo, pr, q, pros, dop: dop && dop.map((v, i) => (i < D.sati_gotovo ? v : null)) };
     const kum = (a, do_ = a.length) => { let t = 0; return a.map((v, i) => (i < do_ ? (t += v || 0) : null)); };
-    return { stv: kum(stv, D.sati_gotovo), pr: pr && kum(pr), q: null, pros: pros && kum(pros) };
+    const ukupno = dop ? stv.map((v, i) => (v == null ? null : v + (dop[i] || 0))) : stv;
+    return { stv: kum(ukupno, D.sati_gotovo), pr: pr && kum(pr), q: null, pros: pros && kum(pros), dopZbirno: !!dop };
   }
   function crtajGlavni(b) {
     const n = nizovi(), P = prognoza(), x = oznake();
-    const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"] };
+    const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"], dop: b["bicikl-blago"] };
     document.getElementById("g-oznaka").textContent = izabrana ? `Brojač ${izabrana} · ${(s.serije.find((r) => r.serija === izabrana) || {}).naziv || ""}` : `Ceo grad · ${zbirno ? "zbirno od ponoći" : "sat po sat"}`;
     const kad = D.uzivo ? "Danas" : "Tog dana";
     document.getElementById("g-naslov").textContent = izabrana ? `${kad} prema prognozi za ovaj brojač` : `${kad} prema prognozi i prosečnom istom danu`;
@@ -319,14 +322,19 @@
       `<span><i style="background:${boja.stv}"></i>izbrojano</span>`,
       n.pr ? `<span><i style="background:${boja.pr}"></i>prognoza (${D.prognoza.zvanicna ? "iz ponoći" : `izdata u ${sat(P.izdato_utc)}`})</span>` : "",
       n.q ? `<span><i style="background:${boja.pr};opacity:.3"></i>interval 10–90 %</span>` : "",
+      n.dop ? `<span><i style="background:${boja.dop}"></i>procena: drugi smer nije radio (potvrđeno od održavanja), dopuna po istorijskom odnosu smerova</span>` : "",
+      n.dopZbirno ? `<span class="sitno">zbir uključuje procenu za sate kad drugi smer nije radio</span>` : "",
       n.pros ? `<span><i class="isprekidano" style="border-color:${boja.pros}"></i>prosečan ${NS.datumDug(D.datum).split(",")[0].toLowerCase()} u ovom mesecu</span>` : "",
       saPrognozom && !P ? `<span class="sitno">prognoza za danas još nije izdata</span>` : "",
     ].join("");
     const serije = [
-      { name: "izbrojano", type: zbirno ? "line" : "bar", data: n.stv, barMaxWidth: 22, itemStyle: { color: boja.stv, borderRadius: [4, 4, 0, 0] },
+      { name: "izbrojano", type: zbirno ? "line" : "bar", data: n.stv, barMaxWidth: 22, stack: n.dop ? "stubac" : undefined,
+        itemStyle: { color: boja.stv, borderRadius: n.dop ? 0 : [4, 4, 0, 0] },
         lineStyle: { color: boja.stv, width: 3 }, symbol: "none", areaStyle: zbirno ? { color: boja.stv, opacity: 0.14 } : undefined, z: 3 },
       ...linijaSada(b),
     ];
+    if (n.dop) serije.push({ name: "dopuna (procena)", type: "bar", data: n.dop, barMaxWidth: 22, stack: "stubac", z: 3,
+      itemStyle: { color: boja.dop, borderRadius: [4, 4, 0, 0], decal: { symbol: "rect", dashArrayX: [1, 0], dashArrayY: [3, 4], rotation: -0.6, color: "rgba(255,255,255,0.35)" } } });
     if (n.pr) serije.push({ name: "prognoza", type: "line", data: n.pr, symbol: "none", smooth: 0.3, lineStyle: { color: boja.pr, width: 2.5 }, itemStyle: { color: boja.pr }, z: 4 });
     if (n.q) serije.push(
       { name: "q10", type: "line", data: n.q[0], stack: "int", symbol: "none", lineStyle: { opacity: 0 }, silent: true, tooltip: { show: false } },
