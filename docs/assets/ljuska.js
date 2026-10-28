@@ -4,6 +4,8 @@
 "use strict";
 
 const LJ = (() => {
+  // verzija aplikacije: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke) — pravilo je u CLAUDE.md
+  const VERZIJA = "1.0.125";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -49,6 +51,7 @@ const LJ = (() => {
     cpu: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>',
     palette: '<circle cx="13.5" cy="6.5" r="1.2"/><circle cx="17.5" cy="10.5" r="1.2"/><circle cx="8.5" cy="7.5" r="1.2"/><circle cx="6.5" cy="12.5" r="1.2"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2Z"/>',
     reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   };
   const ik = (ime, klasa = "") => `<svg class="ik ${klasa}" viewBox="0 0 24 24" aria-hidden="true">${IK[ime] || ""}</svg>`;
@@ -63,7 +66,7 @@ const LJ = (() => {
       { id: "danas", t: "Danas uživo", href: "danas.html", ik: "activity", uzivo: true }] },
     { grupa: "Mapa", stavke: [
       { id: "mapa", t: "Mapa brojača", href: "mapa.html", ik: "map" },
-      { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna.html", ik: "flame", uskoro: true },
+      { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna.html", ik: "flame", zakljucano: true },
       { id: "staze", t: "Biciklističke staze", href: "staze.html", ik: "route", oznaka: "NOVO" }] },
     { grupa: "Podaci", stavke: [
       { id: "grafici", t: "Grafici", href: "grafici.html", ik: "chart" },
@@ -73,18 +76,17 @@ const LJ = (() => {
       { id: "kalendar", t: "Kalendar", href: "kalendar.html", ik: "calendar", oznaka: "NOVO" },
       { id: "rekordi", t: "Rekordi i zanimljivosti", href: "rekordi.html", ik: "trophy", oznaka: "NOVO" }] },
     { grupa: "Analize", stavke: [
-      { id: "vreme", t: "Vreme i biciklisti", href: "vreme.html", ik: "rain", uskoro: true },
-      { id: "praznici", t: "Praznici i događaji", href: "praznici.html", ik: "star", uskoro: true },
+      { id: "praznici", t: "Praznici i događaji", href: "praznici.html", ik: "star", zakljucano: true },
       { id: "ritam", t: "Ritam grada", href: "ritam.html", ik: "pulse", oznaka: "NOVO" },
-      { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet.html", ik: "shield", uskoro: true }] },
+      { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet.html", ik: "shield", zakljucano: true }] },
     { grupa: "Prognoza", stavke: [
       { id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", zakljucano: true },
       { id: "tacnost", t: "Tačnost prognoze", href: "tacnost.html", ik: "target", zakljucano: true },
       { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", zakljucano: true }] },
     { grupa: "Projekat", stavke: [
       { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" },
-      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", uskoro: true },
-      { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", uskoro: true }] },
+      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", zakljucano: true },
+      { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", zakljucano: true }] },
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
   const oznakaStavke = (x) => (x.uzivo ? uzivoZnak() : x.zakljucano ? `<span class="oznaka-meni katanac" title="još nije dostupno">${ik("lock")}</span>`
@@ -251,6 +253,39 @@ const LJ = (() => {
     fioka.classList.remove("otvoren");
     document.documentElement.classList.remove("bez-skrola");
     if (okidac && okidac.focus) okidac.focus();
+  }
+
+  // ---------------------------------------------------------------- PRIJAVA (šablon — nalog stiže sa backend-om)
+  // Avatar: biciklista (GIF: okreću se pedale i točkovi) ispred panorame dela grada koja klizi iza njega.
+  // Biciklisti i pozadine stižu kasnije; do tada su mesta prazna i ništa se ne šalje.
+  const POZADINE = [["dunav", "Uz Dunav"], ["centar", "Centar"], ["petrovaradin", "Petrovaradin"], ["liman", "Liman"], ["naselja", "Novo naselje"], ["periferija", "Periferija"]];
+  let prijava = null;
+  function otvoriPrijavu() {
+    if (!prijava) {
+      prijava = document.createElement("dialog");
+      prijava.className = "prijava";
+      prijava.setAttribute("aria-labelledby", "prijava-naslov");
+      prijava.innerHTML = `<div class="prijava-glava"><div><span class="eyebrow">Nalog · uskoro</span><h2 id="prijava-naslov">Prijava</h2></div>
+          <button type="button" class="ikonica-dugme" data-zatvori aria-label="Zatvori">${ik("x")}</button></div>
+        <p class="sitno">Prijava i nalozi stižu uskoro. Ovo je izgled — ništa se još ne šalje i ne pamti.</p>
+        <form class="prijava-forma" onsubmit="return false">
+          <label>E-pošta<input type="email" placeholder="ime@primer.rs" disabled></label>
+          <label>Lozinka<input type="password" placeholder="••••••••" disabled></label>
+          <div class="prijava-dugmad"><button class="dugme primarno" disabled>Prijavi se</button><button class="dugme" disabled>Napravi nalog</button></div>
+        </form>
+        <div class="avatar-sablon">
+          <span class="eyebrow">Tvoj avatar</span>
+          <div class="avatar-panorama" aria-label="pregled avatara: biciklista vozi kroz izabrani deo grada"><div class="avatar-pozadina"></div>
+            <img class="avatar-biciklista" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt=""></div>
+          <div class="avatar-korak"><b>1. Izaberi biciklistu</b><div class="avatar-mreza">${Array.from({ length: 12 }, (_, i) =>
+            `<button type="button" class="avatar-polje" disabled aria-label="biciklista ${i + 1}">${i + 1}</button>`).join("")}</div></div>
+          <div class="avatar-korak"><b>2. Gde najviše voziš</b><div class="avatar-cipovi">${POZADINE.map(([k, t]) =>
+            `<button type="button" class="cip" data-pozadina="${k}" disabled>${t}</button>`).join("")}</div></div>
+        </div>`;
+      prijava.addEventListener("click", (e) => { if (e.target === prijava || e.target.closest("[data-zatvori]")) prijava.close(); });
+      document.body.append(prijava);
+    }
+    prijava.showModal();
   }
 
   // ---------------------------------------------------------------- UŽIVO (odašiljač koji pulsira)
@@ -475,7 +510,7 @@ const LJ = (() => {
           ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}${zakljucana(x)}>${ik(x.ik)}<span class="tekst">${x.t}</span>
           ${oznakaStavke(x)}</a>`).join("")}</div></div></nav>`;
       }).join("") +
-      `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad</span></div></div>`;
+      `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div></div>`;
 
     const glavno = document.createElement("div");
     glavno.className = "glavno";
@@ -491,6 +526,7 @@ const LJ = (() => {
       <div class="padajuce"><button class="ikonica-dugme jezik" id="jezik-dugme" aria-label="Jezik">SR</button></div>
       <div class="padajuce"><button class="ikonica-dugme" id="obavestenja-dugme" aria-label="Obaveštenja">${ik("bell")}<span class="brojac skriveno"></span></button></div>
       <button class="ikonica-dugme" id="tema-dugme" aria-label="Svetla ili tamna tema" title="Svetla / tamna tema">${ik(tema() === "dark" ? "sun" : "moon")}</button>
+      <button class="dugme malo prijava-dugme" id="prijava-dugme" aria-haspopup="dialog">${ik("user")}<span>Prijava</span></button>
       <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>`;
 
     main.parentNode.insertBefore(ljuska, main);
@@ -516,6 +552,7 @@ const LJ = (() => {
     ljuska.addEventListener("click", (e) => { if (ljuska.classList.contains("otvoren") && !e.target.closest(".meni") && !e.target.closest("#meni-dugme")) ljuska.classList.remove("otvoren"); });
     document.getElementById("tema-dugme").addEventListener("click", () => postaviTemu(tema() === "dark" ? "light" : "dark"));
     document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
+    document.getElementById("prijava-dugme").addEventListener("click", otvoriPrijavu);
     primeniIzgled({}, { sacuvaj: false });
     proveriUzivo();
     setInterval(osveziUzivo, 60000);                 // „pre X min“ i prelazak u sivo
@@ -553,5 +590,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { VERZIJA, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();

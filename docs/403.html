@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NaSicu</title>
   <meta name="robots" content="noindex">
-  <link rel="icon" href="/ns-bike-data/assets/slike/brend/favicon.ico" sizes="any">
-  <link rel="icon" type="image/svg+xml" href="/ns-bike-data/assets/slike/brend/NaSicu_ikonica_NS.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/ns-bike-data/assets/slike/brend/favicon-32.png">
-  <link rel="apple-touch-icon" href="/ns-bike-data/assets/slike/brend/apple-touch-icon.png">
-  <link rel="manifest" href="/ns-bike-data/site.webmanifest">
+  <link rel="icon" href="/assets/slike/brend/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/assets/slike/brend/NaSicu_ikonica_NS.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/slike/brend/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/slike/brend/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#04162F">
   <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark";if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t}catch(e){}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,7 +51,7 @@
 </head>
 <body>
   <main>
-    <a class="znak" id="znak" href="/ns-bike-data/" title="NaSicu — na kontrolnu tablu"><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="225 55 1100 870" role="img" aria-label="NaSicu"><title>NaSicu logo</title><defs>
+    <a class="znak" id="znak" href="/" title="NaSicu — na kontrolnu tablu"><svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="225 55 1100 870" role="img" aria-label="NaSicu"><title>NaSicu logo</title><defs>
 <radialGradient id="bg" cx="0.45" cy="0.18" r="0.95"><stop offset="0" stop-color="#0A2142"/><stop offset="0.55" stop-color="#04162F"/><stop offset="1" stop-color="#020E22"/></radialGradient>
 <linearGradient id="gBlue" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#3AD0FF"/><stop offset="1" stop-color="#14A0F5"/></linearGradient>
 <linearGradient id="gBlueDark" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#0E7BE0"/><stop offset="1" stop-color="#1688EC"/></linearGradient>
@@ -71,16 +71,13 @@
     <h1>Ova staza je zatvorena</h1>
     <p>Nemaš dozvolu da otvoriš ovu stranu. Ako misliš da je to greška, vrati se na kontrolnu tablu ili pokušaj ponovo kasnije.</p>
     <div class="akcije">
-      <a class="dugme primarno" id="pocetna" href="/ns-bike-data/">Na kontrolnu tablu</a>
-      <a class="dugme" id="mapa" href="/ns-bike-data/mapa.html">Mapa brojača</a>
+      <a class="dugme primarno" id="pocetna" href="/">Na kontrolnu tablu</a>
+      <a class="dugme" id="mapa" href="/mapa.html">Mapa brojača</a>
       <button class="dugme" type="button" onclick="history.back()">Nazad</button>
     </div>
     <div class="tehnicki"><span>STATUS <b>403</b></span><span>KOD <b>ZABRANJENO</b></span><span>PUTANJA <b id="putanja">—</b></span></div>
   </main>
   <script>
-    // na github.io je sajt u podfolderu (/ns-bike-data/), na sopstvenom domenu u korenu
-    const koren = location.hostname.endsWith("github.io") ? "/" + (location.pathname.split("/")[1] || "") + "/" : "/";
-    for (const [id, put] of [["pocetna", ""], ["znak", ""], ["mapa", "mapa.html"]]) document.getElementById(id).href = koren + put;
     document.getElementById("putanja").textContent = location.pathname.length > 40 ? "…" + location.pathname.slice(-38) : location.pathname;
   </script>
 </body>

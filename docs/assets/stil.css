@@ -1360,3 +1360,35 @@ html.bez-skrola { overflow: hidden; }
 .pusti-vreme { font: 700 24px/1.1 "JetBrains Mono", monospace; color: var(--teal); letter-spacing: -0.02em; }
 .pusti-broj { font-size: 12.5px; color: var(--t-muted); }
 .pusti-broj b { color: var(--t-base); font-size: 14px; }
+
+/* Verzija aplikacije (dno menija) */
+.meni .dno .verzija { font-family: "JetBrains Mono", monospace; font-size: 11px; }
+
+/* Prijava — šablon (nalog i avatar stižu sa backend-om) */
+.prijava-dugme { gap: 6px; }
+@media (max-width: 640px) { .prijava-dugme span { display: none; } }
+dialog.prijava { width: min(520px, calc(100vw - 32px)); max-height: calc(100vh - 48px); overflow: auto; padding: 22px; border-radius: 16px;
+  border: 1px solid var(--border); background: var(--bg-card); color: var(--t-base); box-shadow: 0 30px 80px rgb(0 0 0 / .45); }
+dialog.prijava::backdrop { background: rgb(2 8 20 / .6); backdrop-filter: blur(3px); }
+.prijava-glava { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.prijava-glava h2 { margin: 4px 0 0; font-size: 20px; }
+.prijava-forma { display: grid; gap: 12px; margin: 16px 0 20px; }
+.prijava-forma label { display: grid; gap: 6px; font-size: 12.5px; color: var(--t-muted); }
+.prijava-forma input { height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: inherit; }
+.prijava-forma input:disabled, .prijava button:disabled { opacity: 0.6; cursor: not-allowed; }
+.prijava-dugmad { display: flex; gap: 10px; flex-wrap: wrap; }
+.avatar-sablon { display: grid; gap: 14px; padding-top: 16px; border-top: 1px solid var(--border-soft); }
+/* panorama: pozadina dela grada klizi ulevo, biciklista stoji u sredini (kasnije GIF koji vrti pedale) */
+.avatar-panorama { position: relative; height: 120px; border-radius: 12px; overflow: hidden; border: 1px dashed var(--border);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 22%, var(--bg-card)) 0%, var(--bg-card) 100%); }
+.avatar-pozadina { position: absolute; inset: auto 0 0 0; height: 70%; width: 200%;
+  background: repeating-linear-gradient(90deg, var(--bg-muted) 0 34px, transparent 34px 46px, var(--border) 46px 70px, transparent 70px 96px);
+  -webkit-mask: linear-gradient(transparent 0 30%, #000 30%); mask: linear-gradient(transparent 0 30%, #000 30%); opacity: .8; }
+.avatar-panorama::after { content: ""; position: absolute; left: 0; right: 0; bottom: 14px; border-top: 3px dashed color-mix(in srgb, var(--success) 70%, transparent); }
+.avatar-biciklista { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: 92px; height: auto; }
+@media (prefers-reduced-motion: no-preference) { .avatar-pozadina { animation: panorama 8s linear infinite; } }
+@keyframes panorama { to { transform: translateX(-96px); } }
+.avatar-korak { display: grid; gap: 8px; font-size: 13px; }
+.avatar-mreza { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.avatar-polje { aspect-ratio: 1; border-radius: 10px; border: 1px dashed var(--border); background: var(--bg-muted); color: var(--t-light); font: 12px "JetBrains Mono", monospace; }
+.avatar-cipovi { display: flex; flex-wrap: wrap; gap: 6px; }

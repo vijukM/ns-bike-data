@@ -3,8 +3,8 @@
     python -m sajt.strane_greske        # posle izmene logoa ili teksta grešaka
 
 Strane su samostalne: GitHub Pages vraća 404.html za bilo koju putanju, pa relativne adrese ne rade.
-Zato je logo (docs/assets/slike/brend/NaSicu_logo.svg) ugrađen u stranu kao SVG, a ikonice taba imaju
-apsolutne adrese. Logo je nepromenjen; strana samo pomera isprekidanu liniju staze ispod bicikla
+Zato je logo (docs/assets/slike/brend/NaSicu_logo.svg) ugrađen u stranu kao SVG, a ikonice taba i linkovi
+imaju apsolutne adrese od korena domena (sajt je na https://nasicu.rs/). Logo je nepromenjen; strana samo pomera isprekidanu liniju staze ispod bicikla
 (ne i kad je u sistemu uključeno „manje pokreta“), a u svetloj temi natpis „icu“ dobija tamne boje
 iz NaSicu_logo_za_svetlu_podlogu.svg.
 """
@@ -17,7 +17,7 @@ from pathlib import Path
 KOREN = Path(__file__).resolve().parents[1]
 DOCS = KOREN / "docs"
 LOGO = DOCS / "assets" / "slike" / "brend" / "NaSicu_logo.svg"
-SAJT = "/ns-bike-data"
+SAJT = ""                                       # sajt je u korenu domena nasicu.rs
 
 GRESKE = {
     404: {"oznaka": "nije pronađeno", "kod": "NIJE_PRONADJENO", "naslov": "Ova strana je skrenula sa staze",
@@ -107,9 +107,6 @@ def strana(kod: int) -> str:
     <div class="tehnicki"><span>STATUS <b>{kod}</b></span><span>KOD <b>{g["kod"]}</b></span><span>PUTANJA <b id="putanja">—</b></span></div>
   </main>
   <script>
-    // na github.io je sajt u podfolderu (/ns-bike-data/), na sopstvenom domenu u korenu
-    const koren = location.hostname.endsWith("github.io") ? "/" + (location.pathname.split("/")[1] || "") + "/" : "/";
-    for (const [id, put] of [["pocetna", ""], ["znak", ""], ["mapa", "mapa.html"]]) document.getElementById(id).href = koren + put;
     document.getElementById("putanja").textContent = location.pathname.length > 40 ? "…" + location.pathname.slice(-38) : location.pathname;
   </script>
 </body>

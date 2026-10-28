@@ -1,0 +1,23 @@
+name: verzija aplikacije
+
+# Svaki commit u PR-u koji menja aplikaciju (sve osim podataka) mora da poveća VERZIJA u docs/assets/ljuska.js.
+# Podaci (automatska čitanja, prognoze, preuzeti slojevi) se ne računaju. Pravilo: CLAUDE.md → „Verzija aplikacije“.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  provera:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Svaka izmena aplikacije povećava verziju
+        env:
+          BAZA: ${{ github.event.pull_request.base.sha }}
+          VRH: ${{ github.event.pull_request.head.sha }}
+        run: python .github/verzija_provera.py "$BAZA" "$VRH"
