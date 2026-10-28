@@ -56,6 +56,7 @@ const LJ = (() => {
   const info = (tekst) => `<span class="info" tabindex="0" role="note" aria-label="${tekst}" data-info="${tekst}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>`;
 
   // uskoro: strana je u izradi — u meniju dobija oznaku USKORO, a strana prikazuje skicu kako će izgledati
+  // zakljucano: u meniju je katanac i klik ne otvara stranu (adresa i dalje radi, ko je zna)
   const MENI = [
     { grupa: "Pregled", stavke: [
       { id: "kontrolna", t: "Kontrolna tabla", href: "index.html", ik: "home" },
@@ -77,15 +78,20 @@ const LJ = (() => {
       { id: "ritam", t: "Ritam grada", href: "ritam.html", ik: "pulse", oznaka: "NOVO" },
       { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet.html", ik: "shield", uskoro: true }] },
     { grupa: "Prognoza", stavke: [
-      { id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", uskoro: true },
-      { id: "tacnost", t: "Tačnost prognoze", href: "tacnost.html", ik: "target", uskoro: true },
-      { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", uskoro: true }] },
+      { id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", zakljucano: true },
+      { id: "tacnost", t: "Tačnost prognoze", href: "tacnost.html", ik: "target", zakljucano: true },
+      { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", zakljucano: true }] },
     { grupa: "Projekat", stavke: [
       { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" },
       { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", uskoro: true },
       { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", uskoro: true }] },
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
+  const oznakaStavke = (x) => (x.uzivo ? uzivoZnak() : x.zakljucano ? `<span class="oznaka-meni katanac" title="još nije dostupno">${ik("lock")}</span>`
+    : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : "");
+  const zakljucana = (x) => (x.zakljucano ? ' data-zakljucano aria-disabled="true"' : "");
+  // klik na zaključanu stavku menija ne vodi nikud
+  document.addEventListener("click", (e) => { if (e.target.closest("a[data-zakljucano]")) e.preventDefault(); }, true);
 
   // ---------------------------------------------------------------- izgled (tema, boja, gustina, raspored, širina, smer)
   // Sve se primenjuje kao data-* atributi na <html> (rani skript u <head> to radi i pre crtanja strane) i pamti
@@ -290,8 +296,8 @@ const LJ = (() => {
       const aktivna = g.stavke.some((x) => x.id === strana);
       return `<div class="gm-grupa"><button type="button" class="gm-dugme${aktivna ? " aktivna" : ""}" aria-expanded="false" data-i="${i}">
         ${ik(g.stavke[0].ik)}<span>${g.grupa}</span>${ik("chevron", "strelica")}</button>
-        <div class="gm-panel" role="menu">${g.stavke.map((x) => `<a role="menuitem" class="${x.id === strana ? "aktivna" : ""}" href="${x.href}">${ik(x.ik)}<span>${x.t}</span>
-          ${x.uzivo ? uzivoZnak() : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</div></div>`;
+        <div class="gm-panel" role="menu">${g.stavke.map((x) => `<a role="menuitem" class="${x.id === strana ? "aktivna" : ""}" href="${x.href}"${zakljucana(x)}>${ik(x.ik)}<span>${x.t}</span>
+          ${oznakaStavke(x)}</a>`).join("")}</div></div>`;
     }).join("");
     const zatvori = () => nav.querySelectorAll(".gm-grupa.otvorena").forEach((g) => { g.classList.remove("otvorena"); g.querySelector(".gm-dugme").setAttribute("aria-expanded", "false"); });
     const otvori = (g) => { zatvori(); g.classList.add("otvorena"); g.querySelector(".gm-dugme").setAttribute("aria-expanded", "true"); };
@@ -365,7 +371,7 @@ const LJ = (() => {
     if (paleta) return;
     const s = await NS.stanice().catch(() => ({ serije: [] }));
     const stavke = [
-      ...MENI.flatMap((g) => g.stavke.map((x) => ({ grupa: "Strane", t: x.t, opis: g.grupa + (x.uskoro ? " · uskoro" : ""), href: x.href, ik: x.ik }))),
+      ...MENI.flatMap((g) => g.stavke.filter((x) => !x.zakljucano).map((x) => ({ grupa: "Strane", t: x.t, opis: g.grupa + (x.uskoro ? " · uskoro" : ""), href: x.href, ik: x.ik }))),
       ...s.serije.map((r) => ({ grupa: "Stanice", t: `${r.serija} · ${r.naziv}`, opis: r.smerovi.join(" · "),
         href: `stanica.html?id=${encodeURIComponent(r.serija)}`, pin: r.stanje })),
     ];
@@ -466,8 +472,8 @@ const LJ = (() => {
           <span class="grupa-ikona">${ik(g.ik)}</span><span class="eyebrow">${g.grupa}</span><span class="grupa-broj">${g.stavke.length}</span>${ik("chevron", "grupa-strelica")}</button>
         <div class="grupa-telo" id="meni-grupa-${gi}"><div class="grupa-unutra">${g.stavke.map((x) =>
         `<a class="stavka ${x.id === strana ? "aktivna" : ""}" href="${x.href}" ${x.spolja ? 'target="_blank" rel="noopener"' : ""} ${otvorena ? "" : 'tabindex="-1"'}
-          ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}>${ik(x.ik)}<span class="tekst">${x.t}</span>
-          ${x.uzivo ? uzivoZnak() : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : ""}</a>`).join("")}</div></div></nav>`;
+          ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}${zakljucana(x)}>${ik(x.ik)}<span class="tekst">${x.t}</span>
+          ${oznakaStavke(x)}</a>`).join("")}</div></div></nav>`;
       }).join("") +
       `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad</span></div></div>`;
 
@@ -543,7 +549,7 @@ const LJ = (() => {
     padajuce(dugme, async () => `<div class="naslov-panela"><b>Obaveštenja</b><span class="eyebrow">${s.stanje_period}</span></div>` +
       lose.map((r) => `<a class="red-panela" href="stanica.html?id=${encodeURIComponent(r.serija)}"><img src="${NS.pin(r.stanje)}" alt="">
         <span>${r.serija} · ${r.naziv}<small>${r.napomena || s.stanja[r.stanje]} · kompletnih dana ${r.kompletnih_30d}/30</small></span></a>`).join("") +
-      `<a class="red-panela" href="prognoza.html">${ik("cloud")}<span>Prognoza za sutra<small>model E31 — uskoro na sajtu</small></span></a>`);
+      `<div class="red-panela">${ik("cloud")}<span>Prognoza za sutra<small>model E31 — uskoro na sajtu</small></span></div>`);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();

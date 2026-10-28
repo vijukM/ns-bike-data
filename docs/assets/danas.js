@@ -294,6 +294,7 @@
     const kad = D.uzivo ? "Danas" : "Tog dana";
     document.getElementById("g-naslov").textContent = izabrana ? `${kad} prema prognozi za ovaj brojač` : `${kad} prema prognozi i prosečnom istom danu`;
     document.getElementById("mapa-oznaka").textContent = D.uzivo ? "Mapa danas" : `Mapa · ${NS.datum(D.datum)}`;
+    if (satIgre == null) satMape(null);
     izborBrojaca();
     document.getElementById("g-legenda").innerHTML = [
       `<span><i style="background:${boja.stv}"></i>izbrojano</span>`,
@@ -304,8 +305,11 @@
       n.pros ? `<span><i class="isprekidano" style="border-color:${boja.pros}"></i>prosečan ${NS.datumDug(D.datum).split(",")[0].toLowerCase()} u ovom mesecu</span>` : "",
       saPrognozom && !P ? `<span class="sitno">prognoza za danas još nije izdata</span>` : "",
     ].join("");
+    // pri „Pusti dan“: tekući sat druge boje, prošli sati obični, budući bledi
+    const igra = satIgre != null && !zbirno, istak = getComputedStyle(document.documentElement).getPropertyValue("--teal").trim();
+    const stv = igra ? n.stv.map((v, i) => ({ value: v, itemStyle: i === satIgre ? { color: istak, opacity: 1 } : i > satIgre ? { opacity: 0.25 } : {} })) : n.stv;
     const serije = [
-      { name: "izbrojano", type: zbirno ? "line" : "bar", data: n.stv, barMaxWidth: 22, stack: n.dop ? "stubac" : undefined,
+      { name: "izbrojano", type: zbirno ? "line" : "bar", data: stv, barMaxWidth: 22, stack: n.dop ? "stubac" : undefined,
         itemStyle: { color: boja.stv, borderRadius: n.dop ? 0 : [4, 4, 0, 0] },
         lineStyle: { color: boja.stv, width: 3 }, symbol: "none", areaStyle: zbirno ? { color: boja.stv, opacity: 0.14 } : undefined, z: 3 },
       ...linijaSada(b),
@@ -458,7 +462,7 @@
       sort.kol === kol ? `<span class="strelica-sort">${sort.smer > 0 ? "▲" : "▼"}</span>` : ""}${info}</th>`;
     const naziv = Object.fromEntries(s.serije.map((x) => [x.serija, x.naziv]));
     document.getElementById("tabela").innerHTML = `<thead><tr>${th("serija", "Brojač")}${th("danas", "Danas", "broj")}${
-      th("prog", "Prognoza", "broj", MAPA.info("prognoza za iste sate za koje postoji izbrojano"))}${th("odst", "Razlika", "broj", MAPA.info("Razlika = (izbrojano − prognoza) / prognoza × 100, za zbir sati koji su prošli. To je odstupanje ukupnog broja (relativna greška zbira), nije MAPE ni WAPE: te mere sabiraju apsolutne greške po satu, pa ne mogu da budu negativne. Plus znači više biciklista od prognoze."))}<th class="bez-sorta">Sat po sat</th>${
+      th("prog", "Prognoza", "broj", MAPA.info("prognoza za iste sate za koje postoji izbrojano"))}${th("odst", "Razlika", "broj", MAPA.info("Koliko je izbrojano više (+) ili manje (−) od prognoze, u %, za sate koji su prošli."))}<th class="bez-sorta">Sat po sat</th>${
       th("stanje", "Stanje")}</tr></thead><tbody>` + r.map((x) => {
       const [txt, boja] = STANJE[x.stanje] || ["", "var(--t-light)"];
       const t = ton(x.odst);
@@ -488,7 +492,15 @@
 
   /** „Pusti dan“: mapa sat po sat (svakih PUSTI_MS), pinovi pokazuju broj u tom satu, a boja razliku od prognoze za taj sat. */
   const PUSTI_MS = 1000;
-  let tajmer = null;
+  let tajmer = null, satIgre = null;
+  /** Okvir ispod dugmeta: dan (uvek) i, dok traje puštanje, sat i zbir svih brojača u tom satu. */
+  function satMape(i) {
+    const dan = NS.datumDug(D.datum);
+    const el = document.getElementById("mapa-sat");
+    el.classList.toggle("igra", i != null);
+    el.innerHTML = `<span class="pusti-dan">${D.uzivo ? "danas · " : ""}${dan}</span>` + (i == null ? "" :
+      `<span class="pusti-vreme">${oznake()[i].oznaka}</span><span class="pusti-broj">${D.grad[i] == null ? "nema podataka" : `<b>${NS.broj(D.grad[i])}</b> na svim brojačima`}</span>`);
+  }
   const pustiEl = document.getElementById("mapa-pusti");
   const dugmePusti = (igra) => { pustiEl.innerHTML = `${LJ.ik(igra ? "pause" : "play")}${igra ? "Zaustavi" : "Pusti dan"}`; };
   dugmePusti(false);
@@ -502,13 +514,16 @@
           + (p != null ? `<div class="tt-red">prognoza za taj sat ${NS.broj(Math.round(p))}${odst != null ? ` · <b>${znak(odst)}</b>` : ""}</div>` : "") };
     }
     ctl.prikaziVrednosti(v);
-    const zbirSata = D.grad[i];
-    document.getElementById("mapa-oznaka").textContent = `${o.oznaka}${zbirSata != null ? ` · ${NS.broj(zbirSata)} na svim brojačima` : ""}`;
+    satIgre = i;
+    satMape(i);
+    g.glavni.osvezi();
+    g.glavni.spreman.then(({ ec }) => { if (satIgre === i) ec.dispatchAction({ type: "showTip", seriesIndex: 0, dataIndex: i }); });
   }
   function zaustavi(vrati = true) {
     if (!tajmer) return;
-    clearInterval(tajmer); tajmer = null; dugmePusti(false);
-    if (vrati) { mapaVrednosti(); document.getElementById("mapa-oznaka").textContent = D.uzivo ? "Mapa danas" : `Mapa · ${NS.datum(D.datum)}`; }
+    clearInterval(tajmer); tajmer = null; satIgre = null; dugmePusti(false);
+    g.glavni.spreman.then(({ ec }) => ec.dispatchAction({ type: "hideTip" }));
+    if (vrati) { mapaVrednosti(); satMape(null); g.glavni.osvezi(); }
   }
   pustiEl.addEventListener("click", () => {
     if (tajmer) { zaustavi(); return; }
