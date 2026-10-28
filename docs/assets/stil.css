@@ -14,8 +14,8 @@
   --bg-hover: #1C2438;
   --bg-muted: #1A2237;
   --t-base: #F1F5F9;
-  --t-muted: #94A3B8;
-  --t-light: #64748B;
+  --t-muted: #B4C0D0;
+  --t-light: #94A3B8;
   --border: #222C42;
   --border-soft: #1A2237;
   --primary: #60A5FA;
@@ -49,8 +49,8 @@
   --bg-hover: #F8FAFC;
   --bg-muted: #F1F5F9;
   --t-base: #1E293B;
-  --t-muted: #64748B;
-  --t-light: #94A3B8;
+  --t-muted: #526178;
+  --t-light: #64748B;
   --border: #E4E8EF;
   --border-soft: #EEF1F5;
   --primary: #2563EB;
@@ -117,6 +117,10 @@ svg.ik { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none
 .meni .oznaka-meni { margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 999px; background: var(--success-soft); color: var(--success); }
 .meni .oznaka-meni.plava { background: var(--primary-soft); color: var(--primary); }
 .meni .oznaka-meni.siva { background: var(--bg-muted); color: var(--t-muted); }
+.meni .oznaka-meni.katanac, .gm-panel .oznaka-meni.katanac { display: inline-grid; place-items: center; padding: 3px 5px; background: var(--bg-muted); color: var(--t-light); }
+.meni .oznaka-meni.katanac .ik, .gm-panel .oznaka-meni.katanac .ik { width: 12px; height: 12px; }
+.meni a[data-zakljucano], .gm-panel a[data-zakljucano] { cursor: not-allowed; opacity: 0.7; }
+.meni a[data-zakljucano]:hover, .gm-panel a[data-zakljucano]:hover { background: transparent; color: inherit; }
 .meni .dno { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-soft); display: flex; gap: 10px; align-items: center; }
 .meni .dno .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: #fff; background: linear-gradient(135deg, #3B82F6, #8B5CF6); flex: none; }
 .meni .dno b { display: block; font-size: 13px; }
@@ -278,7 +282,7 @@ input[type="range"] { accent-color: var(--primary); width: 100%; }
 /* tabele */
 .tabela-omot { overflow-x: auto; }
 table.tabela { border-collapse: collapse; width: 100%; font-size: 13px; }
-.tabela th { text-align: left; font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; color: var(--t-light); padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
+.tabela th { text-align: left; font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--t-base); padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
 .tabela td { padding: 12px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
 .tabela tbody tr:hover { background: var(--bg-hover); }
 .tabela td.broj, .tabela th.broj { text-align: right; font-variant-numeric: tabular-nums; }
@@ -1347,3 +1351,12 @@ html.bez-skrola { overflow: hidden; }
 .cilj-cinjenice dd b { font: 600 17px/1.2 "Inter Tight", Inter, sans-serif; }
 .cilj-cinjenice dd small { display: block; font-size: 11.5px; color: var(--t-muted); }
 #dan-danas[hidden] { display: none; }
+
+/* Danas: „Pusti dan“ — dugme i okvir sa danom i satom ispod njega */
+.pusti-omot { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.pusti-sat { white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: right; }
+.pusti-dan { font-family: "Inter Tight", Inter, sans-serif; font-weight: 700; font-size: 14px; color: var(--t-base); text-transform: capitalize; }
+.pusti-sat.igra { padding: 8px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--teal) 55%, transparent); background: color-mix(in srgb, var(--teal) 12%, var(--bg-card)); }
+.pusti-vreme { font: 700 24px/1.1 "JetBrains Mono", monospace; color: var(--teal); letter-spacing: -0.02em; }
+.pusti-broj { font-size: 12.5px; color: var(--t-muted); }
+.pusti-broj b { color: var(--t-base); font-size: 14px; }
