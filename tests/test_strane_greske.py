@@ -7,7 +7,7 @@ def test_404_i_403():
         h = sg.strana(kod)
         assert "<title>NaSicu</title>" in h and f'<div class="broj">{kod}</div>' in h
         assert '<svg class="logo"' in h and 'id="natpis"' in h and "<?xml" not in h
-        assert 'href="/ns-bike-data/assets/slike/brend/NaSicu_ikonica_NS.svg"' in h
+        assert 'href="/assets/slike/brend/NaSicu_ikonica_NS.svg"' in h
         assert 'x="1214.0"' in h                                    # dodatna crtica staze za pomeranje linije
 
 

@@ -123,32 +123,6 @@
       izvor: "dnevni i satni podaci iz istorije, isti kao na strani stanice",
     },
 
-    vreme: {
-      ik: "rain", prioritet: 2, naslov: "Vreme i <em>biciklisti</em>",
-      uvod: "Koliko kiša, hladnoća, vrućina i sneg menjaju broj biciklista — po danu i po satu.",
-      skice: [
-        { sirina: "pola", eyebrow: "Temperatura × padavine", naslov: "Prema prosečnom danu", opcija: (b) => {
-          const tx = ["< 0", "0–5", "5–10", "10–15", "15–20", "20–25", "25–30", "> 30"], py = ["suvo", "< 1 mm", "1–5 mm", "> 5 mm"];
-          const d = [];
-          tx.forEach((_, i) => py.forEach((__, j) => d.push([i, j, Math.round(-55 + i * 13 - j * 14 - (i === 7 ? 18 : 0))])));
-          return { ...NS.osnova(b), tooltip: { trigger: "item", formatter: (p) => `${tx[p.value[0]]} °C · ${py[p.value[1]]}: ${p.value[2]} %` },
-            grid: { left: 64, right: 12, top: 8, bottom: 60 },
-            xAxis: { type: "category", data: tx, ...NS.osaX(b), name: "°C" }, yAxis: { type: "category", data: py, ...NS.osaX(b) },
-            visualMap: { min: -80, max: 40, calculable: false, orient: "horizontal", left: "center", bottom: 0, itemHeight: 140, textStyle: { color: b["ink-3"] },
-              inRange: { color: [b.temp, b.povrsina, b.bicikl] } },
-            series: [{ type: "heatmap", data: d, itemStyle: { borderColor: b.povrsina, borderWidth: 2, borderRadius: 4 } }] };
-        } },
-        { sirina: "pola", eyebrow: "Kiša u satu", naslov: "Pad broja dok pada kiša", opcija: (b) => ({
-          ...NS.osnova(b), tooltip: tt(b), grid: { left: 48, right: 12, top: 10, bottom: 28 },
-          xAxis: { type: "category", data: ["sat pre", "kiša 1. sat", "2. sat", "3. sat", "sat posle", "2 h posle"], ...NS.osaX(b) },
-          yAxis: { type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], formatter: "{value} %" } }) },
-          series: [{ type: "bar", data: [-2, -38, -46, -44, -18, -6], barWidth: "50%", itemStyle: { color: b.kisa, borderRadius: [0, 0, 5, 5] } }] }) },
-      ],
-      plan: [["Temperatura × padavine", "toplotna tabela: koliko je biciklista u odnosu na prosečan dan"], ["Kiša u satu", "koliko broj padne dok pada kiša i koliko se brzo vrati"],
-        ["Sneg, vetar, vrućina", "posebni slučajevi i pragovi"], ["Najbolje vreme za vožnju", "temperatura i doba dana sa najviše biciklista"]],
-      izvor: "istorija brojanja + Open-Meteo (satno, lokalno vreme)",
-    },
-
     praznici: {
       ik: "star", prioritet: 2, naslov: "Praznici i <em>događaji</em>",
       uvod: "Kako praznici, školski raspust i veliki događaji u gradu menjaju broj biciklista u odnosu na običan isti dan.",
