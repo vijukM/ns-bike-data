@@ -302,12 +302,19 @@
       n.q ? `<span><i style="background:${boja.pr};opacity:.3"></i>interval 10–90 %</span>` : "",
       n.dop ? `<span><i class="srafura-dopuna" style="--b:${boja.dop}"></i>procena za drugi smer koji nije brojao bicikliste</span>` : "",
       n.dopZbirno ? `<span class="sitno">zbir uključuje procenu za sate kad drugi smer nije radio</span>` : "",
+      (zbirno ? [] : (izabrana ? D.serije[izabrana].procena : D.procena_sati) || []).length
+        ? `<span><i class="srafura-dopuna" style="--b:${boja.stv}"></i>procena — čitanje u XX:02 je izostalo (zbir oba sata je tačan)</span>` : "",
       n.pros ? `<span><i class="isprekidano" style="border-color:${boja.pros}"></i>prosečan ${NS.datumDug(D.datum).split(",")[0].toLowerCase()} u ovom mesecu</span>` : "",
       saPrognozom && !P ? `<span class="sitno">prognoza za danas još nije izdata</span>` : "",
     ].join("");
     // pri „Pusti dan“: tekući sat druge boje, prošli sati obični, budući bledi
     const igra = satIgre != null && !zbirno, istak = getComputedStyle(document.documentElement).getPropertyValue("--teal").trim();
-    const stv = igra ? n.stv.map((v, i) => ({ value: v, itemStyle: i === satIgre ? { color: istak, opacity: 1 } : i > satIgre ? { opacity: 0.25 } : {} })) : n.stv;
+    // procena: čitanje na granici sata je izostalo, pa je granica procenjena između susednih čitanja (šrafura)
+    const procena = new Set(zbirno ? [] : (izabrana ? D.serije[izabrana].procena : D.procena_sati) || []);
+    const SRAFURA = { symbol: "rect", dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: Math.PI / 4, color: "rgba(255,255,255,0.5)" };
+    const stv = igra || procena.size ? n.stv.map((v, i) => ({ value: v, itemStyle: {
+      ...(procena.has(i) ? { opacity: 0.6, decal: SRAFURA } : {}),
+      ...(igra ? (i === satIgre ? { color: istak, opacity: 1 } : i > satIgre ? { opacity: 0.25 } : {}) : {}) } })) : n.stv;
     const serije = [
       { name: "izbrojano", type: zbirno ? "line" : "bar", data: stv, barMaxWidth: 22, stack: n.dop ? "stubac" : undefined,
         itemStyle: { color: boja.stv, borderRadius: n.dop ? 0 : [4, 4, 0, 0] },
@@ -330,7 +337,7 @@
         ps = ps.filter((p) => p.axisIndex !== 1 && p.seriesType !== undefined && p.dataIndex != null);
         if (!ps.length) return "";
         const i = ps[0].dataIndex;
-        return `<b>${x[i].oznaka}</b><br>` + ps.filter((p) => !["q10", "int"].includes(p.seriesName)).map((p) => `${p.marker}${p.seriesName}: <b>${
+        return `<b>${x[i].oznaka}</b>${procena.has(i) ? ' <span style="opacity:.7">· procena</span>' : ""}<br>` + ps.filter((p) => !["q10", "int"].includes(p.seriesName)).map((p) => `${p.marker}${p.seriesName}: <b>${
           p.value == null ? (p.seriesName === "izbrojano" ? statusSata(i) : "—") : NS.broj(Math.round(p.value))}</b>`).join("<br>")
           + (n.q && !zbirno && P.grad.q10[i] != null ? `<br><span style="opacity:.7">interval ${NS.broj(Math.round(P.grad.q10[i]))} – ${NS.broj(Math.round(P.grad.q90[i]))}</span>` : "");
       } },

@@ -40,6 +40,9 @@ VREME = konfig.KOREN / "podaci" / "vremenska_prognoza" / "za_model"
 # i ulazi u zbir grada; sati kvara pre popravke tog dana ne ulaze u zbir — vidi KVAR_SMERA)
 ISKLJUCENE = {"28": ("drugi smer nije brojao do popravke 23. 10. 2026. — stubac je izmereni smer + procena", date(2026, 10, 23))}
 KASNI_MIN, TOLERANCIJA_MIN, STAROST_MIN, NULA_JUCE = 70, 10, 20, 50
+# granica sata bez čitanja (npr. propušteno XX:02): procena linearno između najbližih čitanja pre i posle granice,
+# ako su najviše toliko minuta jedno od drugog (samo za prikaz; satni obračun za model ostaje bez interpolacije)
+PROCENA_MAX_MIN = 90
 # prognoze model-v1 (E28) su do 20.10.2026 imale pomeren sat (novi podaci u lokalnom vremenu) — ne prikazuju se
 STARI_MODELI = ("E28",)
 PRELAZ_PONOC = "00:20:00"     # čitanje sa vremenom brojača pre ovoga (novi dan) nosi zbir prethodnog dana u „juče“
@@ -82,6 +85,15 @@ def citanja_dana(dan: date, koren: Path = konfig.PODACI) -> pd.DataFrame:
     return c[c["datum_brojaca"] == dan.isoformat()].reset_index(drop=True)
 
 
+def vreme_brojaca_utc(c: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
+    """(vreme brojača u UTC, da li je čitanje sveže: brojač nije stariji od STAROST_MIN ni „iz budućnosti“)."""
+    citanje = pd.to_datetime(c["vreme_citanja_utc"], utc=True)
+    citanje_lok = citanje.dt.tz_convert(konfig.TZ).dt.tz_localize(None)
+    brojac_lok = pd.to_datetime(c["datum_brojaca"] + " " + c["vreme_brojaca"].astype(str))
+    zaostatak = citanje_lok - brojac_lok                      # isto i na dan promene vremena (razlika naivnih)
+    return citanje - zaostatak, (zaostatak <= pd.Timedelta(minutes=STAROST_MIN)) & (zaostatak >= pd.Timedelta(minutes=-5))
+
+
 def kraj_sata_utc(c: pd.DataFrame) -> pd.Series:
     """Vreme brojača (lokalno, naivno) → UTC kraj sata kome čitanje pripada; NaT ako čitanje ne važi za sat."""
     citanje = pd.to_datetime(c["vreme_citanja_utc"], utc=True)
@@ -95,15 +107,21 @@ def kraj_sata_utc(c: pd.DataFrame) -> pd.Series:
     return kraj.where(ok)
 
 
-def satno_danas(c: pd.DataFrame, sati_utc: pd.DatetimeIndex) -> dict[str, list]:
-    """Po seriji: lista po satu dana (null = nema važećeg čitanja na nekom kraju sata ili state 0)."""
+def satno_danas(c: pd.DataFrame, sati_utc: pd.DatetimeIndex, procene: dict | None = None) -> dict[str, list]:
+    """Po seriji: lista po satu dana (null = nema važećeg čitanja na nekom kraju sata ili state 0).
+
+    Granica sata bez važećeg čitanja procenjuje se linearno između najbližih svežih čitanja pre i posle nje
+    (najviše PROCENA_MAX_MIN razmaka); ako je `procene` dat, u njega se upisuje {serija: [sat je procena?]}."""
     n = len(sati_utc)
     if c.empty:
         return {}
+    t_brojaca, svez = vreme_brojaca_utc(c)
+    sva = c.assign(t=t_brojaca)[svez & c["danas"].notna() & (c["state"] != 0)]
     c = c.assign(kraj=kraj_sata_utc(c)).dropna(subset=["kraj"])
     c = c.sort_values("vreme_citanja_utc").drop_duplicates(["serija", "direction", "kraj"], keep="last")
     krajevi = {t: i for i, t in enumerate(sati_utc + pd.Timedelta(hours=1))}
-    po_smeru = {}
+    granice = list(sati_utc + pd.Timedelta(hours=1))
+    po_smeru, procena_smera = {}, {}
     for (s, d), g in c.groupby(["serija", "direction"]):
         kum = [None] * (n + 1)
         kum[0] = 0                                            # ponoć: zbir 0
@@ -112,14 +130,34 @@ def satno_danas(c: pd.DataFrame, sati_utc: pd.DatetimeIndex) -> dict[str, list]:
             if i is None:
                 continue
             kum[i + 1] = None if r["state"] == 0 or pd.isna(r["danas"]) else int(r["danas"])
+        # propuštena granica: procena između najbližih svežih čitanja pre i posle (samo unutar dana)
+        tacke = sva[(sva["serija"] == s) & (sva["direction"] == d)].sort_values("t")[["t", "danas"]].to_numpy()
+        procenjeno = [False] * (n + 1)
+        for j in range(1, n + 1):
+            if kum[j] is not None or not len(tacke):
+                continue
+            T = granice[j - 1]
+            pre = [(t, v) for t, v in tacke if t <= T]
+            posle = [(t, v) for t, v in tacke if t > T]
+            if not pre or not posle:
+                continue
+            (t0, v0), (t1, v1) = pre[-1], posle[0]
+            if (t1 - t0) > pd.Timedelta(minutes=PROCENA_MAX_MIN) or v1 < v0:
+                continue
+            kum[j] = int(round(v0 + (v1 - v0) * ((T - t0) / (t1 - t0))))
+            procenjeno[j] = True
         po_smeru[(s, d)] = [kum[i + 1] - kum[i] if kum[i] is not None and kum[i + 1] is not None else None
                             for i in range(n)]
+        procena_smera[(s, d)] = [procenjeno[i] or procenjeno[i + 1] for i in range(n)]
     serije = {}
-    for (s, _), v in po_smeru.items():
+    for (s, d), v in po_smeru.items():
         if s not in serije:
             serije[s] = v
         else:
             serije[s] = [a + b if a is not None and b is not None else None for a, b in zip(serije[s], v)]
+        if procene is not None:
+            pr = procena_smera[(s, d)]
+            procene[s] = [a or b for a, b in zip(procene[s], pr)] if s in procene else pr
     # negativna razlika (brojač resetovan / ispravka) nije validan sat
     return {s: [x if x is None or x >= 0 else None for x in v] for s, v in serije.items()}
 
@@ -277,7 +315,8 @@ def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = Fals
     poslednje_citanje = c["vreme_citanja_utc"].max()
     # poslednje čitanje SVAKOG smera sa datumom D (za prošli dan: čitanje posle ponoći ima samo deo brojača)
     poslednje = c.sort_values("vreme_citanja_utc").groupby(["serija", "direction"]).tail(1)
-    satno = satno_danas(c, sati_utc)
+    procene = {}
+    satno = satno_danas(c, sati_utc, procene)
     krajevi = kraj_sata_utc(poslednje).dropna()
     poslednji_kraj = krajevi.max() if len(krajevi) else None
     gotovo = int(((sati_utc + pd.Timedelta(hours=1)) <= poslednji_kraj).sum()) if poslednji_kraj is not None else 0
@@ -286,6 +325,10 @@ def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = Fals
     iskljucene = {s for s, (_, popravka) in ISKLJUCENE.items() if dan < popravka}
     st = stanje_serija(poslednje, iskljucene)
     serije = {s: {**v, "sati": satno.get(s, [None] * len(sati_utc))} for s, v in sorted(st.items())}
+    for s, v in serije.items():                               # sati čija granica je procenjena (propušteno čitanje)
+        pr = [i for i, (x, p) in enumerate(zip(v["sati"], procene.get(s, []))) if p and x is not None]
+        if pr:
+            v["procena"] = pr
     for s in iskljucene:
         if s in serije:
             serije[s]["napomena"] = ISKLJUCENE[s][0]
@@ -305,7 +348,9 @@ def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = Fals
         "citanje_utc": str(poslednje_citanje), "citanje_lokalno": cit.strftime("%H:%M"), "brojaci_do": brojaci_do,
         "napravljeno_utc": sada_utc.strftime("%Y-%m-%dT%H:%MZ"),
         "pocetak_utc": sati_utc[0].strftime("%Y-%m-%dT%H:%MZ"), "sati": oznake(sati_utc), "sati_gotovo": gotovo,
-        "grad": grad, "danas": int(sum(v["danas"] or 0 for s, v in serije.items() if s in ukljucene)),
+        "grad": grad,
+        "procena_sati": sorted({i for s in ukljucene for i in serije[s].get("procena", []) if grad[i] is not None}),
+        "danas": int(sum(v["danas"] or 0 for s, v in serije.items() if s in ukljucene)),
         "juce": int(sum(v["juce"] or 0 for s, v in serije.items() if s in ukljucene)),
         "ove_godine": int(poslednje["ove_godine"].sum()),
         "serije": serije, "prognoza": prognoze(dan, sati_utc), "vreme": vreme(sati_utc),
