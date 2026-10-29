@@ -7,14 +7,16 @@ Jezik projekta (kod, komentari, tekst na sajtu, commit poruke): srpski, latinica
 
 ## Verzija aplikacije
 
-Verzija je `const VERZIJA = "1.0.N"` na vrhu `docs/assets/ljuska.js` i prikazuje se u dnu menija („v 1.0.N“).
+Verzija je `const VERZIJA = "1.X.YY"` na vrhu `docs/assets/ljuska.js` i prikazuje se u dnu menija („v 1.1.27“).
+Poslednji broj ima uvek dve cifre (00–99).
 
-- **Svaki commit koji menja aplikaciju povećava poslednji broj za 1** (1.0.125 → 1.0.126), u istom commit-u.
+- **Svaki commit koji menja aplikaciju povećava poslednji broj za 1** (1.1.27 → 1.1.28), u istom commit-u;
+  posle 1.X.99 ide 1.(X+1).00.
   Aplikacija je sve osim podataka: kod sajta (`docs/*.html`, `docs/assets/`), stil, generatori (`sajt/`),
   model i priprema (`prognoza_biciklista/`, `vremenska_prognoza/`), workflow-i, testovi, dokumentacija.
 - **Ne računa se** commit koji samo dodaje podatke: automatska čitanja brojača („podaci: čitanje …“),
   prognoze i preuzeti slojevi — putanje `podaci/`, `docs/data/`, `sajt/podaci/`, `docs/assets/slike/nsbike/`.
-- Veća promena (novi deo sajta, backend, nalozi) može da poveća srednji broj: 1.0.N → 1.1.0.
+- Veća promena (novi deo sajta, backend, nalozi) može da poveća srednji broj: 1.1.YY → 1.2.00.
 - Proverava je workflow `.github/workflows/verzija.yml` (`.github/verzija_provera.py`) na svakom PR-u ka `main`.
 
 ## Pri svakoj izmeni sajta
@@ -31,7 +33,10 @@ Verzija je `const VERZIJA = "1.0.N"` na vrhu `docs/assets/ljuska.js` i prikazuje
 - `docs/assets/kapija.js` se učitava u `<head>` svake strane (posle skripta za temu), uz `<meta name="robots" content="noindex, nofollow">`;
   `docs/robots.txt` zabranjuje indeksiranje. Nova strana mora imati oba reda (proverava `tests/test_kapija.py`).
 - Proverava PBKDF2-SHA256 (300.000 ponavljanja) prema `SO` i `HES`; lozinka se ne čuva nigde u repozitorijumu.
-- Nova lozinka: `python -m sajt.kapija "nova lozinka" --upisi` (stari ulazi prestaju da važe).
+- Privremeni pristup: dugme sa satom u dnu menija pravi link `?pristup=<istek>.<potpis>` koji važi 5 min – 1 dan.
+  Potpis je ECDSA P-256; sajt ima `JAVNI` ključ, a `TAJNI` je šifrovan lozinkom (AES-GCM, PBKDF2 sa `SO_K`).
+  Privremeni ulaz se zatvara čim istekne (i na otvorenoj strani).
+- Nova lozinka: `python -m sajt.kapija "nova lozinka" --upisi` — pravi i nove ključeve, pa stari ulazi i linkovi prestaju da važe.
 - Kada sajt postane javan: ukloniti oba reda iz strana, `kapija.js`, dugme „Zaključaj“ u `ljuska.js` i `robots.txt`.
 - Ovo je zavesa, ne zaštita: `docs/data/*.json` i kod su i dalje javni.
 

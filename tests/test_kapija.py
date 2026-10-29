@@ -16,6 +16,16 @@ def test_svaka_strana_ucitava_kapiju_pre_sadrzaja():
         assert '<meta name="robots" content="noindex, nofollow">' in h, f.name
 
 
+def test_kljucevi_kapije():
+    import base64
+    s = kp.KAPIJA.read_text(encoding="utf-8")
+    javni = base64.b64decode(re.search(r'const JAVNI = "([^"]+)"', s)[1])
+    tajni = base64.b64decode(re.search(r'const TAJNI = "([^"]+)"', s)[1])
+    assert len(javni) == 65 and javni[0] == 4                      # P-256, nesažeta tačka (Web Crypto „raw“)
+    assert len(tajni) > 12 + 16 + 100                              # iv + šifrovan PKCS8 + oznaka
+    assert re.search(r'const SO_K = "[0-9a-f]{32}"', s)
+
+
 def test_hes_iz_kapije_je_pbkdf2():
     s = kp.KAPIJA.read_text(encoding="utf-8")
     so, h = re.search(r'const SO = "([0-9a-f]{32})"', s)[1], re.search(r'const HES = "([0-9a-f]{64})"', s)[1]

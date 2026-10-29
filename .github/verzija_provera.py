@@ -1,5 +1,6 @@
 """Provera verzije aplikacije: svaki commit (bez merge-a) između BAZA i VRH koji menja nešto van podataka
-mora da poveća VERZIJA u docs/assets/ljuska.js za tačno 1 na poslednjem broju (npr. 1.0.125 → 1.0.126).
+mora da poveća VERZIJA u docs/assets/ljuska.js (oblik 1.X.YY) za tačno 1: 1.1.27 → 1.1.28, a posle .99 ide 1.(X+1).00.
+Veći skok srednjeg ili prvog broja je dozvoljen (nova celina).
 
     python .github/verzija_provera.py <baza> <vrh>
 """
@@ -11,7 +12,7 @@ import sys
 
 FAJL = "docs/assets/ljuska.js"
 PODACI = ("podaci/", "docs/data/", "sajt/podaci/", "docs/assets/slike/nsbike/")
-RE = re.compile(r'const VERZIJA = "(\d+)\.(\d+)\.(\d+)";')
+RE = re.compile(r'const VERZIJA = "(\d+)\.(\d+)\.(\d{2})";')
 
 
 def git(*a: str) -> str:
@@ -26,6 +27,14 @@ def verzija(rev: str) -> tuple[int, int, int] | None:
     return tuple(map(int, m.groups())) if m else None
 
 
+def sledeca(v: tuple[int, int, int]) -> tuple[int, int, int]:
+    return (v[0], v[1], v[2] + 1) if v[2] < 99 else (v[0], v[1] + 1, 0)
+
+
+def tekst(v: tuple[int, int, int]) -> str:
+    return f"{v[0]}.{v[1]}.{v[2]:02d}"
+
+
 def main(baza: str, vrh: str) -> int:
     greske = []
     for c in git("rev-list", "--reverse", "--no-merges", f"{baza}..{vrh}").split():
@@ -37,11 +46,11 @@ def main(baza: str, vrh: str) -> int:
         if posle is None:
             greske.append(f"{naslov}: nema VERZIJA u {FAJL}")
         elif pre is None:
-            print(f"ok  {naslov}: uvedena verzija {'.'.join(map(str, posle))}")
-        elif posle[:2] == pre[:2] and posle[2] == pre[2] + 1 or posle[:2] > pre[:2]:
-            print(f"ok  {naslov}: {'.'.join(map(str, pre))} → {'.'.join(map(str, posle))}")
+            print(f"ok  {naslov}: uvedena verzija {tekst(posle)}")
+        elif posle == sledeca(pre) or posle[:2] > pre[:2]:
+            print(f"ok  {naslov}: {tekst(pre)} → {tekst(posle)}")
         else:
-            greske.append(f"{naslov}: verzija {'.'.join(map(str, pre))} → {'.'.join(map(str, posle))} (treba +1); menja {', '.join(fajlovi[:4])}")
+            greske.append(f"{naslov}: verzija {tekst(pre)} → {tekst(posle)} (treba {tekst(sledeca(pre))}); menja {', '.join(fajlovi[:4])}")
     for g in greske:
         print("GREŠKA", g)
     return 1 if greske else 0

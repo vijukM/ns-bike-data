@@ -4,8 +4,8 @@
 "use strict";
 
 const LJ = (() => {
-  // verzija aplikacije: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke) — pravilo je u CLAUDE.md
-  const VERZIJA = "1.0.126";
+  // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
+  const VERZIJA = "1.1.27";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -52,6 +52,7 @@ const LJ = (() => {
     palette: '<circle cx="13.5" cy="6.5" r="1.2"/><circle cx="17.5" cy="10.5" r="1.2"/><circle cx="8.5" cy="7.5" r="1.2"/><circle cx="6.5" cy="12.5" r="1.2"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2Z"/>',
     reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
     lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   };
   const ik = (ime, klasa = "") => `<svg class="ik ${klasa}" viewBox="0 0 24 24" aria-hidden="true">${IK[ime] || ""}</svg>`;
@@ -288,6 +289,51 @@ const LJ = (() => {
     prijava.showModal();
   }
 
+  // ---------------------------------------------------------------- PRIVREMENI PRISTUP (link koji važi nekoliko minuta)
+  let pristupDlg = null;
+  function otvoriPristup() {
+    if (!pristupDlg) {
+      pristupDlg = document.createElement("dialog");
+      pristupDlg.className = "prijava pristup";
+      pristupDlg.setAttribute("aria-labelledby", "pristup-naslov");
+      pristupDlg.innerHTML = `<div class="prijava-glava"><div><span class="eyebrow">Kapija</span><h2 id="pristup-naslov">Privremeni pristup</h2></div>
+          <button type="button" class="ikonica-dugme" data-zatvori aria-label="Zatvori">${ik("x")}</button></div>
+        <p class="sitno">Napravi link koji otvara sajt bez lozinke. Pošalji ga nekome — posle isteka više ne radi, a sajt se toj osobi zaključava.</p>
+        <form class="prijava-forma" autocomplete="off">
+          <label>Lozinka sajta<input type="password" name="lozinka" required></label>
+          <label>Važi<select name="minuta">${[[5, "5 minuta"], [10, "10 minuta"], [30, "30 minuta"], [60, "1 sat"], [240, "4 sata"], [1440, "1 dan"]]
+            .map(([m, t]) => `<option value="${m}"${m === 10 ? " selected" : ""}>${t}</option>`).join("")}</select></label>
+          <div class="prijava-dugmad"><button class="dugme primarno" type="submit">Napravi link</button></div>
+          <div class="pristup-greska sitno" role="alert"></div>
+        </form>
+        <div class="pristup-rezultat" hidden>
+          <label class="sitno">Link<input type="text" readonly></label>
+          <div class="prijava-dugmad"><button class="dugme" type="button" data-kopiraj>${ik("copy")}Kopiraj</button><span class="sitno pristup-istek"></span></div>
+        </div>`;
+      const forma = pristupDlg.querySelector("form"), greska = pristupDlg.querySelector(".pristup-greska"), rez = pristupDlg.querySelector(".pristup-rezultat");
+      forma.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const dugme = forma.querySelector("button");
+        dugme.disabled = true; greska.textContent = ""; rez.hidden = true;
+        try {
+          const { link, istice } = await KAPIJA.napraviLink(forma.lozinka.value, +forma.minuta.value);
+          rez.querySelector("input").value = link;
+          rez.querySelector(".pristup-istek").textContent = `važi do ${new Date(istice).toLocaleString("sr-Latn-RS", { day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })}`;
+          rez.hidden = false;
+          forma.lozinka.value = "";
+        } catch (x) { greska.textContent = x.message === "Pogrešna lozinka." ? x.message : "Link nije napravljen (potreban je https)."; }
+        dugme.disabled = false;
+      });
+      pristupDlg.querySelector("[data-kopiraj]").addEventListener("click", async () => {
+        const polje = rez.querySelector("input");
+        try { await navigator.clipboard.writeText(polje.value); tost("Link je kopiran.", "check"); } catch (x) { polje.select(); }
+      });
+      pristupDlg.addEventListener("click", (e) => { if (e.target === pristupDlg || e.target.closest("[data-zatvori]")) pristupDlg.close(); });
+      document.body.append(pristupDlg);
+    }
+    pristupDlg.showModal();
+  }
+
   // ---------------------------------------------------------------- UŽIVO (odašiljač koji pulsira)
   // Crveno i treperi samo kad je poslednje čitanje brojača sveže (≤ 150 min); inače sivo, uz vreme poslednjeg čitanja.
   const ODASILJAC = `<svg class="odasiljac" viewBox="0 0 24 16" aria-hidden="true">
@@ -511,6 +557,7 @@ const LJ = (() => {
           ${oznakaStavke(x)}</a>`).join("")}</div></div></nav>`;
       }).join("") +
       `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>
+        <button type="button" class="ikonica-dugme zakljucaj-dugme" id="pristup-dugme" title="Privremeni pristup (link na nekoliko minuta)" aria-label="Privremeni pristup" aria-haspopup="dialog">${ik("clock")}</button>
         <button type="button" class="ikonica-dugme zakljucaj-dugme" id="zakljucaj-dugme" title="Zaključaj sajt (ponovo traži lozinku)" aria-label="Zaključaj sajt">${ik("lock")}</button></div>`;
 
     const glavno = document.createElement("div");
@@ -555,6 +602,8 @@ const LJ = (() => {
     document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
     document.getElementById("prijava-dugme").addEventListener("click", otvoriPrijavu);
     document.getElementById("zakljucaj-dugme").addEventListener("click", () => { if (typeof KAPIJA !== "undefined") KAPIJA.zakljucaj(); });
+    const pristup = document.getElementById("pristup-dugme");
+    if (typeof KAPIJA === "undefined" || KAPIJA.privremen()) pristup.remove(); else pristup.addEventListener("click", otvoriPristup);
     primeniIzgled({}, { sacuvaj: false });
     proveriUzivo();
     setInterval(osveziUzivo, 60000);                 // „pre X min“ i prelazak u sivo
