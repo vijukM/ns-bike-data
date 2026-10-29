@@ -40,6 +40,17 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Kada sajt postane javan: ukloniti oba reda iz strana, `kapija.js`, dugme „Zaključaj“ u `ljuska.js` i `robots.txt`.
 - Ovo je zavesa, ne zaštita: `docs/data/*.json` i kod su i dalje javni.
 
+## Biciklisti (izbor lika) i scena „Reka“
+
+- Prozor „Prijava“ je `docs/assets/prijava.js`; ljuska ga učitava tek na klik (`LJ.ucitajSkript`), a on tek tada učitava
+  `docs/assets/nasicu/` (`nasicu-likovi.js`, `likovi-probni.js`, `reka-scena.js`), `docs/likovi/likovi.json` i `docs/reka/reka-panorama.svg`.
+- **Gotov materijal, ne menjati:** `docs/assets/nasicu/*.js` i `docs/reka/reka-panorama.svg` (crteži i logika likova/scene).
+- Na sajtu su samo `likovi/mini/<id>.webp` (240×180) — bez svg/png/animacija verzija; `likovi.json` nema putanje do njih.
+- Likovi za izbor su statične sličice, 5 po strani; vektorski se animira samo izabrani lik u sceni (pauza van ekrana,
+  u sakrivenom tabu, kad je prozor zatvoren i uz „manje pokreta“). Podešavanja scene su objekat `SCENA` u `prijava.js`.
+- Dok nema naloga, izbor se čuva u pregledaču (`localStorage` „ns-profil“: `lik_id`, `mesto`, `vreme`, `doba`), proveren sa `PRIJAVA.valjan`.
+  Kad dođe backend: uz korisnika polje `lik_id` (nullable), provera da je jedan od 52 iz `likovi.json`.
+
 ## Ne menjati bez izričitog zahteva
 
 - `docs/MODEL_KONTEKST.md` (opis modela prognoze).

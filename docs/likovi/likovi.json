@@ -1,0 +1,470 @@
+[
+ {
+  "id": "studentkinja-mtb",
+  "ime": "Studentkinja na MTB-u",
+  "opis": "Brdski bicikl sa amortizerom, ranac, slušalice i duks",
+  "grupa": "Osnovni",
+  "bicikl": "mtb",
+  "mini": "likovi/mini/studentkinja-mtb.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "baka-gradski",
+  "ime": "Baka na gradskom",
+  "opis": "Holandski bicikl sa korpom, zvoncem i blatobranima",
+  "grupa": "Osnovni",
+  "bicikl": "gradski",
+  "mini": "likovi/mini/baka-gradski.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "drumas",
+  "ime": "Drumaš",
+  "opis": "Drumski bicikl, dres, sportske naočare, aero položaj",
+  "grupa": "Osnovni",
+  "bicikl": "drumski",
+  "mini": "likovi/mini/drumas.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dete",
+  "ime": "Mala biciklistkinja",
+  "opis": "Dečji bicikl sa zaštitom lanca, kaciga i rep",
+  "grupa": "Osnovni",
+  "bicikl": "decji",
+  "mini": "likovi/mini/dete.webp",
+  "brzinaReka": 41.23
+ },
+ {
+  "id": "dostavljac-svetloplava",
+  "ime": "Dostavljač · Svetloplavi",
+  "opis": "Trekking bicikl, svetloplavi termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljači",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljac-svetloplava.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljac-zuta",
+  "ime": "Dostavljač · Žuti",
+  "opis": "Trekking bicikl, žuti termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljači",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljac-zuta.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljac-crvena",
+  "ime": "Dostavljač · Crveni",
+  "opis": "Trekking bicikl, crveni termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljači",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljac-crvena.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljac-siva",
+  "ime": "Dostavljač · Sivi",
+  "opis": "Trekking bicikl, sivi termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljači",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljac-siva.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljacica-svetloplava",
+  "ime": "Dostavljačica · Svetloplavi",
+  "opis": "Trekking bicikl, svetloplavi termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljačice",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljacica-svetloplava.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljacica-zuta",
+  "ime": "Dostavljačica · Žuti",
+  "opis": "Trekking bicikl, žuti termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljačice",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljacica-zuta.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljacica-crvena",
+  "ime": "Dostavljačica · Crveni",
+  "opis": "Trekking bicikl, crveni termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljačice",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljacica-crvena.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostavljacica-siva",
+  "ime": "Dostavljačica · Sivi",
+  "opis": "Trekking bicikl, sivi termo-ranac, kaciga i refleksna traka",
+  "grupa": "Dostavljačice",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/dostavljacica-siva.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "poslovni-sklopivi",
+  "ime": "Poslovni čovek",
+  "opis": "Sklopivi bicikl, sako i kravata, kožna torba preko ramena",
+  "grupa": "Ostali",
+  "bicikl": "sklopivi",
+  "mini": "likovi/mini/poslovni-sklopivi.webp",
+  "brzinaReka": 35.74
+ },
+ {
+  "id": "mama-sediste",
+  "ime": "Mama sa detetom",
+  "opis": "Trekking bicikl sa dečjim sedištem pozadi, oboje sa kacigama",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/mama-sediste.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "deka-elektricni",
+  "ime": "Deka na električnom",
+  "opis": "Električni gradski bicikl sa baterijom, displejom i motorom u točku",
+  "grupa": "Ostali",
+  "bicikl": "elektricni",
+  "mini": "likovi/mini/deka-elektricni.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "bmx-klinac",
+  "ime": "BMX klinac",
+  "opis": "BMX sa kočićima na osovinama, kačket naopako, nisko sedište",
+  "grupa": "Ostali",
+  "bicikl": "bmx",
+  "mini": "likovi/mini/bmx-klinac.webp",
+  "brzinaReka": 45.36
+ },
+ {
+  "id": "tata-teretni",
+  "ime": "Tata sa teretnim",
+  "opis": "Teretni bicikl sa drvenim sandukom – a u sanduku pas",
+  "grupa": "Ostali",
+  "bicikl": "teretni",
+  "mini": "likovi/mini/tata-teretni.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "turista-ev6",
+  "ime": "Turista na EuroVelo 6",
+  "opis": "Trekking bicikl sa bisagama napred i pozadi, šešir i naočare",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/turista-ev6.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "sportistkinja-drumska",
+  "ime": "Sportistkinja",
+  "opis": "Drumski bicikl, dres, pletenica ispod kacige, aero položaj",
+  "grupa": "Ostali",
+  "bicikl": "drumski",
+  "mini": "likovi/mini/sportistkinja-drumska.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "zena-pijaca",
+  "ime": "Sa pijace",
+  "opis": "Gradski bicikl sa gajbom povrća na prtljažniku, marama",
+  "grupa": "Ostali",
+  "bicikl": "gradski",
+  "mini": "likovi/mini/zena-pijaca.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "uzbrdo-stojeci",
+  "ime": "Uzbrdo, iz stajanja",
+  "opis": "MTB, vozi stojeći na pedalama – penjanje na Frušku goru",
+  "grupa": "Ostali",
+  "bicikl": "mtb",
+  "mini": "likovi/mini/uzbrdo-stojeci.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "kuca-poruku",
+  "ime": "Kuca poruku",
+  "opis": "Sklopivi bicikl, jedna ruka na kormanu, druga na telefonu",
+  "grupa": "Ostali",
+  "bicikl": "sklopivi",
+  "mini": "likovi/mini/kuca-poruku.webp",
+  "brzinaReka": 35.74
+ },
+ {
+  "id": "ebajs-pas",
+  "ime": "E-bajs i kuca u korpi",
+  "opis": "Električni bicikl sa baterijom i displejom, psić u prednjoj korpi",
+  "grupa": "Ostali",
+  "bicikl": "elektricni",
+  "mini": "likovi/mini/ebajs-pas.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "zimska-oprema",
+  "ime": "Zimska oprema",
+  "opis": "Trekking bicikl; kapa sa pomponom, šal, prošivena jakna i rukavice",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/zimska-oprema.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "tandem",
+  "ime": "Par na tandemu",
+  "opis": "Tandem: dvoje vozača, pedale povezane lancem, okreću zajedno",
+  "grupa": "Ostali",
+  "bicikl": "tandem",
+  "mini": "likovi/mini/tandem.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "pecaros",
+  "ime": "Pecaroš na putu do Dunava",
+  "opis": "Trekking bicikl, štap za pecanje na leđima, kantica na prtljažniku",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/pecaros.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "u-kabanici",
+  "ime": "U kabanici",
+  "opis": "Gradski bicikl sa blatobranima, žuta kabanica sa kapuljačom",
+  "grupa": "Ostali",
+  "bicikl": "gradski",
+  "mini": "likovi/mini/u-kabanici.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "pozdravlja",
+  "ime": "Pozdravlja komšiju",
+  "opis": "Trekking bicikl sa korpom namirnica, maše dok vozi",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/pozdravlja.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "visoki-tocak",
+  "ime": "Gospodin na visokom točku",
+  "opis": "Penny-farthing: pedale na osovini velikog točka, bez lanca",
+  "grupa": "Ostali",
+  "bicikl": "visokiTocak",
+  "mini": "likovi/mini/visoki-tocak.webp",
+  "brzinaReka": 82.47
+ },
+ {
+  "id": "kruzer-strand",
+  "ime": "Kruzerom na Štrand",
+  "opis": "Kruzer: balon gume sa belim bokovima, visok korman, peškir",
+  "grupa": "Ostali",
+  "bicikl": "kruzer",
+  "mini": "likovi/mini/kruzer-strand.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "pekar-tricikl",
+  "ime": "Pekar na triciklu",
+  "opis": "Tricikl sa dva zadnja točka i velikom korpom punom peciva",
+  "grupa": "Ostali",
+  "bicikl": "tricikl",
+  "mini": "likovi/mini/pekar-tricikl.webp",
+  "brzinaReka": 52.23
+ },
+ {
+  "id": "pomocni-tockici",
+  "ime": "Prvi bicikl",
+  "opis": "Mali bicikl sa pomoćnim točkićima i trakicama na ručkama",
+  "grupa": "Ostali",
+  "bicikl": "mali",
+  "mini": "likovi/mini/pomocni-tockici.webp",
+  "brzinaReka": 32.99
+ },
+ {
+  "id": "hronometar",
+  "ime": "Hronometar",
+  "opis": "Aero bicikl: pun disk pozadi, točak sa tri žbice, aero kaciga",
+  "grupa": "Ostali",
+  "bicikl": "hronometar",
+  "mini": "likovi/mini/hronometar.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "lezeci",
+  "ime": "Ležeći bicikl",
+  "opis": "Vozi se zavaljen, pedale su napred; visoka zastavica da ga vide",
+  "grupa": "Ostali",
+  "bicikl": "lezeci",
+  "mini": "likovi/mini/lezeci.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "fatbike",
+  "ime": "Fatbajk avanturista",
+  "opis": "Gume od 10 cm za pesak i blato, torbe za višednevnu turu",
+  "grupa": "Ostali",
+  "bicikl": "fatbike",
+  "mini": "likovi/mini/fatbike.webp",
+  "brzinaReka": 57.73
+ },
+ {
+  "id": "prikolica",
+  "ime": "Mama sa prikolicom",
+  "opis": "Trekking bicikl vuče dečju prikolicu sa zastavicom",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/prikolica.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "fiksi",
+  "ime": "Fiksi",
+  "opis": "Jednobrzinac: šareni duboki obruči i korman „rogovi”",
+  "grupa": "Ostali",
+  "bicikl": "fiksi",
+  "mini": "likovi/mini/fiksi.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "javni-bicikl",
+  "ime": "Turistkinja na javnom biciklu",
+  "opis": "Bicikl iz sistema deljenja: korpa sa brojem, zatvoren lanac",
+  "grupa": "Ostali",
+  "bicikl": "javni",
+  "mini": "likovi/mini/javni-bicikl.webp",
+  "brzinaReka": 60.48
+ },
+ {
+  "id": "retro-sklopivi",
+  "ime": "Retro sklopivi",
+  "opis": "Stari sklopivi bicikl: mali točkovi, hromirani blatobrani i prtljažnik",
+  "grupa": "Ostali",
+  "bicikl": "retroSklopivi",
+  "mini": "likovi/mini/retro-sklopivi.webp",
+  "brzinaReka": 35.74
+ },
+ {
+  "id": "tata-dvoje-dece",
+  "ime": "Tata sa dvoje dece",
+  "opis": "Gradski bicikl sa dečjim sedištem napred i pozadi",
+  "grupa": "Ostali",
+  "bicikl": "gradski",
+  "mini": "likovi/mini/tata-dvoje-dece.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "gravel-nasip",
+  "ime": "Gravel po nasipu",
+  "opis": "Drumski korman i deblje gume za makadam, torba u ramu",
+  "grupa": "Ostali",
+  "bicikl": "gravel",
+  "mini": "likovi/mini/gravel-nasip.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "dostava-paketa",
+  "ime": "Dostava paketa",
+  "opis": "Električni teretni tricikl: dva prednja točka i sanduk pun paketa",
+  "grupa": "Ostali",
+  "bicikl": "eTricikl",
+  "mini": "likovi/mini/dostava-paketa.webp",
+  "brzinaReka": 54.98
+ },
+ {
+  "id": "patrola",
+  "ime": "Biciklistička patrola",
+  "opis": "MTB sa bisagama i svetlom, reflektujući prsluk i radio-stanica",
+  "grupa": "Ostali",
+  "bicikl": "mtb",
+  "mini": "likovi/mini/patrola.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "pas-na-povocu",
+  "ime": "Sa psom na povocu",
+  "opis": "Pas trči pored bicikla – mlatara repom i ušima",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/pas-na-povocu.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "postar",
+  "ime": "Poštar",
+  "opis": "Gradski bicikl, korpa puna pisama, torba preko ramena",
+  "grupa": "Ostali",
+  "bicikl": "gradski",
+  "mini": "likovi/mini/postar.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "cvecarka",
+  "ime": "Cvećarka",
+  "opis": "Teretni bicikl sa sandukom punim buketa",
+  "grupa": "Ostali",
+  "bicikl": "teretni",
+  "mini": "likovi/mini/cvecarka.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "sladoledzija",
+  "ime": "Sladoledžija",
+  "opis": "Električni tricikl sa hladnjakom za sladoled i prugastim suncobranom",
+  "grupa": "Ostali",
+  "bicikl": "eTricikl",
+  "mini": "likovi/mini/sladoledzija.webp",
+  "brzinaReka": 54.98
+ },
+ {
+  "id": "muzicar",
+  "ime": "Muzičar sa gitarom",
+  "opis": "Jednobrzinac, gitara u futroli na leđima, vunena kapa",
+  "grupa": "Ostali",
+  "bicikl": "fiksi",
+  "mini": "likovi/mini/muzicar.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "sa-reflektorima",
+  "ime": "Sa reflektorima",
+  "opis": "Trekking bicikl sa reflektorima na točkovima i refleksnom trakom",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/sa-reflektorima.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "na-fakultet",
+  "ime": "Na fakultet",
+  "opis": "Kaput i šal, knjige u korpi",
+  "grupa": "Ostali",
+  "bicikl": "trekking",
+  "mini": "likovi/mini/na-fakultet.webp",
+  "brzinaReka": 63.22
+ },
+ {
+  "id": "guralica",
+  "ime": "Guralica",
+  "opis": "Bicikl bez pedala: dete se odguruje nogama od zemlje",
+  "grupa": "Ostali",
+  "bicikl": "guralica",
+  "mini": "likovi/mini/guralica.webp",
+  "brzinaReka": 30.24
+ },
+ {
+  "id": "mladenci",
+  "ime": "Mladenci na tandemu",
+  "opis": "Veo i venčić, cilindar i leptir-mašna, limenke zveckaju iza",
+  "grupa": "Ostali",
+  "bicikl": "tandem",
+  "mini": "likovi/mini/mladenci.webp",
+  "brzinaReka": 63.22
+ }
+]

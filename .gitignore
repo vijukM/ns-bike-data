@@ -9,3 +9,5 @@ podaci/biciklisti/master_novo.parquet
 model_podaci/
 model/
 /istorija/
+# izvorni paket biciklista (20 MB) — na sajt idu samo izabrani fajlovi
+nasicu-biciklisti/

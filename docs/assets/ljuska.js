@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.28";
+  const VERZIJA = "1.1.29";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -256,37 +256,22 @@ const LJ = (() => {
     if (okidac && okidac.focus) okidac.focus();
   }
 
-  // ---------------------------------------------------------------- PRIJAVA (šablon — nalog stiže sa backend-om)
-  // Avatar: biciklista (GIF: okreću se pedale i točkovi) ispred panorame dela grada koja klizi iza njega.
-  // Biciklisti i pozadine stižu kasnije; do tada su mesta prazna i ništa se ne šalje.
-  const POZADINE = [["dunav", "Uz Dunav"], ["centar", "Centar"], ["petrovaradin", "Petrovaradin"], ["liman", "Liman"], ["naselja", "Novo naselje"], ["periferija", "Periferija"]];
-  let prijava = null;
-  function otvoriPrijavu() {
-    if (!prijava) {
-      prijava = document.createElement("dialog");
-      prijava.className = "prijava";
-      prijava.setAttribute("aria-labelledby", "prijava-naslov");
-      prijava.innerHTML = `<div class="prijava-glava"><div><span class="eyebrow">Nalog · uskoro</span><h2 id="prijava-naslov">Prijava</h2></div>
-          <button type="button" class="ikonica-dugme" data-zatvori aria-label="Zatvori">${ik("x")}</button></div>
-        <p class="sitno">Prijava i nalozi stižu uskoro. Ovo je izgled — ništa se još ne šalje i ne pamti.</p>
-        <form class="prijava-forma" onsubmit="return false">
-          <label>E-pošta<input type="email" placeholder="ime@primer.rs" disabled></label>
-          <label>Lozinka<input type="password" placeholder="••••••••" disabled></label>
-          <div class="prijava-dugmad"><button class="dugme primarno" disabled>Prijavi se</button><button class="dugme" disabled>Napravi nalog</button></div>
-        </form>
-        <div class="avatar-sablon">
-          <span class="eyebrow">Tvoj avatar</span>
-          <div class="avatar-panorama" aria-label="pregled avatara: biciklista vozi kroz izabrani deo grada"><div class="avatar-pozadina"></div>
-            <img class="avatar-biciklista" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt=""></div>
-          <div class="avatar-korak"><b>1. Izaberi biciklistu</b><div class="avatar-mreza">${Array.from({ length: 12 }, (_, i) =>
-            `<button type="button" class="avatar-polje" disabled aria-label="biciklista ${i + 1}">${i + 1}</button>`).join("")}</div></div>
-          <div class="avatar-korak"><b>2. Gde najviše voziš</b><div class="avatar-cipovi">${POZADINE.map(([k, t]) =>
-            `<button type="button" class="cip" data-pozadina="${k}" disabled>${t}</button>`).join("")}</div></div>
-        </div>`;
-      prijava.addEventListener("click", (e) => { if (e.target === prijava || e.target.closest("[data-zatvori]")) prijava.close(); });
-      document.body.append(prijava);
-    }
-    prijava.showModal();
+  // ---------------------------------------------------------------- PRIJAVA (nalog + izbor bicikliste)
+  // Prozor je u assets/prijava.js i učitava se tek na prvi klik (sa istim ?v= kao ljuska), da ne opterećuje svaku stranu.
+  const VER = ((document.querySelector('script[src*="assets/ljuska.js"]') || {}).src || "").split("?v=")[1] || "";
+  const skripte = {};
+  /** Učitava skript samo jednom; vraća Promise. */
+  function ucitajSkript(put) {
+    return (skripte[put] ||= new Promise((ok, ne) => {
+      const s = document.createElement("script");
+      s.src = `${put}${VER ? `?v=${VER}` : ""}`;
+      s.onload = ok;
+      s.onerror = () => { delete skripte[put]; ne(new Error(`nije učitano: ${put}`)); };
+      document.head.append(s);
+    }));
+  }
+  async function otvoriPrijavu() {
+    try { await ucitajSkript("assets/prijava.js"); PRIJAVA.otvori(); } catch (e) { tost("Prijava trenutno nije dostupna.", "alert"); }
   }
 
   // ---------------------------------------------------------------- PRIVREMENI PRISTUP (link koji važi nekoliko minuta)
@@ -656,5 +641,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { VERZIJA, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { VERZIJA, ucitajSkript, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();
