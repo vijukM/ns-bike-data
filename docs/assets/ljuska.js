@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke) — pravilo je u CLAUDE.md
-  const VERZIJA = "1.0.125";
+  const VERZIJA = "1.0.126";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -510,7 +510,8 @@ const LJ = (() => {
           ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}${zakljucana(x)}>${ik(x.ik)}<span class="tekst">${x.t}</span>
           ${oznakaStavke(x)}</a>`).join("")}</div></div></nav>`;
       }).join("") +
-      `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div></div>`;
+      `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>
+        <button type="button" class="ikonica-dugme zakljucaj-dugme" id="zakljucaj-dugme" title="Zaključaj sajt (ponovo traži lozinku)" aria-label="Zaključaj sajt">${ik("lock")}</button></div>`;
 
     const glavno = document.createElement("div");
     glavno.className = "glavno";
@@ -553,6 +554,7 @@ const LJ = (() => {
     document.getElementById("tema-dugme").addEventListener("click", () => postaviTemu(tema() === "dark" ? "light" : "dark"));
     document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
     document.getElementById("prijava-dugme").addEventListener("click", otvoriPrijavu);
+    document.getElementById("zakljucaj-dugme").addEventListener("click", () => { if (typeof KAPIJA !== "undefined") KAPIJA.zakljucaj(); });
     primeniIzgled({}, { sacuvaj: false });
     proveriUzivo();
     setInterval(osveziUzivo, 60000);                 // „pre X min“ i prelazak u sivo
