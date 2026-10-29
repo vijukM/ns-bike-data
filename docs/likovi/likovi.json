@@ -6,7 +6,10 @@
   "grupa": "Osnovni",
   "bicikl": "mtb",
   "mini": "likovi/mini/studentkinja-mtb.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "baka-gradski",
@@ -15,7 +18,10 @@
   "grupa": "Osnovni",
   "bicikl": "gradski",
   "mini": "likovi/mini/baka-gradski.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "drumas",
@@ -24,7 +30,10 @@
   "grupa": "Osnovni",
   "bicikl": "drumski",
   "mini": "likovi/mini/drumas.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "sportisti"
+  ]
  },
  {
   "id": "dete",
@@ -33,7 +42,10 @@
   "grupa": "Osnovni",
   "bicikl": "decji",
   "mini": "likovi/mini/dete.webp",
-  "brzinaReka": 41.23
+  "brzinaReka": 41.23,
+  "kategorije": [
+   "deca"
+  ]
  },
  {
   "id": "dostavljac-svetloplava",
@@ -42,7 +54,10 @@
   "grupa": "Dostavljači",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljac-svetloplava.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljac-zuta",
@@ -51,7 +66,10 @@
   "grupa": "Dostavljači",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljac-zuta.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljac-crvena",
@@ -60,7 +78,10 @@
   "grupa": "Dostavljači",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljac-crvena.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljac-siva",
@@ -69,7 +90,10 @@
   "grupa": "Dostavljači",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljac-siva.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljacica-svetloplava",
@@ -78,7 +102,10 @@
   "grupa": "Dostavljačice",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljacica-svetloplava.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljacica-zuta",
@@ -87,7 +114,10 @@
   "grupa": "Dostavljačice",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljacica-zuta.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljacica-crvena",
@@ -96,7 +126,10 @@
   "grupa": "Dostavljačice",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljacica-crvena.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "dostavljacica-siva",
@@ -105,7 +138,10 @@
   "grupa": "Dostavljačice",
   "bicikl": "trekking",
   "mini": "likovi/mini/dostavljacica-siva.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "poslovni-sklopivi",
@@ -114,7 +150,10 @@
   "grupa": "Ostali",
   "bicikl": "sklopivi",
   "mini": "likovi/mini/poslovni-sklopivi.webp",
-  "brzinaReka": 35.74
+  "brzinaReka": 35.74,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "mama-sediste",
@@ -123,7 +162,11 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/mama-sediste.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni",
+   "deca"
+  ]
  },
  {
   "id": "deka-elektricni",
@@ -132,7 +175,10 @@
   "grupa": "Ostali",
   "bicikl": "elektricni",
   "mini": "likovi/mini/deka-elektricni.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "bmx-klinac",
@@ -141,7 +187,11 @@
   "grupa": "Ostali",
   "bicikl": "bmx",
   "mini": "likovi/mini/bmx-klinac.webp",
-  "brzinaReka": 45.36
+  "brzinaReka": 45.36,
+  "kategorije": [
+   "deca",
+   "sportisti"
+  ]
  },
  {
   "id": "tata-teretni",
@@ -150,7 +200,11 @@
   "grupa": "Ostali",
   "bicikl": "teretni",
   "mini": "likovi/mini/tata-teretni.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni",
+   "deca"
+  ]
  },
  {
   "id": "turista-ev6",
@@ -159,7 +213,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/turista-ev6.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "rekreativci"
+  ]
  },
  {
   "id": "sportistkinja-drumska",
@@ -168,7 +225,10 @@
   "grupa": "Ostali",
   "bicikl": "drumski",
   "mini": "likovi/mini/sportistkinja-drumska.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "sportisti"
+  ]
  },
  {
   "id": "zena-pijaca",
@@ -177,7 +237,10 @@
   "grupa": "Ostali",
   "bicikl": "gradski",
   "mini": "likovi/mini/zena-pijaca.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "uzbrdo-stojeci",
@@ -186,7 +249,11 @@
   "grupa": "Ostali",
   "bicikl": "mtb",
   "mini": "likovi/mini/uzbrdo-stojeci.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "sportisti",
+   "rekreativci"
+  ]
  },
  {
   "id": "kuca-poruku",
@@ -195,7 +262,10 @@
   "grupa": "Ostali",
   "bicikl": "sklopivi",
   "mini": "likovi/mini/kuca-poruku.webp",
-  "brzinaReka": 35.74
+  "brzinaReka": 35.74,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "ebajs-pas",
@@ -204,7 +274,11 @@
   "grupa": "Ostali",
   "bicikl": "elektricni",
   "mini": "likovi/mini/ebajs-pas.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni",
+   "rekreativci"
+  ]
  },
  {
   "id": "zimska-oprema",
@@ -213,7 +287,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/zimska-oprema.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "tandem",
@@ -222,7 +299,11 @@
   "grupa": "Ostali",
   "bicikl": "tandem",
   "mini": "likovi/mini/tandem.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "rekreativci",
+   "specijalni"
+  ]
  },
  {
   "id": "pecaros",
@@ -231,7 +312,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/pecaros.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "rekreativci"
+  ]
  },
  {
   "id": "u-kabanici",
@@ -240,7 +324,10 @@
   "grupa": "Ostali",
   "bicikl": "gradski",
   "mini": "likovi/mini/u-kabanici.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "pozdravlja",
@@ -249,7 +336,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/pozdravlja.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "visoki-tocak",
@@ -258,7 +348,10 @@
   "grupa": "Ostali",
   "bicikl": "visokiTocak",
   "mini": "likovi/mini/visoki-tocak.webp",
-  "brzinaReka": 82.47
+  "brzinaReka": 82.47,
+  "kategorije": [
+   "specijalni"
+  ]
  },
  {
   "id": "kruzer-strand",
@@ -267,7 +360,10 @@
   "grupa": "Ostali",
   "bicikl": "kruzer",
   "mini": "likovi/mini/kruzer-strand.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "rekreativci"
+  ]
  },
  {
   "id": "pekar-tricikl",
@@ -276,7 +372,11 @@
   "grupa": "Ostali",
   "bicikl": "tricikl",
   "mini": "likovi/mini/pekar-tricikl.webp",
-  "brzinaReka": 52.23
+  "brzinaReka": 52.23,
+  "kategorije": [
+   "posao",
+   "specijalni"
+  ]
  },
  {
   "id": "pomocni-tockici",
@@ -285,7 +385,10 @@
   "grupa": "Ostali",
   "bicikl": "mali",
   "mini": "likovi/mini/pomocni-tockici.webp",
-  "brzinaReka": 32.99
+  "brzinaReka": 32.99,
+  "kategorije": [
+   "deca"
+  ]
  },
  {
   "id": "hronometar",
@@ -294,7 +397,10 @@
   "grupa": "Ostali",
   "bicikl": "hronometar",
   "mini": "likovi/mini/hronometar.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "sportisti"
+  ]
  },
  {
   "id": "lezeci",
@@ -303,7 +409,10 @@
   "grupa": "Ostali",
   "bicikl": "lezeci",
   "mini": "likovi/mini/lezeci.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "specijalni"
+  ]
  },
  {
   "id": "fatbike",
@@ -312,7 +421,11 @@
   "grupa": "Ostali",
   "bicikl": "fatbike",
   "mini": "likovi/mini/fatbike.webp",
-  "brzinaReka": 57.73
+  "brzinaReka": 57.73,
+  "kategorije": [
+   "sportisti",
+   "rekreativci"
+  ]
  },
  {
   "id": "prikolica",
@@ -321,7 +434,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/prikolica.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "deca"
+  ]
  },
  {
   "id": "fiksi",
@@ -330,7 +446,11 @@
   "grupa": "Ostali",
   "bicikl": "fiksi",
   "mini": "likovi/mini/fiksi.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni",
+   "specijalni"
+  ]
  },
  {
   "id": "javni-bicikl",
@@ -339,7 +459,10 @@
   "grupa": "Ostali",
   "bicikl": "javni",
   "mini": "likovi/mini/javni-bicikl.webp",
-  "brzinaReka": 60.48
+  "brzinaReka": 60.48,
+  "kategorije": [
+   "rekreativci"
+  ]
  },
  {
   "id": "retro-sklopivi",
@@ -348,7 +471,10 @@
   "grupa": "Ostali",
   "bicikl": "retroSklopivi",
   "mini": "likovi/mini/retro-sklopivi.webp",
-  "brzinaReka": 35.74
+  "brzinaReka": 35.74,
+  "kategorije": [
+   "specijalni"
+  ]
  },
  {
   "id": "tata-dvoje-dece",
@@ -357,7 +483,10 @@
   "grupa": "Ostali",
   "bicikl": "gradski",
   "mini": "likovi/mini/tata-dvoje-dece.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "deca"
+  ]
  },
  {
   "id": "gravel-nasip",
@@ -366,7 +495,11 @@
   "grupa": "Ostali",
   "bicikl": "gravel",
   "mini": "likovi/mini/gravel-nasip.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "sportisti",
+   "rekreativci"
+  ]
  },
  {
   "id": "dostava-paketa",
@@ -375,7 +508,10 @@
   "grupa": "Ostali",
   "bicikl": "eTricikl",
   "mini": "likovi/mini/dostava-paketa.webp",
-  "brzinaReka": 54.98
+  "brzinaReka": 54.98,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "patrola",
@@ -384,7 +520,10 @@
   "grupa": "Ostali",
   "bicikl": "mtb",
   "mini": "likovi/mini/patrola.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "pas-na-povocu",
@@ -393,7 +532,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/pas-na-povocu.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "rekreativci"
+  ]
  },
  {
   "id": "postar",
@@ -402,7 +544,10 @@
   "grupa": "Ostali",
   "bicikl": "gradski",
   "mini": "likovi/mini/postar.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "cvecarka",
@@ -411,7 +556,10 @@
   "grupa": "Ostali",
   "bicikl": "teretni",
   "mini": "likovi/mini/cvecarka.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "posao"
+  ]
  },
  {
   "id": "sladoledzija",
@@ -420,7 +568,11 @@
   "grupa": "Ostali",
   "bicikl": "eTricikl",
   "mini": "likovi/mini/sladoledzija.webp",
-  "brzinaReka": 54.98
+  "brzinaReka": 54.98,
+  "kategorije": [
+   "posao",
+   "specijalni"
+  ]
  },
  {
   "id": "muzicar",
@@ -429,7 +581,10 @@
   "grupa": "Ostali",
   "bicikl": "fiksi",
   "mini": "likovi/mini/muzicar.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "sa-reflektorima",
@@ -438,7 +593,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/sa-reflektorima.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "na-fakultet",
@@ -447,7 +605,10 @@
   "grupa": "Ostali",
   "bicikl": "trekking",
   "mini": "likovi/mini/na-fakultet.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "svakodnevni"
+  ]
  },
  {
   "id": "guralica",
@@ -456,7 +617,10 @@
   "grupa": "Ostali",
   "bicikl": "guralica",
   "mini": "likovi/mini/guralica.webp",
-  "brzinaReka": 30.24
+  "brzinaReka": 30.24,
+  "kategorije": [
+   "deca"
+  ]
  },
  {
   "id": "mladenci",
@@ -465,6 +629,9 @@
   "grupa": "Ostali",
   "bicikl": "tandem",
   "mini": "likovi/mini/mladenci.webp",
-  "brzinaReka": 63.22
+  "brzinaReka": 63.22,
+  "kategorije": [
+   "specijalni"
+  ]
  }
 ]

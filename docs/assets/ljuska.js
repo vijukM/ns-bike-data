@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.29";
+  const VERZIJA = "1.1.30";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -272,6 +272,22 @@ const LJ = (() => {
   }
   async function otvoriPrijavu() {
     try { await ucitajSkript("assets/prijava.js"); PRIJAVA.otvori(); } catch (e) { tost("Prijava trenutno nije dostupna.", "alert"); }
+  }
+  // profil (biciklista/avatar) je poseban prozor: assets/profil.js, otvara se klikom na profil u dnu menija
+  async function otvoriProfil(opcije) {
+    try { await ucitajSkript("assets/profil.js"); PROFIL.otvori(opcije); } catch (e) { tost("Profil trenutno nije dostupan.", "alert"); }
+  }
+  /** Avatar u dnu menija: sličica sačuvanog bicikliste (localStorage „ns-profil“), inače inicijali. */
+  function osveziAvatar() {
+    const el = document.querySelector(".meni .dno .avatar");
+    if (!el || el.dataset.privremen) return;
+    let id = null;
+    try { id = (JSON.parse(localStorage.getItem("ns-profil") || "null") || {}).lik_id; } catch (e) { /* */ }
+    if (id && /^[a-z0-9-]+$/.test(id)) {
+      el.classList.add("sa-likom");
+      el.innerHTML = `<img src="likovi/mini/${id}.webp" alt="" width="240" height="180" decoding="async">`;
+      el.querySelector("img").onerror = () => { el.classList.remove("sa-likom"); el.textContent = "NS"; };
+    } else { el.classList.remove("sa-likom"); el.textContent = "NS"; }
   }
 
   // ---------------------------------------------------------------- PRIVREMENI PRISTUP (link koji važi nekoliko minuta)
@@ -543,8 +559,8 @@ const LJ = (() => {
       }).join("") +
       // dno menija (kasnije profil): privremeni ulaz preko linka pokazuje koliko je još ostalo
       (typeof KAPIJA !== "undefined" && KAPIJA.privremen()
-        ? `<div class="dno privremeni"><span class="avatar">${ik("clock")}</span><div><b>Privremeni nalog</b><span class="sitno">još <b class="preostalo" id="preostalo">—</b> · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>`
-        : `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>`) +
+        ? `<div class="dno privremeni"><button type="button" class="profil-dugme" id="profil-dugme" title="Profil i biciklista"><span class="avatar" data-privremen="1">${ik("clock")}</span><div><b>Privremeni nalog</b><span class="sitno">još <b class="preostalo" id="preostalo">—</b> · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div></button>`
+        : `<div class="dno"><button type="button" class="profil-dugme" id="profil-dugme" title="Profil i biciklista"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div></button>`) +
       `
         <button type="button" class="ikonica-dugme zakljucaj-dugme" id="pristup-dugme" title="Privremeni pristup (link na nekoliko minuta)" aria-label="Privremeni pristup" aria-haspopup="dialog">${ik("clock")}</button>
         <button type="button" class="ikonica-dugme zakljucaj-dugme" id="zakljucaj-dugme" title="Zaključaj sajt (ponovo traži lozinku)" aria-label="Zaključaj sajt">${ik("lock")}</button></div>`;
@@ -590,6 +606,8 @@ const LJ = (() => {
     document.getElementById("tema-dugme").addEventListener("click", () => postaviTemu(tema() === "dark" ? "light" : "dark"));
     document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
     document.getElementById("prijava-dugme").addEventListener("click", otvoriPrijavu);
+    document.getElementById("profil-dugme").addEventListener("click", () => otvoriProfil());
+    osveziAvatar();
     document.getElementById("zakljucaj-dugme").addEventListener("click", () => { if (typeof KAPIJA !== "undefined") KAPIJA.zakljucaj(); });
     const preostalo = document.getElementById("preostalo");
     if (preostalo) {
@@ -641,5 +659,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { VERZIJA, ucitajSkript, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { VERZIJA, ucitajSkript, otvoriPrijavu, otvoriProfil, osveziAvatar, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();
