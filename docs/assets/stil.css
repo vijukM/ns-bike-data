@@ -1394,6 +1394,12 @@ dialog.prijava::backdrop { background: rgb(2 8 20 / .6); backdrop-filter: blur(3
 .avatar-cipovi { display: flex; flex-wrap: wrap; gap: 6px; }
 
 /* Kapija: dugme „Zaključaj“ u dnu menija */
-.meni .dno .zakljucaj-dugme { margin-left: auto; width: 30px; height: 30px; }
+.meni .dno .zakljucaj-dugme { width: 30px; height: 30px; flex: none; }
+.meni .dno > div { flex: 1; min-width: 0; }
 .meni .dno .zakljucaj-dugme .ik { width: 15px; height: 15px; }
 .ljuska.uzak .meni .dno .zakljucaj-dugme { display: none; }
+.prijava-forma select { height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: inherit; }
+.pristup-greska { color: var(--danger, #F0391F); min-height: 18px; }
+.pristup-rezultat { display: grid; gap: 10px; }
+.pristup-rezultat input { width: 100%; box-sizing: border-box; height: 40px; padding: 0 12px; margin-top: 6px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: 12px "JetBrains Mono", monospace; }
+.pristup-rezultat .prijava-dugmad { align-items: center; }

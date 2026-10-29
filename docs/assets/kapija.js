@@ -1,40 +1,75 @@
 /* Kapija: dok sajt nije gotov, sve strane traže lozinku. Učitava se u <head> svake strane, pre sadržaja.
-   Proverava se PBKDF2-SHA256 (Web Crypto) lozinke prema SO i HES ispod; lozinka se nigde ne čuva.
-   Posle tačne lozinke pregledač pamti ulaz TRAJANJE_DANA dana (localStorage), dok se ne klikne „Zaključaj“.
+   - Lozinka: PBKDF2-SHA256 (Web Crypto) prema SO i HES; lozinka se nigde ne čuva. Ulaz se pamti TRAJANJE_DANA dana.
+   - Privremeni link (?pristup=…): ko zna lozinku pravi link koji važi nekoliko minuta (dugme u dnu menija).
+     Link nosi vreme isteka potpisano ECDSA P-256 ključem; sajt ima samo JAVNI ključ, a TAJNI je šifrovan
+     lozinkom (AES-GCM, PBKDF2 sa SO_K) — bez lozinke se link ne može napraviti ni produžiti.
    Ovo je zavesa za posetioce, ne zaštita podataka: JSON fajlovi i kod su i dalje javni.
-   Nova lozinka: python -m sajt.kapija "nova lozinka" → upisati SO i HES (stari ulazi tada prestaju da važe). */
+   Nova lozinka (i novi ključevi): python -m sajt.kapija "nova lozinka" --upisi */
 "use strict";
 
 const KAPIJA = (() => {
-  const SO = "0f94729c18654a3dd238d4b5d34c9386";
-  const HES = "444a6ef98ffe633a03cd8075b0124ea487d81adc5b352fec9063dee3a484f5c4";
+  const SO = "07e2317ab984951e7e2f50e82dbe7643";
+  const HES = "95a77bf9983187464aa8659dd7d111b6091cc4e7710867f87e3b38a49e767c5c";
+  const SO_K = "d557e84eb712650368ac9fd9d3b4cbca";
+  const JAVNI = "BCwQR9fxBS52YShwpeRDmHuh1VneRshI5Q3URG/fwOSrxlEHoUIIxUcCz6O5YwgidFbDrwSGMuaKhp9Ik3jAzfQ=";
+  const TAJNI = "7KtRFoMcjMJCcJQptgbhqo7cBn939K/js2CD/SVmE1nW9XeMxRBiLcHDIwKg27vxHDWgkXh7mfzNuhRegGO5Xa2PQr0tfvbOP+L2sbRn1uRXSEjwXSQJgQIvrX4ef/QjV0jfOn6nGSuwuT2cl1qGj64sXPpAnWLiMh2xZ6WEx0GyrQUxGno5aI0cnAJ8EAV6jbLco6V4OO02HntmTr/SgL8uoEW05w==";
   const PONAVLJANJA = 300000;
   const TRAJANJE_DANA = 30;
   const KLJUC = "ns-kapija";
+  const PORUKA = "nasicu-pristup:";
 
-  const otvorena = () => {
-    try {
-      const z = JSON.parse(localStorage.getItem(KLJUC) || "null");
-      return !!z && z.h === HES && z.do > Date.now();
-    } catch (e) { return false; }
-  };
+  const ulaz = () => { try { return JSON.parse(localStorage.getItem(KLJUC) || "null"); } catch (e) { return null; } };
+  const otvorena = () => { const z = ulaz(); return !!z && z.h === HES && z.do > Date.now(); };
   const hex = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
-  const bajtovi = (h) => new Uint8Array(h.match(/../g).map((x) => parseInt(x, 16)));
+  const izHex = (h) => new Uint8Array(h.match(/../g).map((x) => parseInt(x, 16)));
+  const izB64 = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+  const uB64url = (b) => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const tekst = (s) => new TextEncoder().encode(s);
 
-  async function proveri(lozinka) {
-    const kljuc = await crypto.subtle.importKey("raw", new TextEncoder().encode(lozinka), "PBKDF2", false, ["deriveBits"]);
-    const bitovi = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: bajtovi(SO), iterations: PONAVLJANJA }, kljuc, 256);
-    return hex(bitovi) === HES;
+  async function pbkdf2(lozinka, so) {
+    const k = await crypto.subtle.importKey("raw", tekst(lozinka), "PBKDF2", false, ["deriveBits"]);
+    return crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: izHex(so), iterations: PONAVLJANJA }, k, 256);
+  }
+  const proveri = async (lozinka) => hex(await pbkdf2(lozinka, SO)) === HES;
+  function zapamti(doKada, privremen) {
+    try { localStorage.setItem(KLJUC, JSON.stringify({ h: HES, do: doKada, ...(privremen ? { p: 1 } : {}) })); } catch (e) { /* */ }
   }
 
+  /** Link koji važi `minuta` minuta (samo uz tačnu lozinku). */
+  async function napraviLink(lozinka, minuta) {
+    if (!(await proveri(lozinka))) throw new Error("Pogrešna lozinka.");
+    const sif = izB64(TAJNI);
+    const aes = await crypto.subtle.importKey("raw", await pbkdf2(lozinka, SO_K), "AES-GCM", false, ["decrypt"]);
+    const pkcs8 = await crypto.subtle.decrypt({ name: "AES-GCM", iv: sif.slice(0, 12) }, aes, sif.slice(12));
+    const tajni = await crypto.subtle.importKey("pkcs8", pkcs8, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+    const istek = (Math.ceil(Date.now() / 60000) + minuta).toString(36);
+    const potpis = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, tajni, tekst(PORUKA + istek));
+    return { link: `${location.origin}/?pristup=${istek}.${uB64url(potpis)}`, istice: parseInt(istek, 36) * 60000 };
+  }
+  /** Vreme isteka (ms) ako je potpis linka ispravan, inače null. */
+  async function proveriLink(kod) {
+    const [istek, potpis] = String(kod).split(".");
+    if (!istek || !potpis) return null;
+    const javni = await crypto.subtle.importKey("raw", izB64(JAVNI), { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    const ok = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, javni, izB64(potpis), tekst(PORUKA + istek));
+    return ok ? parseInt(istek, 36) * 60000 : null;
+  }
   function zakljucaj() {
     try { localStorage.removeItem(KLJUC); } catch (e) { /* */ }
     location.reload();
   }
+  const privremen = () => { const z = ulaz(); return otvorena() && !!z.p; };
+  const javno = { zakljucaj, napraviLink, privremen, istice: () => (otvorena() ? ulaz().do : null) };
 
-  if (otvorena()) return { zakljucaj };
+  const adresa = new URL(location.href);
+  const kod = adresa.searchParams.get("pristup");
+  const bezKoda = () => { adresa.searchParams.delete("pristup"); return adresa.pathname + adresa.search + adresa.hash; };
+  // privremeni ulaz se zatvara čim istekne, i na otvorenoj strani
+  if (privremen()) setTimeout(() => location.reload(), Math.min(ulaz().do - Date.now() + 1000, 2 ** 31 - 1));
+  if (!kod && otvorena()) return javno;
+  if (kod && otvorena() && !privremen()) { history.replaceState(null, "", bezKoda()); return javno; }
 
-  // sadržaj strane se ne prikazuje dok se ne unese lozinka
+  // sadržaj strane se ne prikazuje dok se ne unese lozinka (ili ne proveri link)
   const d = document.documentElement;
   d.classList.add("kapija");
   document.write(`<style id="kapija-stil">
@@ -59,19 +94,28 @@ const KAPIJA = (() => {
     #kapija .k-greska { min-height: 20px; margin-top: 10px; font-size: 13px; color: #FF7550; }
   </style>`);
 
-  function prikazi() {
+  async function prikazi() {
+    let poruka = "";
+    if (kod) {
+      let istek = null;
+      try { istek = await proveriLink(kod); } catch (e) { /* neispravan kod */ }
+      if (istek && istek > Date.now()) { zapamti(istek, true); location.replace(bezKoda()); return; }
+      poruka = istek ? "Link za pristup je istekao. Zatraži novi ili unesi lozinku." : "Link za pristup nije ispravan.";
+      history.replaceState(null, "", bezKoda());
+    }
+    const z = ulaz();
+    if (!poruka && z && z.p && z.h === HES) poruka = "Privremeni pristup je istekao.";
     const k = document.createElement("main");
     k.id = "kapija";
-    const tamna = d.dataset.theme !== "light";
     k.innerHTML = `<img class="k-znak" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="">
-      <img class="k-natpis" src="assets/slike/brend/natpis-${tamna ? "tamna" : "svetla"}.svg" alt="NaSicu">
+      <img class="k-natpis" src="assets/slike/brend/natpis-${d.dataset.theme !== "light" ? "tamna" : "svetla"}.svg" alt="NaSicu">
       <form class="k-kartica" autocomplete="off">
         <h1>Sajt je u izradi</h1>
         <p>Za sada je otvoren samo za tim. Unesi lozinku za pristup.</p>
         <label for="k-lozinka" style="position:absolute;left:-9999px">Lozinka</label>
-        <input id="k-lozinka" type="password" placeholder="Lozinka" autofocus required>
+        <input id="k-lozinka" type="password" placeholder="Lozinka" required>
         <button type="submit">Uđi</button>
-        <div class="k-greska" role="alert"></div>
+        <div class="k-greska" role="alert">${poruka}</div>
       </form>`;
     document.body.prepend(k);
     const forma = k.querySelector("form"), polje = k.querySelector("input"), dugme = k.querySelector("button"), greska = k.querySelector(".k-greska");
@@ -82,16 +126,12 @@ const KAPIJA = (() => {
       dugme.disabled = true; greska.textContent = "";
       let ok = false;
       try { ok = await proveri(polje.value); } catch (x) { greska.textContent = "Pregledač ne podržava proveru (potreban je https)."; }
-      if (ok) {
-        try { localStorage.setItem(KLJUC, JSON.stringify({ h: HES, do: Date.now() + TRAJANJE_DANA * 864e5 })); } catch (x) { /* */ }
-        location.reload();
-        return;
-      }
+      if (ok) { zapamti(Date.now() + TRAJANJE_DANA * 864e5, false); location.reload(); return; }
       dugme.disabled = false;
       if (!greska.textContent) greska.textContent = "Pogrešna lozinka.";
       polje.select();
     });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", prikazi); else prikazi();
-  return { zakljucaj };
+  return javno;
 })();
