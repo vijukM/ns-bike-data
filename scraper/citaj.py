@@ -31,6 +31,24 @@ def _upisi_gresku(poruka: str, sada_utc: datetime) -> None:
         f.write(f"{sada_utc:%Y-%m-%dT%H:%M:%SZ}\t{jedan_red}\n")
 
 
+KOLONE_POKRETANJA = ["pocetak_utc", "kraj_utc", "okidac", "metod", "ishod", "fajl"]
+
+
+def _okidac() -> str:
+    """Ko je pokrenuo čitanje: cron-job.org (workflow_dispatch u XX:02), rezerva (schedule u XX:20) ili ručno/lokalno."""
+    return {"workflow_dispatch": "cron-job.org", "schedule": "rezerva"}.get(os.environ.get("GITHUB_EVENT_NAME", ""), "rucno")
+
+
+def _upisi_pokretanje(pocetak: datetime, metod: str, ishod: str, fajl: str = "") -> None:
+    nov = not konfig.POKRETANJA_LOG.exists()
+    konfig.POKRETANJA_LOG.parent.mkdir(parents=True, exist_ok=True)
+    with open(konfig.POKRETANJA_LOG, "a", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        if nov:
+            w.writerow(KOLONE_POKRETANJA)
+        w.writerow([f"{pocetak:%Y-%m-%dT%H:%M:%SZ}", f"{datetime.now(timezone.utc):%Y-%m-%dT%H:%M:%SZ}", _okidac(), metod, ishod, fajl])
+
+
 def _gh_output(**kv) -> None:
     put = os.environ.get("GITHUB_OUTPUT")
     if put:
@@ -90,10 +108,11 @@ def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
     sada = datetime.now(timezone.utc).replace(microsecond=0)
+    pocetak = sada
     if a.samo_ako_nema and (sada.minute < 10 or postoji_citanje_za_sat(sada)):
         # rezerva (XX:20) koju GitHub zakasni do početka sledećeg sata ne čita — glavno čitanje stiže u XX:02
         log.info("rezerva: za tekući sat već postoji čitanje ili je početak sata — preskačem")
-        _gh_output(procitano="false", prvo_u_danu="false", obracunaj="false")
+        _gh_output(procitano="false", prvo_u_danu="false", obracunaj="false", preskoceno="true")
         return 0
 
     try:
@@ -101,17 +120,21 @@ def main(argv=None) -> int:
             data = a.iz_fajla.read_bytes()
             proveri_sadrzaj(data)
         else:
-            pocetak = float(os.environ["NS_BIKE_POCETAK"]) if os.environ.get("NS_BIKE_POCETAK") else None
-            data = preuzmi_bicikliste(a.metod, [float(x) for x in a.pokusaji_u.split(",")], pocetak)
+            pocetak_s = float(os.environ["NS_BIKE_POCETAK"]) if os.environ.get("NS_BIKE_POCETAK") else None
+            data = preuzmi_bicikliste(a.metod, [float(x) for x in a.pokusaji_u.split(",")], pocetak_s)
         sada = datetime.now(timezone.utc).replace(microsecond=0)
         csv_put, n, prvo = sacuvaj(data, sada)
     except Exception as e:  # noqa: BLE001
         poruka = f"metod={a.metod}\t{type(e).__name__}: {e}"
         _upisi_gresku(poruka, sada)
+        if not a.iz_fajla:
+            _upisi_pokretanje(pocetak, a.metod, "greska")
         log.error("čitanje nije uspelo: %s", poruka)
         _gh_output(procitano="false", prvo_u_danu="false", obracunaj="false")
         return 2
 
+    if not a.iz_fajla:
+        _upisi_pokretanje(pocetak, a.metod, "procitano", f"{csv_put.parent.relative_to(konfig.PODACI).as_posix()}/{csv_put.stem}")
     _, unosi = parsiraj(data)
     nedostaju, visak = proveri_serije(unosi)
     log.info("sačuvano: %d redova -> %s (+ .xml.gz)", n, csv_put)

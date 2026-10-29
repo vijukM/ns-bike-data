@@ -282,26 +282,6 @@
       izvor: "master rad — posle konačne odluke o modelu",
     },
 
-    preuzimanje: {
-      ik: "download", prioritet: 2, naslov: "Preuzimanje <em>podataka</em>",
-      uvod: "Očišćeni podaci sa sajta za preuzimanje — za ceo period ili izabrane stanice i mesece, u CSV ili JSON obliku, uz opis kolona.",
-      skice: [
-        { sirina: "cela", eyebrow: "Paketi", naslov: "Šta se može preuzeti", html: () => `<div class="tabela-omot"><table class="tabela">
-          <thead><tr><th>Skup</th><th>Opis</th><th>Format</th><th class="broj">Veličina</th><th></th></tr></thead><tbody>
-          ${[["Stanice", "spisak 46 serija: naziv, smer, koordinate, stanje", "CSV · JSON", "20 kB"],
-    ["Grad po danu", "zbir i broj brojača, vreme, praznici", "CSV · JSON", "90 kB"],
-    ["Stanica po danu", "dnevni zbir za svaku stanicu (46 fajlova)", "CSV · JSON", "770 kB"],
-    ["Satni podaci", "svaki sat svakog brojača, po mesecima, sa razlogom za rupu", "CSV · JSON", "5,7 MB"],
-    ["Vreme po satu", "temperatura, padavine, sneg (lokalno vreme)", "CSV · JSON", "820 kB"],
-    ["Biciklističke staze", "OpenStreetMap segmenti", "GeoJSON", "—"]].map(([a, o, f, v]) =>
-    `<tr><td><b>${a}</b></td><td class="muted">${o}</td><td><span class="znacka">${f}</span></td><td class="broj mono">${v}</td>
-            <td><span class="dugme malo" aria-disabled="true">${LJ.ik("lock")}Preuzmi</span></td></tr>`).join("")}</tbody></table></div>` },
-      ],
-      plan: [["Gotovi paketi", "CSV i JSON za ceo period"], ["Izbor stanica i perioda", "samo ono što ti treba, u jednom fajlu"],
-        ["Opis kolona", "šta znači svaka kolona i šifra nedostajućeg podatka"], ["Kako citirati", "kako navesti izvor u radu ili članku"]],
-      izvor: "isti fajlovi koje koristi sajt (data/istorija)",
-    },
-
     recnik: {
       ik: "book", prioritet: 2, naslov: "Rečnik <em>pojmova</em>",
       uvod: "Kratka objašnjenja pojmova koji se koriste na sajtu — od „serije brojača“ do „kvantila“.",

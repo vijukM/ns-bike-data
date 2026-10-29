@@ -1525,3 +1525,49 @@ dialog.profil [hidden] { display: none !important; }
   .pf-filteri { display: flex; flex-wrap: nowrap; overflow-x: auto; }
   .pf-lik img { width: 100%; }
 }
+
+/* Preuzimanje podataka: dnevnik čitanja (assets/preuzimanje.js) */
+.kpi .vrednost small { font-size: 0.5em; font-weight: 600; color: var(--t-muted); margin-left: 2px; }
+.ct-kontrole { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.ct-legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12px; color: var(--t-muted); margin-bottom: 12px; }
+.ct-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.ct-legenda .ct-polje { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.ct-raspored { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; align-items: start; }
+.ct-mreza-omot { overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 4px; }
+.ct-mreza { display: grid; gap: 3px; min-width: 860px; }
+.ct-red { display: grid; grid-template-columns: 82px repeat(24, minmax(26px, 1fr)) 64px; gap: 3px; align-items: center; }
+.ct-glava { font: 500 10px "JetBrains Mono", monospace; color: var(--t-light); }
+.ct-sat-oznaka { text-align: center; }
+.ct-dan { font: 600 12px Inter, sans-serif; color: var(--t-muted); white-space: nowrap; }
+.ct-zbir { font: 500 11px "JetBrains Mono", monospace; color: var(--t-muted); text-align: right; white-space: nowrap; }
+.ct-br-nepr { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: var(--warning-soft); color: var(--warning); font-size: 10px; }
+.ct-polje { height: 26px; border-radius: 5px; border: 1px solid transparent; padding: 0; font: 500 9.5px "JetBrains Mono", monospace; cursor: pointer; color: var(--t-base); }
+.ct-polje:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.ct-polje.izabrano { outline: 2px solid var(--primary); outline-offset: 1px; }
+.ct-ok { background: color-mix(in srgb, var(--success) 26%, var(--bg-card)); }
+.ct-napomena { background: color-mix(in srgb, var(--primary) 30%, var(--bg-card)); }
+.ct-problem { background: color-mix(in srgb, var(--warning) 45%, var(--bg-card)); }
+.ct-nema { background: color-mix(in srgb, var(--danger) 55%, var(--bg-card)); color: #fff; font-weight: 700; }
+.ct-ceka { background: transparent; border: 1px dashed var(--border); }
+.ct-van { background: var(--bg-muted); opacity: .35; cursor: default; }
+.ct-prazno { padding: 18px 0; }
+.ct-detalj { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--bg-muted); display: grid; gap: 8px; position: sticky; top: 80px; }
+.ct-detalj h3 { margin: 0; font-size: 18px; }
+.ct-detalj p { margin: 0; }
+.ct-oznake { display: flex; flex-wrap: wrap; gap: 4px; }
+.ct-oznake .znacka { white-space: normal; }
+.ct-citanje, .ct-greske { display: grid; gap: 4px; padding-top: 8px; border-top: 1px solid var(--border-soft); }
+.ct-d-red { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; }
+.ct-d-red span { color: var(--t-muted); }
+.ct-d-red b { font-weight: 600; text-align: right; }
+.ct-napomena.sitno { background: none; }
+.ct-tabela-omot { max-height: 360px; overflow-y: auto; }
+#ct-tabela tr[data-d] { cursor: pointer; }
+#ct-tabela tr[data-d]:hover td { background: var(--bg-hover); }
+.ct-koraci { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; font-size: 13.5px; }
+@media (max-width: 1100px) { .ct-raspored { grid-template-columns: minmax(0, 1fr); } .ct-detalj { position: static; } }
+.ct-greska { display: grid; gap: 2px; font-size: 12px; }
+.ct-greska span { color: var(--t-muted); overflow-wrap: anywhere; }
+.ct-detalj { min-width: 0; overflow-wrap: anywhere; }
+#ct-tabela td { white-space: normal; }
+#ct-tabela .znacka { white-space: normal; margin: 1px 0; }
