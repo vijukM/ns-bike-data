@@ -83,3 +83,18 @@ def test_poslednji_sat_iz_juce_kad_brojac_predje_u_novi_dan(tmp_path):
     c = danas.citanja_dana(date(2026, 10, 20), tmp_path)
     s = danas.satno_danas(c, danas.sati_dana(date(2026, 10, 20)))
     assert s["a"][23] == 8
+
+
+def test_propusteno_citanje_granica_se_procenjuje(tmp_path):
+    # 20. 10. (CEST): čitanje u 12:02 izostalo; ručno u 12:18 (brojač 12:12). Granica 12:00 se procenjuje
+    # linearno između 10:56→11:00 (100) i 12:12 (172): 100 + 72 · 64/76 ≈ 161 → sati 11–12 i 12–13 su „procena“
+    for utc, brojac, n in [("2026-10-20 09:02:30", "10:56:00", 100), ("2026-10-20 10:18:30", "12:12:00", 172),
+                           ("2026-10-20 11:02:30", "12:56:00", 230)]:
+        citanje(tmp_path, utc, [{"serija": "a", "direction": "1", "vreme_brojaca": brojac, "danas": n}])
+    d = danas.napravi(datetime(2026, 10, 20, 11, 5, tzinfo=timezone.utc), tmp_path)
+    a = d["serije"]["a"]
+    assert a["sati"][11] == 161 - 100 and a["sati"][12] == 230 - 161            # 12–13: do granice 13:00 (12:56)
+    assert a["sati"][11] + a["sati"][12] == 230 - 100                           # zbir oba sata je tačan
+    assert a["procena"] == [11, 12] and d["procena_sati"] == [11, 12]
+    # bez čitanja posle granice nema procene (tekući sat ostaje prazan)
+    assert d["sati_gotovo"] == 13 and a["sati"][13] is None
