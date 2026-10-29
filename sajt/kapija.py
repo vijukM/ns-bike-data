@@ -2,6 +2,7 @@
 
     python -m sajt.kapija "lozinka"            # samo ispiše nove vrednosti
     python -m sajt.kapija "lozinka" --upisi    # upiše ih u docs/assets/kapija.js
+    python -m sajt.kapija "admin lozinka" --admin --upisi   # samo admin lozinka (ADMIN_SO, ADMIN_HES), ključevi ostaju
 
 - SO, HES: PBKDF2-SHA256 lozinke (300.000 ponavljanja) — provera ulaza.
 - JAVNI, TAJNI, SO_K: par ključeva ECDSA P-256 za privremene linkove. Javni ključ proverava potpis linka;
@@ -45,7 +46,11 @@ def main(argv: list[str]) -> int:
     if not argv:
         print(__doc__)
         return 1
-    v = napravi(argv[0])
+    if "--admin" in argv[1:]:
+        so = secrets.token_bytes(16)
+        v = {"ADMIN_SO": so.hex(), "ADMIN_HES": hes(argv[0], so)}
+    else:
+        v = napravi(argv[0])
     for k, x in v.items():
         print(f"{k:6}= {x}")
     if "--upisi" in argv[1:]:

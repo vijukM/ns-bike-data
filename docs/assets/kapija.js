@@ -13,6 +13,11 @@ const KAPIJA = (() => {
   const SO_K = "d557e84eb712650368ac9fd9d3b4cbca";
   const JAVNI = "BCwQR9fxBS52YShwpeRDmHuh1VneRshI5Q3URG/fwOSrxlEHoUIIxUcCz6O5YwgidFbDrwSGMuaKhp9Ik3jAzfQ=";
   const TAJNI = "7KtRFoMcjMJCcJQptgbhqo7cBn939K/js2CD/SVmE1nW9XeMxRBiLcHDIwKg27vxHDWgkXh7mfzNuhRegGO5Xa2PQr0tfvbOP+L2sbRn1uRXSEjwXSQJgQIvrX4ef/QjV0jfOn6nGSuwuT2cl1qGj64sXPpAnWLiMh2xZ6WEx0GyrQUxGno5aI0cnAJ8EAV6jbLco6V4OO02HntmTr/SgL8uoEW05w==";
+  // admin provera (strane samo za upravljanje, npr. „Preuzimanje podataka“): posebna lozinka, isti PBKDF2
+  const ADMIN_SO = "df96cc565462be35b0de891c0a54416a";
+  const ADMIN_HES = "fd1f9fc44f341a01fc72d38f7bdea2b8fca8762f5687689e50c51b1c7934bead";
+  const ADMIN_MIN = 30;                  // admin ulaz važi dok je tab otvoren, najviše toliko minuta
+  const ADMIN_KLJUC = "ns-admin";
   const PONAVLJANJA = 300000;
   const TRAJANJE_DANA = 30;
   const KLJUC = "ns-kapija";
@@ -59,7 +64,40 @@ const KAPIJA = (() => {
     location.reload();
   }
   const privremen = () => { const z = ulaz(); return otvorena() && !!z.p; };
-  const javno = { zakljucaj, napraviLink, privremen, istice: () => (otvorena() ? ulaz().do : null) };
+  // ---------------------------------------------------------------- admin provera
+  // Druga lozinka za strane samo za upravljanje — i kad je sajt već otključan (npr. laptop ostao upaljen 30 dana).
+  // Pamti se samo u sessionStorage (do zatvaranja taba) i najviše ADMIN_MIN minuta.
+  const adminOtvoren = () => {
+    try { const z = JSON.parse(sessionStorage.getItem(ADMIN_KLJUC) || "null"); return !!z && z.h === ADMIN_HES && z.do > Date.now(); } catch (e) { return false; }
+  };
+  const proveriAdmin = async (lozinka) => hex(await pbkdf2(lozinka, ADMIN_SO)) === ADMIN_HES;
+  /** Prikazuje formu za admin lozinku u `el`; vraća Promise koji se ispuni kad je provera prošla. */
+  function trazAdmina(el) {
+    if (adminOtvoren()) return Promise.resolve();
+    return new Promise((gotovo) => {
+      el.innerHTML = `<form class="admin-kapija kartica" autocomplete="off">
+          <span class="eyebrow">Samo za administratora</span><h1>Potrebna je admin lozinka</h1>
+          <p class="sitno">Ova strana je za upravljanje sajtom. I kad je sajt otključan, ovde se lozinka traži ponovo; važi dok je tab otvoren, najviše ${ADMIN_MIN} minuta.</p>
+          <label for="admin-lozinka" style="position:absolute;left:-9999px">Admin lozinka</label>
+          <div class="admin-red"><input id="admin-lozinka" type="password" placeholder="Admin lozinka" required><button class="dugme primarno" type="submit">Proveri</button></div>
+          <div class="admin-greska sitno" role="alert"></div></form>`;
+      const forma = el.querySelector("form"), polje = forma.querySelector("input"), dugme = forma.querySelector("button"), gr = forma.querySelector(".admin-greska");
+      polje.focus();
+      forma.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        dugme.disabled = true; gr.textContent = "";
+        let ok = false;
+        try { ok = await proveriAdmin(polje.value); } catch (x) { gr.textContent = "Pregledač ne podržava proveru (potreban je https)."; }
+        dugme.disabled = false;
+        if (!ok) { if (!gr.textContent) gr.textContent = "Pogrešna lozinka."; polje.select(); return; }
+        try { sessionStorage.setItem(ADMIN_KLJUC, JSON.stringify({ h: ADMIN_HES, do: Date.now() + ADMIN_MIN * 60000 })); } catch (x) { /* */ }
+        gotovo();
+      });
+    });
+  }
+  const odjaviAdmina = () => { try { sessionStorage.removeItem(ADMIN_KLJUC); } catch (e) { /* */ } };
+
+  const javno = { zakljucaj, napraviLink, privremen, istice: () => (otvorena() ? ulaz().do : null), trazAdmina, adminOtvoren, odjaviAdmina };
 
   const adresa = new URL(location.href);
   const kod = adresa.searchParams.get("pristup");
