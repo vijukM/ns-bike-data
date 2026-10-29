@@ -1392,3 +1392,8 @@ dialog.prijava::backdrop { background: rgb(2 8 20 / .6); backdrop-filter: blur(3
 .avatar-mreza { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .avatar-polje { aspect-ratio: 1; border-radius: 10px; border: 1px dashed var(--border); background: var(--bg-muted); color: var(--t-light); font: 12px "JetBrains Mono", monospace; }
 .avatar-cipovi { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Kapija: dugme „Zaključaj“ u dnu menija */
+.meni .dno .zakljucaj-dugme { margin-left: auto; width: 30px; height: 30px; }
+.meni .dno .zakljucaj-dugme .ik { width: 15px; height: 15px; }
+.ljuska.uzak .meni .dno .zakljucaj-dugme { display: none; }

@@ -26,6 +26,15 @@ Verzija je `const VERZIJA = "1.0.N"` na vrhu `docs/assets/ljuska.js` i prikazuje
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 
+## Kapija (lozinka dok sajt nije gotov)
+
+- `docs/assets/kapija.js` se učitava u `<head>` svake strane (posle skripta za temu), uz `<meta name="robots" content="noindex, nofollow">`;
+  `docs/robots.txt` zabranjuje indeksiranje. Nova strana mora imati oba reda (proverava `tests/test_kapija.py`).
+- Proverava PBKDF2-SHA256 (300.000 ponavljanja) prema `SO` i `HES`; lozinka se ne čuva nigde u repozitorijumu.
+- Nova lozinka: `python -m sajt.kapija "nova lozinka" --upisi` (stari ulazi prestaju da važe).
+- Kada sajt postane javan: ukloniti oba reda iz strana, `kapija.js`, dugme „Zaključaj“ u `ljuska.js` i `robots.txt`.
+- Ovo je zavesa, ne zaštita: `docs/data/*.json` i kod su i dalje javni.
+
 ## Ne menjati bez izričitog zahteva
 
 - `docs/MODEL_KONTEKST.md` (opis modela prognoze).
