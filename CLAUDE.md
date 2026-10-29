@@ -57,6 +57,16 @@ Poslednji broj ima uvek dve cifre (00–99).
   proveren sa `PROFIL.valjan`; dno menija prikazuje sličicu lika. Kad dođe backend: uz korisnika polje `lik_id` (nullable),
   provera da je jedan od 52 iz `likovi.json`.
 
+## Dnevnik čitanja (strana „Preuzimanje podataka“)
+
+- Čitanje brojača: `.github/workflows/citaj.yml` — cron-job.org u XX:02 (`workflow_dispatch`), ponovni pokušaji +3 i +6 min,
+  rezerva u XX:20 (`schedule`, GitHub je zna zakasniti) čita samo ako za sat nema čitanja. Rezerva koja ne čita
+  (`preskoceno=true`) ne obnavlja sajt i ne pravi commit.
+- `scraper/citaj.py` upisuje svako pokretanje (pročitano ili greška) u `podaci/biciklisti/pokretanja.csv` (okidač, metod, ishod, fajl);
+  greške su u `podaci/biciklisti/greske.log`.
+- `python -m sajt.citanja` → `docs/data/citanja.json` (svaki dan × sat: minut čitanja, okidač, starost izvora, redovi, greške,
+  nepravilnosti); pokreće se posle svakog čitanja. Strana: `docs/preuzimanje.html` + `docs/assets/preuzimanje.js`.
+
 ## Ne menjati bez izričitog zahteva
 
 - `docs/MODEL_KONTEKST.md` (opis modela prognoze).
