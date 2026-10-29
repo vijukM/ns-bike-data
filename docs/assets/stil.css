@@ -1403,3 +1403,18 @@ dialog.prijava::backdrop { background: rgb(2 8 20 / .6); backdrop-filter: blur(3
 .pristup-rezultat { display: grid; gap: 10px; }
 .pristup-rezultat input { width: 100%; box-sizing: border-box; height: 40px; padding: 0 12px; margin-top: 6px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: 12px "JetBrains Mono", monospace; }
 .pristup-rezultat .prijava-dugmad { align-items: center; }
+
+/* Meni: logo gore i dno (profil, verzija) uvek vidljivi, između se skroluje */
+.meni { padding-top: 0; padding-bottom: 0; }
+.meni .brend, .ljuska.uzak .meni .brend { position: sticky; top: 0; z-index: 3; padding-top: 18px; background: var(--bg-sidebar);
+  box-shadow: -16px 0 0 var(--bg-sidebar), 16px 0 0 var(--bg-sidebar); }
+.meni .dno { position: sticky; bottom: 0; z-index: 3; padding-bottom: 14px; background: var(--bg-sidebar);
+  box-shadow: -16px 0 0 var(--bg-sidebar), 16px 0 0 var(--bg-sidebar); }
+.meni .dno.privremeni .avatar { background: linear-gradient(135deg, #F59E0B, #F0391F); }
+.meni .dno.privremeni .avatar .ik { width: 17px; height: 17px; }
+.meni .dno .preostalo { font-family: "JetBrains Mono", monospace; font-weight: 600; color: var(--warning); display: inline; font-size: 11.5px; }
+.meni .dno .preostalo.malo { color: var(--danger, #F0391F); }
+.meni .dno { gap: 8px; }
+.meni .dno .sitno { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; }
+.meni .dno .zakljucaj-dugme { width: 26px; height: 26px; margin-left: -4px; }
+.meni .dno .zakljucaj-dugme .ik { width: 14px; height: 14px; }
