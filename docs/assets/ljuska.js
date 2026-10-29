@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.30";
+  const VERZIJA = "1.1.31";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -270,6 +270,18 @@ const LJ = (() => {
       document.head.append(s);
     }));
   }
+  /** Prozor se zatvara samo klikom VAN njega: i pritisak i puštanje miša moraju biti van okvira
+      (klik u unutrašnji razmak prozora ili prevlačenje klizača do ivice ga ne zatvaraju). */
+  function zatvaranjeVan(dlg) {
+    const van = (e) => {
+      if (e.target !== dlg) return false;
+      const r = dlg.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    let dole = false;
+    dlg.addEventListener("pointerdown", (e) => { dole = van(e); });
+    dlg.addEventListener("click", (e) => { if (dole && van(e)) dlg.close(); dole = false; });
+  }
   async function otvoriPrijavu() {
     try { await ucitajSkript("assets/prijava.js"); PRIJAVA.otvori(); } catch (e) { tost("Prijava trenutno nije dostupna.", "alert"); }
   }
@@ -329,7 +341,8 @@ const LJ = (() => {
         const polje = rez.querySelector("input");
         try { await navigator.clipboard.writeText(polje.value); tost("Link je kopiran.", "check"); } catch (x) { polje.select(); }
       });
-      pristupDlg.addEventListener("click", (e) => { if (e.target === pristupDlg || e.target.closest("[data-zatvori]")) pristupDlg.close(); });
+      pristupDlg.addEventListener("click", (e) => { if (e.target.closest("[data-zatvori]")) pristupDlg.close(); });
+      zatvaranjeVan(pristupDlg);
       document.body.append(pristupDlg);
     }
     pristupDlg.showModal();
@@ -659,5 +672,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { VERZIJA, ucitajSkript, otvoriPrijavu, otvoriProfil, osveziAvatar, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { VERZIJA, VER, ucitajSkript, zatvaranjeVan, otvoriPrijavu, otvoriProfil, osveziAvatar, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();

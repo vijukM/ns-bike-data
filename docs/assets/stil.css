@@ -1435,7 +1435,8 @@ dialog.prijava.profil { width: min(860px, calc(100vw - 32px)); }
 .pf-korak:focus-visible, .pf-lik:focus-visible, .pf-opcija:focus-visible, .pf-strelica:focus-visible, .profil .cip:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 /* pregled: 3/4 širine prozora; korak 1 = samo biciklista (bez pozadine), dalje = scena „Reka“ */
 .pf-pregled { position: relative; width: 75%; margin: 14px auto 0; border-radius: 14px; overflow: hidden; background: #9AD6FF; border: 1px solid var(--border); }
-.pf-pregled.samo-lik { background: radial-gradient(90% 80% at 50% 70%, color-mix(in srgb, var(--primary) 16%, var(--bg-muted)), var(--bg-muted)); }
+/* korak 1: neutralna srednje svetla pozadina, ista u obe teme — tamne gume i svetli blatobrani se jasno vide; donji pojas je tlo (y = 272 od 300) */
+.pf-pregled.samo-lik { background: linear-gradient(180deg, #CBD6E2 0%, #AFBECF 90.67%, #97A8BC 90.67%, #8B9DB2 100%); }
 .pf-platno { width: 100%; }
 .pf-samo { display: none; }
 .pf-pregled.samo-lik .pf-platno { visibility: hidden; }
@@ -1505,3 +1506,22 @@ dialog.prijava.profil { width: min(860px, calc(100vw - 32px)); }
 }
 dialog.profil [hidden] { display: none !important; }
 .pf-carobnjak > *, #pf-korak-telo, .pf-lik-red > *, .pf-filteri { min-width: 0; }
+
+/* profil: zbijeniji raspored, filteri u 2 reda */
+.pf-koraci { margin: 10px 0 6px; }
+.pf-pregled { margin-top: 6px; }
+.pf-carobnjak { gap: 10px; margin-top: 10px; }
+.pf-klizaci { gap: 4px 24px; }
+.pf-klizaci label { gap: 0 10px; }
+.pf-filteri { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 8px; }
+.pf-filteri .cip { height: 30px; justify-content: center; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-likovi { gap: 6px; }
+.pf-lik { padding: 4px 4px 6px; gap: 2px; }
+.pf-lik img { width: 84%; margin: 0 auto; }
+.pf-lik span { min-height: 0; }
+.pf-strana { margin-top: 4px; }
+.prijava.profil .pf-dno { margin-top: -2px; }
+@media (max-width: 640px) {
+  .pf-filteri { display: flex; flex-wrap: nowrap; overflow-x: auto; }
+  .pf-lik img { width: 100%; }
+}

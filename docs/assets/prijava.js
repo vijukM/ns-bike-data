@@ -27,7 +27,8 @@ const PRIJAVA = (() => {
       dlg.querySelector("[name=lozinka]").autocomplete = v === "novi" ? "new-password" : "current-password";
     });
     dlg.querySelector(".pr-forma").addEventListener("submit", (e) => { e.preventDefault(); LJ.tost("Nalozi stižu uskoro.", "info"); });
-    dlg.addEventListener("click", (e) => { if (e.target === dlg || e.target.closest("[data-zatvori]")) dlg.close(); });
+    dlg.addEventListener("click", (e) => { if (e.target.closest("[data-zatvori]")) dlg.close(); });
+    LJ.zatvaranjeVan(dlg);
   }
 
   function otvori() {

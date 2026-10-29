@@ -110,7 +110,7 @@ const PROFIL = (() => {
   const sirina = () => (usko.matches ? SCENA.sirinaPrikazaUsko : SCENA.sirinaPrikaza);
 
   async function ucitajMaterijal() {
-    const json = fetch("likovi/likovi.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+    const json = fetch(`likovi/likovi.json${LJ.VER ? `?v=${LJ.VER}` : ""}`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
     await LJ.ucitajSkript("assets/nasicu/nasicu-likovi.js");
     await Promise.all([LJ.ucitajSkript("assets/nasicu/likovi-probni.js"), LJ.ucitajSkript("assets/nasicu/reka-scena.js")]);
     likovi = await json;
@@ -198,7 +198,7 @@ const PROFIL = (() => {
         </div>
         <button type="button" class="ikonica-dugme pf-strelica" data-strana="1" aria-label="Sledećih ${PO_STRANI}"${strana < n - 1 ? "" : " disabled"}>${LJ.ik("chevron")}</button>
       </div>
-      <div class="pf-strana sitno">Strana <b>${strana + 1}</b> od ${n} · ${spisak.length} biciklista</div>`;
+      <div class="pf-strana sitno">Strana <b>${strana + 1}</b> / ${n}</div>`;
   }
   function korakOpcije(k) {
     return `<div class="pf-opcije" role="group">${OPCIJE[k].map(([id, t, opis, gotovo]) => `
@@ -277,7 +277,7 @@ const PROFIL = (() => {
     document.body.append(dlg);
 
     dlg.addEventListener("click", (e) => {
-      if (e.target === dlg || e.target.closest("[data-zatvori]")) { dlg.close(); return; }
+      if (e.target.closest("[data-zatvori]")) { dlg.close(); return; }
       const a = e.target.closest("[data-akcija]");
       if (a) {
         if (a.dataset.akcija === "prijava") { dlg.close(); LJ.otvoriPrijavu(); } else pocniCarobnjak();
@@ -299,6 +299,7 @@ const PROFIL = (() => {
         crtajKorak();
       }
     });
+    LJ.zatvaranjeVan(dlg);
     dlg.querySelector(".pf-klizaci").addEventListener("input", (e) => {
       const k = e.target.dataset.k;
       if (!k) return;
