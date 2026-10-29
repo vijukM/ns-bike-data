@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.27";
+  const VERZIJA = "1.1.28";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -556,7 +556,11 @@ const LJ = (() => {
           ${x.id === strana ? 'aria-current="page"' : ""} title="${x.t}" ${x.uzivo ? "data-uzivo-stavka" : ""}${zakljucana(x)}>${ik(x.ik)}<span class="tekst">${x.t}</span>
           ${oznakaStavke(x)}</a>`).join("")}</div></div></nav>`;
       }).join("") +
-      `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>
+      // dno menija (kasnije profil): privremeni ulaz preko linka pokazuje koliko je još ostalo
+      (typeof KAPIJA !== "undefined" && KAPIJA.privremen()
+        ? `<div class="dno privremeni"><span class="avatar">${ik("clock")}</span><div><b>Privremeni nalog</b><span class="sitno">još <b class="preostalo" id="preostalo">—</b> · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>`
+        : `<div class="dno"><span class="avatar">NS</span><div><b>Master rad</b><span class="sitno">FTN Novi Sad · <span class="verzija" title="verzija aplikacije">v ${VERZIJA}</span></span></div>`) +
+      `
         <button type="button" class="ikonica-dugme zakljucaj-dugme" id="pristup-dugme" title="Privremeni pristup (link na nekoliko minuta)" aria-label="Privremeni pristup" aria-haspopup="dialog">${ik("clock")}</button>
         <button type="button" class="ikonica-dugme zakljucaj-dugme" id="zakljucaj-dugme" title="Zaključaj sajt (ponovo traži lozinku)" aria-label="Zaključaj sajt">${ik("lock")}</button></div>`;
 
@@ -573,9 +577,9 @@ const LJ = (() => {
       <button class="pretraga-dugme" id="pretraga-dugme" aria-label="Pretraga">${ik("search")}<span>Pretraži stanice…</span><kbd>Ctrl K</kbd></button>
       <div class="padajuce"><button class="ikonica-dugme jezik" id="jezik-dugme" aria-label="Jezik">SR</button></div>
       <div class="padajuce"><button class="ikonica-dugme" id="obavestenja-dugme" aria-label="Obaveštenja">${ik("bell")}<span class="brojac skriveno"></span></button></div>
+      <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>
       <button class="ikonica-dugme" id="tema-dugme" aria-label="Svetla ili tamna tema" title="Svetla / tamna tema">${ik(tema() === "dark" ? "sun" : "moon")}</button>
-      <button class="dugme malo prijava-dugme" id="prijava-dugme" aria-haspopup="dialog">${ik("user")}<span>Prijava</span></button>
-      <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>`;
+      <button class="dugme malo prijava-dugme" id="prijava-dugme" aria-haspopup="dialog">${ik("user")}<span>Prijava</span></button>`;
 
     main.parentNode.insertBefore(ljuska, main);
     glavno.append(gornja, gornjiMeni(strana), main);
@@ -602,6 +606,17 @@ const LJ = (() => {
     document.getElementById("prilagodi-dugme").addEventListener("click", otvoriPrilagodi);
     document.getElementById("prijava-dugme").addEventListener("click", otvoriPrijavu);
     document.getElementById("zakljucaj-dugme").addEventListener("click", () => { if (typeof KAPIJA !== "undefined") KAPIJA.zakljucaj(); });
+    const preostalo = document.getElementById("preostalo");
+    if (preostalo) {
+      const otkucaj = () => {
+        const s = Math.max(0, Math.round((KAPIJA.istice() - Date.now()) / 1000));
+        const dd = (x) => String(x).padStart(2, "0");
+        preostalo.textContent = s >= 3600 ? `${Math.floor(s / 3600)} h ${dd(Math.floor((s % 3600) / 60))} min` : `${dd(Math.floor(s / 60))}:${dd(s % 60)}`;
+        preostalo.classList.toggle("malo", s < 60);
+      };
+      otkucaj();
+      setInterval(otkucaj, 1000);
+    }
     const pristup = document.getElementById("pristup-dugme");
     if (typeof KAPIJA === "undefined" || KAPIJA.privremen()) pristup.remove(); else pristup.addEventListener("click", otvoriPristup);
     primeniIzgled({}, { sacuvaj: false });
