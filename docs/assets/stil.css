@@ -1571,3 +1571,14 @@ dialog.profil [hidden] { display: none !important; }
 .ct-detalj { min-width: 0; overflow-wrap: anywhere; }
 #ct-tabela td { white-space: normal; }
 #ct-tabela .znacka { white-space: normal; margin: 1px 0; }
+
+/* Admin provera (KAPIJA.trazAdmina) */
+.admin-kapija { max-width: 520px; margin: 40px auto; display: grid; gap: 10px; }
+.admin-kapija h1 { font-size: 22px; margin: 0; }
+.admin-kapija p { margin: 0; }
+.admin-red { display: flex; gap: 10px; }
+.admin-red input { flex: 1; min-width: 0; height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: inherit; }
+.admin-red input:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.admin-greska { color: var(--danger, #F0391F); min-height: 18px; }
+.ct-fajl { font-size: 11px; overflow-wrap: anywhere; text-align: right; }
+.ct-d-red > span { flex: none; }

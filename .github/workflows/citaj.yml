@@ -68,13 +68,13 @@ jobs:
 
       - name: Sajt — „Danas uživo“ (docs/data/danas.json)
         if: always() && steps.brza.outputs.preskoceno != 'true'
+        continue-on-error: true
+        run: python -m sajt.danas
 
       - name: Sajt — dnevnik čitanja (docs/data/citanja.json, strana „Preuzimanje podataka“)
         if: always() && steps.brza.outputs.preskoceno != 'true'
         continue-on-error: true
         run: python -m sajt.citanja
-        continue-on-error: true
-        run: python -m sajt.danas
 
       - name: Commit i push podataka
         if: always() && steps.brza.outputs.preskoceno != 'true'

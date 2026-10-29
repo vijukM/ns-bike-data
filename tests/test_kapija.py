@@ -31,3 +31,10 @@ def test_hes_iz_kapije_je_pbkdf2():
     so, h = re.search(r'const SO = "([0-9a-f]{32})"', s)[1], re.search(r'const HES = "([0-9a-f]{64})"', s)[1]
     assert f"PONAVLJANJA = {kp.PONAVLJANJA}".replace("_", "") in s.replace("_", "")
     assert len(kp.hes("bilo šta", bytes.fromhex(so))) == len(h)
+
+
+def test_admin_provera():
+    s = kp.KAPIJA.read_text(encoding="utf-8")
+    assert re.search(r'const ADMIN_SO = "[0-9a-f]{32}"', s) and re.search(r'const ADMIN_HES = "[0-9a-f]{64}"', s)
+    # strana „Preuzimanje podataka“ traži admin lozinku i kad je sajt otključan
+    assert "KAPIJA.trazAdmina(main)" in (DOCS / "assets" / "preuzimanje.js").read_text(encoding="utf-8")

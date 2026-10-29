@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.32";
+  const VERZIJA = "1.1.33";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -86,7 +86,7 @@ const LJ = (() => {
       { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", zakljucano: true }] },
     { grupa: "Projekat", stavke: [
       { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" },
-      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", zakljucano: true },
+      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", oznaka: "ADMIN", klasa: "siva" },
       { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", zakljucano: true }] },
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
