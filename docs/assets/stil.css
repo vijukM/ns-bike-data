@@ -80,12 +80,12 @@ html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 /* Pozadina strane (poslednji sloj): blag dijagonalni gradijent u nijansama --bg-body (malo svetlije ↘ malo tamnije),
    jedva vidljive dijagonalne trake i fini šum (SVG feTurbulence) — da pozadina ne bude ravna; posebno za obe teme. */
 :root, :root[data-theme="dark"] {
-  --poz-svetlo: #111A2E; --poz-tamno: #070B16; --poz-traka: rgb(255 255 255 / .014);
-  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .07 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --poz-svetlo: #17223C; --poz-tamno: #04070E; --poz-traka: rgb(255 255 255 / .014);
+  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.9' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .035 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
 }
 :root[data-theme="light"] {
-  --poz-svetlo: #F8FAFD; --poz-tamno: #E4EBF3; --poz-traka: rgb(15 40 80 / .018);
-  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 .1 0 0 0 0 .25 .055 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --poz-svetlo: #FFFFFF; --poz-tamno: #D9E2ED; --poz-traka: rgb(15 40 80 / .018);
+  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.9' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 .1 0 0 0 0 .25 .028 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
 }
 body {
   margin: 0; color: var(--t-base);
