@@ -77,15 +77,16 @@ Poslednji broj ima uvek dve cifre (00–99).
 
 - Strane samo za upravljanje: **Kamere uživo** (`docs/kamere.html` + `assets/kamere.js`) i **Preuzimanje podataka**.
   Obe traže admin lozinku (`KAPIJA.trazAdmina`), i kad je sajt otključan.
-- Kamere: spisak u `docs/data/kamere.json` (naziv, opis, `url` HLS prenosa) — menja se bez izmene koda. Strana sama
-  proverava da li prenos radi (i drugi naziv fajla chunks.m3u8 ↔ playlist.m3u8), kamera koja ne radi dobija sivo
-  „NE RADI“ i proverava se ponovo na 2 min; prenos se pauzira van ekrana. hls.js 1.5.20 sa jsdelivr (SRI).
-  Opciono polje `slika` (snimak kamere, `docs/assets/slike/kamere/<id>.webp`) se prikazuje dok prenos ne radi;
-  kamera bez slike dobija placeholder `nema-slike.svg`.
-- Uvećan prikaz (fokus): dugme gore desno (ili klik na karticu) uveća jednu kameru preko ekrana; zum scrollom,
-  pomeranje prevlačenjem, strelice ←/→ (i dugmad) za sledeću kameru, dugme za ceo ekran (`requestFullscreen`),
-  zatvaranje × ili Esc. `.km-video` se premesti u overlay (`.km-fokus`), zum je transform na `.km-zum`
-  (video + platno), pa se okviri uvećavaju zajedno sa slikom.
+- Kamere: spisak u `docs/data/kamere.json` (naziv, opis, `url` HLS prenosa) — menja se bez izmene koda.
+  hls.js 1.5.20 sa jsdelivr (SRI). Opciono polje `slika` (snimak, `docs/assets/slike/kamere/<id>.webp`) = sličica
+  u mreži; bez slike → placeholder `nema-slike.svg`.
+- **Štednja protoka:** u mreži se NE prenosi uživo — prikazuju se sličice, a živ prenos kreće tek kad se uđe u kameru
+  (fokus). Status u mreži se proverava lagano (`fetch` m3u8 liste, ne ceo prenos): radi / ne-radi (403) / nepoznato,
+  ponovo na 2 min. Napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje staju (`zaustaviUzivo`).
+- Uvećan prikaz (fokus): klik na karticu ili dugme otvara kameru uživo preko ekrana; zum scrollom, pomeranje
+  prevlačenjem, strelice ←/→ (i dugmad) za sledeću kameru, dugme za ceo ekran (`requestFullscreen`), zatvaranje × ili
+  Esc. Kontrole su u okviru snimka (`.km-kontrole`): Brojanje, Region (prikaz ROI), i „Broji“ (izbor klasa). `.km-video`
+  se premesti u overlay, zum je transform na `.km-zum` (video + platno), pa se okviri uvećavaju zajedno sa slikom.
 - Prenosi `srbija-nadlanu.ott.solutions` vraćaju 403 za zahteve sa nasicu.rs (server pušta samo svoje sajtove, npr.
   kamere.24sedam.rs; proverava Referer). Pregledač ne da JS-u da lažira Referer, pa strana (1) ne šalje Referer
   (`<meta name="referrer" content="no-referrer">` u `kamere.html`) i (2) ume da prenos provuče kroz proksi iz polja
@@ -96,16 +97,15 @@ Poslednji broj ima uvek dve cifre (00–99).
   (TensorFlow.js + COCO-SSD, model `docs/assets/modeli/coco-ssd/` ssdlite, Apache-2.0; biblioteka sa jsdelivr uz SRI).
   Lenjo se učita (`LJ.ucitajSkript`) tek na uključenje; izbor po kameri se pamti u `localStorage` „ns-kamere-brojac“.
   Kadar se deli na pločice (`PLOCICE` na vrhu) jer SSD smanji kadar pa inače ne vidi sitna vozila; crta okvire i broj
-  „koliko se trenutno vidi“ (bez praćenja i linije). Podešavanja su na vrhu modula. Model zna 6 klasa: auto, kamion,
-  autobus, motor, pešak, bicikl. Koje se broje bira se u padajućoj listi „Broji“ u zaglavlju (pamti se u `localStorage`
-  „ns-kamere-klase“; podrazumevano sva vozila, bez pešaka i biciklista).
+  „koliko se trenutno vidi“ (bez praćenja i linije), samo dok je kamera u fokusu. Podešavanja su na vrhu modula.
+  Model zna 6 klasa: auto, kamion, autobus, motor, pešak, bicikl. Koje se broje bira se u kontroli „Broji“ unutar
+  snimka (pamti se u `localStorage` „ns-kamere-klase“; podrazumevano sva vozila, bez pešaka i biciklista).
 - Region interesa (ROI): poligon 0–1 u polju `roi` kamere u `kamere.json` (zadaje se unapred, jer su kamere statične —
   nema crtanja na sajtu). Detekcija i pločice rade samo unutar njega (brže, bez lažnih vozila na zgradama/drveću);
-  vozilo se broji ako mu je centar u regionu. Region se prikazuje na kameri (svetlije unutra, zatamnjeno van), a info
-  dugme (ⓘ) u zaglavlju objašnjava ROI i daje po kameri koliko se slike gleda i procenu uštede. ROI poligoni su
-  izvučeni iz označenih snimaka (žuta granica) alatom cv2 (flood-fill); kad stigne nova granica, samo se promeni
-  `roi` u JSON-u. Protok preko linije + praćenje i poređenje sa zvaničnim brojačima (ns-trafic-data) dolaze kasnije;
-  za javni rad treba dozvola/licenca prenosa.
+  vozilo se broji ako mu je centar u regionu. Region se prikazuje na kameri (svetlije unutra, zatamnjeno van); dugme
+  „Region“ u fokusu ga uključuje/isključuje. ROI poligoni su izvučeni iz označenih snimaka (žuta granica) alatom cv2
+  (flood-fill); kad stigne nova granica, samo se promeni `roi` u JSON-u. Protok preko linije + praćenje i poređenje sa
+  zvaničnim brojačima (ns-trafic-data) dolaze kasnije; za javni rad treba dozvola/licenca prenosa.
 - Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma
   ns-trafic-data, adresa u `docs/data/admin.json`) i podsetnik za tokene (datumi isteka u `docs/data/admin.json`).
 - `LJ.stalnoUzivo(sveze, tekst)` = isti znak „UŽIVO“ kao „Danas uživo“, ali ne zavisi od čitanja brojača.

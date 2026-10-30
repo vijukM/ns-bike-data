@@ -1607,6 +1607,15 @@ body.km-fokus-otvoren { overflow: hidden; }
 .km-fokus:fullscreen .km-fokus-poz { width: min(98vw, 2200px); }
 .km-fokus:fullscreen .km-fokus-ram { max-height: 90vh; }
 .km-fokus .km-ceo { display: none; }   /* u fokusu je zatvaranje preko × */
+/* kontrole unutar snimka (fokus): brojanje, region, izbor klasa */
+.km-kontrole { position: absolute; left: 12px; bottom: 12px; z-index: 6; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.km-k-dug { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 10px; border: 1px solid rgb(148 163 184 / .25);
+  background: rgb(2 14 34 / .82); color: #E8EEF7; font: 600 13px "Inter", system-ui, sans-serif; cursor: pointer; backdrop-filter: blur(4px); }
+.km-k-dug svg { width: 17px; height: 17px; }
+.km-k-dug:hover { background: rgb(2 14 34 / .96); }
+.km-k-dug.ukljuceno { background: var(--brend, #2563EB); border-color: transparent; color: #fff; }
+.km-k-dug[hidden] { display: none; }
+.km-kontrole .km-padaj-meni { right: auto; left: 0; top: auto; bottom: calc(100% + 6px); }
 .km-alati { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 3; }
 .km-ceo, .km-prebroj { background: rgb(4 22 47 / .65); color: #F1F5F9; border-color: transparent; }
 .km-ceo:hover, .km-prebroj:hover { background: rgb(4 22 47 / .85); }
@@ -1638,8 +1647,7 @@ body.km-fokus-otvoren { overflow: hidden; }
 .km-glava { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; }
 .km-glava b { display: block; font-size: 14.5px; }
 .km-povezivanje { font: 600 10.5px "JetBrains Mono", monospace; color: var(--t-light); letter-spacing: .06em; }
-.km-kartica[data-stanje="ne-radi"] .km-video { cursor: default; background: repeating-linear-gradient(135deg, #04162F 0 14px, #071d3b 14px 28px); }
-.km-kartica[data-stanje="ne-radi"] .km-alati { display: none; }
+.km-kartica[data-stanje="ne-radi"] .km-video { background: repeating-linear-gradient(135deg, #04162F 0 14px, #071d3b 14px 28px); }
 .km-kartica[data-stanje="ne-radi"] .ima-sliku video { filter: grayscale(.6) brightness(.55); }
 .km-video.bez-slike video { object-fit: cover; }   /* placeholder popunjava karticu */
 .km-kartica[data-stanje="ne-radi"] .km-poruka,
