@@ -41,6 +41,16 @@
       </section>
       <div class="mreza-2">
         <section class="kartica pojava">
+          <div class="kartica-glava"><div><span class="eyebrow">Drumski saobraćaj · na 5 minuta</span><h2>Automobili — prikupljanje${LJ.info("Poseban repozitorijum ns-trafic-data: svakih 5 minuta stanje svih traka (vozila/h, brzina, zauzetost). Polje = jedan sat; 12 čitanja na sat = ceo sat.")}</h2></div></div>
+          <div id="dr-telo"><p class="sitno">Učitavanje…</p></div>
+        </section>
+        <section class="kartica pojava">
+          <div class="kartica-glava"><div><span class="eyebrow">Podsetnik</span><h2>Tokeni za cron-job.org${LJ.info("Kad token istekne, cron-job.org dobija 401 i čitanja staju. Novi token: GitHub → Settings → Developer settings → Fine-grained tokens; datum se upisuje u data/admin.json.")}</h2></div></div>
+          <div id="tk-telo"><p class="sitno">Učitavanje…</p></div>
+        </section>
+      </div>
+      <div class="mreza-2">
+        <section class="kartica pojava">
           <div class="kartica-glava"><div><span class="eyebrow">Spisak</span><h2>Nepravilnosti</h2></div></div>
           <div class="tabela-omot ct-tabela-omot"><table class="tabela" id="ct-tabela"></table></div>
         </section>
@@ -143,6 +153,41 @@
   }
   function sve() { kpiRed(); mreza(); tabela(); detalj(); }
 
+  // ---------------------------------------------------------------- drumski saobraćaj (ns-trafic-data) i tokeni (data/admin.json)
+  const vremeLok = (iso) => new Intl.DateTimeFormat("sr-Latn-RS", { timeZone: "Europe/Belgrade", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+  const preMin = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 60 ? `pre ${Math.max(0, m)} min` : `pre ${Math.floor(m / 60)} h ${m % 60} min`; };
+  async function drumski(A) {
+    const el = document.getElementById("dr-telo");
+    try {
+      const S = await fetch(`${A.drumski_stanje}?t=${Math.floor(Date.now() / 60000)}`, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+      const p = S.poslednje, sveze = p && Date.now() - Date.parse(p.vreme_utc) < 20 * 60000;
+      // poslednja 24 lokalna sata (tekući sat je „u toku“)
+      const satKljuc = (d) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Belgrade", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23" }).format(d).replace(" ", "T");
+      const sada = new Date(), mapa = Object.fromEntries((S.sati || []).map((x) => [x.sat, x]));
+      const sati = Array.from({ length: 24 }, (_, i) => { const k = satKljuc(new Date(sada - (23 - i) * 3600000)); return { k, ...(mapa[k] || { citanja: 0, greske: 0 }), tekuci: i === 23 }; });
+      const ukupno = sati.slice(0, 23).reduce((a, x) => a + x.citanja, 0), greske = sati.reduce((a, x) => a + x.greske, 0);
+      el.innerHTML = `
+        <div class="dr-red"><span>Poslednje čitanje</span><b>${p ? `${vremeLok(p.vreme_utc)} · ${preMin(p.vreme_utc)}` : "—"} ${LJ.stalnoUzivo(!!sveze, sveze ? "UŽIVO" : "KASNI")}</b></div>
+        <div class="dr-red"><span>Traka u poslednjem čitanju</span><b>${p ? `${p.traka} · ${p.novih_intervala} novih intervala` : "—"}</b></div>
+        <div class="dr-red"><span>Čitanja u poslednja 23 puna sata</span><b>${ukupno} od ${23 * 12}</b></div>
+        <div class="dr-red"><span>Neuspela čitanja (24 h)</span><b>${greske}${S.poslednja_greska ? ` · poslednje ${vremeLok(S.poslednja_greska)}` : ""}</b></div>
+        <div class="dr-sati">${sati.map((x) => `<span class="dr-sat ${x.tekuci ? "buduce" : x.citanja >= 11 ? "pun" : x.citanja ? "deo" : "prazan"}"
+          title="${x.k.slice(8, 10)}. ${x.k.slice(5, 7)}. ${x.k.slice(11)} h: ${x.citanja} čitanja${x.greske ? `, ${x.greske} neuspelih` : ""}${x.tekuci ? " (u toku)" : ""}"></span>`).join("")}</div>
+        <div class="dr-ose"><span>${sati[0].k.slice(11)} h</span><span>sada</span></div>`;
+    } catch (e) {
+      el.innerHTML = `<p class="sitno">Stanje prikupljanja trenutno nije dostupno (${String(e.message || e).slice(0, 60)}).</p>`;
+    }
+  }
+  function tokeni(A) {
+    const d = new Date(), danas = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    document.getElementById("tk-telo").innerHTML = (A.tokeni || []).map((t) => {
+      const dana = Math.round((Date.parse(`${t.istice}T00:00:00Z`) - danas) / 864e5);
+      const klasa = dana < 0 ? "isteklo" : dana <= 30 ? "uskoro" : "";
+      return `<div class="tk-red ${klasa}"><b>${t.naziv}</b><span class="tk-dana">${dana < 0 ? "ISTEKAO" : `${NS.broj(dana)} d`}</span>
+        <span class="sitno">${t.namena} · ističe ${NS.datum(t.istice)}</span></div>`;
+    }).join("") || `<p class="sitno">Nema upisanih tokena.</p>`;
+  }
+
   try {
     // i kad je sajt otključan, ova strana traži admin lozinku (assets/kapija.js)
     if (typeof KAPIJA !== "undefined") await KAPIJA.trazAdmina(main);
@@ -159,6 +204,8 @@
     // početno: poslednji sat sa čitanjem
     if (C.poslednje) izabran = [C.poslednje.datum, +C.poslednje.f.slice(0, 2)];
     sve();
+    fetch(`data/admin.json?t=${Date.now()}`, { cache: "no-store" }).then((r) => r.json()).then((A) => { tokeni(A); drumski(A); setInterval(() => drumski(A), 5 * 60000); })
+      .catch(() => { document.getElementById("tk-telo").innerHTML = document.getElementById("dr-telo").innerHTML = '<p class="sitno">data/admin.json nije dostupan.</p>'; });
     LJ.pojave(main);
     LJ.osveziUzivo();
   } catch (e) {

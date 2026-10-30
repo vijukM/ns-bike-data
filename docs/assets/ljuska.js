@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.35";
+  const VERZIJA = "1.1.36";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -53,6 +53,8 @@ const LJ = (() => {
     reset: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"/>',
+    camera: '<path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect width="14" height="12" x="2" y="6" rx="2"/>',
+    expand: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
     lock: '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   };
   const ik = (ime, klasa = "") => `<svg class="ik ${klasa}" viewBox="0 0 24 24" aria-hidden="true">${IK[ime] || ""}</svg>`;
@@ -86,11 +88,14 @@ const LJ = (() => {
       { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", zakljucano: true }] },
     { grupa: "Projekat", stavke: [
       { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" },
-      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download", oznaka: "ADMIN", klasa: "siva" },
       { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", zakljucano: true }] },
+    // Admin: strane za upravljanje — traže i admin lozinku (KAPIJA.trazAdmina), i kad je sajt otključan
+    { grupa: "Admin", stavke: [
+      { id: "kamere", t: "Kamere uživo", href: "kamere.html", ik: "camera", kamera: true },
+      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download" }] },
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
-  const oznakaStavke = (x) => (x.uzivo ? uzivoZnak() : x.zakljucano ? `<span class="oznaka-meni katanac" title="još nije dostupno">${ik("lock")}</span>`
+  const oznakaStavke = (x) => (x.uzivo ? uzivoZnak() : x.kamera ? stalnoUzivo() : x.zakljucano ? `<span class="oznaka-meni katanac" title="još nije dostupno">${ik("lock")}</span>`
     : x.oznaka ? `<span class="oznaka-meni ${x.klasa || ""}">${x.oznaka}</span>` : "");
   const zakljucana = (x) => (x.zakljucano ? ' data-zakljucano aria-disabled="true"' : "");
   // klik na zaključanu stavku menija ne vodi nikud
@@ -356,6 +361,9 @@ const LJ = (() => {
     <circle class="krug-puls" cx="12" cy="8" r="2.4"/><circle class="srce" cx="12" cy="8" r="2.4"/></svg>`;
   /** Oznaka „UŽIVO“ (mala = samo odašiljač, za tekst u karticama). */
   const uzivoZnak = (mala = false) => `<span class="uzivo-znak${mala ? " mala" : ""}" data-uzivo role="status" title="Podaci uživo">${ODASILJAC}${mala ? "" : "<b>UŽIVO</b>"}</span>`;
+  /** Isti znak, ali ne zavisi od čitanja brojača (kamere su uživo same po sebi); `sveze=false` = sivo („ne radi“). */
+  const stalnoUzivo = (sveze = true, tekst = "UŽIVO") =>
+    `<span class="uzivo-znak ${sveze ? "sveze" : "staro"}" role="status" title="${sveze ? "Prenos uživo" : "Prenos trenutno ne radi"}">${ODASILJAC}<b>${tekst}</b></span>`;
   const SVEZE_MIN = 150;
   let uzivoStanje = null;
   function osveziUzivo() {
@@ -527,7 +535,7 @@ const LJ = (() => {
 
   // ---------------------------------------------------------------- postavljanje
   // grupe menija: ikonica i boja grupe (boja se vidi u nekim stilovima menija), zatvorene grupe, stil povezivanja grupe i stavki
-  const IKONE_GRUPA = { Pregled: "home", Mapa: "map", Podaci: "table", Analize: "chart", Prognoza: "cloud", Projekat: "info" };
+  const IKONE_GRUPA = { Pregled: "home", Mapa: "map", Podaci: "table", Analize: "chart", Prognoza: "cloud", Projekat: "info", Admin: "lock" };
   for (const g of MENI) g.ik = IKONE_GRUPA[g.grupa] || g.stavke[0].ik;
   const BOJE_GRUPA = ["--primary", "--success", "--purple", "--orange", "--teal", "--t-muted"];
   const zatvoreneGrupe = new Set((() => { try { return JSON.parse(localStorage.getItem("ns-meni-zatvoreno") || "[]"); } catch (e) { return []; } })());
@@ -672,5 +680,5 @@ const LJ = (() => {
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
-  return { VERZIJA, VER, ucitajSkript, zatvaranjeVan, otvoriPrijavu, otvoriProfil, osveziAvatar, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
+  return { VERZIJA, VER, stalnoUzivo, ucitajSkript, zatvaranjeVan, otvoriPrijavu, otvoriProfil, osveziAvatar, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();
