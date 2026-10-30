@@ -27,8 +27,8 @@ window.BROJAC = (() => {
   const PRAG = 0.25;                              // najmanja pouzdanost detekcije
   const INTERVAL_MS = 220;                        // razmak između detekcija (~4–5 u sekundi)
   const IOU = 0.45;                               // spajanje duplih kutija iz susednih pločica
-  const KLASE = { car: "auto", truck: "kamion", bus: "autobus", motorcycle: "motor" };   // šta je „vozilo“
-  const BOJE = { car: "#38BDF8", truck: "#F59E0B", bus: "#A78BFA", motorcycle: "#34D399" };
+  const KLASE = { car: "auto", truck: "kamion", bus: "autobus", motorcycle: "motor", person: "pešak", bicycle: "bicikl" };
+  const BOJE = { car: "#38BDF8", truck: "#F59E0B", bus: "#A78BFA", motorcycle: "#34D399", person: "#F472B6", bicycle: "#FBBF24" };
 
   // ------------------------------------------------------------ učitavanje biblioteke i modela (jednom)
   let libP = null, modelP = null, model = null;
@@ -82,7 +82,7 @@ window.BROJAC = (() => {
 
   // ------------------------------------------------------------ jedna kamera: petlja detekcije + crtanje
   // dajRoi() → poligon [[x,y]…] u razmeri 0–1 (ili null): detekcija se radi samo unutar njega.
-  function napravi(video, platno, naBroj, dajRoi) {
+  function napravi(video, platno, naBroj, dajRoi, dajKlase) {
     const ctx = platno.getContext("2d");
     const off = document.createElement("canvas"), octx = off.getContext("2d");
     let radi = true, zadnje = [];
@@ -92,6 +92,7 @@ window.BROJAC = (() => {
       if (!vw || !vh) return;
       const roi = dajRoi && dajRoi();
       const uzRoi = roi && roi.length >= 3;
+      const izb = dajKlase && dajKlase();   // izabrane klase (Set) ili ništa = sve iz KLASE
       let [x0, y0, x1, y1] = uzRoi ? okvir(roi, vw, vh) : [0, 0, vw, vh];
       x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0));
       x1 = Math.min(vw, Math.ceil(x1)); y1 = Math.min(vh, Math.ceil(y1));
@@ -109,7 +110,7 @@ window.BROJAC = (() => {
         octx.drawImage(video, sx, sy, sw, sh, 0, 0, sw, sh);
         let pred;
         try { pred = await model.detect(off, 20, PRAG); } catch (e) { return; }
-        for (const d of pred) if (d.class in KLASE) {
+        for (const d of pred) if (d.class in KLASE && (!izb || izb.has(d.class))) {
           const [bx, by, bw, bh] = d.bbox;
           const cx = bx + sx + bw / 2, cy = by + sy + bh / 2;             // centar kutije
           if (uzRoi && !uRegionu(roi, cx, cy, vw, vh)) continue;          // samo u regionu
@@ -158,7 +159,7 @@ window.BROJAC = (() => {
     return { stop() { radi = false; try { ctx.clearRect(0, 0, platno.width, platno.height); } catch (e) {} } };
   }
 
-  async function ukljuci(video, platno, naBroj, dajRoi) { await spremiModel(); return napravi(video, platno, naBroj, dajRoi); }
+  async function ukljuci(video, platno, naBroj, dajRoi, dajKlase) { await spremiModel(); return napravi(video, platno, naBroj, dajRoi, dajKlase); }
 
-  return { ukljuci, spremiModel, KLASE };
+  return { ukljuci, spremiModel, KLASE, BOJE };
 })();
