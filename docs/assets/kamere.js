@@ -32,8 +32,9 @@
   const dajKlase = () => izabraneKlase;
   const povrsina = (poly) => { let s = 0; for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length]; s += a[0] * b[1] - b[0] * a[1]; } return Math.abs(s) / 2; };
 
-  /** Glavna adresa, pa ista sa drugim nazivom fajla (chunks.m3u8 ↔ playlist.m3u8). */
-  const adrese = (url) => {
+  /** Glavna adresa, pa ista sa drugim nazivom fajla (chunks.m3u8 ↔ playlist.m3u8); „bez_druge_adrese“ = samo glavna. */
+  const adrese = (url, samoGlavna = false) => {
+    if (samoGlavna) return [url];
     const druga = /chunks\.m3u8/.test(url) ? url.replace("chunks.m3u8", "playlist.m3u8")
       : /playlist\.m3u8/.test(url) ? url.replace("playlist.m3u8", "chunks.m3u8") : null;
     return druga ? [url, druga] : [url];
@@ -48,6 +49,8 @@
     const roi = (k.roi && k.roi.length >= 3) ? k.roi : null;
     let roiOn = !!roi;                 // podrazumevano prikaži region ako ga ima
     const dajRoi = () => roi;
+    const sveAdrese = () => adrese(k.url, !!k.bez_druge_adrese);
+    if (k.slika) { const im = new Image(); im.onerror = () => { video.poster = NEMA_SLIKE; }; im.src = k.slika; }   // spoljna sličica ne radi → placeholder
 
     function postavi(novo, tekst = "") {
       stanje = novo; el.dataset.stanje = novo;
@@ -63,7 +66,7 @@
     async function proveri() {
       if (uzivo) return;
       kod = 0;
-      for (const url of adrese(k.url)) {
+      for (const url of sveAdrese()) {
         try {
           const r = await fetch(krozProksi(url), { cache: "no-store" });
           if (r.ok && /#EXTM3U/.test(await r.text())) { aktivna = url; postavi("radi"); zakazi(); return; }
@@ -108,7 +111,7 @@
 
     // --- živ prenos (poziva se iz fokusa) ---
     function ugasiHls() { if (hls) { hls.destroy(); hls = null; } }
-    function pokreniUzivo() { uzivo = true; clearTimeout(ponovo); kod = 0; postavi("povezivanje"); probaj(adrese(k.url)); }
+    function pokreniUzivo() { uzivo = true; clearTimeout(ponovo); kod = 0; postavi("povezivanje"); probaj(sveAdrese()); }
     function probaj(spisak) {
       ugasiHls(); clearTimeout(tajmer);
       if (!spisak.length) { postavi("ne-radi", kod === 403 ? `${P403} Zatvori i probaj kasnije.` : PNE); return; }

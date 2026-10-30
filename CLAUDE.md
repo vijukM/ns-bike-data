@@ -25,6 +25,8 @@ Poslednji broj ima uvek dve cifre (00–99).
   da posetioci ne dobiju stari keš.
 - Strane 404/403 se ne menjaju ručno: `python -m sajt.strane_greske`.
 - Testovi: `python -m pytest -q tests`.
+- Pozadina strane (`body`): blag dijagonalni gradijent oko `--bg-body` + jedva vidljive dijagonalne trake + šum (SVG
+  feTurbulence), posebno za tamnu i svetlu temu (`--poz-*` u `stil.css`).
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 
@@ -39,6 +41,11 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Nova lozinka: `python -m sajt.kapija "nova lozinka" --upisi` — pravi i nove ključeve, pa stari ulazi i linkovi prestaju da važe.
 - Kada sajt postane javan: ukloniti oba reda iz strana, `kapija.js`, dugme „Zaključaj“ u `ljuska.js` i `robots.txt`.
 - Ovo je zavesa, ne zaštita: `docs/data/*.json` i kod su i dalje javni.
+- Svako polje za lozinku dobija dugme „oko“ (prikaži/sakrij) — `kapija.js` ga dodaje sam (MutationObserver), i za forme
+  koje se iscrtaju kasnije (prijava, privremeni link…).
+- Dok se kuca lozinka (prvi ekran kapije i admin forma) pozadina ima čestice: particles.js 2.0.0 (MIT,
+  `docs/assets/vendor/particles.min.js` + licenca), učitava se samo tada; boja prati temu, uz „manje pokreta“ stoje.
+  Admin forma ih uklanja posle ispravne lozinke (`cestice()` vraća funkciju za uklanjanje).
 
 ## Profil, biciklista (avatar) i scena „Reka“
 
@@ -78,8 +85,9 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Strane samo za upravljanje: **Kamere uživo** (`docs/kamere.html` + `assets/kamere.js`) i **Preuzimanje podataka**.
   Obe traže admin lozinku (`KAPIJA.trazAdmina`), i kad je sajt otključan.
 - Kamere: spisak u `docs/data/kamere.json` (naziv, opis, `url` HLS prenosa) — menja se bez izmene koda.
-  hls.js 1.5.20 sa jsdelivr (SRI). Opciono polje `slika` (snimak, `docs/assets/slike/kamere/<id>.webp`) = sličica
-  u mreži; bez slike → placeholder `nema-slike.svg`.
+  hls.js 1.5.20 sa jsdelivr (SRI). Opciono polje `slika` (snimak, `docs/assets/slike/kamere/<id>.webp` ili spoljna adresa)
+  = sličica u mreži; bez slike ili ako se ne učita → placeholder `nema-slike.svg`. `"bez_druge_adrese": true` = ne probati
+  drugi naziv fajla (chunks ↔ playlist). U skupljenom meniju „Kamere uživo“ ima crvenu tačku kao „Danas uživo“.
 - **Štednja protoka:** u mreži se NE prenosi uživo — prikazuju se sličice, a živ prenos kreće tek kad se uđe u kameru
   (fokus). Status u mreži se proverava lagano (`fetch` m3u8 liste, ne ceo prenos): radi / ne-radi (403) / nepoznato,
   ponovo na 2 min. Napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje staju (`zaustaviUzivo`).
