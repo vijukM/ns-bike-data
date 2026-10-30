@@ -76,6 +76,13 @@ jobs:
         continue-on-error: true
         run: python -m sajt.citanja
 
+      # drumski saobraćaj (automobili): isto pokretanje, poseban korak — greška ovde ne utiče na bicikliste
+      - name: Drumski saobraćaj (podaci/drumski)
+        if: always() && steps.brza.outputs.preskoceno != 'true'
+        continue-on-error: true
+        timeout-minutes: 3
+        run: python -m scraper.drumski
+
       - name: Commit i push podataka
         if: always() && steps.brza.outputs.preskoceno != 'true'
         run: |

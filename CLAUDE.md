@@ -67,6 +67,16 @@ Poslednji broj ima uvek dve cifre (00–99).
 - `python -m sajt.citanja` → `docs/data/citanja.json` (svaki dan × sat: minut čitanja, okidač, starost izvora, redovi, greške,
   nepravilnosti); pokreće se posle svakog čitanja. Strana: `docs/preuzimanje.html` + `docs/assets/preuzimanje.js`.
 
+## Drumski saobraćaj (automobili)
+
+- `scraper/drumski.py` čita `http://stari.ugzins.rs/SAUS/counters_georss_sr.xml` (rezerva `counters_georss_gps_sr.xml`,
+  isti sadržaj sa decimalnim zarezom) u istom pokretanju kao biciklisti — poseban korak u `citaj.yml` sa `continue-on-error`,
+  logika biciklista se ne menja.
+- Fajl nema dnevnih zbirova: 172 trake (44 lokacije), stanje poslednjeg 5-minutnog intervala (vozila/h, km/h, sleđenje,
+  zauzetost u promilima, stanje 1–6). Jedno čitanje na sat = jedan uzorak po satu.
+- Čuva se `podaci/drumski/YYYY/MM/DD/HHMM.csv.gz` (sva polja; bez sirovog XML-a zbog veličine), greške u `podaci/drumski/greske.log`.
+  Za sada se nigde ne prikazuje.
+
 ## Ne menjati bez izričitog zahteva
 
 - `docs/MODEL_KONTEKST.md` (opis modela prognoze).
