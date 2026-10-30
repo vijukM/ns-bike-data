@@ -89,8 +89,9 @@ Poslednji broj ima uvek dve cifre (00–99).
   = sličica u mreži; bez slike ili ako se ne učita → placeholder `nema-slike.svg`. `"bez_druge_adrese": true` = ne probati
   drugi naziv fajla (chunks ↔ playlist). U skupljenom meniju „Kamere uživo“ ima crvenu tačku kao „Danas uživo“.
 - **Štednja protoka:** u mreži se NE prenosi uživo — prikazuju se sličice, a živ prenos kreće tek kad se uđe u kameru
-  (fokus). Status u mreži se proverava lagano (`fetch` m3u8 liste, ne ceo prenos): radi / ne-radi (403) / nepoznato,
-  ponovo na 2 min. Napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje staju (`zaustaviUzivo`).
+  (fokus). Dok se kamera ne otvori ne šalje se nijedan zahtev ka serveru prenosa (nema provere statusa u mreži);
+  stanje radi/ne radi se vidi tek u fokusu. Napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje
+  staju (`zaustaviUzivo`).
 - Uvećan prikaz (fokus): klik na karticu ili dugme otvara kameru uživo preko ekrana; zum scrollom, pomeranje
   prevlačenjem, strelice ←/→ (i dugmad) za sledeću kameru, dugme za ceo ekran (`requestFullscreen`), zatvaranje × ili
   Esc. Kontrole su u okviru snimka (`.km-kontrole`): Brojanje, Region (prikaz ROI), i „Broji“ (izbor klasa). `.km-video`

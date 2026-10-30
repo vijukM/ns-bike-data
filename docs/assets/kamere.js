@@ -1,7 +1,6 @@
 /* Strana „Kamere uživo“ (Admin): HLS prenosi kamera iz data/kamere.json. Spisak se menja samo u JSON-u.
    Štednja protoka: u mreži se prikazuju SLIČICE (poster), a živ prenos kreće tek kad se uđe u kameru (fokus).
-   U mreži se dostupnost proverava lagano (dohvati se samo m3u8 lista, ne ceo prenos). Napuštanjem kamere prenos i
-   brojanje staju. Odgovor 403 = server pušta samo svoje sajtove (Referer); rešenje: no-referrer + proksi (kamere-proksi/).
+   Dok se kamera ne otvori ne šalje se nijedan zahtev ka serveru prenosa. Napuštanjem kamere prenos i brojanje staju. Odgovor 403 = server pušta samo svoje sajtove (Referer); rešenje: no-referrer + proksi (kamere-proksi/).
    U fokusu: zum (scroll), pomeranje (prevlačenje), strelice ←/→, ceo ekran, i u okviru snimka kontrole — brojanje,
    prikaz regiona i izbor klasa. Region interesa (polje „roi“ u kamere.json, poligon 0–1) se zadaje unapred. */
 "use strict";
@@ -9,7 +8,6 @@
 (async () => {
   const main = document.getElementById("sadrzaj");
   const ROK_MS = 20000;            // koliko se čeka da prenos krene pre nego što se proglasi „ne radi“
-  const PONOVO_MS = 2 * 60000;     // ponovna lagana provera dostupnosti
   const NEMA_SLIKE = "assets/slike/kamere/nema-slike.svg";
   const P403 = "Server kamere ne dozvoljava prikaz sa ovog sajta (403).";
   const PNE = "Prenos trenutno ne radi.";
@@ -44,7 +42,7 @@
   function kamera(k, el) {
     const video = el.querySelector("video"), stanjeEl = el.querySelector(".km-stanje"), poruka = el.querySelector(".km-poruka"), brojEl = el.querySelector(".km-broj");
     const platno = el.querySelector(".km-platno");
-    let hls = null, tajmer = 0, ponovo = 0, stanje = "povezivanje", aktivna = null, kod = 0, brojac = null;
+    let hls = null, tajmer = 0, stanje = "mirno", aktivna = null, kod = 0, brojac = null;
     let uzivo = false, brojOn = false;
     const roi = (k.roi && k.roi.length >= 3) ? k.roi : null;
     let roiOn = !!roi;                 // podrazumevano prikaži region ako ga ima
@@ -56,27 +54,11 @@
       stanje = novo; el.dataset.stanje = novo;
       stanjeEl.innerHTML = novo === "radi" ? LJ.stalnoUzivo(true)
         : novo === "ne-radi" ? LJ.stalnoUzivo(false, "NE RADI")
-          : novo === "nepoznato" ? `<span class="km-povezivanje">—</span>`
+          : novo === "mirno" ? ""
             : `<span class="km-povezivanje">povezivanje…</span>`;
       poruka.textContent = tekst; poruka.hidden = !tekst;
-      osveziZbir();
     }
 
-    // --- lagana provera dostupnosti (bez puštanja prenosa) — za status u mreži ---
-    async function proveri() {
-      if (uzivo) return;
-      kod = 0;
-      for (const url of sveAdrese()) {
-        try {
-          const r = await fetch(krozProksi(url), { cache: "no-store" });
-          if (r.ok && /#EXTM3U/.test(await r.text())) { aktivna = url; postavi("radi"); zakazi(); return; }
-          if (r.status === 403) kod = 403;
-        } catch (e) { kod = kod || "mreza"; }
-      }
-      postavi(kod === 403 ? "ne-radi" : "nepoznato", kod === 403 ? P403 : "");
-      zakazi();
-    }
-    function zakazi() { clearTimeout(ponovo); ponovo = setTimeout(() => { if (!uzivo && stanje !== "radi") proveri(); }, PONOVO_MS); }
 
     // --- region (statički prikaz kad se ne broji) ---
     function osveziRoi() {
@@ -111,7 +93,7 @@
 
     // --- živ prenos (poziva se iz fokusa) ---
     function ugasiHls() { if (hls) { hls.destroy(); hls = null; } }
-    function pokreniUzivo() { uzivo = true; clearTimeout(ponovo); kod = 0; postavi("povezivanje"); probaj(sveAdrese()); }
+    function pokreniUzivo() { uzivo = true; kod = 0; postavi("povezivanje"); probaj(sveAdrese()); }
     function probaj(spisak) {
       ugasiHls(); clearTimeout(tajmer);
       if (!spisak.length) { postavi("ne-radi", kod === 403 ? `${P403} Zatvori i probaj kasnije.` : PNE); return; }
@@ -137,7 +119,7 @@
       video.onplaying = null; try { video.pause(); } catch (e) { /* */ }
       video.removeAttribute("src"); try { video.load(); } catch (e) { /* */ }
       platno.hidden = true; brojEl.hidden = true;
-      proveri();                 // vrati status iz lagane provere
+      postavi("mirno");          // van fokusa se ništa ne proverava ni ne prenosi
     }
     function pauzirajUzivo(p) {
       if (!uzivo || stanje !== "radi") return;
@@ -150,7 +132,7 @@
     function roiToggle() { roiOn = !roiOn; if (brojac) return roiOn; osveziRoi(); return roiOn; }
 
     return {
-      proveri, pokreniUzivo, zaustaviUzivo, pauzirajUzivo, osveziRoi, brojToggle, roiToggle,
+      pokreniUzivo, zaustaviUzivo, pauzirajUzivo, osveziRoi, brojToggle, roiToggle,
       imaRoi: () => !!roi, roiPokr: () => roi ? Math.round(povrsina(roi) * 100) : 0,
       stBroj: () => brojOn, stRoi: () => roiOn, stanje: () => stanje,
     };
@@ -158,13 +140,7 @@
 
   // ---------------------------------------------------------------- strana
   let kamere = [];
-  function osveziZbir() {
-    const radi = kamere.filter((x) => x.stanje() === "radi").length, nr = kamere.filter((x) => x.stanje() === "ne-radi").length;
-    const el = document.getElementById("km-zbir");
-    if (el) el.textContent = `${radi} od ${kamere.length} radi${nr ? ` · ${nr} ne radi` : ""}`;
-    const zn = document.getElementById("km-uzivo");
-    if (zn) zn.innerHTML = LJ.stalnoUzivo(radi > 0, radi > 0 ? "UŽIVO" : "KAMERE");
-  }
+
 
   try {
     if (typeof KAPIJA !== "undefined") await KAPIJA.trazAdmina(main);
@@ -173,12 +149,11 @@
     const spisak = (C.kamere || []).filter((k) => k && k.url);
     main.innerHTML = `
       <header class="zaglavlje-strane pojava">
-        <div><span class="eyebrow">Admin · drumski saobraćaj</span><h1>Kamere <em>uživo</em></h1>
-          <p class="uvod sitno">Sličice se ne prenose uživo — klik na kameru je otvara uživo (i štedi protok). Brojanje i region su unutar uvećanog prikaza.</p></div>
-        <div class="akcije"><span id="km-uzivo">${LJ.stalnoUzivo(true)}</span><span class="znacka" id="km-zbir">…</span></div>
+        <div><span class="eyebrow">Admin · drumski saobraćaj</span><h1>Kamere <em>uživo</em></h1></div>
+        <div class="akcije">${LJ.stalnoUzivo(true)}</div>
       </header>
       <div class="km-mreza pojava">${spisak.map((k, i) => `
-        <section class="kartica km-kartica" data-i="${i}" data-stanje="povezivanje">
+        <section class="kartica km-kartica" data-i="${i}" data-stanje="mirno">
           <div class="km-video${k.slika ? " ima-sliku" : " bez-slike"}" data-i="${i}">
             <div class="km-zum">
               <video muted playsinline preload="none" poster="${esc(k.slika || NEMA_SLIKE)}" aria-label="${esc(k.naziv)} — kamera"></video>
@@ -195,7 +170,6 @@
       ${spisak.length ? "" : `<p class="sitno">U data/kamere.json nema kamera.</p>`}`;
     const kartice = [...main.querySelectorAll(".km-kartica")];
     kamere = kartice.map((el, i) => kamera(spisak[i], el));
-    kamere.forEach((x) => x.proveri());   // lagana provera statusa (bez prenosa)
 
     // --- fokus: uvećana jedna kamera; živ prenos, zum, pomeranje, strelice, ceo ekran, kontrole u snimku ---
     const fokusEl = document.createElement("div");
