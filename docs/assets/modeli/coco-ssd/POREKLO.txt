@@ -1,0 +1,5 @@
+Model: SSDLite MobileNet V2, treniran na COCO skupu, TensorFlow.js format.
+Izvor: @tensorflow-models/coco-ssd (https://github.com/tensorflow/tfjs-models), preuzeto sa
+  https://storage.googleapis.com/tfjs-models/savedmodel/ssdlite_mobilenet_v2/
+Licenca: Apache License 2.0 (dozvoljava slobodnu upotrebu, uključujući komercijalnu).
+Upotreba: brojanje vozila na strani Admin → Kamere uživo (docs/assets/kamere-brojac.js), u pregledaču.
