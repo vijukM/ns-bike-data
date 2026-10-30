@@ -92,6 +92,12 @@ Poslednji broj ima uvek dve cifre (00–99).
   `proksi` u `kamere.json` (Cloudflare Worker u `kamere-proksi/`, šalje dozvoljeni Referer). Ovo je privremeno, za
   demo iza admin lozinke; za javni rad i za brojanje vozila treba dozvola/licenca vlasnika prenosa. Proksi radi samo
   za taj jedan izvor (nije otvoreni proksi).
+- Brojanje vozila (`docs/assets/kamere-brojac.js`): dugme na kameri uključi/isključi brojanje; radi u pregledaču
+  (TensorFlow.js + COCO-SSD, model `docs/assets/modeli/coco-ssd/` ssdlite, Apache-2.0; biblioteka sa jsdelivr uz SRI).
+  Lenjo se učita (`LJ.ucitajSkript`) tek na uključenje; izbor po kameri se pamti u `localStorage` „ns-kamere-brojac“.
+  Kadar se deli na pločice (`PLOCICE` na vrhu) jer SSD smanji kadar pa inače ne vidi sitna vozila; crta okvire i broj
+  „koliko se trenutno vidi“ (bez praćenja i linije). Podešavanja su na vrhu modula. Protok preko linije + praćenje i
+  poređenje sa zvaničnim brojačima (ns-trafic-data) dolaze kasnije; za javni rad treba dozvola/licenca prenosa.
 - Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma
   ns-trafic-data, adresa u `docs/data/admin.json`) i podsetnik za tokene (datumi isteka u `docs/data/admin.json`).
 - `LJ.stalnoUzivo(sveze, tekst)` = isti znak „UŽIVO“ kao „Danas uživo“, ali ne zavisi od čitanja brojača.
