@@ -1,6 +1,7 @@
 """Provera verzije aplikacije: svaki commit (bez merge-a) između BAZA i VRH koji menja nešto van podataka
 mora da poveća VERZIJA u docs/assets/ljuska.js (oblik 1.X.YY) za tačno 1: 1.1.27 → 1.1.28, a posle .99 ide 1.(X+1).00.
-Veći skok srednjeg ili prvog broja je dozvoljen (nova celina).
+Veći skok srednjeg ili prvog broja je dozvoljen (nova celina). Ne računaju se fajlovi koji u celom PR-u ostaju
+isti (npr. privremeni workflow koji se doda pa obriše) — oni ne menjaju aplikaciju.
 
     python .github/verzija_provera.py <baza> <vrh>
 """
@@ -37,8 +38,10 @@ def tekst(v: tuple[int, int, int]) -> str:
 
 def main(baza: str, vrh: str) -> int:
     greske = []
+    konacno = set(git("diff", "--name-only", f"{baza}...{vrh}").split())       # šta PR stvarno menja
     for c in git("rev-list", "--reverse", "--no-merges", f"{baza}..{vrh}").split():
-        fajlovi = [f for f in git("diff-tree", "--no-commit-id", "--name-only", "-r", c).split() if not f.startswith(PODACI)]
+        fajlovi = [f for f in git("diff-tree", "--no-commit-id", "--name-only", "-r", c).split()
+                   if not f.startswith(PODACI) and f in konacno]
         if not fajlovi:
             continue
         pre, posle = verzija(f"{c}^"), verzija(c)
