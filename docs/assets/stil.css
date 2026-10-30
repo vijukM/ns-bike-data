@@ -1599,6 +1599,8 @@ dialog.profil [hidden] { display: none !important; }
 .km-kartica[data-stanje="ne-radi"] .km-video { cursor: default; background: repeating-linear-gradient(135deg, #04162F 0 14px, #071d3b 14px 28px); }
 .km-kartica[data-stanje="ne-radi"] .km-ceo { display: none; }
 .km-kartica[data-stanje="ne-radi"] .ima-sliku video { filter: grayscale(.6) brightness(.55); }
+.km-video.bez-slike video { object-fit: cover; }   /* placeholder popunjava karticu */
+.km-kartica[data-stanje="ne-radi"] .km-poruka,
 .km-kartica[data-stanje="ne-radi"] .ima-sliku .km-poruka { inset: auto 0 0 0; padding: 8px 14px; background: rgb(2 14 34 / .8); color: #CBD5E1; font-size: 12px; }
 .km-kartica[data-stanje="ne-radi"] .km-glava b { color: var(--t-muted); }
 
