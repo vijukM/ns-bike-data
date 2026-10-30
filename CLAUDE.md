@@ -69,13 +69,9 @@ Poslednji broj ima uvek dve cifre (00–99).
 
 ## Drumski saobraćaj (automobili)
 
-- `scraper/drumski.py` čita `http://stari.ugzins.rs/SAUS/counters_georss_sr.xml` (rezerva `counters_georss_gps_sr.xml`,
-  isti sadržaj sa decimalnim zarezom) u istom pokretanju kao biciklisti — poseban korak u `citaj.yml` sa `continue-on-error`,
-  logika biciklista se ne menja.
-- Fajl nema dnevnih zbirova: 172 trake (44 lokacije), stanje poslednjeg 5-minutnog intervala (vozila/h, km/h, sleđenje,
-  zauzetost u promilima, stanje 1–6). Jedno čitanje na sat = jedan uzorak po satu.
-- Čuva se `podaci/drumski/YYYY/MM/DD/HHMM.csv.gz` (sva polja; bez sirovog XML-a zbog veličine), greške u `podaci/drumski/greske.log`.
-  Za sada se nigde ne prikazuje.
+- Prikuplja se u posebnom projektu **ns-trafic-data** (na 5 min), ne u ns-bike-data. U ns-bike-data nema svog prikupljanja
+  (ranije `scraper/drumski.py` + `podaci/drumski/` — uklonjeno); vrati se samo ako se dva projekta objedine.
+- Stanje prikupljanja (ns-trafic-data `stanje.json`) prikazuje admin strana „Preuzimanje podataka“.
 
 ## Admin (grupa u meniju)
 
@@ -86,6 +82,9 @@ Poslednji broj ima uvek dve cifre (00–99).
   „NE RADI“ i proverava se ponovo na 2 min; prenos se pauzira van ekrana. hls.js 1.5.20 sa jsdelivr (SRI).
   Opciono polje `slika` (snimak kamere, `docs/assets/slike/kamere/<id>.webp`) se prikazuje dok prenos ne radi;
   kamera bez slike dobija placeholder `nema-slike.svg`.
+- Uvećan prikaz (fokus): dugme gore desno (ili klik na karticu) uveća jednu kameru preko ekrana; zum scrollom,
+  pomeranje prevlačenjem, zatvaranje × ili Esc. `.km-video` se premesti u overlay (`.km-fokus`), zum je transform na
+  `.km-zum` (video + platno za brojanje), pa se okviri uvećavaju zajedno sa slikom.
 - Prenosi `srbija-nadlanu.ott.solutions` vraćaju 403 za zahteve sa nasicu.rs (server pušta samo svoje sajtove, npr.
   kamere.24sedam.rs; proverava Referer). Pregledač ne da JS-u da lažira Referer, pa strana (1) ne šalje Referer
   (`<meta name="referrer" content="no-referrer">` u `kamere.html`) i (2) ume da prenos provuče kroz proksi iz polja

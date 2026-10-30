@@ -217,14 +217,6 @@
     const zn = document.getElementById("km-uzivo");   // sivo kad nijedna ne radi
     if (zn && radi + nr) zn.innerHTML = LJ.stalnoUzivo(radi > 0, radi > 0 ? "UŽIVO" : "NE RADI");
   }
-  async function preko(el) {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else if (el.requestFullscreen) await el.requestFullscreen();
-      else if (el.querySelector("video").webkitEnterFullscreen) el.querySelector("video").webkitEnterFullscreen();   // iPhone
-    } catch (e) { /* pregledač odbio */ }
-  }
-
   try {
     if (typeof KAPIJA !== "undefined") await KAPIJA.trazAdmina(main);
     const C = await fetch(`data/kamere.json?t=${Date.now()}`, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(`kamere.json: ${r.status}`); return r.json(); });
@@ -232,23 +224,22 @@
     const spisak = (C.kamere || []).filter((k) => k && k.url);
     main.innerHTML = `
       <header class="zaglavlje-strane pojava">
-        <div><span class="eyebrow">Admin · drumski saobraćaj</span><h1>Kamere <em>uživo</em></h1>
-          <p class="uvod">Prenos sa kamera saobraćaja u Novom Sadu. Klik na kameru ili dugme ${LJ.ik("expand")} prikazuje je preko celog ekrana.
-            Dugme ${IKONA_BROJ} uključuje brojanje vozila (radi na uređaju, ništa se ne šalje), a ${IKONA_REGION} crta region —
-            deo puta gde se broji (brže i tačnije, bez zgrada i drveća).</p></div>
+        <div><span class="eyebrow">Admin · drumski saobraćaj</span><h1>Kamere <em>uživo</em></h1></div>
         <div class="akcije"><span id="km-uzivo">${LJ.stalnoUzivo(true)}</span><span class="znacka" id="km-zbir">…</span></div>
       </header>
       <div class="km-mreza pojava">${spisak.map((k, i) => `
         <section class="kartica km-kartica" data-i="${i}" data-stanje="povezivanje">
-          <div class="km-video${k.slika ? " ima-sliku" : " bez-slike"}">
-            <video muted playsinline autoplay preload="none" poster="${esc(k.slika || NEMA_SLIKE)}" aria-label="${esc(k.naziv)} — prenos uživo"></video>
-            <canvas class="km-platno" hidden></canvas>
+          <div class="km-video${k.slika ? " ima-sliku" : " bez-slike"}" data-i="${i}">
+            <div class="km-zum">
+              <video muted playsinline autoplay preload="none" poster="${esc(k.slika || NEMA_SLIKE)}" aria-label="${esc(k.naziv)} — prenos uživo"></video>
+              <canvas class="km-platno" hidden></canvas>
+            </div>
             <div class="km-broj" hidden></div>
             <div class="km-poruka" hidden></div>
             <div class="km-alati">
               <button type="button" class="ikonica-dugme km-region" aria-label="Region brojanja: ${esc(k.naziv)}" title="Region brojanja (nacrtaj deo puta)">${IKONA_REGION}</button>
               <button type="button" class="ikonica-dugme km-prebroj" aria-pressed="false" aria-label="Brojanje vozila: ${esc(k.naziv)}" title="Brojanje vozila (uključi/isključi)">${IKONA_BROJ}</button>
-              <button type="button" class="ikonica-dugme km-ceo" aria-label="Preko celog ekrana: ${esc(k.naziv)}" title="Preko celog ekrana">${LJ.ik("expand")}</button>
+              <button type="button" class="ikonica-dugme km-ceo" aria-label="Uvećaj kameru: ${esc(k.naziv)}" title="Uvećaj (fokus na ovu kameru)">${LJ.ik("expand")}</button>
             </div>
           </div>
           <div class="km-glava"><div><b>${esc(k.naziv)}</b><span class="sitno">${esc(k.opis || "")}</span></div><span class="km-stanje"></span></div>
@@ -262,12 +253,61 @@
       const r = el.getBoundingClientRect();
       kamere[i].vidljivost(!document.hidden && r.bottom > 0 && r.top < innerHeight);
     }));
-    main.addEventListener("click", (e) => {
-      const kartEl = e.target.closest(".km-kartica");
-      if (!kartEl) return;
-      if (e.target.closest(".km-prebroj")) { kamere[+kartEl.dataset.i].tumbler(); return; }
-      if (e.target.closest(".km-region")) { kamere[+kartEl.dataset.i].region(); return; }
-      if (e.target.closest(".km-ceo") || e.target.closest(".km-video")) preko(kartEl.querySelector(".km-video"));
+    // --- fokus: uvećana jedna kamera sa zumom (scroll) i pomeranjem (prevlačenje) ---
+    const fokusEl = document.createElement("div");
+    fokusEl.className = "km-fokus"; fokusEl.hidden = true;
+    fokusEl.innerHTML = `<div class="km-fokus-poz">
+      <div class="km-fokus-traka"><span class="km-fokus-ime"></span>
+        <button type="button" class="ikonica-dugme km-fokus-x" aria-label="Zatvori (Esc)" title="Zatvori (Esc)">${LJ.ik("x") || "✕"}</button></div>
+      <div class="km-fokus-ram"></div></div>`;
+    document.body.appendChild(fokusEl);
+    const ram = fokusEl.querySelector(".km-fokus-ram");
+    let uFokusu = -1, S = 1, X = 0, Y = 0, vuci = false, lx = 0, ly = 0;
+    function primeniZum() {
+      const z = ram.querySelector(".km-zum"); if (!z) return;
+      const r = ram.getBoundingClientRect(), mx = (S - 1) * r.width / 2, my = (S - 1) * r.height / 2;
+      X = Math.max(-mx, Math.min(mx, X)); Y = Math.max(-my, Math.min(my, Y));
+      z.style.transform = `translate(${X}px, ${Y}px) scale(${S})`;
+      ram.classList.toggle("moze-vuci", S > 1);
+    }
+    function otvoriFokus(i) {
+      if (uFokusu === i) return;
+      if (uFokusu >= 0) zatvoriFokus();
+      ram.appendChild(kartice[i].querySelector(".km-video"));
+      kartice[i].classList.add("u-fokusu");
+      fokusEl.querySelector(".km-fokus-ime").textContent = spisak[i].naziv;
+      S = 1; X = 0; Y = 0; primeniZum();
+      fokusEl.hidden = false; document.body.classList.add("km-fokus-otvoren"); uFokusu = i;
+    }
+    function zatvoriFokus() {
+      if (uFokusu < 0) return;
+      const kart = kartice[uFokusu], vid = ram.querySelector(".km-video");
+      if (vid) { const z = vid.querySelector(".km-zum"); if (z) z.style.transform = ""; kart.insertBefore(vid, kart.querySelector(".km-glava")); }
+      kart.classList.remove("u-fokusu"); fokusEl.hidden = true; document.body.classList.remove("km-fokus-otvoren");
+      S = 1; X = 0; Y = 0; uFokusu = -1;
+    }
+    ram.addEventListener("wheel", (e) => {
+      if (uFokusu < 0) return; e.preventDefault();
+      const r = ram.getBoundingClientRect(), cx = e.clientX - r.left - r.width / 2, cy = e.clientY - r.top - r.height / 2;
+      const f = e.deltaY < 0 ? 1.15 : 1 / 1.15, nS = Math.min(8, Math.max(1, S * f)), k2 = nS / S;
+      X = cx - (cx - X) * k2; Y = cy - (cy - Y) * k2; S = nS; if (S <= 1.001) { S = 1; X = 0; Y = 0; }
+      primeniZum();
+    }, { passive: false });
+    ram.addEventListener("pointerdown", (e) => { if (uFokusu < 0 || S <= 1) return; vuci = true; lx = e.clientX; ly = e.clientY; try { ram.setPointerCapture(e.pointerId); } catch (x) {} });
+    ram.addEventListener("pointermove", (e) => { if (!vuci) return; X += e.clientX - lx; Y += e.clientY - ly; lx = e.clientX; ly = e.clientY; primeniZum(); });
+    const krajVuce = () => { vuci = false; };
+    ram.addEventListener("pointerup", krajVuce); ram.addEventListener("pointercancel", krajVuce);
+    fokusEl.addEventListener("click", (e) => { if (e.target === fokusEl || e.target.closest(".km-fokus-x")) zatvoriFokus(); });
+    addEventListener("keydown", (e) => { if (e.key === "Escape") zatvoriFokus(); });
+
+    // dugmad i otvaranje fokusa rade i u mreži i u uvećanom prikazu (klik se pronalazi preko .km-video[data-i])
+    document.addEventListener("click", (e) => {
+      const vidEl = e.target.closest(".km-video"); if (!vidEl) return;
+      const i = +vidEl.dataset.i;
+      if (e.target.closest(".km-prebroj")) { kamere[i].tumbler(); return; }
+      if (e.target.closest(".km-region")) { kamere[i].region(); return; }
+      if (e.target.closest(".km-ceo")) { otvoriFokus(i); return; }
+      if (uFokusu < 0) otvoriFokus(i);   // klik na karticu u mreži → uvećaj
     });
     LJ.pojave(main);
   } catch (e) {

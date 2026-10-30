@@ -1587,9 +1587,21 @@ dialog.profil [hidden] { display: none !important; }
 .km-mreza { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 18px; }
 .km-kartica { padding: 0; overflow: hidden; }
 .km-video { position: relative; aspect-ratio: 16 / 9; background: #020E22; cursor: zoom-in; }
+.km-zum { position: absolute; inset: 0; transform-origin: center center; will-change: transform; }
 .km-video video { width: 100%; height: 100%; object-fit: contain; display: block; background: #020E22; }
-.km-video:fullscreen { cursor: zoom-out; aspect-ratio: auto; }
-.km-video:fullscreen video { object-fit: contain; }
+/* uvećan prikaz jedne kamere (fokus) sa zumom i pomeranjem */
+body.km-fokus-otvoren { overflow: hidden; }
+.km-fokus { position: fixed; inset: 0; z-index: 60; background: rgb(2 8 20 / .93); display: flex; }
+.km-fokus[hidden] { display: none; }
+.km-fokus-poz { margin: auto; width: min(96vw, 1600px); display: flex; flex-direction: column; gap: 10px; }
+.km-fokus-traka { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #E8EEF7; font-weight: 600; padding: 0 2px; }
+.km-fokus-ram { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: 82vh; overflow: hidden; border-radius: 14px; background: #020E22; }
+.km-fokus-ram.moze-vuci { cursor: grab; }
+.km-fokus-ram.moze-vuci:active { cursor: grabbing; }
+.km-fokus-ram .km-video { position: absolute; inset: 0; aspect-ratio: auto; cursor: inherit; }
+.km-fokus-x { background: rgb(255 255 255 / .12); color: #fff; border-color: transparent; }
+.km-fokus-x:hover { background: rgb(255 255 255 / .22); }
+.km-fokus .km-ceo { display: none; }   /* u fokusu je zatvaranje preko × */
 .km-alati { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 3; }
 .km-ceo, .km-prebroj, .km-region { background: rgb(4 22 47 / .65); color: #F1F5F9; border-color: transparent; }
 .km-ceo:hover, .km-prebroj:hover, .km-region:hover { background: rgb(4 22 47 / .85); }
