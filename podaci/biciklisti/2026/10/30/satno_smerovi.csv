@@ -1,0 +1,1369 @@
+serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,6.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,39.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,62.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,90.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,92.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,103.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,96.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,96.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,83.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,75.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,91.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,45.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,76.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,21.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,36.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,32.0,ok
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,7.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,27.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,41.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,32.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,44.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,49.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,80.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,71.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,34.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,49.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,34.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,43.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,34.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,18.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,7.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,11.0,ok
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,3.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,5.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,31.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,26.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,34.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,13.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,35.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,12.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,20.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,34.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,33.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,29.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,15.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,22.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,20.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,11.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,8.0,ok
+20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,4.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,28.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,12.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,12.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,6.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,9.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,29.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,25.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,3.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,6.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,1.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,5.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,5.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,12.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,13.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,5.0,ok
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,3.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,3.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,7.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,13.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,17.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,14.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,14.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,17.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,19.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,22.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,39.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,43.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,33.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,31.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,15.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,22.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,5.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,13.0,ok
+22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,2.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,10.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,24.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,20.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,17.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,27.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,39.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,19.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,18.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,35.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,33.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,20.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,21.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,23.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,21.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,5.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,10.0,ok
+22a,22NSa Bul. kralja Petra I,13,Kraljevica Marka-Kisacka (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,6.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,2.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,17.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,47.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,94.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,91.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,87.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,80.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,90.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,101.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,110.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,113.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,132.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,124.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,112.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,73.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,61.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,58.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,33.0,ok
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,5.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,18.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,33.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,24.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,19.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,28.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,28.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,24.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,19.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,35.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,29.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,21.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,31.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,20.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,13.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,9.0,ok
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,5.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,20.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,42.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,21.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,15.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,21.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,29.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,39.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,20.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,30.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,34.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,15.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,28.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,24.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,16.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,9.0,ok
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,2.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,3.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,11.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,9.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,8.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,16.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,16.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,18.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,12.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,23.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,15.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,18.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,17.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,11.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,8.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,13.0,ok
+26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,2.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,8.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,20.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,11.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,12.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,10.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,14.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,18.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,9.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,19.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,10.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,7.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,22.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,7.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,8.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,6.0,ok
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,13.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,44.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,60.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,68.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,35.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,41.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,50.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,48.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,54.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,36.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,81.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,47.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,55.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,58.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,43.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,36.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,22.0,ok
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,1.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,11.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,26.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,28.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,20.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,14.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,20.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,20.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,23.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,26.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,38.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,29.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,21.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,29.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,19.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,13.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,14.0,ok
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,5.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,6.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,5.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,6.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,20.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,97.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,111.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,93.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,92.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,79.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,93.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,86.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,59.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,89.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,75.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,64.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,55.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,56.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,31.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,33.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,5.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,7.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,2.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,3.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,17.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,45.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,59.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,84.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,76.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,85.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,91.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,109.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,98.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,122.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,94.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,84.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,73.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,64.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,69.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,39.0,ok
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,8.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,4.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,2.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,2.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,10.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,27.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,46.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,48.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,73.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,51.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,69.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,68.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,84.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,45.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,59.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,71.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,58.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,55.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,70.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,43.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,44.0,ok
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,4.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,2.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,5.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,11.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,40.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,33.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,28.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,41.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,40.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,45.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,47.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,43.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,41.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,42.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,37.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,33.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,26.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,13.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,15.0,ok
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,8.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,1.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,16.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,63.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,92.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,81.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,77.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,85.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,99.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,88.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,55.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,107.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,66.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,59.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,56.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,46.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,42.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,32.0,ok
+30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,3.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,5.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,12.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,49.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,77.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,70.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,76.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,70.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,91.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,98.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,89.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,85.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,88.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,114.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,104.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,92.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,72.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,56.0,ok
+30b,30NSb Bul. cara Lazara,24,Fruskogorska-Bul. Oslobodj. (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,21.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,6.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,4.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,6.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,3.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,10.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,20.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,102.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,112.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,83.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,100.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,106.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,96.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,78.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,91.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,116.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,141.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,128.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,83.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,119.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,115.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,53.0,ok
+31b,31NSb Kralja Petra I -P. Adamova,23,Bul. Oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,6.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,3.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,5.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,4.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,8.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,25.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,78.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,83.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,87.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,87.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,86.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,88.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,103.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,94.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,114.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,91.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,99.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,90.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,63.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,57.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,38.0,ok
+34b,34NSb Futoska (N. Tesle),24,Bul. Oslobodjenja - C. Dušana  (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,18.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,7.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,7.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,5.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,17.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,77.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,222.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,275.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,202.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,170.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,170.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,237.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,261.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,206.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,313.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,203.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,139.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,167.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,166.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,127.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,114.0,ok
+34a,34NSa Futoska (N. Tesle),14,C. Dušana - Bul. Oslobodjenja (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,6.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,3.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,4.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,2.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,2.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,12.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,11.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,8.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,2.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,1.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,0.0,ok
+36b,36NSb Jevrejska,24,Bul. M. Pupina - Futoska (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,9.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,10.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,28.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,87.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,141.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,119.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,60.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,108.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,81.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,106.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,99.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,178.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,85.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,123.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,98.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,87.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,88.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,68.0,ok
+36a,36NSa Jevrejska,14,Futoska - Bul. M. Pupina (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,3.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,6.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,13.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,15.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,15.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,7.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,8.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,12.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,10.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,10.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,15.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,7.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,9.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,11.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,3.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,1.0,ok
+37a,37NSa Bul.oslobodjenja(N.fronta),14,Most slobode - N. fronta (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,8.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,8.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,22.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,54.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,68.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,40.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,57.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,34.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,55.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,63.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,60.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,80.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,54.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,58.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,46.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,41.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,47.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,20.0,ok
+38a,38NSa Hadzi Ruvimova,14,B. Evrope - Rumenacka (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,11.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,4.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,29.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,57.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,56.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,71.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,68.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,53.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,89.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,78.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,56.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,67.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,67.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,84.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,53.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,79.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,18.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,42.0,ok
+38b,38NSb Hadzi Ruvimova,24,Rumenacka - B. Evrope (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,6.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,22.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,36.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,31.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,51.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,45.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,36.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,60.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,52.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,55.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,53.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,62.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,40.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,31.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,24.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,24.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,13.0,ok
+39b,39NSb Bul. J. Tomica,24,B. oslobodjenja - Rumenacka (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,3.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,6.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,13.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,21.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,31.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,35.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,31.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,39.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,28.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,29.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,49.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,36.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,25.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,14.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,26.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,16.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,14.0,ok
+39a,39NSa Bul. J. Tomica,14,Rumenacka - B. oslobodjenja (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,6.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,20.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,9.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,10.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,22.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,24.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,22.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,25.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,50.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,42.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,37.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,30.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,34.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,24.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,15.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,13.0,ok
+40a,40NSa Bul. P. Pavla,21,Bul Evrope - Vrsacka,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,2.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,5.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,13.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,9.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,18.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,26.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,20.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,19.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,20.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,24.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,25.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,24.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,20.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,16.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,13.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,6.0,ok
+40b,40NSb Bul. P. Pavla,11,Bul Evrope - Vrsacka,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,1.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,3.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,14.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,20.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,22.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,19.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,18.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,11.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,15.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,11.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,17.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,19.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,23.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,16.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,8.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,7.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,5.0,ok
+40b,40NSb Bul. P. Pavla,21,Vrsacka - Bul Evrope,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,7.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,17.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,51.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,45.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,30.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,27.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,30.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,27.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,36.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,24.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,35.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,33.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,25.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,26.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,15.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,8.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,11.0,ok
+40a,40NSa Bul. P. Pavla,11,Vrsacka - Bul Evrope,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,10.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,65.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,110.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,59.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,76.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,77.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,60.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,85.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,63.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,73.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,5.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,1.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,4.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,1.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),11,Bul. kralja Petra I - N.Sajma,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,3.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,31.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,51.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,47.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,65.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,62.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,68.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,69.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,68.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,81.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,9.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,2.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,2.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,2.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,1.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,4.0,ok
+41,41NS Bul.oslobodjenja(N.Sajma),21,N.Sajma - Bul. kralja Petra I,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,4.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,9.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,22.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,51.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,35.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,28.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,25.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,35.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,40.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,38.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,46.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,63.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,53.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,57.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,38.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,36.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,20.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,20.0,ok
+42b,42NSb Radomira Rase Radujkova,23,Bul Evrope - Bul S. Jovanovica (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,0.0,ok
+42a,42NSa Radomira Rase Radujkova,13,Bul S. Jovanovica - Bul Evrope (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,2.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,15.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,24.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,46.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,32.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,45.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,48.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,40.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,49.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,30.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,34.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,27.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,46.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,33.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,46.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,27.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,20.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,19.0,ok
+43a,43NSa K.Stankovica,14,Bul.Evrope-Rumenacka (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,2.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,2.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,16.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,17.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,17.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,9.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,21.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,11.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,19.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,23.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,19.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,21.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,21.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,25.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,19.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,20.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,13.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,8.0,ok
+43b,43NSb K.Stankovica,24,Rumenacka-Bul.Evrope (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,8.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,23.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,52.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,49.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,32.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,33.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,32.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,42.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,38.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,31.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,55.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,73.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,30.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,47.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,36.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,28.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,18.0,ok
+44b,44NSb Bul.Evrope(B.Bajica),24,Futoska-H.Ruvimova (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,2.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,5.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,20.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,32.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,36.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,30.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,26.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,38.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,18.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,26.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,36.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,56.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,42.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,41.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,34.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,38.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,15.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,22.0,ok
+44a,44NSa Bul.Evrope(B.Bajica),14,H.Ruvimova-Futoska (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,10.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,24.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,34.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,22.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,32.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,25.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,19.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,16.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,16.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,21.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,18.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,12.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,14.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,11.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,6.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,9.0,ok
+45a,45NSa Bate Brkica,14,Bul.J.Ducica-Futoski put (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,2.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,13.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,19.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,40.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,32.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,42.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,29.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,39.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,45.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,26.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,37.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,41.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,34.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,22.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,27.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,11.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,17.0,ok
+45b,45NSb Bate Brkica,24,Futoski put-Bul.J.Ducica (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,5.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,5.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,11.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,14.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,18.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,23.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,13.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,16.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,19.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,15.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,23.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,17.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,17.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,13.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,7.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,11.0,ok
+46a,46NSa Futoski put,21,Bate Brkica-Bul.Kneza Milosa,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,4.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,3.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,6.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,24.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,28.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,34.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,27.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,30.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,24.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,28.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,24.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,17.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,21.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,25.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,12.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,14.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,15.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,9.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,10.0,ok
+46b,46NSb Futoski put,11,Bate Brkica-Bul.Kneza Milosa,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,3.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,13.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,20.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,23.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,19.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,26.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,13.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,27.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,23.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,14.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,19.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,12.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,14.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,18.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,10.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,6.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,5.0,ok
+46a,46NSa Futoski put,11,Bul.Kneza Milosa-Bate Brkica,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,3.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,4.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,2.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,1.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,12.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,10.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,16.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,27.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,30.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,27.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,19.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,29.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,27.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,38.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,35.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,27.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,17.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,27.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,18.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,15.0,ok
+46b,46NSb Futoski put,21,Bul.Kneza Milosa-Bate Brkica,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,5.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,5.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,11.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,10.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,15.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,15.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,11.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,16.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,20.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,13.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,18.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,13.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,9.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,11.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,16.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,8.0,ok
+47,47NS Narodnog fronta(Sekspirova),21,Bul.oslobodjenja-Sekspirova,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,10.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,22.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,29.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,12.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,18.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,16.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,22.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,43.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,17.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,23.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,27.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,18.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,25.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,17.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,10.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,8.0,ok
+47,47NS Narodnog fronta(Sekspirova),11,Sekspirova-Bul.oslobodjenja,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,0.0,ok
+49b,49NSb Maksima Gorkog,24,Strazilovska-Sutjeska (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,1.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,1.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,2.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,14.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,28.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,18.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,7.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,12.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,20.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,30.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,6.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,7.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,6.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,6.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,4.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,6.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,3.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,4.0,ok
+49a,49NSa Maksima Gorkog,14,Sutjeska-Strazilovska (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,3.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,1.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,2.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,1.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,4.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,25.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,47.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,31.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,36.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,36.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,31.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,77.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,47.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,76.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,28.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,27.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,37.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,20.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,19.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,14.0,ok
+50a,50NSa Brace Ribnikar,14,Futoska-M.Dimitrijevica (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,2.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,9.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,34.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,53.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,26.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,23.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,11.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,37.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,48.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,38.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,29.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,34.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,39.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,35.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,32.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,10.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,12.0,ok
+50b,50NSb Brace Ribnikar,24,M.Dimitrijevica-Futoska (u oba smera)(b),2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,1.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,4.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,6.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,4.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,18.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,28.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,25.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,38.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,30.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,45.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,54.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,56.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,75.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,122.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,91.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,68.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,59.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,60.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,41.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,36.0,ok
+51b,51NSb Futoski put,11,Bul.Evrope-Suboticka,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,3.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,1.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,1.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,3.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,23.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,10.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,20.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,9.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,15.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,24.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,47.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,14.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,26.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,13.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,16.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,14.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,13.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,7.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,7.0,ok
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,0.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,3.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,4.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,11.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,18.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,13.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,12.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,13.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,22.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,30.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,16.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,19.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,18.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,20.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,18.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,11.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,6.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,4.0,ok
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,1,2026-10-30 01:00:00,2026-10-30 00:00:00+00:00,0.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,2,2026-10-30 02:00:00,2026-10-30 01:00:00+00:00,2.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,3,2026-10-30 03:00:00,2026-10-30 02:00:00+00:00,5.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,4,2026-10-30 04:00:00,2026-10-30 03:00:00+00:00,6.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,5,2026-10-30 05:00:00,2026-10-30 04:00:00+00:00,3.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,6,2026-10-30 06:00:00,2026-10-30 05:00:00+00:00,12.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,7,2026-10-30 07:00:00,2026-10-30 06:00:00+00:00,46.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,8,2026-10-30 08:00:00,2026-10-30 07:00:00+00:00,135.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,9,2026-10-30 09:00:00,2026-10-30 08:00:00+00:00,115.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,10,2026-10-30 10:00:00,2026-10-30 09:00:00+00:00,49.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,11,2026-10-30 11:00:00,2026-10-30 10:00:00+00:00,59.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,12,2026-10-30 12:00:00,2026-10-30 11:00:00+00:00,58.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,13,2026-10-30 13:00:00,2026-10-30 12:00:00+00:00,69.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,14,2026-10-30 14:00:00,2026-10-30 13:00:00+00:00,68.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,15,2026-10-30 15:00:00,2026-10-30 14:00:00+00:00,,nepotpun_sat
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,16,2026-10-30 16:00:00,2026-10-30 15:00:00+00:00,39.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,17,2026-10-30 17:00:00,2026-10-30 16:00:00+00:00,51.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,18,2026-10-30 18:00:00,2026-10-30 17:00:00+00:00,57.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,19,2026-10-30 19:00:00,2026-10-30 18:00:00+00:00,33.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,20,2026-10-30 20:00:00,2026-10-30 19:00:00+00:00,39.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,21,2026-10-30 21:00:00,2026-10-30 20:00:00+00:00,44.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,22,2026-10-30 22:00:00,2026-10-30 21:00:00+00:00,18.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,23,2026-10-30 23:00:00,2026-10-30 22:00:00+00:00,19.0,ok
+51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-10-30,24,2026-10-31 00:00:00,2026-10-30 23:00:00+00:00,,zastarelo
