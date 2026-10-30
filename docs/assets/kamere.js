@@ -50,8 +50,10 @@
     const sveAdrese = () => adrese(k.url, !!k.bez_druge_adrese);
     if (k.slika) { const im = new Image(); im.onerror = () => { video.poster = NEMA_SLIKE; }; im.src = k.slika; }   // spoljna sličica ne radi → placeholder
 
+    const vidEl = el.querySelector(".km-video");
     function postavi(novo, tekst = "") {
       stanje = novo; el.dataset.stanje = novo;
+      vidEl.classList.toggle("ucitava", novo === "povezivanje" && uzivo);   // krug dok prenos ne krene
       stanjeEl.innerHTML = novo === "radi" ? LJ.stalnoUzivo(true)
         : novo === "ne-radi" ? LJ.stalnoUzivo(false, "NE RADI")
           : novo === "mirno" ? ""
@@ -161,6 +163,7 @@
             </div>
             <div class="km-broj" hidden></div>
             <div class="km-poruka" hidden></div>
+            <div class="km-ucitava" role="status" aria-label="Učitavam prenos"><span class="km-krug"></span><span>Učitavam prenos…</span></div>
             <div class="km-alati">
               <button type="button" class="ikonica-dugme km-ceo" aria-label="Otvori uživo: ${esc(k.naziv)}" title="Otvori uživo (fokus)">${LJ.ik("expand")}</button>
             </div>

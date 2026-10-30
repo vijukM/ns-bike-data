@@ -81,11 +81,11 @@ html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
    jedva vidljive dijagonalne trake i fini šum (SVG feTurbulence) — da pozadina ne bude ravna; posebno za obe teme. */
 :root, :root[data-theme="dark"] {
   --poz-svetlo: #17223C; --poz-tamno: #04070E; --poz-traka: rgb(255 255 255 / .014);
-  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.9' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .035 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.4' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .035 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
 }
 :root[data-theme="light"] {
   --poz-svetlo: #FFFFFF; --poz-tamno: #D9E2ED; --poz-traka: rgb(15 40 80 / .018);
-  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.9' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 .1 0 0 0 0 .25 .028 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --poz-sum: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.4' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 .1 0 0 0 0 .25 .028 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
 }
 body {
   margin: 0; color: var(--t-base);
@@ -1656,7 +1656,15 @@ body.km-fokus-otvoren { overflow: hidden; }
 .km-broj { position: absolute; left: 10px; top: 10px; display: flex; align-items: baseline; gap: 8px; padding: 6px 11px;
   border-radius: 999px; background: rgb(2 14 34 / .82); color: #E8EEF7; font-size: 12.5px; pointer-events: none; backdrop-filter: blur(3px); }
 .km-broj b { font-size: 17px; font-weight: 700; color: #fff; }
-.km-broj[hidden], .km-poruka[hidden], .km-platno[hidden] { display: none; }   /* display:flex/grid inače gazi hidden */
+.km-broj[hidden], .km-poruka[hidden], .km-platno[hidden] { display: none; }
+/* krug dok se prenos povezuje (samo u fokusu, nestaje kad krene slika) */
+.km-ucitava { display: none; position: absolute; inset: 0; z-index: 4; place-items: center; align-content: center; gap: 12px;
+  background: rgb(2 10 24 / .45); color: #E8EEF7; font-size: 13px; font-weight: 500; pointer-events: none; }
+.km-video.ucitava .km-ucitava { display: grid; }
+.km-krug { width: 46px; height: 46px; border-radius: 50%; border: 3px solid rgb(255 255 255 / .18); border-top-color: #3AD0FF;
+  animation: km-krug .8s linear infinite; }
+@keyframes km-krug { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .km-krug { animation-duration: 2.4s; } }   /* display:flex/grid inače gazi hidden */
 .km-broj-po { color: #9FB3CC; font-size: 11px; }
 .km-broj-rad { color: #9FB3CC; font-size: 11.5px; }
 .km-poruka { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; color: #9FB3CC; font-size: 13px; }
