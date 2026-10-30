@@ -21,10 +21,16 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const IKONA_BROJ = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M3 8V5a2 2 0 0 1 2-2h3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 0-2 2h-3"/><rect x="8" y="9.5" width="8" height="5" rx="1"/></svg>`;
+  const IKONA_REGION = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M5 4 19 7 17 20 8 18 3 11Z"/><circle cx="5" cy="4" r="1.4" fill="currentColor"/><circle cx="19" cy="7" r="1.4" fill="currentColor"/><circle cx="17" cy="20" r="1.4" fill="currentColor"/><circle cx="3" cy="11" r="1.4" fill="currentColor"/></svg>`;
   // koje su kamere uključile brojanje vozila (pamti se u pregledaču)
   const KLJUC_BROJ = "ns-kamere-brojac";
   const brojOmogucen = (() => { try { return new Set(JSON.parse(localStorage.getItem(KLJUC_BROJ) || "[]")); } catch (e) { return new Set(); } })();
   const upisiBroj = () => { try { localStorage.setItem(KLJUC_BROJ, JSON.stringify([...brojOmogucen])); } catch (e) { /* */ } };
+  // region interesa (poligon 0–1) po kameri — detekcija samo tu (brže, bez lažnih vozila na zgradama)
+  const KLJUC_ROI = "ns-kamere-roi";
+  const roiMapa = (() => { try { return JSON.parse(localStorage.getItem(KLJUC_ROI) || "{}") || {}; } catch (e) { return {}; } })();
+  const upisiRoi = () => { try { localStorage.setItem(KLJUC_ROI, JSON.stringify(roiMapa)); } catch (e) { /* */ } };
 
   /** Glavna adresa, pa ista sa drugim nazivom fajla (chunks.m3u8 ↔ playlist.m3u8). */
   const adrese = (url) => {
@@ -36,8 +42,10 @@
   // ---------------------------------------------------------------- jedna kamera
   function kamera(k, el) {
     const video = el.querySelector("video"), stanjeEl = el.querySelector(".km-stanje"), poruka = el.querySelector(".km-poruka");
-    const platno = el.querySelector(".km-platno"), brojEl = el.querySelector(".km-broj"), dugmeB = el.querySelector(".km-prebroj");
+    const platno = el.querySelector(".km-platno"), brojEl = el.querySelector(".km-broj"), dugmeB = el.querySelector(".km-prebroj"), dugmeR = el.querySelector(".km-region");
     let hls = null, tajmer = 0, ponovo = 0, vidljiva = false, stanje = "povezivanje", aktivna = null, ceka = true, kod = 0, brojac = null;
+    let roi = roiMapa[k.id] || k.roi || null, crtanjeRoi = false, tacke = [], alatRoi = null;   // region interesa (poligon 0–1)
+    const dajRoi = () => roi;
 
     // --- brojanje vozila (lenjo: BROJAC se učita tek kad se uključi) ---
     const brojUkljucen = () => brojOmogucen.has(k.id);
@@ -51,7 +59,7 @@
       try {
         await LJ.ucitajSkript("assets/kamere-brojac.js");
         if (!brojUkljucen() || stanje !== "radi") { if (!brojUkljucen()) brojEl.hidden = true; return; }
-        brojac = await BROJAC.ukljuci(video, platno, naBroj);
+        brojac = await BROJAC.ukljuci(video, platno, naBroj, dajRoi);
         platno.hidden = false;
       } catch (e) { brojEl.innerHTML = `<span class="km-broj-rad">brojanje nije dostupno</span>`; }
     }
@@ -67,6 +75,70 @@
     dugmeB.setAttribute("aria-pressed", brojUkljucen() ? "true" : "false");
     dugmeB.classList.toggle("ukljuceno", brojUkljucen());
 
+    // --- region interesa: crtanje poligona po slici (detekcija samo unutar njega) ---
+    dugmeR.classList.toggle("ima-roi", !!roi);
+    const transformRoi = () => {
+      const w = platno.width || platno.clientWidth, h = platno.height || platno.clientHeight;
+      const vw = video.videoWidth || 16, vh = video.videoHeight || 9, sk = Math.min(w / vw, h / vh);
+      return { w, h, vw, vh, sk, dx: (w - vw * sk) / 2, dy: (h - vh * sk) / 2 };
+    };
+    function crtajRoi() {
+      const ctx = platno.getContext("2d"), { w, h, vw, vh, sk, dx, dy } = transformRoi();
+      ctx.clearRect(0, 0, w, h);
+      if (!tacke.length) return;
+      ctx.beginPath();
+      tacke.forEach((p, i) => { const x = dx + p[0] * vw * sk, y = dy + p[1] * vh * sk; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      if (tacke.length >= 3) { ctx.closePath(); ctx.fillStyle = "rgba(37,99,235,.18)"; ctx.fill(); }
+      ctx.lineWidth = 2; ctx.strokeStyle = "rgba(96,165,250,.95)"; ctx.stroke();
+      ctx.fillStyle = "#fff";
+      tacke.forEach((p) => { ctx.beginPath(); ctx.arc(dx + p[0] * vw * sk, dy + p[1] * vh * sk, 4, 0, 7); ctx.fill(); });
+    }
+    const tackaIz = (e) => {
+      const r = platno.getBoundingClientRect();
+      const px = (e.clientX - r.left) * (platno.width / r.width), py = (e.clientY - r.top) * (platno.height / r.height);
+      const { vw, vh, sk, dx, dy } = transformRoi();
+      return [Math.min(1, Math.max(0, (px - dx) / sk / vw)), Math.min(1, Math.max(0, (py - dy) / sk / vh))];
+    };
+    const uRegionKlik = (e) => { if (!crtanjeRoi) return; e.stopPropagation(); e.preventDefault(); tacke.push(tackaIz(e)); crtajRoi(); };
+    function regionAlat() {
+      alatRoi = document.createElement("div"); alatRoi.className = "km-region-alat";
+      alatRoi.innerHTML = `<span>Klikni tačke oko puta (min. 3)</span>
+        <button type="button" data-a="undo">Poništi tačku</button>
+        <button type="button" data-a="save">Sačuvaj</button>
+        <button type="button" data-a="clear">Obriši region</button>
+        <button type="button" data-a="cancel">Otkaži</button>`;
+      alatRoi.addEventListener("click", (e) => {
+        const a = e.target.closest("button"); if (!a) return; e.stopPropagation();
+        if (a.dataset.a === "undo") { tacke.pop(); crtajRoi(); }
+        else if (a.dataset.a === "save") { if (tacke.length >= 3) { roi = tacke.slice(); roiMapa[k.id] = roi; upisiRoi(); } izadjiRegion(); }
+        else if (a.dataset.a === "clear") { roi = null; delete roiMapa[k.id]; upisiRoi(); tacke = []; izadjiRegion(); }
+        else izadjiRegion();
+      });
+      el.querySelector(".km-video").appendChild(alatRoi);
+    }
+    function udjiRegion() {
+      if (crtanjeRoi || stanje !== "radi") return;
+      crtanjeRoi = true; dugmeR.classList.add("ukljuceno");
+      if (brojac) { brojac.stop(); brojac = null; }        // pauza brojanja dok se crta
+      brojEl.hidden = true;
+      platno.hidden = false; platno.style.pointerEvents = "auto"; platno.style.cursor = "crosshair";
+      platno.width = platno.clientWidth; platno.height = platno.clientHeight;
+      tacke = roi ? roi.map((p) => p.slice()) : []; crtajRoi();
+      platno.addEventListener("click", uRegionKlik);
+      regionAlat();
+    }
+    function izadjiRegion() {
+      crtanjeRoi = false; dugmeR.classList.remove("ukljuceno"); dugmeR.classList.toggle("ima-roi", !!roi);
+      platno.removeEventListener("click", uRegionKlik);
+      platno.style.pointerEvents = ""; platno.style.cursor = "";
+      if (alatRoi) { alatRoi.remove(); alatRoi = null; }
+      platno.getContext("2d").clearRect(0, 0, platno.width, platno.height);
+      platno.hidden = true;
+      if (brojUkljucen() && stanje === "radi") brojStart();   // nastavi brojanje sa novim regionom
+    }
+    function regionTumbler() { if (crtanjeRoi) izadjiRegion(); else udjiRegion(); }
+    addEventListener("resize", () => { if (crtanjeRoi) { platno.width = platno.clientWidth; platno.height = platno.clientHeight; crtajRoi(); } });
+
     function postavi(novo, tekst = "") {
       stanje = novo;
       el.dataset.stanje = novo;
@@ -78,6 +150,7 @@
     }
     function ugasi() {
       clearTimeout(tajmer);
+      if (crtanjeRoi) izadjiRegion();
       brojStop();
       if (hls) { hls.destroy(); hls = null; }
       video.removeAttribute("src");
@@ -132,7 +205,7 @@
       if (stanje === "radi") { if (hls) hls.startLoad(-1); video.play().catch(() => {}); brojStart(); }
       else if (ceka || stanje === "ne-radi") { ceka = false; pokreni(); }
     }
-    return { pokreni, vidljivost, tumbler: brojTumbler, stanje: () => stanje };
+    return { pokreni, vidljivost, tumbler: brojTumbler, region: regionTumbler, stanje: () => stanje };
   }
 
   // ---------------------------------------------------------------- strana
@@ -161,7 +234,8 @@
       <header class="zaglavlje-strane pojava">
         <div><span class="eyebrow">Admin · drumski saobraćaj</span><h1>Kamere <em>uživo</em></h1>
           <p class="uvod">Prenos sa kamera saobraćaja u Novom Sadu. Klik na kameru ili dugme ${LJ.ik("expand")} prikazuje je preko celog ekrana.
-            Dugme ${IKONA_BROJ} uključuje brojanje vozila na toj kameri (radi na uređaju, ništa se ne šalje).</p></div>
+            Dugme ${IKONA_BROJ} uključuje brojanje vozila (radi na uređaju, ništa se ne šalje), a ${IKONA_REGION} crta region —
+            deo puta gde se broji (brže i tačnije, bez zgrada i drveća).</p></div>
         <div class="akcije"><span id="km-uzivo">${LJ.stalnoUzivo(true)}</span><span class="znacka" id="km-zbir">…</span></div>
       </header>
       <div class="km-mreza pojava">${spisak.map((k, i) => `
@@ -172,6 +246,7 @@
             <div class="km-broj" hidden></div>
             <div class="km-poruka" hidden></div>
             <div class="km-alati">
+              <button type="button" class="ikonica-dugme km-region" aria-label="Region brojanja: ${esc(k.naziv)}" title="Region brojanja (nacrtaj deo puta)">${IKONA_REGION}</button>
               <button type="button" class="ikonica-dugme km-prebroj" aria-pressed="false" aria-label="Brojanje vozila: ${esc(k.naziv)}" title="Brojanje vozila (uključi/isključi)">${IKONA_BROJ}</button>
               <button type="button" class="ikonica-dugme km-ceo" aria-label="Preko celog ekrana: ${esc(k.naziv)}" title="Preko celog ekrana">${LJ.ik("expand")}</button>
             </div>
@@ -191,6 +266,7 @@
       const kartEl = e.target.closest(".km-kartica");
       if (!kartEl) return;
       if (e.target.closest(".km-prebroj")) { kamere[+kartEl.dataset.i].tumbler(); return; }
+      if (e.target.closest(".km-region")) { kamere[+kartEl.dataset.i].region(); return; }
       if (e.target.closest(".km-ceo") || e.target.closest(".km-video")) preko(kartEl.querySelector(".km-video"));
     });
     LJ.pojave(main);
