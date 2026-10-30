@@ -22,6 +22,95 @@ const KAPIJA = (() => {
   const TRAJANJE_DANA = 30;
   const KLJUC = "ns-kapija";
   const PORUKA = "nasicu-pristup:";
+  const VER_K = (() => { try { return new URL(document.currentScript.src).searchParams.get("v") || ""; } catch (e) { return ""; } })();
+
+  // ---------------------------------------------------------------- „oko“ za lozinku
+  // Svako polje za lozinku na sajtu (kapija, admin, prijava, privremeni link…) dobija dugme koje prikaže/sakrije
+  // unos. Dodaje se samo (MutationObserver), pa radi i za forme koje se iscrtaju kasnije.
+  const OKO = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  const OKO_NE = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.4 3.3M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18"/></svg>`;
+  function oko(inp) {
+    if (inp.dataset.oko) return;
+    inp.dataset.oko = "1";
+    const omot = document.createElement("span");
+    omot.className = "lozinka-omot";
+    inp.parentNode.insertBefore(omot, inp);
+    omot.appendChild(inp);
+    const d = document.createElement("button");
+    d.type = "button"; d.className = "lozinka-oko"; d.innerHTML = OKO;
+    d.setAttribute("aria-label", "Prikaži lozinku"); d.setAttribute("aria-pressed", "false"); d.title = "Prikaži lozinku";
+    d.addEventListener("click", () => {
+      const vidi = inp.type === "password";
+      inp.type = vidi ? "text" : "password";
+      d.innerHTML = vidi ? OKO_NE : OKO;
+      d.setAttribute("aria-pressed", vidi ? "true" : "false");
+      d.title = vidi ? "Sakrij lozinku" : "Prikaži lozinku"; d.setAttribute("aria-label", d.title);
+      inp.focus();
+    });
+    omot.appendChild(d);
+  }
+  const okoSvuda = (koren) => { if (koren.querySelectorAll) koren.querySelectorAll('input[type="password"]').forEach(oko); };
+  const okoStil = document.createElement("style");
+  okoStil.textContent = `.lozinka-omot{position:relative;display:block;flex:1;min-width:0}
+    .lozinka-omot>input{width:100%;box-sizing:border-box;padding-right:44px!important}
+    button.lozinka-oko,#kapija button.lozinka-oko{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:32px;height:32px;margin:0;padding:0;
+      display:grid;place-items:center;border:0;border-radius:8px;background:transparent;color:inherit;opacity:.65;cursor:pointer}
+    button.lozinka-oko:hover,#kapija button.lozinka-oko:hover{opacity:1;background:rgb(127 127 127 / .14)}
+    button.lozinka-oko:focus-visible{outline:2px solid #14A0F5;outline-offset:1px}`;
+  document.head.appendChild(okoStil);
+  new MutationObserver((zapisi) => zapisi.forEach((z) => z.addedNodes.forEach((n) => {
+    if (n.nodeType !== 1) return;
+    if (n.matches && n.matches('input[type="password"]')) oko(n); else okoSvuda(n);
+  }))).observe(document.documentElement, { childList: true, subtree: true });
+
+  // ---------------------------------------------------------------- čestice (pozadina dok se kuca lozinka)
+  // particles.js 2.0.0 (Vincent Garreau, MIT) — assets/vendor/particles.min.js, učitava se samo na ekranima sa
+  // lozinkom (kapija i admin). Boja prati temu; uz „manje pokreta“ čestice stoje i nema interakcije.
+  const CESTICE_BRZINA = 4;
+  const konfigCestica = () => {
+    const svetla = document.documentElement.dataset.theme === "light";
+    const boja = svetla ? "#1E4F8F" : "#FFFFFF", mirno = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return {
+      particles: {
+        number: { value: 109, density: { enable: true, value_area: 788 } },
+        color: { value: boja },
+        shape: { type: "circle" },
+        opacity: { value: svetla ? 0.45 : 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: boja, opacity: svetla ? 0.3 : 0.4, width: 1 },
+        move: { enable: !mirno, speed: CESTICE_BRZINA, direction: "none", random: false, straight: false, out_mode: "out", bounce: false },
+      },
+      interactivity: {
+        detect_on: "window",
+        events: { onhover: { enable: !mirno, mode: "repulse" }, onclick: { enable: !mirno, mode: "push" }, resize: true },
+        modes: { repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 } },
+      },
+      retina_detect: true,
+    };
+  };
+  let cesticeP = null;
+  const ucitajCestice = () => (cesticeP ||= new Promise((ok, ne) => {
+    if (window.particlesJS) return ok();
+    const s = document.createElement("script");
+    s.src = `assets/vendor/particles.min.js${VER_K ? `?v=${VER_K}` : ""}`;
+    s.onload = ok; s.onerror = () => { cesticeP = null; ne(new Error("čestice nisu učitane")); };
+    document.head.appendChild(s);
+  }));
+  /** Pravi pozadinu sa česticama u novom elementu (fixed, iza sadržaja); vraća funkciju koja je uklanja. */
+  function cestice(id) {
+    const el = document.createElement("div");
+    el.id = id; el.className = "cestice"; el.setAttribute("aria-hidden", "true");
+    document.body.prepend(el);
+    ucitajCestice().then(() => { if (el.isConnected) particlesJS(id, konfigCestica()); }).catch(() => {});
+    return () => {
+      try {
+        const ostali = (window.pJSDom || []).filter((x) => x.pJS.canvas.el.parentNode !== el);
+        (window.pJSDom || []).filter((x) => !ostali.includes(x)).forEach((x) => x.pJS.fn.vendors.destroypJS());
+        window.pJSDom = ostali;            // destroypJS() postavlja pJSDom na null
+      } catch (e) { /* */ }
+      el.remove();
+    };
+  }
 
   const ulaz = () => { try { return JSON.parse(localStorage.getItem(KLJUC) || "null"); } catch (e) { return null; } };
   const otvorena = () => { const z = ulaz(); return !!z && z.h === HES && z.do > Date.now(); };
@@ -81,7 +170,10 @@ const KAPIJA = (() => {
           <label for="admin-lozinka" style="position:absolute;left:-9999px">Admin lozinka</label>
           <div class="admin-red"><input id="admin-lozinka" type="password" placeholder="Admin lozinka" required><button class="dugme primarno" type="submit">Proveri</button></div>
           <div class="admin-greska sitno" role="alert"></div></form>`;
-      const forma = el.querySelector("form"), polje = forma.querySelector("input"), dugme = forma.querySelector("button"), gr = forma.querySelector(".admin-greska");
+      const forma = el.querySelector("form"), polje = forma.querySelector("input"), dugme = forma.querySelector("button[type=submit]"), gr = forma.querySelector(".admin-greska");
+      okoSvuda(forma);
+      const skloniCestice = cestice("admin-cestice");
+      document.body.classList.add("ima-cestice");
       polje.focus();
       forma.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -91,6 +183,7 @@ const KAPIJA = (() => {
         dugme.disabled = false;
         if (!ok) { if (!gr.textContent) gr.textContent = "Pogrešna lozinka."; polje.select(); return; }
         try { sessionStorage.setItem(ADMIN_KLJUC, JSON.stringify({ h: ADMIN_HES, do: Date.now() + ADMIN_MIN * 60000 })); } catch (x) { /* */ }
+        skloniCestice(); document.body.classList.remove("ima-cestice");
         gotovo();
       });
     });
@@ -111,7 +204,9 @@ const KAPIJA = (() => {
   const d = document.documentElement;
   d.classList.add("kapija");
   document.write(`<style id="kapija-stil">
-    html.kapija body > :not(#kapija) { display: none !important; }
+    html.kapija body > :not(#kapija):not(.cestice) { display: none !important; }
+    html.kapija .cestice { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    #kapija { position: relative; z-index: 1; }
     html.kapija body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; box-sizing: border-box;
       background: radial-gradient(120% 80% at 45% 0%, #0B2A52 0%, #04162F 55%, #020E22 100%) fixed; color: #F1F5F9; font: 15px/1.6 Inter, system-ui, sans-serif; }
     html.kapija[data-theme="light"] body { background: linear-gradient(180deg, #F0F5FB, #E2ECF7); color: #0B1630; }
@@ -156,7 +251,9 @@ const KAPIJA = (() => {
         <div class="k-greska" role="alert">${poruka}</div>
       </form>`;
     document.body.prepend(k);
-    const forma = k.querySelector("form"), polje = k.querySelector("input"), dugme = k.querySelector("button"), greska = k.querySelector(".k-greska");
+    const forma = k.querySelector("form"), polje = k.querySelector("input"), dugme = k.querySelector("button[type=submit]"), greska = k.querySelector(".k-greska");
+    okoSvuda(forma);
+    cestice("k-cestice");
     polje.focus();
     forma.addEventListener("submit", async (e) => {
       e.preventDefault();
