@@ -1598,6 +1598,8 @@ dialog.profil [hidden] { display: none !important; }
 .km-povezivanje { font: 600 10.5px "JetBrains Mono", monospace; color: var(--t-light); letter-spacing: .06em; }
 .km-kartica[data-stanje="ne-radi"] .km-video { cursor: default; background: repeating-linear-gradient(135deg, #04162F 0 14px, #071d3b 14px 28px); }
 .km-kartica[data-stanje="ne-radi"] .km-ceo { display: none; }
+.km-kartica[data-stanje="ne-radi"] .ima-sliku video { filter: grayscale(.6) brightness(.55); }
+.km-kartica[data-stanje="ne-radi"] .ima-sliku .km-poruka { inset: auto 0 0 0; padding: 8px 14px; background: rgb(2 14 34 / .8); color: #CBD5E1; font-size: 12px; }
 .km-kartica[data-stanje="ne-radi"] .km-glava b { color: var(--t-muted); }
 
 /* Preuzimanje: drumski saobraćaj (ns-trafic-data) i tokeni */

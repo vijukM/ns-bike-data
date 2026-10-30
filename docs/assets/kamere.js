@@ -2,6 +2,8 @@
    Spisak se menja samo u JSON-u (bez izmene koda). Da li prenos radi, strana proverava sama: ako glavna adresa ne
    odgovori, proba i drugi naziv fajla (chunks.m3u8 ↔ playlist.m3u8); kamera koja ne radi proverava se ponovo na
    PONOVO_MS, pa se sama prikaže kad proradi. Prenos se pauzira van ekrana i u sakrivenom tabu.
+   Opciono polje „slika“ (snimak kamere) se prikazuje dok prenos ne radi. Odgovor 403 = server kamere ne dozvoljava
+   prikaz sa ovog sajta (proverava odakle dolazi zahtev) — to se ne ispravlja kodom, nego dozvolom vlasnika prenosa.
    Kasnije: brojanje vozila (okviri oko vozila i linija prolaska) — ovde je samo prikaz. */
 "use strict";
 
@@ -22,7 +24,7 @@
   // ---------------------------------------------------------------- jedna kamera
   function kamera(k, el) {
     const video = el.querySelector("video"), stanjeEl = el.querySelector(".km-stanje"), poruka = el.querySelector(".km-poruka");
-    let hls = null, tajmer = 0, ponovo = 0, vidljiva = false, stanje = "povezivanje", aktivna = null, ceka = true;
+    let hls = null, tajmer = 0, ponovo = 0, vidljiva = false, stanje = "povezivanje", aktivna = null, ceka = true, kod = 0;
 
     function postavi(novo, tekst = "") {
       stanje = novo;
@@ -41,7 +43,9 @@
     }
     function neRadi() {
       ugasi();
-      postavi("ne-radi", "Prenos trenutno ne radi. Proveravam ponovo na 2 minuta.");
+      postavi("ne-radi", kod === 403
+        ? "Server kamere ne dozvoljava prikaz sa ovog sajta (403). Proveravam ponovo na 2 minuta."
+        : "Prenos trenutno ne radi. Proveravam ponovo na 2 minuta.");
       clearTimeout(ponovo);
       ponovo = setTimeout(() => { if (vidljiva && !document.hidden) pokreni(); }, PONOVO_MS);
     }
@@ -50,6 +54,7 @@
       ugasi();
       clearTimeout(ponovo);
       if (!spisak.length) { neRadi(); return; }
+      if (spisak.length === adrese(k.url).length) kod = 0;
       const [url, ...ostale] = spisak;
       if (stanje !== "radi") postavi("povezivanje");
       const dalje = () => { if (stanje !== "radi" || aktivna === url) pokreni(ostale); };
@@ -57,7 +62,10 @@
       video.onplaying = () => { clearTimeout(tajmer); aktivna = url; postavi("radi"); };
       if (window.Hls && Hls.isSupported()) {
         hls = new Hls({ liveSyncDurationCount: 3, manifestLoadingMaxRetry: 1, levelLoadingMaxRetry: 2 });
-        hls.on(Hls.Events.ERROR, (_e, d) => { if (d.fatal) { clearTimeout(tajmer); dalje(); } });
+        hls.on(Hls.Events.ERROR, (_e, d) => {
+          if (d.response && d.response.code) kod = d.response.code;
+          if (d.fatal) { clearTimeout(tajmer); dalje(); }
+        });
         hls.loadSource(url);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
@@ -115,8 +123,8 @@
       </header>
       <div class="km-mreza pojava">${spisak.map((k, i) => `
         <section class="kartica km-kartica" data-i="${i}" data-stanje="povezivanje">
-          <div class="km-video">
-            <video muted playsinline autoplay preload="none" aria-label="${esc(k.naziv)} — prenos uživo"></video>
+          <div class="km-video${k.slika ? " ima-sliku" : ""}">
+            <video muted playsinline autoplay preload="none"${k.slika ? ` poster="${esc(k.slika)}"` : ""} aria-label="${esc(k.naziv)} — prenos uživo"></video>
             <div class="km-poruka" hidden></div>
             <button type="button" class="ikonica-dugme km-ceo" aria-label="Preko celog ekrana: ${esc(k.naziv)}" title="Preko celog ekrana">${LJ.ik("expand")}</button>
           </div>
