@@ -86,12 +86,13 @@ Poslednji broj ima uvek dve cifre (00–99).
   Obe traže admin lozinku (`KAPIJA.trazAdmina`), i kad je sajt otključan.
 - Kamere: spisak u `docs/data/kamere.json` (naziv, opis, `url` HLS prenosa) — menja se bez izmene koda.
   hls.js 1.5.20 sa jsdelivr (SRI). Opciono polje `slika` (snimak, `docs/assets/slike/kamere/<id>.webp` ili spoljna adresa)
-  = sličica u mreži; bez slike ili ako se ne učita → placeholder `nema-slike.svg`. `"bez_druge_adrese": true` = ne probati
+  = sličica u mreži (sve su lokalne, 720 px webp); bez slike ili ako se ne učita → placeholder `nema-slike.svg`. `"bez_druge_adrese": true` = ne probati
   drugi naziv fajla (chunks ↔ playlist). U skupljenom meniju „Kamere uživo“ ima crvenu tačku kao „Danas uživo“.
 - **Štednja protoka:** u mreži se NE prenosi uživo — prikazuju se sličice, a živ prenos kreće tek kad se uđe u kameru
   (fokus). Dok se kamera ne otvori ne šalje se nijedan zahtev ka serveru prenosa (nema provere statusa u mreži);
   stanje radi/ne radi se vidi tek u fokusu. Napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje
-  staju (`zaustaviUzivo`).
+  staju (`zaustaviUzivo`). Dok se prenos u fokusu povezuje, preko slike se vrti krug „Učitavam prenos…“
+  (klasa `.ucitava` na `.km-video`), koji nestaje kad krene slika.
 - Uvećan prikaz (fokus): klik na karticu ili dugme otvara kameru uživo preko ekrana; zum scrollom, pomeranje
   prevlačenjem, strelice ←/→ (i dugmad) za sledeću kameru, dugme za ceo ekran (`requestFullscreen`), zatvaranje × ili
   Esc. Kontrole su u okviru snimka (`.km-kontrole`): Brojanje, Region (prikaz ROI), i „Broji“ (izbor klasa). `.km-video`

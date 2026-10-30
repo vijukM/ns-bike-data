@@ -7,6 +7,6 @@
     {"id": "petrovaradin", "naziv": "Most Duga", "opis": "drumski saobraćaj", "slika": "assets/slike/kamere/petrovaradin.webp", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/petrovaradin/chunks.m3u8", "roi": [[0.979, 0.97], [0.709, 0.819], [0.595, 0.648], [0.607, 0.481], [0.84, 0.19], [0.73, 0.1], [0.34, 0.651], [0.0, 0.769], [0.0, 0.999]]},
     {"id": "juzni-bul1", "naziv": "Mišeluk", "opis": "drumski saobraćaj", "slika": "assets/slike/kamere/juzni-bul1.webp", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/juzni-bul1/chunks.m3u8", "roi": [[0.616, 0.471], [0.399, 0.493], [0.399, 0.565], [0.468, 0.56], [0.492, 0.613], [0.588, 0.531]]},
     {"id": "trg-slobode", "naziv": "Trg slobode", "opis": "pešačka zona", "slika": "assets/slike/kamere/trg-slobode.webp", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/trg-slobodens/playlist.m3u8"},
-    {"id": "most-slobode", "naziv": "Most slobode", "opis": "drumski saobraćaj", "slika": "https://kamere.24sedam.rs/js/cameras/most-slobode.webp", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/most-slobode1/playlist.m3u8", "bez_druge_adrese": true}
+    {"id": "most-slobode", "naziv": "Most slobode", "opis": "drumski saobraćaj", "slika": "assets/slike/kamere/most-slobode.webp", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/most-slobode1/playlist.m3u8", "bez_druge_adrese": true}
   ]
 }
