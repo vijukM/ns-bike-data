@@ -84,10 +84,14 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Kamere: spisak u `docs/data/kamere.json` (naziv, opis, `url` HLS prenosa) — menja se bez izmene koda. Strana sama
   proverava da li prenos radi (i drugi naziv fajla chunks.m3u8 ↔ playlist.m3u8), kamera koja ne radi dobija sivo
   „NE RADI“ i proverava se ponovo na 2 min; prenos se pauzira van ekrana. hls.js 1.5.20 sa jsdelivr (SRI).
-  Opciono polje `slika` (snimak kamere, `docs/assets/slike/kamere/<id>.webp`) se prikazuje dok prenos ne radi.
+  Opciono polje `slika` (snimak kamere, `docs/assets/slike/kamere/<id>.webp`) se prikazuje dok prenos ne radi;
+  kamera bez slike dobija placeholder `nema-slike.svg`.
 - Prenosi `srbija-nadlanu.ott.solutions` vraćaju 403 za zahteve sa nasicu.rs (server pušta samo svoje sajtove, npr.
-  kamere.24sedam.rs); strana tada piše „Server kamere ne dozvoljava prikaz sa ovog sajta (403)“. Ne zaobilaziti
-  (lažni Referer, proksi) — rešenje je dozvola vlasnika prenosa.
+  kamere.24sedam.rs; proverava Referer). Pregledač ne da JS-u da lažira Referer, pa strana (1) ne šalje Referer
+  (`<meta name="referrer" content="no-referrer">` u `kamere.html`) i (2) ume da prenos provuče kroz proksi iz polja
+  `proksi` u `kamere.json` (Cloudflare Worker u `kamere-proksi/`, šalje dozvoljeni Referer). Ovo je privremeno, za
+  demo iza admin lozinke; za javni rad i za brojanje vozila treba dozvola/licenca vlasnika prenosa. Proksi radi samo
+  za taj jedan izvor (nije otvoreni proksi).
 - Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma
   ns-trafic-data, adresa u `docs/data/admin.json`) i podsetnik za tokene (datumi isteka u `docs/data/admin.json`).
 - `LJ.stalnoUzivo(sveze, tekst)` = isti znak „UŽIVO“ kao „Danas uživo“, ali ne zavisi od čitanja brojača.

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 405" role="img" aria-label="Nema slike">
+  <rect width="720" height="405" fill="#071d3b"/>
+  <g transform="translate(360 176)" fill="none" stroke="#3a567f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="-70" y="-34" width="118" height="68" rx="9"/>
+    <path d="M48 -17 L96 -36 V36 L48 17"/>
+    <circle cx="-11" cy="0" r="17"/>
+  </g>
+  <text x="360" y="272" fill="#5c76a0" font-family="'JetBrains Mono', monospace" font-size="26" letter-spacing="2" text-anchor="middle">NEMA SLIKE</text>
+</svg>

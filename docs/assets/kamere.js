@@ -2,8 +2,11 @@
    Spisak se menja samo u JSON-u (bez izmene koda). Da li prenos radi, strana proverava sama: ako glavna adresa ne
    odgovori, proba i drugi naziv fajla (chunks.m3u8 ↔ playlist.m3u8); kamera koja ne radi proverava se ponovo na
    PONOVO_MS, pa se sama prikaže kad proradi. Prenos se pauzira van ekrana i u sakrivenom tabu.
-   Opciono polje „slika“ (snimak kamere) se prikazuje dok prenos ne radi. Odgovor 403 = server kamere ne dozvoljava
-   prikaz sa ovog sajta (proverava odakle dolazi zahtev) — to se ne ispravlja kodom, nego dozvolom vlasnika prenosa.
+   Opciono polje „slika“ (snimak kamere) se prikazuje dok prenos ne radi; kamera bez slike dobija placeholder.
+   Odgovor 403 = server kamere pušta samo svoje sajtove (proverava Referer). Pregledač ne da JavaScript-u da lažira
+   Referer, pa čisto front-end rešenje ne postoji; strana zato (1) ne šalje Referer (<meta referrer no-referrer> u
+   kamere.html) i (2) ume da prenos provuče kroz proksi iz polja „proksi“ u kamere.json (Cloudflare Worker iz
+   kamere-proksi/, koji šalje dozvoljeni Referer). Za javni rad treba dozvola/licenca vlasnika prenosa.
    Kasnije: brojanje vozila (okviri oko vozila i linija prolaska) — ovde je samo prikaz. */
 "use strict";
 
@@ -11,6 +14,9 @@
   const main = document.getElementById("sadrzaj");
   const ROK_MS = 20000;            // koliko se čeka da prenos krene pre nego što se proglasi „ne radi“
   const PONOVO_MS = 2 * 60000;     // ponovna provera kamere koja ne radi
+  const NEMA_SLIKE = "assets/slike/kamere/nema-slike.svg";
+  let PROKSI = "";                 // adresa proksija iz kamere.json (prazno = direktno sa servera kamere)
+  const krozProksi = (u) => PROKSI ? `${PROKSI}/?u=${encodeURIComponent(u)}` : u;
   const nativniHls = () => !!document.createElement("video").canPlayType("application/vnd.apple.mpegurl");
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -66,12 +72,12 @@
           if (d.response && d.response.code) kod = d.response.code;
           if (d.fatal) { clearTimeout(tajmer); dalje(); }
         });
-        hls.loadSource(url);
+        hls.loadSource(krozProksi(url));
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
       } else if (nativniHls()) {
         video.onerror = () => { clearTimeout(tajmer); dalje(); };
-        video.src = url;
+        video.src = krozProksi(url);
         video.play().catch(() => {});
       } else {
         clearTimeout(tajmer);
@@ -113,6 +119,7 @@
   try {
     if (typeof KAPIJA !== "undefined") await KAPIJA.trazAdmina(main);
     const C = await fetch(`data/kamere.json?t=${Date.now()}`, { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(`kamere.json: ${r.status}`); return r.json(); });
+    PROKSI = (C.proksi || "").trim().replace(/\/+$/, "");
     const spisak = (C.kamere || []).filter((k) => k && k.url);
     main.innerHTML = `
       <header class="zaglavlje-strane pojava">
@@ -123,8 +130,8 @@
       </header>
       <div class="km-mreza pojava">${spisak.map((k, i) => `
         <section class="kartica km-kartica" data-i="${i}" data-stanje="povezivanje">
-          <div class="km-video${k.slika ? " ima-sliku" : ""}">
-            <video muted playsinline autoplay preload="none"${k.slika ? ` poster="${esc(k.slika)}"` : ""} aria-label="${esc(k.naziv)} — prenos uživo"></video>
+          <div class="km-video${k.slika ? " ima-sliku" : " bez-slike"}">
+            <video muted playsinline autoplay preload="none" poster="${esc(k.slika || NEMA_SLIKE)}" aria-label="${esc(k.naziv)} — prenos uživo"></video>
             <div class="km-poruka" hidden></div>
             <button type="button" class="ikonica-dugme km-ceo" aria-label="Preko celog ekrana: ${esc(k.naziv)}" title="Preko celog ekrana">${LJ.ik("expand")}</button>
           </div>
