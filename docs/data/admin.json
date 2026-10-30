@@ -1,0 +1,8 @@
+{
+  "opis": "Podsetnik na strani Admin → Preuzimanje podataka. Kad se napravi novi token, upisati novi datum isteka (bez izmene koda).",
+  "tokeni": [
+    {"naziv": "ns-bike-data TOKEN", "namena": "cron-job.org → čitanje biciklista (svakog sata)", "istice": "2027-10-09"},
+    {"naziv": "ns-trafic-data TOKEN", "namena": "cron-job.org → drumski saobraćaj (na 5 min)", "istice": "2027-10-29"}
+  ],
+  "drumski_stanje": "https://raw.githubusercontent.com/vijukM/ns-trafic-data/main/podaci/stanje.json"
+}

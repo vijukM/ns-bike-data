@@ -77,6 +77,17 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Čuva se `podaci/drumski/YYYY/MM/DD/HHMM.csv.gz` (sva polja; bez sirovog XML-a zbog veličine), greške u `podaci/drumski/greske.log`.
   Za sada se nigde ne prikazuje.
 
+## Admin (grupa u meniju)
+
+- Strane samo za upravljanje: **Kamere uživo** (`docs/kamere.html` + `assets/kamere.js`) i **Preuzimanje podataka**.
+  Obe traže admin lozinku (`KAPIJA.trazAdmina`), i kad je sajt otključan.
+- Kamere: spisak u `docs/data/kamere.json` (naziv, opis, `url` HLS prenosa) — menja se bez izmene koda. Strana sama
+  proverava da li prenos radi (i drugi naziv fajla chunks.m3u8 ↔ playlist.m3u8), kamera koja ne radi dobija sivo
+  „NE RADI“ i proverava se ponovo na 2 min; prenos se pauzira van ekrana. hls.js 1.5.20 sa jsdelivr (SRI).
+- Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma
+  ns-trafic-data, adresa u `docs/data/admin.json`) i podsetnik za tokene (datumi isteka u `docs/data/admin.json`).
+- `LJ.stalnoUzivo(sveze, tekst)` = isti znak „UŽIVO“ kao „Danas uživo“, ali ne zavisi od čitanja brojača.
+
 ## Ne menjati bez izričitog zahteva
 
 - `docs/MODEL_KONTEKST.md` (opis modela prognoze).

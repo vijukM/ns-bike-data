@@ -1582,3 +1582,36 @@ dialog.profil [hidden] { display: none !important; }
 .admin-greska { color: var(--danger, #F0391F); min-height: 18px; }
 .ct-fajl { font-size: 11px; overflow-wrap: anywhere; text-align: right; }
 .ct-d-red > span { flex: none; }
+
+/* Kamere uživo (assets/kamere.js) */
+.km-mreza { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 18px; }
+.km-kartica { padding: 0; overflow: hidden; }
+.km-video { position: relative; aspect-ratio: 16 / 9; background: #020E22; cursor: zoom-in; }
+.km-video video { width: 100%; height: 100%; object-fit: contain; display: block; background: #020E22; }
+.km-video:fullscreen { cursor: zoom-out; aspect-ratio: auto; }
+.km-video:fullscreen video { object-fit: contain; }
+.km-ceo { position: absolute; top: 10px; right: 10px; background: rgb(4 22 47 / .65); color: #F1F5F9; border-color: transparent; }
+.km-ceo:hover { background: rgb(4 22 47 / .85); }
+.km-poruka { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; color: #9FB3CC; font-size: 13px; }
+.km-glava { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; }
+.km-glava b { display: block; font-size: 14.5px; }
+.km-povezivanje { font: 600 10.5px "JetBrains Mono", monospace; color: var(--t-light); letter-spacing: .06em; }
+.km-kartica[data-stanje="ne-radi"] .km-video { cursor: default; background: repeating-linear-gradient(135deg, #04162F 0 14px, #071d3b 14px 28px); }
+.km-kartica[data-stanje="ne-radi"] .km-ceo { display: none; }
+.km-kartica[data-stanje="ne-radi"] .km-glava b { color: var(--t-muted); }
+
+/* Preuzimanje: drumski saobraćaj (ns-trafic-data) i tokeni */
+.dr-sati { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; margin-top: 10px; }
+.dr-sat { height: 22px; border-radius: 4px; background: var(--bg-muted); position: relative; }
+.dr-sat.pun { background: color-mix(in srgb, var(--success) 45%, var(--bg-card)); }
+.dr-sat.deo { background: color-mix(in srgb, var(--warning) 55%, var(--bg-card)); }
+.dr-sat.prazan { background: color-mix(in srgb, var(--danger) 55%, var(--bg-card)); }
+.dr-sat.buduce { background: transparent; border: 1px dashed var(--border); }
+.dr-ose { display: flex; justify-content: space-between; font: 500 10px "JetBrains Mono", monospace; color: var(--t-light); margin-top: 4px; }
+.dr-red { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); }
+.dr-red span { color: var(--t-muted); }
+.tk-red { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.tk-red b { font-size: 14px; }
+.tk-red .tk-dana { grid-row: span 2; align-self: center; font: 700 15px "JetBrains Mono", monospace; }
+.tk-red.uskoro .tk-dana { color: var(--warning); }
+.tk-red.isteklo .tk-dana { color: var(--danger, #F0391F); }

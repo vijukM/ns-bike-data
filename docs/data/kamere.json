@@ -1,0 +1,11 @@
+{
+  "opis": "Kamere uživo (strana Admin → Kamere uživo). Ovaj fajl se menja bez izmene koda: dodaj, ukloni ili promeni kameru. Da li prenos radi, strana proverava sama (i proba i drugi naziv fajla: chunks.m3u8 ↔ playlist.m3u8).",
+  "kamere": [
+    {"id": "posta-ns1", "naziv": "Raskrsnica kod pozorišta", "opis": "drumski saobraćaj", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/posta-ns1/chunks.m3u8"},
+    {"id": "posta-ns2", "naziv": "Bulevar Mihajla Pupina", "opis": "drumski saobraćaj", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/posta-ns2/chunks.m3u8"},
+    {"id": "petrovaradin", "naziv": "Dugin most", "opis": "drumski saobraćaj", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/petrovaradin/chunks.m3u8"},
+    {"id": "juzni-bul1", "naziv": "Mišeluk", "opis": "drumski saobraćaj", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/juzni-bul1/chunks.m3u8"},
+    {"id": "trg-slobode", "naziv": "Trg slobode", "opis": "drumski saobraćaj", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/trg-slobodens/playlist.m3u8"},
+    {"id": "most-slobode", "naziv": "Most slobode", "opis": "drumski saobraćaj", "url": "https://srbija-nadlanu.ott.solutions/srbija-nadlanu/most-slobode1/playlist.m3u8"}
+  ]
+}
