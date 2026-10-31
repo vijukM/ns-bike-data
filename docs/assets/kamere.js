@@ -256,6 +256,19 @@
       X = cx - (cx - X) * k2; Y = cy - (cy - Y) * k2; S = nS; if (S <= 1.001) { S = 1; X = 0; Y = 0; }
       primeniZum();
     }, { passive: false });
+    // dupli klik: uvećaj ×2,5 tačno tamo gde je kliknuto; dupli klik na uvećanu sliku vraća ceo kadar
+    ram.addEventListener("dblclick", (e) => {
+      if (uFokusu < 0 || e.target.closest(".km-kontrole")) return;
+      e.preventDefault();
+      if (S > 1.01) { S = 1; X = 0; Y = 0; }
+      else {
+        const r = ram.getBoundingClientRect(), cx = e.clientX - r.left - r.width / 2, cy = e.clientY - r.top - r.height / 2, nS = 2.5;
+        X = cx - (cx - X) * (nS / S); Y = cy - (cy - Y) * (nS / S); S = nS;
+      }
+      const z = ram.querySelector(".km-zum");
+      if (z && !matchMedia("(prefers-reduced-motion: reduce)").matches) { z.style.transition = "transform .25s ease"; setTimeout(() => { z.style.transition = ""; }, 280); }
+      primeniZum();
+    });
     ram.addEventListener("pointerdown", (e) => { if (uFokusu < 0 || S <= 1 || e.target.closest(".km-kontrole")) return; vuci = true; lx = e.clientX; ly = e.clientY; try { ram.setPointerCapture(e.pointerId); } catch (x) { /* */ } });
     ram.addEventListener("pointermove", (e) => { if (!vuci) return; X += e.clientX - lx; Y += e.clientY - ly; lx = e.clientX; ly = e.clientY; primeniZum(); });
     const krajVuce = () => { vuci = false; };

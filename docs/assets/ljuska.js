@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.46";
+  const VERZIJA = "1.1.47";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -547,6 +547,12 @@ const LJ = (() => {
     return STILOVI_MENIJA.includes(st) ? st : "linija";
   }
   // znak (bicikl sa ramom NS) + natpis „NaSicu“; natpis ima verziju za tamnu i za svetlu temu (assets/slike/brend)
+  // u bočnom meniju: bicikl bez slova + slova NS kao poseban sloj na istom mestu (isti koordinatni sistem SVG-a),
+  // pa pri skupljanju menija NS klizi u mali znak, a bicikl i natpis nestaju (i obrnuto) — vidi .brend-slika u stil.css
+  const BREND_MENI = `<div class="brend-slika"><img class="brend-bez" src="assets/slike/brend/NaSicu_ikonica_bicikl_bez_NS.svg" alt="">
+    <img class="brend-ns" src="assets/slike/brend/NaSicu_ikonica_NS.svg" alt=""></div>
+    <span class="brend-tekst"><img class="natpis natpis-tamna" src="assets/slike/brend/natpis-tamna.svg" alt="NaSicu">
+    <img class="natpis natpis-svetla" src="assets/slike/brend/natpis-svetla.svg" alt="NaSicu"></span>`;
   const BREND = `<img class="brend-znak" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="">
     <span class="brend-tekst"><img class="natpis natpis-tamna" src="assets/slike/brend/natpis-tamna.svg" alt="NaSicu">
     <img class="natpis natpis-svetla" src="assets/slike/brend/natpis-svetla.svg" alt="NaSicu"></span>`;
@@ -564,8 +570,7 @@ const LJ = (() => {
     meni.className = "meni";
     meni.dataset.stil = stilMenija();
     meni.setAttribute("aria-label", "Glavni meni");
-    meni.innerHTML = `<a class="brend" href="index.html" aria-label="NaSicu — početna">${BREND}
-        <img class="brend-ns" src="assets/slike/brend/NaSicu_ikonica_NS.svg" alt=""></a>` +
+    meni.innerHTML = `<a class="brend" href="index.html" aria-label="NaSicu — početna">${BREND_MENI}</a>` +
       MENI.map((g, gi) => {
         // grupa se otvara i zatvara strelicom; zatvorene grupe se pamte, a grupa sa trenutnom stranom je uvek otvorena pri učitavanju
         const sadrziStranu = g.stavke.some((x) => x.id === strana);
@@ -663,6 +668,23 @@ const LJ = (() => {
     });
     obavestenja();
     pojave();
+    zadrziSkrolMenija(meni);
+  }
+
+  /** Meni zadržava poziciju skrola između strana (sessionStorage), a aktivna stavka je uvek vidljiva:
+   *  ako je posle vraćanja skrola van vidnog dela (ispod logoa / iznad dna), meni se pomeri da bude u sredini. */
+  function zadrziSkrolMenija(meni) {
+    const KLJUC = "ns-meni-skrol";
+    try { const v = Number(sessionStorage.getItem(KLJUC)); if (v > 0) meni.scrollTop = v; } catch (e) { /* */ }
+    const akt = meni.querySelector("a.stavka.aktivna");
+    if (akt) {
+      const m = meni.getBoundingClientRect(), r = akt.getBoundingClientRect();
+      const gore = m.top + (meni.querySelector(".brend")?.offsetHeight || 0), dole = m.bottom - (meni.querySelector(".dno")?.offsetHeight || 0);
+      if (r.height && (r.top < gore || r.bottom > dole)) meni.scrollTop += (r.top + r.height / 2) - (gore + dole) / 2;
+    }
+    const sacuvaj = () => { try { sessionStorage.setItem(KLJUC, String(Math.round(meni.scrollTop))); } catch (e) { /* */ } };
+    addEventListener("pagehide", sacuvaj);
+    meni.addEventListener("click", (e) => { if (e.target.closest("a[href]")) sacuvaj(); });
   }
 
   async function obavestenja() {
@@ -679,6 +701,10 @@ const LJ = (() => {
       `<div class="red-panela">${ik("cloud")}<span>Prognoza za sutra<small>model E31 — uskoro na sajtu</small></span></div>`);
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", postavi); else postavi();
+  // ljuska.js je na kraju <body> (posle <main>), pa se meni pravi odmah posle izvršavanja skripta — pre prvog
+  // iscrtavanja strane; tako je meni na mestu od prvog kadra i prelaz između strana (View Transitions) je miran.
+  if (document.readyState !== "loading") postavi();
+  else if (document.querySelector("main.sadrzaj")) queueMicrotask(postavi);
+  else document.addEventListener("DOMContentLoaded", postavi);
   return { VERZIJA, VER, stalnoUzivo, ucitajSkript, zatvaranjeVan, otvoriPrijavu, otvoriProfil, osveziAvatar, MENI, ik, IK, info, uzivoZnak, ODASILJAC, osveziUzivo, tema, postaviTemu, primeniIzgled, otvoriPrilagodi, tost, kadVidljivo, pojave, brojanje, prsten };
 })();
