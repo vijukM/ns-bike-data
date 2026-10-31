@@ -1317,18 +1317,30 @@ html.bez-skrola { overflow: hidden; }
 
 /* ---------------------------------------------------------------- NaSicu: znak i natpis u meniju i gornjoj traci */
 .meni .brend { gap: 10px; padding: 2px 6px 16px 4px; }
-.meni .brend img.brend-znak { width: 80px; height: 50px; object-fit: cover; flex: none; }     /* NaSicu_ikonica_bicikl.svg je kvadrat: bicikl po sredini */
 .meni .brend .brend-tekst { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .meni .brend img.natpis { width: 140px; height: auto; display: block; }
 .meni .brend .brend-tekst small { font: 500 9.5px/1.2 "JetBrains Mono", monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-light); white-space: nowrap; }
-.meni .brend img.brend-ns { display: none; width: 40px; height: 40px; }
 :root[data-theme="light"] .natpis-tamna, :root:not([data-theme="light"]) .natpis-svetla { display: none !important; }
-.ljuska.uzak .meni .brend { justify-content: center; padding: 2px 0 16px; }
-.ljuska.uzak .meni .brend img.brend-znak, .ljuska.uzak .meni .brend .brend-tekst { display: none; }
-.ljuska.uzak .meni .brend img.brend-ns { display: block; }
-@media (max-width: 960px) {
-  .ljuska.uzak .meni .brend img.brend-znak, .ljuska.uzak .meni .brend .brend-tekst { display: flex; }
-  .ljuska.uzak .meni .brend img.brend-ns { display: none; }
+/* Znak u bočnom meniju = bicikl bez slova (NaSicu_ikonica_bicikl_bez_NS.svg) + slova NS (NaSicu_ikonica_NS.svg) kao
+   poseban sloj. Oba SVG-a imaju isti koordinatni sistem: u kvadratu bicikla NS zauzima levo 16,24 %, gore 19,91 %,
+   širinu 58,84 %. Bicikl se crta 80×80 isečen na 80×50 (gore −15 px), pa je NS na (13, 0,93) veličine 47,08 px.
+   U uskom meniju NS postaje znak 40×40, a bicikl se skuplja oko slova i nestaje — isto u oba smera. */
+.meni .brend .brend-slika { position: relative; flex: none; width: 80px; height: 50px; }
+.meni .brend img.brend-bez { position: absolute; left: 0; top: 0; width: 80px; height: 50px; object-fit: cover; transform-origin: 0 0; }
+.meni .brend img.brend-ns { position: absolute; left: 12.99px; top: 0.93px; width: 47.08px; height: 47.08px; }
+@media (min-width: 961px) {
+  .ljuska.uzak .meni .brend { gap: 0; padding: 2px 0 16px 2px; }
+  .ljuska.uzak .meni .brend .brend-slika { width: 40px; height: 40px; }
+  .ljuska.uzak .meni .brend img.brend-ns { left: 0; top: 0; width: 40px; height: 40px; }
+  .ljuska.uzak .meni .brend img.brend-bez { opacity: 0; transform: translate(-11.04px, -0.79px) scale(0.8496); }
+  .ljuska.uzak .meni .brend .brend-tekst { display: flex; opacity: 0; max-width: 0; overflow: hidden; }
+  .meni .brend .brend-tekst { max-width: 160px; }
+}
+@media (min-width: 961px) and (prefers-reduced-motion: no-preference) {
+  .meni .brend, .meni .brend .brend-slika, .meni .brend img.brend-ns { transition: all .32s cubic-bezier(.2, .8, .2, 1); }
+  .meni .brend img.brend-bez { transition: transform .32s cubic-bezier(.2, .8, .2, 1), opacity .26s ease; }
+  .meni .brend .brend-tekst { transition: opacity .2s ease .08s, max-width .32s cubic-bezier(.2, .8, .2, 1); }
+  .ljuska.uzak .meni .brend .brend-tekst { transition: opacity .12s ease, max-width .32s cubic-bezier(.2, .8, .2, 1); }
 }
 .brend-gornji img.brend-znak { width: 46px; height: 29px; object-fit: cover; }
 .brend-gornji .brend-tekst { display: flex; align-items: center; }
@@ -1697,3 +1709,14 @@ body.km-fokus-otvoren { overflow: hidden; }
 /* čestice iza sadržaja dok se kuca admin lozinka (kapija.js → cestice()) */
 .cestice { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 body.ima-cestice .ljuska { position: relative; z-index: 1; }
+
+/* Prelaz između strana (View Transitions, Chrome/Edge/Safari 18+): meni i gornja traka stoje u mestu, sadržaj se
+   blago pretapa. Meni se pravi pre prvog iscrtavanja (ljuska.js), pa je na novoj strani isti kao na staroj. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  .meni { view-transition-name: meni; }
+  .gornja { view-transition-name: gornja; }
+  ::view-transition-old(meni), ::view-transition-new(meni), ::view-transition-old(gornja), ::view-transition-new(gornja) { animation: none; }
+  ::view-transition-group(meni), ::view-transition-group(gornja) { animation-duration: 0s; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; }
+}

@@ -27,6 +27,13 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Testovi: `python -m pytest -q tests`.
 - Pozadina strane (`body`): blag dijagonalni gradijent oko `--bg-body` + jedva vidljive dijagonalne trake + šum (SVG
   feTurbulence), posebno za tamnu i svetlu temu (`--poz-*` u `stil.css`).
+- Meni (`ljuska.js`) se pravi odmah posle izvršavanja skripta (`queueMicrotask`, `ljuska.js` je posle `<main>`), pre
+  prvog iscrtavanja; uz View Transitions (`@view-transition` u `stil.css`) meni i gornja traka stoje u mestu pri prelazu
+  na drugu stranu, a sadržaj se pretapa. Ovo nije SPA — svaka strana se i dalje učitava cela. Skrol menija se pamti
+  (`sessionStorage` „ns-meni-skrol“), a aktivna stavka se uvek dovede u vidljiv deo.
+- Znak u bočnom meniju = `NaSicu_ikonica_bicikl_bez_NS.svg` + `NaSicu_ikonica_NS.svg` kao poseban sloj na istom mestu
+  (isti koordinatni sistem); pri skupljanju/širenju menija slova NS klize između malog znaka i rama bicikla, a
+  bicikl i natpis nestaju/pojavljuju se (`.brend-slika` u `stil.css`).
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 
@@ -93,7 +100,7 @@ Poslednji broj ima uvek dve cifre (00–99).
   stanje radi/ne radi se vidi tek u fokusu. Napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje
   staju (`zaustaviUzivo`). Dok se prenos u fokusu povezuje, preko slike se vrti krug „Učitavam prenos…“
   (klasa `.ucitava` na `.km-video`), koji nestaje kad krene slika.
-- Uvećan prikaz (fokus): klik na karticu ili dugme otvara kameru uživo preko ekrana; zum scrollom, pomeranje
+- Uvećan prikaz (fokus): klik na karticu ili dugme otvara kameru uživo preko ekrana; zum scrollom i duplim klikom (×2,5 na mestu klika / vrati), pomeranje
   prevlačenjem, strelice ←/→ (i dugmad) za sledeću kameru, dugme za ceo ekran (`requestFullscreen`), zatvaranje × ili
   Esc. Kontrole su u okviru snimka (`.km-kontrole`): Brojanje, Region (prikaz ROI), i „Broji“ (izbor klasa). `.km-video`
   se premesti u overlay, zum je transform na `.km-zum` (video + platno), pa se okviri uvećavaju zajedno sa slikom.
