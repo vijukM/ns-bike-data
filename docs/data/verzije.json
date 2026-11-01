@@ -1,0 +1,1372 @@
+{
+ "generisano_utc": "2026-11-01T13:56Z",
+ "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
+ "verzije": [
+  {
+   "verzija": "1.1.50",
+   "datum": "2026-11-01T14:56",
+   "naslov": "Admin: Verzije i zadaci; pretraga sa filterima; animacija grafika na Danas uživo",
+   "stavke": [
+    "nova admin strana „Verzije i zadaci“ (razvoj.html): istorija svih verzija sa datumom i izmenama iz git commit-ova (sajt/verzije.py → data/verzije.json, pretraga), i commit-ovi pre uvođenja oznake verzije po danima",
+    "kartica „Zadaci“: zahtevi za izmene (ID, autor, datum zahteva, hitnost, status), napredak po statusu, dodavanje, izmena sa vidljivom istorijom izmena i brisanje; polazni spisak data/zadaci.json",
+    "gornja traka: pretraga je samo lupa; modal ima filtere Sve / Strane / Stanice / Ulice (ulice vode na stranu staza) i dugme × za zatvaranje",
+    "Danas uživo: grafici vremena i brojanja animiraju se kad se doskroluje do njih (stubići talasom, linije s leva)",
+    "testovi tests/test_verzije.py; CLAUDE.md"
+   ],
+   "commit": null
+  },
+  {
+   "verzija": "1.1.49",
+   "datum": "2026-11-01T14:11",
+   "naslov": "O projektu: tabela izvora bez opisa, dva izvora za brojače",
+   "stavke": [
+    "uklonjeni sitni opisi ispod naziva u tabeli izvora (brojači, vreme, NS bike, parkirališta)",
+    "brojači: Mikrobit senzorika d.o.o. i Gradska uprava za građevinsko zemljište i investicije Grada Novog Sada",
+    "„Parkirališta za bicikle“ bez „(zvanično)“; NS bike stanice bez „app.nsbike.rs“"
+   ],
+   "commit": "69a58d9"
+  },
+  {
+   "verzija": "1.1.48",
+   "datum": "2026-11-01T13:49",
+   "naslov": "O projektu: mape u jednom redu, Mikrobit senzorika d.o.o., bez uvoda; gušći i slabiji šum pozadine",
+   "stavke": [
+    "tabela izvora: šest redova o mapama (staze, standardna, satelitska, za bicikliste, vektorske, natpisi) spojeno u jedan red „Mape“ (© OpenStreetMap saradnici, Esri World Imagery)",
+    "izvor brojača: Mikrobit senzorika d.o.o. umesto „UGZINS / Mikrobit“",
+    "uklonjen uvodni tekst ispod naslova",
+    "šum pozadine na svim stranama gušći (baseFrequency 5.2, pločica 48 px) i manje primetan"
+   ],
+   "commit": "20d739f"
+  },
+  {
+   "verzija": "1.1.47",
+   "datum": "2026-10-31T17:21",
+   "naslov": "Meni: animacija znaka NS ↔ bicikl, pamćenje skrola i miran prelaz između strana; kamere: dupli klik za zum",
+   "stavke": [
+    "novi NaSicu_ikonica_bicikl_bez_NS.svg; znak u meniju = bicikl bez slova + NS kao poseban sloj na istom mestu, pa pri skupljanju/širenju menija slova NS klize između malog znaka i rama bicikla, a bicikl i natpis nestaju",
+    "meni pamti poziciju skrola između strana (sessionStorage), aktivna stavka se uvek dovede u vidljiv deo",
+    "meni se pravi pre prvog iscrtavanja (queueMicrotask) + View Transitions: meni i gornja traka stoje u mestu pri prelazu na drugu stranu, sadržaj se blago pretapa",
+    "kamere (fokus): dupli klik uvećava ×2,5 na mestu klika, ponovni dupli klik vraća ceo kadar"
+   ],
+   "commit": "10ab81e"
+  },
+  {
+   "verzija": "1.1.46",
+   "datum": "2026-10-30T21:03",
+   "naslov": "Kamere: krug dok se prenos učitava, lokalna sličica za Most slobode; gušći šum",
+   "stavke": [
+    "u fokusu se preko slike vrti krug „Učitavam prenos…“ dok prenos ne krene; nestaje na prvu sliku, grešku ili zatvaranje",
+    "sličica Most slobode u assets/slike/kamere/most-slobode.webp (720 px, kao ostale) umesto spoljne adrese",
+    "šum pozadine znatno gušći (baseFrequency 3.4, pločica 72 px)"
+   ],
+   "commit": "a98b7a9"
+  },
+  {
+   "verzija": "1.1.45",
+   "datum": "2026-10-30T20:50",
+   "naslov": "Kamere: bez provere statusa pri ulasku i bez uvoda; gušći i suptilniji šum, jači gradijent",
+   "stavke": [
+    "kamere.html više ne šalje nijedan zahtev ka serveru prenosa dok se kamera ne otvori (uklonjena lagana provera statusa u mreži i brojač „X od 6 radi“); stanje se vidi tek u fokusu",
+    "izbačen uvodni tekst sa strane kamera",
+    "pozadina: šum gušći (baseFrequency 1.9, pločica 120 px) i upola slabiji, dijagonalni gradijent izraženiji"
+   ],
+   "commit": "f273e72"
+  },
+  {
+   "verzija": "1.1.44",
+   "datum": "2026-10-30T20:35",
+   "naslov": "Lozinke: dugme „oko“ i čestice u pozadini; pozadina strane; kamere: Most slobode, tačka u meniju",
+   "stavke": [
+    "svako polje za lozinku (kapija, admin, prijava, privremeni link) dobija dugme za prikaz/sakrivanje — kapija.js ga dodaje sam (MutationObserver)",
+    "prvi ekran sa lozinkom i admin forma: pozadina sa česticama (particles.js 2.0.0, MIT, assets/vendor/), boja prati temu, uz „manje pokreta“ stoje; admin forma ih uklanja posle ispravne lozinke",
+    "pozadina strane: blag dijagonalni gradijent oko --bg-body + jedva vidljive dijagonalne trake + šum, za obe teme",
+    "Kamere uživo u skupljenom meniju ima crvenu tačku kao Danas uživo",
+    "Most slobode: ne proba se chunks.m3u8 (bez_druge_adrese), sličica sa kamere.24sedam.rs (rezerva: placeholder)",
+    "ispravka: prazan brojač (.km-broj) se više ne vidi kao tamna pilula na sličicama"
+   ],
+   "commit": "7caa96c"
+  },
+  {
+   "verzija": "1.1.43",
+   "datum": "2026-10-30T15:17",
+   "naslov": "Kamere: lenjo striming (uživo samo u fokusu), kontrole u snimku, bez info dugmeta",
+   "stavke": [
+    "mreža prikazuje sličice (poster); živ prenos kreće tek u fokusu → veliki pad protoka (6 prenosa → 1)",
+    "status u mreži se proverava lagano (fetch m3u8, ne ceo prenos): radi / ne-radi / nepoznato",
+    "napuštanjem kamere (zatvaranje ili druga kamera) prenos i brojanje staju (zaustaviUzivo)",
+    "kontrole premeštene u okvir snimka (fokus): Brojanje, Region (prikaz ROI), izbor klasa „Broji“",
+    "uklonjeno info (ⓘ) dugme i padajuća lista iz zaglavlja",
+    "Most Duga ROI: kraj mosta proširen (2 tačke umesto jedne)"
+   ],
+   "commit": "eb7119f"
+  },
+  {
+   "verzija": "1.1.42",
+   "datum": "2026-10-30T14:53",
+   "naslov": "Kamere: ROI unapred iz snimaka, izbor klasa, strelice i ceo ekran u fokusu",
+   "stavke": [
+    "ROI se zadaje u kamere.json (polje „roi“) — poligoni izvučeni iz označenih snimaka (žuta granica, cv2); Bulevar, Raskrsnica kod pozorišta, Most Duga, Mišeluk. Crtanje ROI na sajtu uklonjeno (kamere su statične).",
+    "region se prikazuje na kameri (svetlije unutra, zatamnjeno van); info dugme (ⓘ) objašnjava ROI i daje po kameri koliko se slike gleda i procenu uštede",
+    "padajuća lista „Broji“: bira klase (auto, kamion, autobus, motor, pešak, bicikl); podrazumevano vozila bez pešaka i biciklista; pamti se u localStorage „ns-kamere-klase“",
+    "fokus: strelice ←/→ (i dugmad) za sledeću kameru, dugme za ceo ekran; z-index iznad bočnog menija"
+   ],
+   "commit": "1aaf705"
+  },
+  {
+   "verzija": "1.1.41",
+   "datum": "2026-10-30T13:50",
+   "naslov": "Kamere: fokus na jednu kameru (zum + pomeranje), ime Most Duga, bez uvoda; uklonjen drumski iz ns-bike-data",
+   "stavke": [
+    "dugme gore desno (i klik na karticu) uvećava jednu kameru preko ekrana: zum scrollom, pomeranje prevlačenjem, zatvaranje × ili Esc; okviri brojanja se uvećavaju zajedno sa slikom (.km-zum)",
+    "kamera petrovaradin preimenovana u „Most Duga“",
+    "izbačen nepotreban uvodni tekst sa strane",
+    "ns-bike-data više ne prikuplja drumski saobraćaj (scraper/drumski.py, korak u citaj.yml, podaci/drumski, testovi — uklonjeno); prikuplja se u ns-trafic-data, vraća se ako se projekti objedine"
+   ],
+   "commit": "047b9a7"
+  },
+  {
+   "verzija": "1.1.40",
+   "datum": "2026-10-30T12:35",
+   "naslov": "Kamere: region interesa za brojanje vozila",
+   "stavke": [
+    "dugme na kameri crta poligon po slici (deo puta gde se broji)",
+    "detekcija i pločice samo unutar regiona → brže i bez lažnih vozila na zgradama/drveću",
+    "kutija se broji samo ako joj je centar u regionu; region se zatamni spolja i iscrta",
+    "pamti se po kameri u localStorage „ns-kamere-roi“; može i podrazumevano polje „roi“ u kamere.json"
+   ],
+   "commit": "d1dd0dd"
+  },
+  {
+   "verzija": "1.1.39",
+   "datum": "2026-10-30T12:19",
+   "naslov": "Kamere: brojanje vozila u pregledaču (TF.js + COCO-SSD)",
+   "stavke": [
+    "dugme na kameri uključuje/isključuje brojanje; crta okvire i „koliko se trenutno vidi“",
+    "detekcija u pregledaču: TensorFlow.js + COCO-SSD (Apache-2.0), model ssdlite u docs/assets/modeli/coco-ssd/; biblioteka sa jsdelivr uz SRI, lenjo se učita tek na uključenje; izbor po kameri u localStorage",
+    "kadar se deli na pločice (SSD inače ne vidi sitna/daleka vozila); NMS spaja duple kutije",
+    "sve na uređaju gledaoca, ništa se ne šalje ni čuva; prototip (bez praćenja i linije)",
+    "za javni rad i „zvanične“ brojke: linija + praćenje, poređenje sa ns-trafic-data i dozvola/licenca prenosa"
+   ],
+   "commit": "cba0b50"
+  },
+  {
+   "verzija": "1.1.38",
+   "datum": "2026-10-30T11:32",
+   "naslov": "Kamere: slike za placeholder, proksi za Referer i „nema slike“",
+   "stavke": [
+    "snimci kamera u docs/assets/slike/kamere/ kao placeholder dok prenos ne radi (posta-ns1 Bulevar Mihajla Pupina, posta-ns2 Raskrsnica kod pozorišta, petrovaradin Dugin most, juzni-bul1 Mišeluk, trg-slobode Trg slobode); most-slobode bez slike → placeholder nema-slike.svg",
+    "server prenosa pušta samo svoje sajtove (403 po Referer-u); pregledač ne da JS-u da lažira Referer, pa:",
+    "— kamere.html: <meta name=\"referrer\" content=\"no-referrer\"> (ne šalje nasicu.rs)",
+    "— kamere.json: opciono polje „proksi“; kamere.js prenos provuče kroz proksi",
+    "— kamere-proksi/: Cloudflare Worker koji dohvata prenos sa dozvoljenim Referer-om (+ CORS), samo za taj izvor",
+    "privremeno, za demo iza admin lozinke; za javni rad i brojanje vozila treba dozvola/licenca vlasnika prenosa"
+   ],
+   "commit": "6aea061"
+  },
+  {
+   "verzija": "1.1.37",
+   "datum": "2026-10-30T11:02",
+   "naslov": "Kamere: zamenjeni nazivi posta-ns1/ns2, poruka za 403 i slika kamere",
+   "stavke": [
+    "posta-ns1 = Bulevar Mihajla Pupina, posta-ns2 = Raskrsnica kod pozorišta",
+    "kad server kamere vrati 403 (ne dozvoljava prikaz sa ovog sajta), strana to i kaže",
+    "opciono polje „slika“ u kamere.json: snimak kamere koji se prikazuje dok prenos ne radi"
+   ],
+   "commit": "8f39780"
+  },
+  {
+   "verzija": "1.1.36",
+   "datum": "2026-10-30T10:46",
+   "naslov": "Admin: kamere uživo, drumski saobraćaj i tokeni na Preuzimanju",
+   "stavke": [
+    "nova grupa menija Admin: Kamere uživo i Preuzimanje podataka (izbačeno iz Projekat)",
+    "kamere.html + kamere.js: HLS prenosi iz data/kamere.json (bez izmene koda), sama proverava da li prenos radi (i chunks.m3u8 ↔ playlist.m3u8), „NE RADI“ i ponovna provera na 2 min, prikaz preko celog ekrana, pauza van ekrana; hls.js 1.5.20 (SRI)",
+    "LJ.stalnoUzivo: isti znak „UŽIVO“ kao „Danas uživo“",
+    "Preuzimanje: stanje prikupljanja ns-trafic-data (stanje.json) i podsetnik za tokene (data/admin.json)"
+   ],
+   "commit": "b3bd287"
+  },
+  {
+   "verzija": "1.1.35",
+   "datum": "2026-10-30T08:26",
+   "naslov": "Drumski saobraćaj: čitanje uz bicikliste (podaci/drumski)",
+   "stavke": [
+    "scraper/drumski.py: javni fajl UGZ counters_georss_sr.xml (rezerva counters_georss_gps_sr.xml — isti sadržaj, decimalni zarez); 172 trake na 44 lokacije, stanje poslednjeg 5-min intervala (vozila/h, brzina, sleđenje, zauzetost, stanje); čuva se HHMM.csv.gz po čitanju, greške u greske.log",
+    "citaj.yml: poseban korak u istom pokretanju, continue-on-error, posle biciklista i pre commit-a; logika biciklista nepromenjena",
+    "provera verzije ne računa fajlove koji u celom PR-u ostaju isti (privremeni workflow za analizu fajlova)",
+    "testovi tests/test_drumski.py; CLAUDE.md; verzija 1.1.35"
+   ],
+   "commit": "3cb5be0"
+  },
+  {
+   "verzija": "1.1.34",
+   "datum": "2026-10-29T13:13",
+   "naslov": "Danas uživo: procena sata kad čitanje u XX:02 izostane",
+   "stavke": [
+    "sajt/danas.py: granica sata bez važećeg čitanja procenjuje se linearno između najbližih svežih čitanja pre i posle (najviše 90 min razmaka); zbir oba susedna sata ostaje tačan; „procena“ po seriji i procena_sati za grad (satni obračun za model ostaje bez interpolacije)",
+    "danas.js: procenjeni sati šrafirani, u legendi i oblačiću „procena“",
+    "29. 10: čitanje u 12:02 je izostalo (neispravan citaj.yml), ručno u 12:18 → sati 11–12 i 12–13 sada imaju procenu",
+    "test; verzija 1.1.34"
+   ],
+   "commit": "12beb0e"
+  },
+  {
+   "verzija": "1.1.33",
+   "datum": "2026-10-29T12:17",
+   "naslov": "Ispravka citaj.yml (dupli ključevi); admin provera za „Preuzimanje podataka“",
+   "stavke": [
+    "citaj.yml: korak „dnevnik čitanja“ je bio ubačen usred koraka „Danas uživo“ (dva run/continue-on-error), pa je GitHub odbacio workflow i čitanje u 12:02 nije pokrenuto; test tests/test_workflowi.py hvata duple ključeve",
+    "„Preuzimanje podataka“ u meniju (oznaka ADMIN) i traži admin lozinku i kad je sajt otključan (heš u kapija.js, važi do zatvaranja taba, najviše 30 min; „Zaključaj admin“); sajt.kapija --admin za promenu",
+    "detalji čitanja: okidač bez „procena po minutu“, puna putanja fajla, „Čitanje u 23:02 · broji 22:02–23:02“"
+   ],
+   "commit": "3b8e73f"
+  },
+  {
+   "verzija": "1.1.32",
+   "datum": "2026-10-29T11:26",
+   "naslov": "Preuzimanje podataka: dnevnik čitanja uživo; rezerva bez čitanja ne pravi commit",
+   "stavke": [
+    "nova strana „Preuzimanje podataka“ (assets/preuzimanje.js): svaki sat svakog dana (minut čitanja, okidač, starost izvora, redovi, greške), nepravilnosti, detalji sata, objašnjenje toka; paketi ostaju „uskoro“",
+    "sajt/citanja.py → docs/data/citanja.json posle svakog čitanja",
+    "scraper upisuje svako pokretanje u podaci/biciklisti/pokretanja.csv",
+    "citaj.yml: rezerva (XX:20) koja ne čita više ne obnavlja sajt i ne pravi commit (otud commit-ovi „podaci: čitanje“ u :37 i sl. bez novog čitanja)",
+    "testovi tests/test_citanja.py; CLAUDE.md; verzija 1.1.32"
+   ],
+   "commit": "90cdb76"
+  },
+  {
+   "verzija": "1.1.31",
+   "datum": "2026-10-29T10:24",
+   "naslov": "Profil: zatvaranje samo klikom van prozora, zbijeniji izbor, filteri u 2 reda",
+   "stavke": [
+    "prozori (profil, prijava, privremeni pristup) se zatvaraju samo kad su i pritisak i puštanje miša van okvira; klik u prozoru ga više ne zatvara",
+    "likovi.json se učitava sa ?v=, da filteri ne čitaju stari keš (svi su pokazivali 0)",
+    "manje razmaka, filteri u 2 reda, „Strana 1 / 11“",
+    "korak 1: neutralna srednje svetla pozadina, ista u obe teme"
+   ],
+   "commit": "7c5305a"
+  },
+  {
+   "verzija": "1.1.30",
+   "datum": "2026-10-29T10:14",
+   "naslov": "Profil: biciklista u posebnom prozoru, filteri, klizači brzine i veličine",
+   "stavke": [
+    "prijava/registracija i biciklista su odvojeni prozori: „Prijava“ u gornjoj traci, profil klikom na dno menija (sličica lika ili poziv „Napravi biciklistu“)",
+    "korak 1 prikazuje samo biciklistu bez pozadine; scena „Reka“ i oznake mesta/vremena/doba dana stižu tek kad se dođe do tog koraka",
+    "filteri: svakodnevni, dostavljači i posao, deca i porodica, sportisti, rekreativci, specijalni (kategorije u likovi.json); bez opisa likova",
+    "pregled za četvrtinu uži; klizači za brzinu i veličinu, čuvaju se uz izbor"
+   ],
+   "commit": "eb8c427"
+  },
+  {
+   "verzija": "1.1.29",
+   "datum": "2026-10-29T09:54",
+   "naslov": "Prijava: izbor bicikliste u 4 koraka i scena „Reka“",
+   "stavke": [
+    "novi prozor „Prijava“ (assets/prijava.js, učitava se tek na klik): širi, Email i Lozinka jedno pored drugog, „Imam nalog“ / „Novi nalog“",
+    "„Tvoj biciklista“ u 4 koraka: biciklista (5 sličica po strani, strelice i tastatura), mesto vožnje (Reka), vreme (Sunce), doba dana (Dan); ostale opcije su „u izradi“; izbor se pamti u pregledaču (ns-profil)",
+    "pregled: scena „Reka“ sa izabranim likom (vektorski, pauza van ekrana, u sakrivenom tabu, kad je prozor zatvoren i uz „manje pokreta“)",
+    "gotov materijal bez izmena: assets/nasicu/*.js, reka/reka-panorama.svg, likovi/mini/*.webp; likovi/likovi.json bez putanja do svg/png/animacija",
+    "testovi: tests/test_likovi.py; CLAUDE.md; verzija 1.1.29"
+   ],
+   "commit": "9573986"
+  },
+  {
+   "verzija": "1.1.28",
+   "datum": "2026-10-29T08:27",
+   "naslov": "Meni: logo i dno uvek vidljivi; tajmer privremenog naloga; Prijava poslednja",
+   "stavke": [
+    "gornja traka: … Prilagodi, Tema, Prijava (poslednja)",
+    "levi meni: logo gore i dno (Master rad · verzija) stoje, skroluju se samo grupe",
+    "privremeni ulaz preko linka: u dnu menija „Privremeni nalog“ i odbrojavanje koliko je još ostalo"
+   ],
+   "commit": "4386437"
+  },
+  {
+   "verzija": "1.1.27",
+   "datum": "2026-10-29T08:14",
+   "naslov": "Kapija: privremeni linkovi za pristup; verzija u obliku 1.X.YY",
+   "stavke": [
+    "dugme sa satom u dnu menija: uz lozinku pravi link koji važi 5 min – 1 dan; istek je potpisan ECDSA P-256 (sajt ima javni ključ, tajni je šifrovan lozinkom), privremeni ulaz se zatvara čim istekne",
+    "sajt.kapija pravi i ključeve; nova so i heš (lozinka ista)",
+    "verzija 1.1.27 (poslednji broj uvek dve cifre, posle .99 ide 1.(X+1).00); provera i CLAUDE.md prilagođeni"
+   ],
+   "commit": "d753937"
+  },
+  {
+   "verzija": "1.0.126",
+   "datum": "2026-10-29T07:44",
+   "naslov": "Kapija: lozinka za ceo sajt dok nije gotov",
+   "stavke": [
+    "docs/assets/kapija.js u <head> svake strane: sadržaj se ne prikazuje dok se ne unese lozinka (PBKDF2-SHA256, 300.000 ponavljanja, Web Crypto); ulaz se pamti 30 dana, dugme „Zaključaj“ u dnu menija",
+    "noindex na svim stranama i robots.txt (Disallow: /)",
+    "sajt/kapija.py za novu lozinku; tests/test_kapija.py"
+   ],
+   "commit": "d0ff1a8"
+  },
+  {
+   "verzija": "1.0.125",
+   "datum": "2026-10-28T16:48",
+   "naslov": "Domen nasicu.rs, zaključane strane, verzija aplikacije, šablon prijave",
+   "stavke": [
+    "domen: strane 404/403 i og:image na https://nasicu.rs (sajt je u korenu)",
+    "meni: katanac i za Toplotnu mapu, Praznike, Kvalitet podataka, Preuzimanje i Rečnik (adrese rade); strana „Vreme i biciklisti“ uklonjena",
+    "verzija aplikacije v 1.0.125 (VERZIJA u ljuska.js, dno menija); pravilo u CLAUDE.md i provera na PR-u (.github/workflows/verzija.yml)",
+    "gornja traka: dugme „Prijava“ sa šablonom naloga i avatara (biciklista ispred panorame dela grada) — sve neaktivno do backend-a"
+   ],
+   "commit": "2e1876a"
+  }
+ ],
+ "pre_verzija": [
+  {
+   "dan": "2026-10-28",
+   "stavke": [
+    {
+     "vreme": "10:20",
+     "naslov": "Danas: „Pusti dan“ ističe sat na grafiku; meni sa katancem; svetliji tekst",
+     "stavke": [
+      "„Pusti dan“: na glavnom grafiku tekući sat druge boje (budući bledi) sa oblačićem; sat i zbir svih brojača u okviru ispod dugmeta; dan je uvek istaknut ispod dugmeta",
+      "tabela brojača: kraći opis „Razlika“, nazivi kolona beli",
+      "tema: --t-muted i --t-light svetliji u tamnoj (tamniji u svetloj) temi",
+      "meni: Prognoza za sutra, Tačnost prognoze i Model imaju katanac umesto „uskoro“; klik ih ne otvara, adrese rade"
+     ],
+     "commit": "277593b"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-27",
+   "stavke": [
+    {
+     "vreme": "09:51",
+     "naslov": "28: kvar smera do popravke 23.10.2026 (tačke 1–2)",
+     "stavke": [
+      "Skok: prvi sat sa oba smera je ts 2026-10-23 13:00 (UTC+1) = 13–14 h lokalno (smer 11: 131, smer 21: 107); u 12–13 h popravka u toku (smer 21: 14) → i taj sat je kvar, sa izmerenim smerom 11.",
+      "ISKLJUCENE[\"28\"] važi do prvog ispravnog sata (`do`).",
+      "KVAR_SMERA + pravilo_kvar_smera: novi sati 28 pre popravke → razlog kvar_smera, y_A NaN (bez ocene), y_jedan_smer (smer 11 iz satno_smerovi, inače feed), y_procena = y_jedan_smer / udeo[vikend, sat] iz udeo_smera_28.csv, zaokruženo. Na stvarnim podacima: 331 sat, procena / jedan smer = 1,874."
+     ],
+     "commit": "8a1a827"
+    },
+    {
+     "vreme": "09:54",
+     "naslov": "28: procena kvara smera u ulazu modela (tačka 3)",
+     "stavke": [
+      "napravi(): y_ulaz = izmereno, a za sate kvar_smera y_procena; iz njega se računaju dinamička skala, lag, roll i isti_sat_7d. Cilj y / yn ostaje bez procene (NaN), pa ni TFT enkoder ni ocena ne vide procenu kao merenje. Test podudarnosti sa referencom i dalje prolazi (bez kolone y_procena ponašanje je isto)."
+     ],
+     "commit": "28e59ba"
+    },
+    {
+     "vreme": "09:54",
+     "naslov": "28: sati kvara smera se ne ocenjuju (tačka 4)",
+     "stavke": [
+      "Ocena (zbirna i po stanici) već uzima samo razlog_A = ok sa stvarnom vrednošću; sati kvar_smera su NaN sa svojim razlogom, pa ne ulaze ni kao izmereno ni kao procena. Napomena u zvanicne_modela i test."
+     ],
+     "commit": "47b9ab3"
+    },
+    {
+     "vreme": "09:59",
+     "naslov": "28: stubac na sajtu = izmereni smer + dopuna (tačka 5)",
+     "stavke": [
+      "sajt.danas.dopuni_kvar_smera: za sate KVAR_SMERA stubac je izmereni smer 11 (sati) + dopuna = procena − izmereno (isto pravilo i udeo kao ulaz modela). Dopuna drugom bojom (šrafura) uz legendu „procena: drugi smer nije radio (potvrđeno od održavanja), dopuna po istorijskom odnosu smerova“. Sati kvara ne ulaze u zbir grada; od popravke (23.10. 13–14 h) 28 više nije „neispravan“ i ulazi u zbir. Arhiva dana ponovo napravljena."
+     ],
+     "commit": "e887733"
+    },
+    {
+     "vreme": "09:59",
+     "naslov": "MODEL_KONTEKST 18i: kvar smera 28 do 23.10.2026 (tačka 6)",
+     "stavke": [
+      "Šta je urađeno i da je dopuna samo za prikaz i ulaz modela, ne za ocenu."
+     ],
+     "commit": "e1c664b"
+    },
+    {
+     "vreme": "12:31",
+     "naslov": "Danas uživo: traka „dan prema prognozi“ umesto KPI, dugme Danas samo kad treba",
+     "stavke": [
+      "KPI red uklonjen; ispod „Kakvo je vreme danas?“ je kartica sa trakom: izbrojano prema prognozi za ceo dan (interval 10–90 % drugom bojom, oznaka prognoze do ovog sata, mesta i za prebačaj) i četiri činjenice.",
+      "Tabela „Svaki brojač prema svojoj prognozi“ iste visine kao leva kolona.",
+      "Dugme „Danas“ se ne prikazuje na današnjem danu (umesto onemogućenog).",
+      "Kraći opis prognoze; „parametar/parametra/parametara“ umesto „veličina“.",
+      "Dopuna 28: legenda „procena za drugi smer koji nije brojao bicikliste“, šrafura u legendi kao na stubcu."
+     ],
+     "commit": "3ec1d8d"
+    },
+    {
+     "vreme": "14:21",
+     "naslov": "Danas: dugme „Pusti dan“ na mapi; Dan na mapi uklonjen; naslov i logo",
+     "stavke": [
+      "danas.html: „Pusti dan“ pušta mapu sat po sat (1 s po satu), pinovi pokazuju broj u satu i razliku od prognoze za taj sat",
+      "naslov kartice: „Koliko su brojači izbrojali danas?“ (jedan biciklista može proći pored više brojača)",
+      "mapa.html: bez prikaza „Dan na mapi“; stari linkovi ?rezim=dan vode na danas.html (i iz kalendara i kontrolne table)",
+      "meni: logo bez natpisa „biciklisti Novog Sada“, znak i natpis veći"
+     ],
+     "commit": "ed37eb0"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-26",
+   "stavke": [
+    {
+     "vreme": "14:15",
+     "naslov": "Danas uživo: poslednji sat dana iz „juče“ kad brojač pre čitanja pređe u novi dan",
+     "stavke": [
+      "Prvo čitanje posle ponoći (25. 10. stiglo u 00:05) može da zatekne brojač već u novom danu (sat brojača kasni par minuta): „danas“ je 0, a zbir dana je u polju „juče“. citanja_dana sada to čitanje računa kao stanje u 23:59:59 prethodnog dana, pa sat 23–24 više nije prazan (kao u satnoj istoriji, scraper.satno). Arhiva ponovo napravljena: popunjen poslednji sat 9., 11., 13. i 25. 10. (ostali sati nepromenjeni)."
+     ],
+     "commit": "b8c8c7d"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-25",
+   "stavke": [
+    {
+     "vreme": "01:24",
+     "naslov": "docs: MODEL_KONTEKST za model-v3 (E32, ciscenje po Status oznakama)",
+     "stavke": [],
+     "commit": "81e3c9f"
+    },
+    {
+     "vreme": "01:25",
+     "naslov": "NaSicu: novi naziv, logo i ikonice; isti naslov taba na svim stranama",
+     "stavke": [
+      "docs/assets/slike/brend: logo (tamna i svetla podloga), znak bicikla i natpis „NaSicu“ izvedeni iz logoa (SVG), ikonica NS, favicon (ico, 16–512), apple-touch-icon, slika za deljenje linka (1200×630).",
+      "Meni: znak + natpis „NaSicu“ i „biciklisti Novog Sada“ umesto „Biciklisti NS · istorija 2021–2026“; u uskom meniju ikonica NS.",
+      "Sve strane: <title>NaSicu</title> i iste ikonice taba; strane više ne menjaju naslov taba iz skripte; site.webmanifest, theme-color, og:*.",
+      "Nadnaslovi grupa u meniju bliže levoj ivici."
+     ],
+     "commit": "67c2ecf"
+    },
+    {
+     "vreme": "07:54",
+     "naslov": "Strane greške 404 i 403 sa NaSicu logoom; originalni nazivi fajlova logoa",
+     "stavke": [
+      "sajt/strane_greske.py pravi docs/404.html i docs/403.html: NaSicu logo ugrađen kao SVG (nepromenjen; pomera se samo isprekidana linija staze), broj greške u bojama logoa, svetla i tamna tema, ikonice sa apsolutnim adresama.",
+      "Fajlovi iz paketa vraćeni na originalne nazive (NaSicu_logo.svg, NaSicu_ikonica_NS.svg, …); u meniju je NaSicu_ikonica_bicikl.svg iz paketa umesto isečka iz logoa."
+     ],
+     "commit": "4fd21ac"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-23",
+   "stavke": [
+    {
+     "vreme": "14:46",
+     "naslov": "Meni: grupe se otvaraju i zatvaraju strelicom, bez trake za skrol",
+     "stavke": [
+      "Naslov svake grupe (Pregled, Mapa, Podaci, Analize, Prognoza, Projekat) je dugme sa strelicom; zatvorene grupe se pamte, grupa sa otvorenom stranom je uvek otvorena; zatvorena grupa pokazuje broj stavki.",
+      "Traka za skrol u meniju je sakrivena (meni se i dalje pomera točkićem).",
+      "Četiri predloga kako grupa i podstranice izgledaju povezano (linija, kartica, boja, stepenik) — proba uživo sa ?meni=…; podrazumevano „linija“ dok se ne izabere konačan."
+     ],
+     "commit": "2a8309b"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-22",
+   "stavke": [
+    {
+     "vreme": "09:43",
+     "naslov": "Sat 00–01 dobija prognozu, kalendar se otvara nagore pri dnu, CI ne briše oktobar",
+     "stavke": [
+      "sajt/danas.py: zvanična prognoza dopunjuje sate kojih nema iz izdanja objavljenog pre početka sata (leti je lokalni sat 00–01 sat 24 modela za prethodni dan); dopunjeni sati se navode u info.",
+      "sajt/sati_novi.py: spajanje po celobrojnom indeksu sata umesto reindex-a po datetime-u, pa razlika u preciznosti (us/ns) više ne prazni mesec.",
+      "requirements.txt: pandas <3, kao za model.",
+      "datum.js: panel se otvara nagore kad ispod dugmeta nema mesta; Esc zatvara kalendar i kad je fokus na dugmetu.",
+      "Ponovo napravljeni sati/2026-09, 2026-10, sati_dostupno i arhiva dana."
+     ],
+     "commit": "a0d7e77"
+    },
+    {
+     "vreme": "11:25",
+     "naslov": "Biciklističke staze: prava strana umesto skice",
+     "stavke": [
+      "sajt/staze_analiza.py: analiza mreže iz OSM podataka koje sajt već ima (staze, ulice, delovi grada, brojači): pravci (obe strane bulevara = jedan), naziv ulice po deonici, promet po najbližem brojaču iste ulice, udaljenost svake ulice do staze, pokrivenost po delu grada, prekidi i krajevi staza → docs/data/staze_analiza.json; korak u workflow-u sajt_istorija.",
+      "staze.html/staze.js: uvod sa brojevima u rečenici i trakom po vrsti umesto KPI kartica; mapa sa četiri prikaza (Mreža, Promet, Do staze, Prekidi) i bočnim spiskom; tabela ulica sa stazom; delovi grada po četiri mere; opis podataka i načina računanja.",
+      "Meni: Biciklističke staze više nisu „uskoro“.",
+      "tests/test_staze_analiza.py: pravci, nazivi, brojači, prekidi, krajevi, udaljenost i delovi grada na izmišljenom kvartu."
+     ],
+     "commit": "cb7ad17"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-21",
+   "stavke": [
+    {
+     "vreme": "09:22",
+     "naslov": "Danas uživo: vreme — kiša u tooltip-u, legenda, info sa vremenom preuzimanja, datum",
+     "stavke": [
+      "tooltip prikazuje padavine u mm (stubić je skaliran 1 mm = 20 % na desnoj osi)",
+      "legenda ispod grafika: temperatura, oblačnost, kiša",
+      "uklonjen red „min–max · kiša · Open-Meteo, preuzeto u…“; vreme preuzimanja je u info pored naslova",
+      "nadnaslov sa datumom: „Vreme · sreda, 21. 10. 2026.“"
+     ],
+     "commit": "9bed666"
+    },
+    {
+     "vreme": "09:59",
+     "naslov": "Danas uživo: „Kakvo je vreme danas?“ sa izborom veličina, pretraga brojača, tabela 5 redova",
+     "stavke": [
+      "vreme: naslov „Kakvo je vreme danas?“, nadnaslov „Vremenska prognoza za <datum>“; padajući izbor „Na grafiku“ (temperatura, osećaj temperature, oblačnost, kiša, vetar, vlažnost, sunčevo zračenje; podrazumevano temperatura, oblačnost i kiša) sa jedinicama; legenda bez jedinica; tooltip sa jedinicama",
+      "Open-Meteo: preuzima se i apparent_temperature (samo za prikaz, model ga ne koristi); danas.json dobija vetar, vlažnost, zračenje i osećaj temperature",
+      "tabela brojača: pretraga desno od naslova, visina za 5 redova sa skrolom"
+     ],
+     "commit": "b8abe66"
+    },
+    {
+     "vreme": "10:30",
+     "naslov": "Danas uživo: vetar i zračenje na skali iz istorije, zelena vlažnost, iste visine kartica, X u izboru",
+     "stavke": [
+      "vetar i sunčevo zračenje na desnoj osi: 100 % = 30 km/h i 900 W/m² (≈ 99,9. percentil satnih vrednosti u Novom Sadu 2021–2026; najviše izmereno 38,8 km/h i 939 W/m², ekstremi idu do vrha); napomena u panelu, tooltip pokazuje stvarne vrednosti",
+      "vlažnost vazduha: svetlozelena linija",
+      "tabela brojača: najviše 4 reda, ostalo skrol; kartica vremena iste visine kao tabela (grafik se smanjuje kad legenda ide u dva reda)",
+      "panel „Na grafiku“: X u gornjem desnom uglu"
+     ],
+     "commit": "5b82729"
+    },
+    {
+     "vreme": "14:32",
+     "naslov": "Dan na mapi: podrazumevano danas, svi dani sa podacima (i posle istorije), oznaka „svi brojači“",
+     "stavke": [
+      "sajt/sati_novi.py: satni fajlovi docs/data/istorija/sati/YYYY-MM.json od 09/2026 iz satnog obračuna scraper-a, u istom formatu kao istorija (lokalni sati, razlozi, 28 = brojač neispravan) + sati_dostupno.json (poslednji dan, dani bez podataka); pokreće ga citaj.yml posle noćnog obračuna",
+      "strana: podrazumevano danas (iz danas.json, do poslednjeg završenog sata), datumi od 1. 1. 2021. do danas, ‹ › preskaču rupu 01.09–08.10.2026, za prazan dan poruka umesto praznog grafika",
+      "napomena „Svi brojači u gradu, sat po sat“ i dugme „Danas uživo, po brojaču →“",
+      "test za nove mesečne fajlove"
+     ],
+     "commit": "89daef4"
+    },
+    {
+     "vreme": "15:03",
+     "naslov": "Danas uživo: izbor dana (prošli dani iz arhive i istorije); zvanična prognoza otporna na ispad Open-Meteo",
+     "stavke": [
+      "strana: ‹ datum › i „Danas“ u zaglavlju, link ?dan=YYYY-MM-DD; prošli dan bez oznake UŽIVO (naslov = dan, „Ceo dan“, „Prema prosečnom danu“, najprometniji sat i brojač); ‹ › preskaču rupu bez podataka",
+      "izvori: danas.json (danas) · docs/data/dani/YYYY-MM-DD.json (od 9. 10. 2026., konačni snimak sa prognozom model-v2 i vremenom; sajt.danas --juce svake noći, --sve za popunu) · istorija sati/ + meteo_sati/ (2021 – 31. 8. 2026., izmereno vreme, bez prognoze)",
+      "sajt.danas: stanje i ukupno iz poslednjeg čitanja svakog smera (za prošli dan čitanje posle ponoći ima samo deo brojača), vreme iz najnovijeg preuzimanja koje pokriva ceo dan",
+      "„Dan na mapi“: dugme vodi na isti dan („Ovaj dan po brojaču“)",
+      "izdaj: Open-Meteo sa ponovnim pokušajima (20/60/120 s); ako i dalje ne odgovara, prognoza se izdaje sa poslednjom sačuvanom vremenskom prognozom (21.10. u 01:03 zvanična je pala na isteku vremena)"
+     ],
+     "commit": "cbb6e8e"
+    },
+    {
+     "vreme": "15:20",
+     "naslov": "Novi izbor datuma na celom sajtu (Danas uživo, Dan na mapi, Kalendar, Stanica)",
+     "stavke": [
+      "assets/datum.js zamenjuje <input type=\"date\">: dugme „Sre 21. 10. 2026.“ (+ oznaka DANAS) i kalendar u stilu sajta; polje ostaje skriveno (vrednost, min/max, „change“), pa kod strana nije menjan",
+      "kalendar zna za podatke: traka prometa ispod svakog dana (biciklista po brojaču, 5 nivoa kao na Kalendaru; na strani stanice promet te stanice), dani bez podataka i van perioda ugašeni, vikend i praznici narandžasto, danas uokviren; hover: „Čet 15. 10. 2026. · 44.597 biciklista · 45 brojača“",
+      "naslov mesec / godina vodi na izbor meseca i godine; prečice Danas, Juče, Pre 7 dana, Najprometniji dan; tastatura (strelice, PgUp/PgDn, Home/End, Enter, Esc); na telefonu panel sa dna ekrana",
+      "docs/data/dani/spisak.json dobija dnevne zbirove (za trake prometa posle istorije)"
+     ],
+     "commit": "eabcd63"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-20",
+   "stavke": [
+    {
+     "vreme": "08:37",
+     "naslov": "docs: MODEL_KONTEKST za model-v2 (E31)",
+     "stavke": [
+      "Originalni MODEL_KONTEKST.md zamenjuje skraćenu verziju. Konačni model je model-v2 = E31 (0,5 x TFT E31t + 0,5 x XGBoost E31). Nova tačka 4b: sve u UTC+1, meteo Open-Meteo vreme t (UTC) -> ts = t + 1 h, bez dodatnog pomaka; referenca za uživo RMSE 12,71."
+     ],
+     "commit": "17cf47d"
+    },
+    {
+     "vreme": "08:47",
+     "naslov": "Mapa: oznaka UŽIVO za NS bike stanice u panelu „Na mapi“",
+     "stavke": [
+      "Red „Iznajmljivanje bicikala“ ima crvenu oznaku UŽIVO (isti odašiljač kao „Danas uživo“ u meniju) i vreme poslednjeg uspešnog osvežavanja, pa se zna da je stanje uživo i pre otvaranja kartice stanice."
+     ],
+     "commit": "866a441"
+    },
+    {
+     "vreme": "09:06",
+     "naslov": "Model-v2 (E31): meteo u UTC+1 bez pomaka, istorija meteo_istorija_utc1, ocena samo aktuelnog modela",
+     "stavke": [
+      "vremenska_prognoza.open_meteo: meteo_vreme=\"utc1\" (podrazumevano) = Open-Meteo t (UTC) → ts = t + 1 h, bez dodatnog pomaka; kalendar iz (ts − 1 h); tabela_iz_ts za istoriju u konvenciji modela",
+      "izdaj: početna istorija vremena iz model/meteo_istorija_utc1.parquet (ne sirove meteo_istorija.parquet)",
+      "test podudarnosti sa novom referencom (25–31.08.2026): sva obeležja jednaka (≤ 2e-15), predikcije po seed-u (XGB i TFT q10/q50/q90) do 0,0007 bic/h; test da Open-Meteo odgovor daje istu tabelu kao istorija",
+      "ocena: referenca RMSE 12,71; u rezime ulaze samo zvanične prognoze aktuelne verzije modela",
+      "workflow preuzima Release model-v2 (keš ključ model-v2); tekstovi na sajtu: model E31"
+     ],
+     "commit": "74afdbe"
+    },
+    {
+     "vreme": "09:58",
+     "naslov": "Mapa: X u panelima, bez Sve/Ništa, bez KPI kartica i podnožja, filter može da ugasi sve, paleta bez zamućenja",
+     "stavke": [
+      "paneli Biciklističke staze i Na mapi: zaglavlje sa X (gore levo); i dalje se zatvaraju klikom van (sada i klikom na pin); dugmad Sve/Ništa uklonjena",
+      "uklonjene KPI kartice iznad mape (brojači, rade, km staza, izdvojene)",
+      "uvod u jednom redu, bez navođenja izvora",
+      "podnožje sa izvorima uklonjeno sa svih strana",
+      "filter stanja: klik na već uključen filter ga gasi → ne prikazuje se nijedan brojač",
+      "Prilagodi (paleta): pozadina više nije zatamnjena ni zamućena",
+      "krofna: „Stanje brojača“ + info"
+     ],
+     "commit": "4d63079"
+    },
+    {
+     "vreme": "11:38",
+     "naslov": "Mapa: paneli bez naslova, X u gornjem desnom uglu",
+     "stavke": [],
+     "commit": "b7ee7b1"
+    },
+    {
+     "vreme": "11:42",
+     "naslov": "Model: novi sati iz scraper-a u oznaci modela ts = ts_utc + 1 h (bili su u lokalnom vremenu)",
+     "stavke": [
+      "priprema._ucitaj_novo je čitala master_YYYY-MM sa lokalnom oznakom (Europe/Belgrade, leti UTC+2), pa su do 25.10.2026 novi sati u modelu bili pomereni 1 h u odnosu na istoriju, meteo i kalendar (MODEL_KONTEKST 4b). Sada se čitaju satno_YYYY-MM.parquet i satno_smerovi (imaju ts_utc) i prevode u_utc1: ts = ts_utc + 1 h, datum/sat iz (ts − 1 h). Provera: jutarnji vrh radnih dana 12–20.10. je u UTC+1 na istom satu kao istorija (06–07 h UTC+1), a sa lokalnom oznakom je bio sat kasnije."
+     ],
+     "commit": "fa627a0"
+    },
+    {
+     "vreme": "12:13",
+     "naslov": "Danas uživo: prava strana sa podacima uživo (danas.json svakog sata)",
+     "stavke": [
+      "sajt/danas.py → docs/data/danas.json posle svakog čitanja (citaj.yml) i posle svake prognoze: satni nizovi današnjeg dana po seriji i gradu iz kumulativnog „danas“ (null, nikad 0, kad čitanje fali), stanje brojača (radi/kasni/nula/nema podataka/neispravan), zvanična i najnovija prognoza na lokalnim satima (model UTC+1 → lokalno; prognoze E28 se ne prikazuju), vreme po satu, prosek istog dana",
+      "docs/data/istorija/prosek_dana.json: prosečan grad po satu za dan u nedelji × mesec (pripremi_istoriju)",
+      "danas.html: oznaka UŽIVO sa vremenom čitanja, 4 broja (do sada, prema prognozi, očekivano do ponoći, brojači), glavni grafik (izbrojano, prognoza + interval, prosečan isti dan, „sada“, po satu / zbirno), mapa sa brojem danas na pinu (zeleno/crveno prema prognozi), vreme, tabela brojača, mini kartice; samo proverava novo čitanje na 5 min",
+      "mapa-modul: prikaziVrednosti() za proizvoljne brojeve na pinovima",
+      "testovi: satni nizovi, null, stanja, DST (23/25 sati), prognoza po lokalnom satu"
+     ],
+     "commit": "73f3185"
+    },
+    {
+     "vreme": "12:36",
+     "naslov": "Danas uživo: izbor brojača na grafiku, stubići između oznaka sati, tabela sa skrolom",
+     "stavke": [
+      "padajući izbor „Ceo grad“ ili jedan brojač; izabran brojač se na mapi fokusira i odskoči, a u tabeli se označi i doskroluje (klik na red radi isto, ponovni klik vraća grad)",
+      "x osa: stubić zauzima ceo sat između oznaka h i h+1 (oznake na granicama sati), hover označava ceo sat ispod miša; „sada“ na granici poslednjeg završenog sata (i na grafiku vremena)",
+      "tabela brojača: fiksna visina sa skrolom i zaglavljem koje ostaje gore, bez „Prikaži sve“"
+     ],
+     "commit": "ed92f07"
+    },
+    {
+     "vreme": "13:45",
+     "naslov": "Danas uživo: tačan hover uz zoom sajta, tooltip dalje od miša, svi sati na osi, sortiranje tabele",
+     "stavke": [
+      "hover: sat ispod miša se računa iz udela širine grafika; ECharts je uz html zoom 0,9 računao poziciju miša bez tog faktora, pa je hover desno na grafiku pokazivao sat ranije",
+      "tooltip ~30 px desno-iznad miša (preklapa se samo kad nema mesta)",
+      "x osa: oznaka za svaki sat (preklapanje sakriva ECharts na uskim ekranima)",
+      "tabela: sortiranje klikom na zaglavlje (brojač, danas, prognoza, razlika, stanje), bez dugmadi Najviše/Odstupanje; info u zaglavlju i u KPI karticama više se ne seče",
+      "klik na brojač (tabela, mapa) skroluje do grafika „Danas prema prognozi za ovaj brojač“"
+     ],
+     "commit": "c0e8237"
+    },
+    {
+     "vreme": "14:13",
+     "naslov": "Danas uživo: izbor brojača kao na strani Grafici, prekidač za prognozu, tekst za sate bez podataka",
+     "stavke": [
+      "„Brojači“ u gornjem desnom uglu kartice: dugme + panel sa pretragom i pinovima (isti izgled kao „Uticaj temperature“ na strani Grafici), izbor jednog brojača ili svih",
+      "prekidač „Prognoza · prikaži“ (podrazumevano isključen): tek tada se crta linija i interval, javlja se u legendi i tooltip-u; info: model, izdanje, interval i greška na test godini",
+      "tooltip za sate bez izbrojanog: „sat još traje“ (tekući sat), „budući sat“, „čeka se sledeće čitanje“ ili „nema podataka“",
+      "info za kolonu „Razlika“ (relativna greška zbira, nije MAPE ni WAPE)"
+     ],
+     "commit": "7d939a7"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-17",
+   "stavke": [
+    {
+     "vreme": "11:46",
+     "naslov": "Mapa: Prikaz, Tip mape i Na mapi uvek u jednom redu",
+     "stavke": [
+      "Kružići boja (svetla/tamna, nijanse vektora) prelaze u red sa natpisom „Tip mape“, pa grupa ne menja širinu pri promeni tipa mape; malo manji razmaci i unutrašnje margine dugmadi da sve stane već od 1440 px."
+     ],
+     "commit": "308c0da"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-16",
+   "stavke": [
+    {
+     "vreme": "10:48",
+     "naslov": "Mapa: umesto CARTO podloge standardne OpenStreetMap pločice, kao na sajtu UGZINS",
+     "stavke": [
+      "UGZINS Traffic Agent koristi OpenLayers 5.3 + tile.openstreetmap.org (provereno istraživanjem sa GitHub servera); ista podloga je sada podrazumevana, u originalnim bojama (u tamnoj temi blago prigušena); ranije zapamćen izbor CARTO prelazi na OpenStreetMap",
+      "podloge: OpenStreetMap, Tamno plava, Siva, Bela; izvori u podnožju, O projektu i README",
+      "uklonjen jednokratni alat za istraživanje mape"
+     ],
+     "commit": "80a88f2"
+    },
+    {
+     "vreme": "10:52",
+     "naslov": "Mapa: vraćena podloga OpenStreetMap, UGZINS kao posebna podloga; dugme preko celog ekrana umesto info dugmeta",
+     "stavke": [
+      "podloge: UGZINS (OSM pločice u originalnim bojama, kao na sajtu UGZINS; podrazumevana), OpenStreetMap (kao ranije: u tamnoj temi potamnjena), Tamno plava, Siva, Bela; CARTO ostaje uklonjen",
+      "dole desno: dugme za mapu preko celog ekrana (tada točkić zumira i bez Ctrl-a); info dugme uklonjeno, izvor © OpenStreetMap saradnici kao mali tekst dole levo"
+     ],
+     "commit": "1164a69"
+    },
+    {
+     "vreme": "11:19",
+     "naslov": "Mapa: podloge Svetla i Tamna (umesto UGZINS i OpenStreetMap); info ikonica u kartici pina",
+     "stavke": [
+      "Svetla = OSM pločice u originalnim bojama (kao sajt UGZINS); Tamna = iste pločice kroz filter boja (obrnuta svetlina, okret nijanse 180°, manje zasićenja) — tamna u obe teme sajta",
+      "ranije zapamćeni izbori (ugzins, osm, carto) prelaze na nove nazive",
+      "kartica pina: umesto teksta „kompletni dani, 1. 9. 2025. – 31. 8. 2026.“ info ikonica sa objašnjenjem"
+     ],
+     "commit": "de21ff1"
+    },
+    {
+     "vreme": "11:36",
+     "naslov": "Mapa: jedno dugme Vektor sa tri nijanse (boja mape – boja ulica) i sloj Parking za bicikle (OSM)",
+     "stavke": [
+      "Podloga: Svetla | Tamna | Vektor; uz Vektor nijanse tamno plavo–belo, sivo–belo, belo–crno (dvobojni krugovi), poslednja nijansa se pamti",
+      "čip „Parking za bicikle“ uz staze: tačke iz docs/data/mapa/parking.geojson (parking, NS bike iznajmljivanje, servisi, stanice za popravku) sa ikonicama nalik OSM-u i karticom (mesta, vrsta, natkriveno)"
+     ],
+     "commit": "4f5747f"
+    },
+    {
+     "vreme": "12:24",
+     "naslov": "Mapa: Tip mape (Standardna/Satelitska/Vektor), nazivi ulica na mapi, izbor vrsta „Za bicikliste“",
+     "stavke": [
+      "„Podloga mape“ → „Tip mape“; Svetla i Tamna spojene u „Standardna“ sa izborom nijanse",
+      "nova Satelitska mapa (Esri World Imagery)",
+      "štikla „Nazivi ulica“ na samoj mapi (vektorska i satelitska), nazivi pored linije",
+      "sloj „Za bicikliste“: strelica otvara izbor vrsta (sve štiklirano), Sve/Ništa, broj po vrsti; info da nisu svi, samo javno upisani",
+      "uklonjen izvor u donjem levom uglu; razmernik vraćen u prvobitni izgled",
+      "O projektu i README dopunjeni"
+     ],
+     "commit": "7f875b4"
+    },
+    {
+     "vreme": "13:56",
+     "naslov": "Mapa: „Na mapi“ umesto „Sloj“, čip sa 4 ikonice za bicikliste, padajući meni „Natpisi“",
+     "stavke": [
+      "čip za bicikliste: 4 ikonice umesto teksta (u boji su vrste koje se prikazuju, ostale blede)",
+      "izbačeni brojevi po vrsti i info dugme; kraća napomena u padajućem panelu",
+      "„Nazivi ulica“ u padajućem meniju „Natpisi“ na mapi, sakriven na standardnoj mapi"
+     ],
+     "commit": "99eaf6a"
+    },
+    {
+     "vreme": "14:19",
+     "naslov": "Mapa: 4 ikonice za bicikliste pale se posebno, legenda bez brojeva, natpisi delova grada, parkova, trgova i važnih mesta",
+     "stavke": [
+      "glavna štikla pali ili gasi sve 4 vrste (polu-štikla kad su uključene samo neke), svaka ikonica posebno",
+      "legenda „Stanje brojača“ iznad mape bez brojeva (ostaju u filteru i pretrazi)",
+      "meni „Natpisi“: nazivi ulica, delovi grada, parkovi i trgovi, važna mesta",
+      "klik na naziv dela grada: zum na taj deo i obris granice; Esc ili klik van briše izbor"
+     ],
+     "commit": "097c95f"
+    },
+    {
+     "vreme": "14:27",
+     "naslov": "Mapa: stavke menija „Natpisi“ bez podataka se ne prikazuju",
+     "stavke": [],
+     "commit": "070762c"
+    },
+    {
+     "vreme": "14:40",
+     "naslov": "Mapa: delovi grada i mesta iz OSM-a; mesne zajednice bez naziva naselja tek na bližem zumu",
+     "stavke": [
+      "Parking i pruga vraćeni na prethodnu verziju: ovaj Overpass odgovor je imao 282 umesto 334 tačke za bicikliste (verovatno nepotpun odgovor servera), a upit se nije menjao."
+     ],
+     "commit": "43505b8"
+    },
+    {
+     "vreme": "16:26",
+     "naslov": "Sajt u razmeri 90 % na računaru; „Prikaži granice“ ispod „Delovi grada“ u meniju Natpisi",
+     "stavke": [
+      "html zoom 0.9 od 961 px naviše (kao 90 % zuma pregledača); visine od 100vh/100vw podeljene sa --z da meni, mapa i prikaz preko celog ekrana ostanu pune visine; telefon ostaje 100 %",
+      "„Prikaži granice“: isprekidan obris svih glavnih delova grada i naselja (četvrti, naselja, gradići)"
+     ],
+     "commit": "d074ee4"
+    },
+    {
+     "vreme": "17:54",
+     "naslov": "Mapa: delovi grada u bojama i „Okolna naselja“; priprema unije sa zvaničnim spiskom parkinga",
+     "stavke": [],
+     "commit": "b8ed942"
+    },
+    {
+     "vreme": "18:22",
+     "naslov": "Mapa: zvanični spisak parkirališta za bicikle (317, JKP „Parking servis“) spojen sa OSM-om; delovi grada u bojama",
+     "stavke": [
+      "sajt/podaci/parking_parkingns.json: 317 šifri sa opisom; položaji sa zvanične PDF mape (2. 10. 2025.) georeferencirane preko OSM ulica (gornji levi ugao ikonice = mesto), za mesta van mape po adresi (Nominatim)",
+      "osnova_mape.spoji_zvanicne: unija — OSM parking bliži od 40 m zvaničnom mestu dobija šifru i opis, ostala zvanična mesta dodaju se kao nove tačke (67 uparenih, 250 dodatih; ukupno 584 tačke)",
+      "kartica parkinga: opis lokacije i šifra; napomena u izboru vrsta ažurirana",
+      "Natpisi → Delovi grada: „Prikaži granice“ boji gradske delove (susedi različitim bojama), „Okolna naselja“ ocrtava i boji Petrovaradin, Kamenicu, Veternik, Futog, Kać…",
+      "O projektu i README dopunjeni"
+     ],
+     "commit": "b605bdf"
+    },
+    {
+     "vreme": "20:04",
+     "naslov": "Mapa: Satelit među delovima grada, jasnije boje suseda; broj parkinga u naslovu; zvanične NS bike stanice",
+     "stavke": [
+      "delovi grada: i manja naselja sa granicom van četvrti (Satelit, Jugovićevo, Kamenjar); susedi po stvarnom dodiru granica, bez iste i slične nijanse (paleta poređana po nijansi)",
+      "kartica parkinga: „Parking za bicikle 202“ (broj bez „Bic“), bez reda sa šifrom",
+      "sajt/podaci/nsbike_stanice.json: 16 stanica (app.nsbike.rs/stanje) — naziv i opis latinicom, 14 mesta; spoji_nsbike: OSM tačke na < 60 m dobijaju zvanične podatke i položaj, NSB08 i NSB10 dodate, privatne ostaju",
+      "kartica NS bike stanice: naziv, opis, broj mesta, „Slobodni bicikli uživo · uskoro“ (mesto za sliku spremno)"
+     ],
+     "commit": "f5f794d"
+    },
+    {
+     "vreme": "20:35",
+     "naslov": "Mapa: stanje NS bike stanica uživo (broj bicikala i slobodnih mesta)",
+     "stavke": [
+      "Na klik na stanicu pregledač čita app.nsbike.rs/stanje (isti javni izvor kao ns-bike.web.app; CORS dozvoljava vijukm.github.io), najviše jednom u 30 s; ako izvor nije dostupan, kartica to kaže. Sajt ostaje statičan."
+     ],
+     "commit": "4a0ea6a"
+    },
+    {
+     "vreme": "21:51",
+     "naslov": "NS bike: slike stanica (Google My Maps, učitavaju se na klik), stanje se preuzima čim se stanice uključe; UGZINS direktno",
+     "stavke": [
+      "sajt/nsbike.py: linkovi slika iz zvanične My Maps mape (JKP „Parking servis“), 408 px; workflow sta=mapa ih osvežava",
+      "kartica NS bike: bez „mesta za bicikle“; slika ispod naziva i opisa (klik = sledeća); stanje uživo se preuzima čim se uključe NS bike stanice i osvežava na minut dok su uključene i stranica vidljiva",
+      "kartice tačaka: klik na drugu tačku dok je kartica otvorena sada odmah otvara novu (ranije ju je samo zatvarao)",
+      "scraper: fajl sa biciklistima prvo direktno sa http://stari.ugzins.rs/SAUS/bicycles_georss_gps_sr.xml (jedan GET, isti bajtovi kao preko sesije, IIS ga osvežava na ~5 min); sesija i pregledač ostaju rezerva"
+     ],
+     "commit": "3612f44"
+    },
+    {
+     "vreme": "22:37",
+     "naslov": "NS bike: slike se preuzimaju i čuvaju kod nas (Google ih ne dozvoljava sa drugog sajta)",
+     "stavke": [],
+     "commit": "93f96fb"
+    },
+    {
+     "vreme": "22:40",
+     "naslov": "NS bike: slike stanica sa našeg sajta (18 fotografija, 640 px WebP); kraća napomena; bez „rotacija i nagib“",
+     "stavke": [
+      "Google slike sa My Maps šalje uz Cross-Origin-Resource-Policy: same-site, pa ih pregledač ne prikazuje sa drugog sajta (ERR_BLOCKED_BY_RESPONSE.NotSameSite). Workflow sajt_istorija (sta=nsbike ili mapa) ih preuzima, smanjuje i čuva u docs/assets/slike/nsbike; u kartici se učitavaju tek na klik."
+     ],
+     "commit": "4b88e25"
+    },
+    {
+     "vreme": "23:00",
+     "naslov": "Mapa: kartica tačke se zatvara kad se otvori brojač; Ctrl+točkić iznad kartice zumira mapu; izbor vrsta staza",
+     "stavke": [
+      "otvaranje kartice brojača (prelaz mišem ili klik) zatvara karticu parkinga, NS bike stanice i važnog mesta",
+      "Ctrl + točkić iznad bilo koje kartice zumira mapu oko pokazivača umesto cele stranice",
+      "staze kao parkinzi: glavna štikla (sve / delimično / ništa), svaka od tri vrste posebno (izdvojena staza, traka na kolovozu, zajednička sa pešacima), strelica otvara legendu sa opisom i dužinom u km; izvor OSM"
+     ],
+     "commit": "43fbc0c"
+    },
+    {
+     "vreme": "23:08",
+     "naslov": "Mapa: bez napomene o izvoru u panelima; „Biciklističke staze“ bez ikonica u čipu; legenda staza samo u panelu",
+     "stavke": [],
+     "commit": "c48627c"
+    },
+    {
+     "vreme": "23:23",
+     "naslov": "Mapa: spisak i filteri gore desno, jedan padajući panel u isto vreme, zelena strelica staza",
+     "stavke": [
+      "desni deo (pretraga, filteri, spisak, prsten) počinje od vrha kartice, pa se prsten vidi bez skrolovanja",
+      "filteri stanja: Sve, radi, ne radi, delimično radi, neispravan (dva reda)",
+      "otvaranje panela staza zatvara panel parkinga/Natpise i obrnuto",
+      "kad su staze uključene, i deo sa strelicom je zelen",
+      "prsten: „Stanje · poslednjih 30 dana“ sa info objašnjenjem umesto datuma"
+     ],
+     "commit": "0afccc2"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-15",
+   "stavke": [
+    {
+     "vreme": "08:15",
+     "naslov": "Mapa: skok samo iz spiska, X skida fokus, kartica na suprotnu stranu; grafik temperature",
+     "stavke": [
+      "pin: bez skoka na hover i na klik na mapi; skok samo kad se stanica bira iz spiska/pretrage",
+      "X na kartici (ili klik na mapu) vraća pin u normalno stanje i skida izbor u spisku",
+      "kartica se otvara na suprotnu stranu od položaja pina (pin gore levo → kartica dole desno)",
+      "grafici: „Uticaj temperature … na broj biciklista“ sa izborom dana (radni/vikend/svaki) i vremena (svi/suvo/kiša); kriva 3. stepena sa najmanjim MSE, ponovo se iscrtava pri izboru",
+      "naziv mesta 31: Bulevar kralja Petra I – Paje Adamova"
+     ],
+     "commit": "adf993b"
+    },
+    {
+     "vreme": "08:34",
+     "naslov": "Mapa: klik na pin centrira bez skoka, kartica prvo iznad; grafici: temperatura i dani u nedelji jedan pored drugog, izbor stanica",
+     "stavke": [
+      "klik na pin: fokus i centriranje mape kao iz spiska, bez skoka",
+      "kartica se otvara iznad pina kad staje; samo kad ne staje, ukoso na suprotnu stranu",
+      "„Uticaj temperature“ i „Dani u nedelji“ jedan pored drugog",
+      "Dani u nedelji: padajući meni sa štiklama — svi brojači (prosek po brojaču) ili do 6 stanica"
+     ],
+     "commit": "657176a"
+    },
+    {
+     "vreme": "09:07",
+     "naslov": "Grafici: prekidač za krivu (spora animacija), Sub/Ned za vikend, izbor stanica za temperaturu; šire strane",
+     "stavke": [
+      "uticaj temperature: prekidač „Kriva“ (uključen; isključena kriva ostaje isključena i pri promeni dana/vremena), kriva se iscrtava sporo s leva na desno kad grafik dođe na ekran i pri svakom uključenju",
+      "vikend: spojena dugmad Sub i Ned (oba uključena); praznici nisu ni radni dan ni vikend",
+      "uklonjena napomena ispod grafika",
+      "izbor brojača (svi = prosek po brojaču, ili do 6 stanica sa pravim dnevnim zbirom i svojom krivom) u gornjem desnom uglu i kod temperature i kod dana u nedelji",
+      "strane šire (do 1680 px), manji razmaci između kartica"
+     ],
+     "commit": "6f9730b"
+    },
+    {
+     "vreme": "09:45",
+     "naslov": "Grafici: rekreativne staze u izboru, Sub/Ned ispod Vikend, brža kriva, linija na danima u nedelji, nova poređenja godina",
+     "stavke": [
+      "izbor brojača: „Rekreativne staze“ (25a Kej žrtava racije, 26 Štrand) sa info-ikonicom; dodavanjem druge stanice natpis „rekreativne“ nestaje (oba grafika)",
+      "Sub/Ned spojeni tačno ispod dugmeta Vikend",
+      "kriva 50 % brža",
+      "Dani u nedelji: linija preko vrhova stubića (prekidač „linija“), poravnata i kod više stanica",
+      "Godine po mesecima: horizontalni zaobljeni stubići sa promenom u %, animacija po mesecu; novi radar „Sezonski otisak godine“ (12 meseci, iste dve godine)"
+     ],
+     "commit": "2ce0151"
+    },
+    {
+     "vreme": "10:00",
+     "naslov": "Grafici: dani u nedelji sa izborom vremena i krivom, opis u info-ikonici; godine prvo izabrana",
+     "stavke": [
+      "Dani u nedelji: Vreme (svi/suvo/kiša) i prekidač „Kriva“ u istom redu kao kod temperature",
+      "opis prebačen u info-ikonicu pored naslova",
+      "Godine po mesecima i radar: prvo prva izabrana godina, pa godina za poređenje"
+     ],
+     "commit": "f8a287c"
+    },
+    {
+     "vreme": "10:23",
+     "naslov": "Grafici: Sub/Ned iznad dugmeta Vikend",
+     "stavke": [],
+     "commit": "521d303"
+    },
+    {
+     "vreme": "13:20",
+     "naslov": "Sajt: ceo meni (22 strane), uskoro strane sa skicom i Kalendar biciklista",
+     "stavke": [
+      "levi meni sa svim planiranim stranama u 6 grupa; strane u izradi imaju oznaku USKORO",
+      "assets/uskoro.js: zajednička strana „uskoro se otvara“ sa skicom (ilustrativni podaci) i planom",
+      "kalendar.html: svaki dan 2021–2026 (grad po brojaču ili stanica), boja po broju ili prema uobičajenom istom danu, praznici, šrafirani dani bez podataka, detalji i satni grafik izabranog dana"
+     ],
+     "commit": "c5e316a"
+    },
+    {
+     "vreme": "13:33",
+     "naslov": "Sajt: Rekordi i zanimljivosti i Ritam grada",
+     "stavke": [
+      "pripremi_istoriju.py pravi rekordi.json (top dani, najprometniji sat i nedelja, vremenski rekordi, godine, rekordi po stanici, zanimljivosti) i ritam.json (sat × dan, godišnja doba, meseci, godine)",
+      "rekordi.html: KPI, top 10 dana (zbir / po brojaču), izbrojano po godini, vremenski rekordi, zanimljivosti i sortirajuća tabela rekorda po brojaču; dani vode u kalendar",
+      "ritam.html: sat × dan u nedelji, brojčanik od 24 sata, godišnja doba, kad grad ustaje, godine",
+      "test za najduži niz i nove fajlove"
+     ],
+     "commit": "68ac345"
+    },
+    {
+     "vreme": "14:23",
+     "naslov": "Mapa na MapLibre GL: rotacija, nagib, 3D zgrade i poster mape (tamno plava, siva, bela)",
+     "stavke": [
+      "mapa-modul.js prepisan sa Leaflet-a na MapLibre GL 4.7.1 (isti API za mapu i kontrolnu tablu): pomeranje, rotacija i nagib (desni klik / Ctrl + prevlačenje, dva prsta), kompas, dugme 3D sa zgradama, Ctrl + točkić (cooperativeGestures, poruke na srpskom), razmera",
+      "podloge: CARTO, OpenStreetMap i tri vektorske poster mape iz docs/data/mapa (OSM), oštre na svakom zumu; kartica se sama otvara iznad pina ili na stranu gde ima mesta",
+      "dan na mapi: noviji prikaz sata prekida početni prikaz stanja (brojevi iznad pinova)",
+      "O projektu, podnožje i README: izvori i nove strane"
+     ],
+     "commit": "295e4c4"
+    },
+    {
+     "vreme": "14:51",
+     "naslov": "3D pin izabrane stanice koji se okreće posle skoka; kartica viša iznad izabranog pina",
+     "stavke": [
+      "assets/pin3d.js: Three.js model po ikonici izabrane stanice (telo kapi sa debljinom i zaobljenom ivicom, lice sa prstenom, žutim diskom i biciklom s obe strane, reljefni prsten, svetla, senka); učitava se tek pri prvom izboru, poštuje „manje animacija“, bez WebGL-a ostaje slika",
+      "rotacija oko vertikalne ose kreće tek kad se odskakivanje završi (ili odmah kod izbora klikom)",
+      "kartica izabranog pina je viša, pa se skok vidi"
+     ],
+     "commit": "755b405"
+    },
+    {
+     "vreme": "15:10",
+     "naslov": "Izabrani pin: odmah 3D, skakuće kao 3D pa se okreće; fokus spušta pin da kartica bude iznad",
+     "stavke": [
+      "ikonica „izabrana“ svuda je snimak 3D modela (NS.zameniPin), pa su slika i 3D identični; stara slika ostaje samo ako pregledač ne podržava WebGL",
+      "klik na pin: odmah 3D i okretanje; iz spiska/pretrage 3D model odskoči, pa se okreće",
+      "flyTo sa pomakom: pin ~74 % visine mape, kartica izabranog uvek iznad (anchor bottom)"
+     ],
+     "commit": "2a7a217"
+    },
+    {
+     "vreme": "15:41",
+     "naslov": "Panel Prilagodi: tema, boja naglaska, gustina, raspored menija, širina i smer",
+     "stavke": [
+      "dugme sa paletom u gornjoj traci otvara fioku sa skicama opcija; promene se vide odmah, pamte se (ns-tema, ns-izgled) i primenjuju pre crtanja strane (rani skript u head-u)",
+      "tema svetla / tamna / sistemska (prati uređaj); dugme sunce/mesec ostaje kao prečica",
+      "6 boja naglaska za obe teme; boje podataka na graficima ostaju iste (--g-prosek)",
+      "gustina zbijeno / uobičajeno / prozračno; raspored bočni / uzak / plutajući / gornji meni sa padajućim grupama; širina puna / uokvirena; smer LTR / RTL",
+      "tastatura: Esc, strelice unutar grupe, fokus ostaje u panelu; Vrati podrazumevano",
+      "Kalendar na telefonu: kontrole u punoj širini"
+     ],
+     "commit": "b3976b1"
+    },
+    {
+     "vreme": "17:54",
+     "naslov": "Oznaka UŽIVO: crveni odašiljač koji pulsira kod „Danas uživo“",
+     "stavke": [
+      "komponenta LJ.uzivoZnak: talasi se šire iz tačke, tačka pulsira, natpis UŽIVO treperi",
+      "u meniju (bočnom i gornjem; u uskom meniju crvena tačka na ikonici), na strani Danas i u kartici pina ispred „danas N do Xh“",
+      "crveno samo kad je poslednje čitanje sveže (≤ 150 min), inače sivo; naslov kaže kada je bilo poslednje čitanje; provera svakog minuta, novo čitanje na 10 min; poštuje „manje animacija“"
+     ],
+     "commit": "5c17113"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-14",
+   "stavke": [
+    {
+     "vreme": "09:25",
+     "naslov": "Faza 1: ponovni pokusaji posle 3 i 6 min, tolerancija za kasnjenje sajta do 10 min",
+     "stavke": [
+      "preuzimanje: pokusaji u +0, +3, +6 min u istom pokretanju (workflow: prvi brzo, ostali brza pa Playwright); NS_BIKE_POCETAK = pocetak pokretanja",
+      "satno: sajt ponekad kasni 8-10 min (12. i 13.10. brojac XX:52-54 pri citanju u XX:02 -> 504 sata \"zastarelo\"); tolerancija pre punog sata 6 -> 10 min, starost 15 -> 20 min; od vise ispravnih citanja u satu uzima se ono sa brojacem najblizim punom satu",
+      "state 0 -> nema_podataka za oba sata koja citanje omedjuje (vec uradjeno, test postoji)",
+      "ponovo izracunati 09.-13.10. (12.10: 727 -> 999 od 1104 sati, 13.10: 862 -> 1092)",
+      "README: stvarna vremena brojaca (XX:52-XX:02, medijana XX:58,6)"
+     ],
+     "commit": "6bcd3d0"
+    },
+    {
+     "vreme": "09:29",
+     "naslov": "Faza 2: priprema istorije za model (prognoza/priprema.py)",
+     "stavke": [
+      "model/istorija.parquet + novi sati iz master_YYYY-MM.parquet na punoj satnoj mrezi (rupa = nema_reda)",
+      "pravila ciscenja kao istorijski master: outlier, niz_nula, nula_dan, skok/skok_okolina (gradski dogadjaj se ne dira), otkaz_smera sa izmenom (NaN samo ako je zbir < 60 % ocekivanog, inace ok_jedan_smer); istorija iz paketa se ne menja",
+      "docs/MODEL_KONTEKST.md (prepisano iz odgovora korisnika od 12.10.)",
+      "testovi za svako pravilo; model_podaci/ se ne commit-uje"
+     ],
+     "commit": "76b5870"
+    },
+    {
+     "vreme": "09:31",
+     "naslov": "Faza 3: vremenska prognoza (Open-Meteo) i praznici Srbije",
+     "stavke": [
+      "prognoza/meteo.py: Forecast API (past_days=8, forecast_days=2), sirovo u meteo/YYYY/MM/DD/HHMM.json, format treninga Datum + Cas 01:00-24:00, DST (prolece interpolacija, jesen prosek), izvedena obelezja (kisa, vlaznost_zemljista od pre 24 h, kalendar, is_holiday, trend)",
+      "prognoza/praznici.py: drzavni praznici Srbije + pravoslavni Vaskrs, prenos sa nedelje; --proveri model/praznici.csv za poredjenje sa treningom",
+      "istrazi.yml: proba Open-Meteo sa GitHub servera (nista se ne cuva)"
+     ],
+     "commit": "f1f476f"
+    },
+    {
+     "vreme": "09:34",
+     "naslov": "Faza 3: forecast_days=3 (sa 2 dana fali Cas 24:00 za sutra — provereno na Open-Meteo sa GitHub-a)",
+     "stavke": [],
+     "commit": "93eea23"
+    },
+    {
+     "vreme": "10:42",
+     "naslov": "Faza 4: obelezja i model (prognoza biciklista) — test podudarnosti sa referencom prolazi",
+     "stavke": [
+      "prognoza/obelezja.py: prenos features.napravi/ucitaj_meteo/_istorija i tft.pripremi bez izmena",
+      "prognoza/model.py: XGBoost (3 seed-a, .ubj), TFT (3 seed-a; checkpoint sa GPU-a ucitan na CPU), ansambl 0,5 x TFT medijana + 0,5 x XGB, interval TFT q10-q90",
+      "tests/test_referenca.py: 7 dana 25.-31.08.2026 — obelezja razlika 0, XGB max 0,0006, TFT max 0,0002 bic/h",
+      "praznici: prenos najvise jedan dan (2021: samo 4.5.) — 75/75 dana kao u treningu",
+      "priprema: p90 sa kolonama stanica_id, sat_pocetak (0-23), mesec",
+      "requirements-model.txt (CPU torch); model/ nije u git-u (GitHub Release model-v1)",
+      "proba_meteo.yml: rucna provera poravnanja Cas u meteo istoriji sa Open-Meteo"
+     ],
+     "commit": "8fc290a"
+    },
+    {
+     "vreme": "10:50",
+     "naslov": "Faza 4/5: izdavanje prognoze biciklista, vremenska prognoza se cuva, jasno odvojeni folderi",
+     "stavke": [
+      "podaci/biciklisti/ (brojaci, premesteno iz podaci/), podaci/vremenska_prognoza/ (svako preuzimanje Open-Meteo + Excel ceo grad po satu), podaci/prognoza_biciklista/ (izlaz modela, zvanicne se ne prepisuju)",
+      "kod: prognoza_biciklista/ (priprema, obelezja, model, praznici, izdaj) i vremenska_prognoza/open_meteo.py",
+      "vremenska prognoza: Cas = Open-Meteo vreme + 1 h, kao u treningu (provereno na avgustu 2026); izvedena obelezja samo kroz prenesenu ucitaj_meteo",
+      "prognoza_biciklista.yml (workflow_dispatch, vrsta zvanicna/osvezavanje, model iz Release-a + kes); citaj.yml ga pokrece: zvanicna u 01:xx posle satnog obracuna, osvezavanje u 07, 13, 19 h",
+      "nepouzdano: skala bez 180 validnih sati ili < 50 % validnih sati u enkoderu",
+      "docs/MODEL_KONTEKST.md, README"
+     ],
+     "commit": "c435d6c"
+    },
+    {
+     "vreme": "11:34",
+     "naslov": "Serija 28 iskljucena (odluka korisnika), Excel: opis lokacije u zaglavlju i spisak brojaca",
+     "stavke": [
+      "priprema: ISKLJUCENE = {28: od 18.04.2026, otkaz_smera}; automatski povratak kad smer 21 >= 3 dana ima 35-60 % dnevnog zbira (zapis u podaci/prognoza_biciklista/iskljucene_serije.log); ok_jedan_smer ostaje u kodu, ali se ne primenjuje (OK_JEDAN_SMER_ODOBRENO = False)",
+      "izdaj: iskljucene serije nemaju prognozu za ocenu; sajt dobija opis i sirovo po smeru",
+      "Excel: u zaglavlju svakog sheeta opis lokacije (mesto, ulica, smerovi) tamnocrveno; Info: spisak brojaca"
+     ],
+     "commit": "5fb3ba1"
+    },
+    {
+     "vreme": "11:37",
+     "naslov": "Vise izvora vremenske prognoze i poredjenja prognoza vs. stvarno (vreme i biciklisti)",
+     "stavke": [
+      "vremenska_prognoza/izvori.py: Open-Meteo modeli (ICON-D2/EU, ECMWF, GFS, Meteo-France, UKMO) i MET Norway — samo za poredjenje; ulaz modela ostaje best_match (za_model/)",
+      "vremenska_prognoza/poredjenje.py: stvarno vreme (analiza sutradan, ERA5 posle ~5-7 dana), prognoza_vs_stvarno po danu i rezime po izvoru/promenljivoj/horizontu",
+      "prognoza_biciklista/poredjenje.py (faza 6): svako izdanje x stanica x sat vs. ocisceno stvarno, rezime_dnevno i po_stanici (zvanicne, prozori probni/glavni), neobicni dani, naive t-168, docs/data/ocena_prognoze_biciklista.json",
+      "workflow: posle prognoze oba poredjenja; README sa svim kolonama"
+     ],
+     "commit": "de3887b"
+    },
+    {
+     "vreme": "14:02",
+     "naslov": "gitignore: istorija/ (Release istorija-v1 se preuzima, ne čuva u git-u)",
+     "stavke": [],
+     "commit": "3f1bacc"
+    },
+    {
+     "vreme": "15:12",
+     "naslov": "Deo 1: meteo za model se čuva u UTC; sat modela bira oznaka_modela(meteo_vreme)",
+     "stavke": [
+      "open_meteo.preuzmi: timezone=GMT (sirov odgovor u UTC)",
+      "u_utc: čita i nove (UTC) i stare (Europe/Belgrade) sačuvane odgovore",
+      "oznaka_modela(df, meteo_vreme='lokalno'|'utc1'): jedino mesto izbora sata; 'lokalno' (podrazumevano) = isto ponašanje kao model-v1, 'utc1' čeka model-v2",
+      "izvori.u_tabelu: prevodi UTC odgovore u lokalno vreme za poređenje",
+      "testovi: UTC i lokalni odgovor daju isti format treninga (DST dani), utc1 bez rupa"
+     ],
+     "commit": "cf7f0cb"
+    },
+    {
+     "vreme": "15:17",
+     "naslov": "Deo 2: priprema istorije za sajt (sajt/pripremi_istoriju.py → docs/data/istorija)",
+     "stavke": [
+      "master_v4_E3 (ts = kraj sata u UTC+1) → UTC → Europe/Belgrade; dani 23/25 h",
+      "dnevni zbir samo za kompletan lokalni dan, NaN ostaje null uz šifru razloga",
+      "serija 28 od 18.04.2026 neispravna i van gradskih zbirova",
+      "gradski zbir + broj uključenih serija, dnevno vreme, mesečni proseci, činjenice",
+      "profili (tip dana × godišnje doba), toplotna mapa, meseci po godinama",
+      "satni fajlovi po mesecu (bicikli i meteo na istoj UTC mreži)",
+      "workflow sajt_istorija.yml (ručno: Release istorija-v1 → JSON)",
+      "testovi: DST, kompletan dan, NaN ≠ 0, 28, zbir JSON = zbir mastera",
+      ".gitignore: /istorija/ samo u korenu (parquet), docs/data/istorija ide u git"
+     ],
+     "commit": "d2b6a71"
+    },
+    {
+     "vreme": "15:31",
+     "naslov": "Deo 3: statički sajt sa istorijom (docs/index.html, docs/stanica.html)",
+     "stavke": [
+      "početna: činjenice, mapa (prosek / dan na mapi sa klizačem i ▶), gradski dnevni grafik (dan/nedelja/mesec) sa brojem brojača, temperaturom i padavinama u odvojenim trakama, poređenje godina na zajedničkim brojačima, tabela stanica",
+      "stanica: dnevno za ceo period (sivo = nema podataka), satni profil po tipu dana i godišnjem dobu, toplotna mapa sat × dan, meseci po godinama, izabrani dan",
+      "Leaflet 1.9.4 i ECharts 5.5.1 sa jsDelivr-a (SRI), svetla/tamna tema po sistemu, srpski latinicom, radi na telefonu; mesta za prognozu označena u kodu",
+      "README: sajt i čuvanje meteo podataka u UTC; snimci ekrana u sajt/snimci/"
+     ],
+     "commit": "d7cd175"
+    },
+    {
+     "vreme": "17:56",
+     "naslov": "sajt: izbor podloge mape (CARTO, OpenStreetMap; „Nacrtana“ u razvoju — samo poruka)",
+     "stavke": [
+      "Izbor se pamti u pregledaču (localStorage, uz try/catch)."
+     ],
+     "commit": "5c66422"
+    },
+    {
+     "vreme": "19:12",
+     "naslov": "Deo A: stanje brojača, biciklističke staze iz OSM-a, ikonice pinova",
+     "stavke": [
+      "stanice.json: stanje (radi / delimično / ne radi / neispravan) za poslednjih 30 dana istorije",
+      "sajt/staze.py: Overpass → docs/data/staze.geojson (izdvojena staza / traka / zajednička)",
+      "workflow sajt_istorija: izbor sta = sve | istorija | staze",
+      "docs/assets/slike/pinovi: 6 ikonica po stanju; logo i favicon"
+     ],
+     "commit": "c5969b4"
+    },
+    {
+     "vreme": "19:33",
+     "naslov": "Deo B: ljuska sajta po uzoru na Adminator",
+     "stavke": [
+      "tokeni boja, podrazumevana tamna tema (pamti se), fontovi Inter / Inter Tight / JetBrains Mono",
+      "levi meni (grupe, oznake, sakupljanje; fioka na telefonu), gornja traka: putanja, pretraga stanica Ctrl K, jezik SR/EN (EN: poruka „uskoro“), obaveštenja, tema",
+      "KPI kartice, prstenovi, trake, čipovi, segmenti, tabele, tost, pojava pri skrolovanju",
+      "zajednicko.js: grafici se crtaju tek kad dođu na ekran, premošćavanje rupa, gradske analize",
+      "o-projektu.html, prognoza.html (uskoro), 404.html (samostalna)"
+     ],
+     "commit": "ebbb1f6"
+    },
+    {
+     "vreme": "19:33",
+     "naslov": "Deo C: mapa sa pinovima po stanju i biciklističkim stazama",
+     "stavke": [
+      "pinovi (radi / delimično / ne radi / neispravan / nije postavljen / izabrana), a/b razmak u pikselima",
+      "staze iz OSM-a kao na bikemap-u (žuto-zelena sredina, zeleni obod), uključivanje čipom",
+      "podloge CARTO / OpenStreetMap / Nacrtana (u razvoju); tamna tema posvetljava/invertuje pločice",
+      "mapa.html: KPI (km staza), spisak sa pretragom i filterom, dan na mapi sa ▶ i brojem iznad pina"
+     ],
+     "commit": "58d2357"
+    },
+    {
+     "vreme": "19:33",
+     "naslov": "Deo D: kontrolna tabla, priča pri skrolovanju, grafici, stanica",
+     "stavke": [
+      "kontrolna tabla: KPI sa brojanjem, mapa, najprometnija mesta, prstenovi, priča u 6 koraka (grafik ostaje fiksiran i menja se dok se skroluje), najprometnije stanice, brojači koji traže pažnju",
+      "grafici.html: grad po danu sa čipovima (serije po izboru, svaka u svojoj traci), isprekidano preko rupa, poređenje godina, temperatura × biciklisti, dani u nedelji, mesec × godina, izvoz PNG",
+      "stanica.html u novoj ljusci (KPI, upozorenja, isprekidane rupe)"
+     ],
+     "commit": "55ce803"
+    },
+    {
+     "vreme": "19:33",
+     "naslov": "Deo E: tabela stanica, README i snimci ekrana",
+     "stavke": [
+      "stanice.html: pretraga, filter po stanju, sortiranje, straničenje, izvoz CSV",
+      "README: strane, ikonice, staze"
+     ],
+     "commit": "1fe1e08"
+    },
+    {
+     "vreme": "20:37",
+     "naslov": "sajt: oznaka verzije na CSS/JS (pregledač ne meša stari i novi fajl iz keša)",
+     "stavke": [],
+     "commit": "a2a1972"
+    },
+    {
+     "vreme": "21:47",
+     "naslov": "Mapa: hover menja pin, fokus sa skokom, filter na mapi, Ctrl+točkić, „danas do Xh“, krofna stanja",
+     "stavke": [
+      "pin: ikonica „izabrana“ pri prelasku mišem; klik fokusira pin (uveća se, odskoči), mapa ga centrira, kartica sa prosekom, danas i linkom na stanicu (i na kontrolnoj tabli)",
+      "filter po stanju i pretraga sakrivaju pinove i na mapi; kolona u spisku objašnjena (info)",
+      "legenda „Stanje brojača“: radi / delimično radi / ne radi / neispravan / izabrana, uz info-oblačiće",
+      "grupisane kontrole (Prikaz, Podloga mape, Sloj) odmah iznad mape; staze kao štikla (uključeno)",
+      "Ctrl/⌘ + točkić = zum, bez Ctrl-a napomena",
+      "tooltip: prosek sa periodom + „danas N do Xh“ iz docs/data/uzivo.json (sajt/uzivo.py, svakog sata u citaj.yml)",
+      "krofna: koliko brojača je u kom stanju (boje kao pinovi), animirana; klik filtrira",
+      "veće ikonice u legendi i filterima (mapa, tabela stanica)"
+     ],
+     "commit": "0c4e4d5"
+    },
+    {
+     "vreme": "22:29",
+     "naslov": "Sajt: pravi nazivi ulica, jedna kartica za hover i klik, ispravke mape",
+     "stavke": [
+      "sajt/nazivi.json: nazivi mesta i smerova pravom latinicom i bez skraćenica (samo prikaz; podaci se mapiraju preko serije/locationID, pa ovo ne utiče na preuzimanje ni na model)",
+      "stanja: radi / delimično radi / ne radi / neispravan, objašnjenja („nepotpuni dani“, „nema podataka“) u info-ikonici (malo i u krugu)",
+      "pin: ista kartica na prelazak mišem (uz skok) i na klik (fokus, ostaje otvorena); bez tooltip-a",
+      "staze: čip kao ranije, ceo čip je štikla; kontrole poravnate levo jedna do druge",
+      "krofna u desnom delu ispod spiska, sporija animacija",
+      "uklonjeni linkovi na izvorni kod; JSON dobija oznaku verzije (keš)"
+     ],
+     "commit": "4f08a00"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-12",
+   "stavke": [
+    {
+     "vreme": "07:04",
+     "naslov": "Satni obracun: prvo ispravno citanje u satu, obracun i u 01:xx, rezerva ne cita u prvih 10 min",
+     "stavke": [
+      "satno.py: za svaki smer se u satu uzima prvo ISPRAVNO citanje (zakasnela rezerva u 08:00 sa brojacem od 07:53 je kvarila sate 8 i 9 dana 10.10.)",
+      "workflow: obracun za juce i u citanju u 01:xx (u 00:02 brojac je cesto jos od 23:58, pa sat 23-24 dobija \"juce\" tek u 01:02)",
+      "citaj.py --samo-ako-nema: ne cita u prvih 10 min sata",
+      "ponovo izracunati 09.-11.10. i Excel (10. i 11.10. sada potpuni: 1104/1104 sati)"
+     ],
+     "commit": "7583295"
+    },
+    {
+     "vreme": "09:25",
+     "naslov": "Markiranje neobicnih sati u Excel-u (nula_dan, nula_niz, skok; sivo za nedostajuce)",
+     "stavke": [
+      "scraper/anomalije.py: pravila i pragovi; vrednosti se ne menjaju, samo se markiraju",
+      "excel.py: narandzasto (nule nalik kvaru), zuto (izolovan skok), sivo (nema vrednosti); oznaka i u koloni Status; objasnjenje u sheetu Info",
+      "testovi za pravila; Excel za oktobar ponovo napravljen"
+     ],
+     "commit": "fb2bc6e"
+    },
+    {
+     "vreme": "12:16",
+     "naslov": "Izlaz u formatu istorijskog mastera (y_A, razlog_A) i Excel kolona y_A umesto S",
+     "stavke": [
+      "satno.py: podaci/YYYY/MM/master_YYYY-MM.parquet — stanica_id, ts, y_A, razlog_A (+ datum, sat), puna naivna satna mreza; DST kao master (jesen: prvi od dva ista ts, prolece: nema_reda); --spoji pravi i podaci/master_novo.parquet",
+      "excel.py: serija sa jednim smerom ima kolonu y_A (cilj modela, istorijski A1k/A2k), ne S<n>",
+      "testovi za master format na danima prelaska vremena"
+     ],
+     "commit": "7320688"
+    },
+    {
+     "vreme": "16:14",
+     "naslov": "y_A/razlog_A svuda (i u Excel-u), state 0 = nema_podataka, popravka rezervne varijante",
+     "stavke": [
+      "feed = A (samo bicikli): satno.csv, satno_smerovi.csv, mesecni fajlovi i Excel koriste y_A / razlog_A (razlog_A = \"ok\" za ispravan sat); Excel: Date | Time | y_A | razlog_A | oznaka, bez S/Sum kolona",
+      "state 0 (\"Nema podataka\", npr. 29a 12.10.) -> sat NaN sa razlogom nema_podataka (ne 0); state 6 ostaje validna nula; isto u kolonama razlike u CSV-u citanja",
+      "Playwright: mapa (div#qTAMap) prekriva radio dugme -> klik se salje direktno elementu",
+      "brza varijanta jednom ponavlja pokusaj pre prelaska na Playwright (sajt je 12.10. u 10:02 vratio 500)",
+      "greske.log: jedna linija po gresci; istrazi.yml proba i rezervnu varijantu (nista ne cuva)"
+     ],
+     "commit": "e339b45"
+    },
+    {
+     "vreme": "16:31",
+     "naslov": "Excel: stari dvosmerni brojaci A01 | A02 | Sum (Sum = y_A), ostali y_A",
+     "stavke": [
+      "A01 = smer 1x, A02 = smer 2x, kao u istorijskom izvozu; parquet fajlovi za model i dalje imaju y_A."
+     ],
+     "commit": "4d05380"
+    }
+   ]
+  },
+  {
+   "dan": "2026-10-09",
+   "stavke": [
+    {
+     "vreme": "15:14",
+     "naslov": "Scraper biciklista (UGZINS/Mikrobit): citanje, satni obracun, testovi, workflow",
+     "stavke": [
+      "scraper/preuzimanje.py: brza varijanta (requests + IntraWeb dogadjaji) i rezerva (Playwright), obavezna provera sadrzaja (odbija fajl sa vozilima), --istrazi za snimanje odgovora",
+      "scraper/citaj.py: jedno citanje -> podaci/sirovo (xml.gz) + podaci/snimci (CSV), greske.log",
+      "scraper/satno.py: satne vrednosti po smeru i seriji (01:00-24:00, bez interpolacije, letnje/zimsko)",
+      "tests/: parsiranje, mapiranje serija, odbijanje vozila, satni obracun na vestackim snimcima",
+      ".github/workflows: citaj.yml (workflow_dispatch + rezerva XX:20), istrazi.yml (rucno)"
+     ],
+     "commit": "1dc70e1"
+    },
+    {
+     "vreme": "15:25",
+     "naslov": "Primer fajla sa biciklistima (57 unosa) u testove; obican User-Agent pregledaca",
+     "stavke": [],
+     "commit": "8bab452"
+    },
+    {
+     "vreme": "15:38",
+     "naslov": "Brza varijanta prema stvarnom toku sajta (bootstrap forma, ETYPETABLE_INPUT, SubmitForm na /rss)",
+     "stavke": [],
+     "commit": "40cb3be"
+    },
+    {
+     "vreme": "21:17",
+     "naslov": "Broj biciklista od prethodnog citanja u svakom CSV-u; citanje u XX:08",
+     "stavke": [
+      "scraper/razlika.py: kolone bicikala_od_prethodnog, minuta_od_prethodnog, prethodno_citanje_utc, razlog_razlike (danas - danas_prethodno, preko ponoci juce - ... + danas)",
+      "citaj.py upisuje te kolone pri svakom citanju; danasnja citanja dopunjena (--dopuni)",
+      "README i workflow: preporuceno vreme citanja XX:08 (sajt osvezava fajl na ~5 min)"
+     ],
+     "commit": "55f22b9"
+    },
+    {
+     "vreme": "21:27",
+     "naslov": "state 6 (nema saobracaja u poslednjih 5 min) je validna nula, ne kvar",
+     "stavke": [
+      "Po opisu sistema (Info na sajtu) stanje se racuna na 5 min; 6 = niko nije prosao. Ispad uredjaja (> 30 min bez podataka) hvata provera svezine vremena brojaca. satno_provera.csv sada oznacava i smerove koji su ceo dan 0 (nula_ceo_dan)."
+     ],
+     "commit": "f98c83f"
+    },
+    {
+     "vreme": "21:49",
+     "naslov": "Citanje u XX:02: tolerancija 6 min pre punog sata, kolone datum/sat, nepotpun_sat",
+     "stavke": [
+      "satno.py: citanje se prihvata ako je vreme brojaca do 6 min pre punog sata (sajt osvezava na ~5 min); \"juce\" samo iz citanja sa datumom brojaca D+1; sat dobija vrednost samo ako su vremena brojaca razmaknuta 50-70 min (inace nepotpun_sat); nove kolone datum (dan D) i sat (1-24)",
+      "README i workflow: vreme citanja XX:02"
+     ],
+     "commit": "fc400f4"
+    },
+    {
+     "vreme": "22:07",
+     "naslov": "Mesecni Excel u obliku istorijske tabele (sheet po seriji, Date/Time 01:00-24:00)",
+     "stavke": [
+      "scraper/excel.py: podaci/excel/bicikli_YYYY-MM.xlsx, 46 sheetova (15a ... 51b) + Info; S<n> za seriju sa jednim smerom, Sum1/Sum2/Sum za dva smera; Status = razlog; > 400 crveno",
+      "satno.py pravi Excel posle dnevnog obracuna; kolona sat = kraj sata po satu na zidu (1-24)",
+      "requirements: openpyxl"
+     ],
+     "commit": "5f4dd50"
+    }
+   ]
+  }
+ ]
+}

@@ -287,6 +287,15 @@
     const ukupno = dop ? stv.map((v, i) => (v == null ? null : v + (dop[i] || 0))) : stv;
     return { stv: kum(ukupno, D.sati_gotovo), pr: pr && kum(pr), q: null, pros: pros && kum(pros), dopZbirno: !!dop };
   }
+  /** Ulazna animacija kad se grafik prvi put vidi: stubići rastu jedan za drugim (talas po satima), linije se
+   *  iscrtavaju s leva udesno. animationDelay važi samo za prvo crtanje, pa „Pusti dan“ i osvežavanja ostaju mirni. */
+  function animiraj(o) {
+    for (const sr of o.series || []) {
+      if (sr.type === "bar") Object.assign(sr, { animationDuration: 700, animationEasing: "cubicOut", animationDelay: (i) => 120 + i * 32 });
+      else if (sr.type === "line" && sr.xAxisIndex !== 1) Object.assign(sr, { animationDuration: 1500, animationEasing: "cubicInOut", animationDelay: 150 });
+    }
+    return o;
+  }
   function crtajGlavni(b) {
     const n = nizovi(), P = prognoza(), x = oznake();
     const boja = { stv: b.bicikl, pr: b.warning, pros: b["ink-3"], dop: b.bicikl };
@@ -634,10 +643,14 @@
     prog.innerHTML = `<label class="prekidac-ui"><input type="checkbox" id="prikazi-prognozu"><span class="klizac" aria-hidden="true"></span><span>prikaži</span></label>`;
     prog.querySelector("input").addEventListener("change", (e) => { saPrognozom = e.target.checked; g.glavni.osvezi(); });
     NS.prekidac(document.getElementById("g-prikaz"), [["sat", "Po satu"], ["zbirno", "Zbirno od ponoći"]], "sat", (v) => { zbirno = v === "zbirno"; g.glavni.osvezi(); });
-    g.glavni = NS.grafik(document.getElementById("g-glavni"), crtajGlavni, { odmah: true });
-    g.vreme = NS.grafik(document.getElementById("g-vreme"), crtajVreme);
+    g.glavni = NS.grafik(document.getElementById("g-glavni"), (b) => animiraj(crtajGlavni(b)), { odmah: true });
+    g.vreme = NS.grafik(document.getElementById("g-vreme"), (b) => animiraj(crtajVreme(b)));
     hover(g.glavni); hover(g.vreme);
-    g.vreme.spreman.then(({ ec, el }) => new ResizeObserver(() => ec.resize()).observe(el));
+    // resize samo kad se veličina stvarno promeni — prvi poziv ResizeObserver-a bi prekinuo ulaznu animaciju
+    g.vreme.spreman.then(({ ec, el }) => {
+      let w = el.clientWidth, h = el.clientHeight;
+      new ResizeObserver(() => { if (el.clientWidth !== w || el.clientHeight !== h) { w = el.clientWidth; h = el.clientHeight; ec.resize(); } }).observe(el);
+    });
     ctl = MAPA.napravi(document.getElementById("mapa"), s, { naFokus: (k) => { if (k && k !== izabrana) izaberi(k, { saMape: true }); } });
     nacrtajSve();
     LJ.pojave(main);
