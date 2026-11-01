@@ -120,7 +120,20 @@ const NS = (() => {
         g.ec.setOption(g.crtaj(boje()), { notMerge: true });
         ok(g);
       };
-      if (odmah || typeof LJ === "undefined") pokreni(); else LJ.kadVidljivo(el, pokreni);
+      if (odmah || typeof LJ === "undefined") {
+        pokreni();
+        // nacrtan odmah (zbog natpisa oko grafika), ali se ne vidi bar pola grafika → animacija se pusti ispočetka
+        // kad se doskroluje (inače bi prošla dok se vidi samo ivica grafika)
+        const r = el.getBoundingClientRect(), vidi = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
+        if (odmah && typeof IntersectionObserver !== "undefined" && vidi < r.height / 2) {
+          const io = new IntersectionObserver((ul) => {
+            if (!ul.some((u) => u.intersectionRatio >= 0.5)) return;
+            io.disconnect();
+            if (g.ec) { g.ec.clear(); g.ec.setOption(g.crtaj(boje()), { notMerge: true }); }
+          }, { threshold: 0.5 });
+          io.observe(el);
+        }
+      } else LJ.kadVidljivo(el, pokreni);
     });
     g.osvezi = () => { if (g.ec) g.ec.setOption(g.crtaj(boje()), { notMerge: true }); };
     grafici.push(g);

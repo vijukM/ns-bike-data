@@ -18,6 +18,10 @@ Poslednji broj ima uvek dve cifre (00–99).
   prognoze i preuzeti slojevi — putanje `podaci/`, `docs/data/`, `sajt/podaci/`, `docs/assets/slike/nsbike/`.
 - Veća promena (novi deo sajta, backend, nalozi) može da poveća srednji broj: 1.1.YY → 1.2.00.
 - Proverava je workflow `.github/workflows/verzija.yml` (`.github/verzija_provera.py`) na svakom PR-u ka `main`.
+- **Istorija verzija** (`docs/data/verzije.json`, admin strana „Verzije i zadaci“): pravi se iz git commit-ova
+  (`python -m sajt.verzije`). Uz svaki commit koji podiže VERZIJA: poruku commit-a napisati u fajl, pokrenuti
+  `python -m sajt.verzije --poruka <fajl>` (doda unos za trenutnu verziju) i commit-ovati sa `git commit -F <fajl>`.
+  Prvi red poruke = naslov, redovi „- …“ = stavke. `tests/test_verzije.py` proverava da je prvi unos = VERZIJA.
 
 ## Pri svakoj izmeni sajta
 
@@ -34,6 +38,8 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Znak u bočnom meniju = `NaSicu_ikonica_bicikl_bez_NS.svg` + `NaSicu_ikonica_NS.svg` kao poseban sloj na istom mestu
   (isti koordinatni sistem); pri skupljanju/širenju menija slova NS klize između malog znaka i rama bicikla, a
   bicikl i natpis nestaju/pojavljuju se (`.brend-slika` u `stil.css`).
+- Pretraga (lupa u gornjoj traci, Ctrl K ili /): modal sa poljem, filterima Sve / Strane / Stanice / Ulice (ulice iz
+  `staze_analiza.json` → `staze.html?ulica=`), zatvaranje ×, Esc ili klikom van.
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 
@@ -125,6 +131,11 @@ Poslednji broj ima uvek dve cifre (00–99).
   zvaničnim brojačima (ns-trafic-data) dolaze kasnije; za javni rad treba dozvola/licenca prenosa.
 - Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma
   ns-trafic-data, adresa u `docs/data/admin.json`) i podsetnik za tokene (datumi isteka u `docs/data/admin.json`).
+- **Verzije i zadaci** (`docs/razvoj.html` + `assets/razvoj.js`, admin lozinka): kartica „Istorija verzija“ (verzije.json,
+  pretraga) i „Zadaci“ — zahtevi za izmene (ID ZAH-###, autor = prijavljeni administrator i ne menja se, datum
+  zahteva, hitnost, status na čekanju/primljeno/u izradi/gotovo), dodavanje, izmena (svaka izmena se beleži i
+  prikazuje uz zahtev) i brisanje. Polazni spisak `docs/data/zadaci.json`, izmene u `localStorage` „ns-zadaci“
+  dok nema backend-a.
 - `LJ.stalnoUzivo(sveze, tekst)` = isti znak „UŽIVO“ kao „Danas uživo“, ali ne zavisi od čitanja brojača.
 
 ## Ne menjati bez izričitog zahteva

@@ -5,7 +5,7 @@
 
 const LJ = (() => {
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.49";
+  const VERZIJA = "1.1.50";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -32,6 +32,8 @@ const LJ = (() => {
     download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/>',
     arrow: '<path d="M5 12h14M12 5l7 7-7 7"/>',
     x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    olovka: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    kanta: '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>',
     calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
     rain: '<path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24"/><path d="M16 14v6M8 14v6M12 16v6"/>',
     trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
@@ -92,7 +94,8 @@ const LJ = (() => {
     // Admin: strane za upravljanje — traže i admin lozinku (KAPIJA.trazAdmina), i kad je sajt otključan
     { grupa: "Admin", stavke: [
       { id: "kamere", t: "Kamere uživo", href: "kamere.html", ik: "camera", kamera: true },
-      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download" }] },
+      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download" },
+      { id: "razvoj", t: "Verzije i zadaci", href: "razvoj.html", ik: "clock" }] },
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
   const oznakaStavke = (x) => (x.uzivo ? uzivoZnak() : x.kamera ? stalnoUzivo() : x.zakljucano ? `<span class="oznaka-meni katanac" title="još nije dostupno">${ik("lock")}</span>`
@@ -469,7 +472,14 @@ const LJ = (() => {
 
   // ---------------------------------------------------------------- pretraga (Ctrl+K)
   const bezKvacica = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
-  let paleta = null;
+  let paleta = null, uliceP = null;
+  // grupe pretrage (filteri ispod polja); „Sve“ je podrazumevano
+  const GRUPE_PRETRAGE = [["sve", "Sve"], ["Strane", "Strane"], ["Stanice", "Stanice"], ["Ulice", "Ulice"]];
+  const uliceZaPretragu = () => (uliceP ||= NS.json("staze_analiza.json", "data/")
+    .then((a) => (a.ulice || []).filter((u) => u.n && !u.van_ulice).map((u) => ({ grupa: "Ulice", t: u.n,
+      opis: `${NS.dec(u.km)} km staza${u.brojaci && u.brojaci.length ? ` · brojači ${u.brojaci.join(", ")}` : ""}`,
+      href: `staze.html?ulica=${encodeURIComponent(u.n)}`, ik: "route" })))
+    .catch(() => { uliceP = null; return []; }));
   async function otvoriPretragu() {
     if (paleta) return;
     const s = await NS.stanice().catch(() => ({ serije: [] }));
@@ -478,18 +488,28 @@ const LJ = (() => {
       ...s.serije.map((r) => ({ grupa: "Stanice", t: `${r.serija} · ${r.naziv}`, opis: r.smerovi.join(" · "),
         href: `stanica.html?id=${encodeURIComponent(r.serija)}`, pin: r.stanje })),
     ];
+    let filter = "sve";
     paleta = document.createElement("div");
     paleta.className = "paleta-pozadina";
-    paleta.innerHTML = `<div class="paleta" role="dialog" aria-label="Pretraga">
-      <div class="unos">${ik("search")}<input type="text" placeholder="Pretraži stanice, ulice, strane…" aria-label="Pretraga"><kbd>Esc</kbd></div>
+    paleta.innerHTML = `<div class="paleta" role="dialog" aria-modal="true" aria-label="Pretraga">
+      <div class="unos">${ik("search")}<input type="text" placeholder="Pretraži stranice, stanice, ulice…" aria-label="Pretraga">
+        <button type="button" class="paleta-x" aria-label="Zatvori pretragu" title="Zatvori (Esc)">${ik("x")}</button></div>
+      <div class="paleta-filteri" role="radiogroup" aria-label="Šta se pretražuje">${GRUPE_PRETRAGE.map(([v, t]) =>
+        `<button type="button" role="radio" data-f="${v}" aria-checked="${v === filter}">${t}<span class="br"></span></button>`).join("")}</div>
       <div class="rezultati" role="listbox"></div></div>`;
     document.body.appendChild(paleta);
     const unos = paleta.querySelector("input");
     const rez = paleta.querySelector(".rezultati");
+    const filteri = paleta.querySelector(".paleta-filteri");
     let aktivan = 0, vidljive = [];
     const crtaj = () => {
       const q = bezKvacica(unos.value.trim());
-      vidljive = stavke.filter((x) => !q || bezKvacica(`${x.t} ${x.opis}`).includes(q)).slice(0, 40);
+      const pogodak = stavke.filter((x) => !q || bezKvacica(`${x.t} ${x.opis}`).includes(q));
+      filteri.querySelectorAll("button").forEach((d) => {
+        const n = d.dataset.f === "sve" ? pogodak.length : pogodak.filter((x) => x.grupa === d.dataset.f).length;
+        d.querySelector(".br").textContent = q ? ` ${n}` : "";
+      });
+      vidljive = pogodak.filter((x) => filter === "sve" || x.grupa === filter).slice(0, filter === "sve" ? 40 : 200);
       aktivan = Math.min(aktivan, Math.max(0, vidljive.length - 1));
       let grupa = "";
       rez.innerHTML = vidljive.length ? vidljive.map((x, i) => {
@@ -509,10 +529,17 @@ const LJ = (() => {
       } else if (e.key === "Enter" && vidljive[aktivan]) location.href = vidljive[aktivan].href;
     };
     document.addEventListener("keydown", tasteri);
-    paleta.addEventListener("click", (e) => { if (e.target === paleta) zatvori(); });
+    paleta.addEventListener("click", (e) => { if (e.target === paleta || e.target.closest(".paleta-x")) zatvori(); });
+    filteri.addEventListener("click", (e) => {
+      const d = e.target.closest("button[data-f]"); if (!d) return;
+      filter = d.dataset.f; aktivan = 0;
+      filteri.querySelectorAll("button").forEach((x) => x.setAttribute("aria-checked", String(x === d)));
+      crtaj(); unos.focus();
+    });
     unos.addEventListener("input", () => { aktivan = 0; crtaj(); });
     crtaj();
     unos.focus();
+    uliceZaPretragu().then((u) => { if (!paleta) return; stavke.push(...u); crtaj(); });
   }
 
   // ---------------------------------------------------------------- padajući paneli
@@ -601,7 +628,7 @@ const LJ = (() => {
       <nav class="putanja" aria-label="Putanja">${putanja.map((p, i) => i === putanja.length - 1 ? `<b>${p}</b>`
         : `<span class="${i ? "srednje" : ""}">${p}</span>${ik("chevron", i ? "srednje" : "")}`).join("")}</nav>
       <span class="razmak"></span>
-      <button class="pretraga-dugme" id="pretraga-dugme" aria-label="Pretraga">${ik("search")}<span>Pretraži stanice…</span><kbd>Ctrl K</kbd></button>
+      <button class="ikonica-dugme" id="pretraga-dugme" aria-label="Pretraga (Ctrl K)" title="Pretraga (Ctrl K)" aria-haspopup="dialog">${ik("search")}</button>
       <div class="padajuce"><button class="ikonica-dugme jezik" id="jezik-dugme" aria-label="Jezik">SR</button></div>
       <div class="padajuce"><button class="ikonica-dugme" id="obavestenja-dugme" aria-label="Obaveštenja">${ik("bell")}<span class="brojac skriveno"></span></button></div>
       <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>
