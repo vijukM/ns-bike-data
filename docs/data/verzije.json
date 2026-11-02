@@ -1,17 +1,16 @@
 {
- "generisano_utc": "2026-11-02T08:31Z",
+ "generisano_utc": "2026-11-02T09:51Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.52",
-   "datum": "2026-11-02T09:31",
-   "naslov": "Staze: krofna cela, deo grada na mapi pri hoveru, kartica Najduže sa % ulice",
+   "verzija": "1.1.53",
+   "datum": "2026-11-02T10:51",
+   "naslov": "Stanica: danas i prognoza za sutra jedan pored drugog, ispod istorije po danu",
    "stavke": [
-    "krofna „Kakve su staze“: raspored u pikselima prema veličini grafika, pa prsten (i uvećan deo pri hoveru) više nije odsečen gore; tooltip stoji uz deo koji je pod mišem i prikazuje samo naziv vrste staze",
-    "Delovi grada: hover na deo grada na grafiku obeleži ga na mapi kao na mapi brojača (popuna, senka i linija granice); klik i dalje vodi do njega i ostavlja oznaku",
-    "„Najduže ulice sa stazom“ je kartica u delu „Ulice sa stazom“ (Sve ulice / Najduže), sa kolonama Staza i % ulice i sortiranjem po svakoj",
-    "uklonjen deo „O podacima — Odakle su staze i kako je računato“",
-    "nadnaslov: Mapa · © OpenStreetMap i saradnici (ODbL) · stanje …; atribucija je link koji ne izgleda kao link"
+    "„Izabrani dan“ je podrazumevano danas (sati do poslednjeg čitanja iz danas.json, vreme za danas), uz prognozu i interval 10–90 % i prosečan isti dan u nedelji; može se izabrati bilo koji dan od početka rada brojača do danas, dugme „Danas“ vraća na današnji dan",
+    "dani posle kraja istorije (od 9. 10. 2026.) iz satnih fajlova; za rupu 1. 9. – 8. 10. 2026. piše da brojači tada nisu čitani; satno vreme samo dok postoji u istoriji (bez zahteva za nepostojeće fajlove)",
+    "nova kartica „Prognoza · sutra“: satna prognoza za tu stanicu sa intervalom 10–90 % i prosečnim istim danom (iz data/prognoza_biciklista.json — model pravi sve serije odjednom, pa se ništa ne računa na klik)",
+    "oba grafika su odmah ispod „Istorija · po danu“; uklonjena kartica „Prognoza za sutra — USKORO“"
    ],
    "commit": null
   },

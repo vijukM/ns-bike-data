@@ -43,6 +43,9 @@ Poslednji broj ima uvek dve cifre (00–99).
   bicikl i natpis nestaju/pojavljuju se (`.brend-slika` u `stil.css`).
 - Pretraga (lupa u gornjoj traci, Ctrl K ili /): modal sa poljem, filterima Sve / Strane / Stanice / Ulice (ulice iz
   `staze_analiza.json` → `staze?ulica=`), zatvaranje ×, Esc ili klikom van.
+- Stanica (`stanica?id=`): ispod istorije po danu su „Izabrani dan“ (podrazumevano danas iz `data/danas.json`, ranije iz
+  `istorija/sati`; danas i sutra uz prognozu i interval 10–90 %) i „Prognoza · sutra“, jedan pored drugog. Prognoza po stanici se
+  ne računa u pregledaču: model pravi sve serije odjednom → `data/prognoza_biciklista.json` (danas i sutra).
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 
