@@ -1,10 +1,21 @@
 {
- "generisano_utc": "2026-11-01T13:56Z",
+ "generisano_utc": "2026-11-02T07:42Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.51",
+   "datum": "2026-11-02T08:42",
+   "naslov": "Adrese strana bez .html (nasicu.rs/mapa umesto nasicu.rs/mapa.html)",
+   "stavke": [
+    "svi linkovi između strana su bez .html: meni, pretraga, stanice, kalendar, rekordi, staze, mapa, strane 404/403; početna je „./“",
+    "ko dođe starim linkom (mapa.html, index.html), adresa se skrati bez ponovnog učitavanja; stari linkovi i dalje rade",
+    "lokalni server za probu sa adresama bez .html (python -m sajt.server), test tests/test_adrese.py; CLAUDE.md"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.50",
-   "datum": "2026-11-01T14:56",
+   "datum": "2026-11-01T14:57",
    "naslov": "Admin: Verzije i zadaci; pretraga sa filterima; animacija grafika na Danas uživo",
    "stavke": [
     "nova admin strana „Verzije i zadaci“ (razvoj.html): istorija svih verzija sa datumom i izmenama iz git commit-ova (sajt/verzije.py → data/verzije.json, pretraga), i commit-ovi pre uvođenja oznake verzije po danima",
@@ -13,7 +24,7 @@
     "Danas uživo: grafici vremena i brojanja animiraju se kad se doskroluje do njih (stubići talasom, linije s leva)",
     "testovi tests/test_verzije.py; CLAUDE.md"
    ],
-   "commit": null
+   "commit": "725ff88"
   },
   {
    "verzija": "1.1.49",

@@ -870,7 +870,7 @@ const MAPA = (() => {
       kartica.setOffset(serija === izabrana ? POMAK_IZABRAN : POMAK);
       kartica.options.anchor = serija === izabrana ? "bottom" : undefined;      // izabrani: kartica uvek iznad pina
       kartica.setLngLat(pinovi[serija].getLngLat())
-        .setHTML(`${t}<div class="tt-red"><a href="stanica.html?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`);
+        .setHTML(`${t}<div class="tt-red"><a href="stanica?id=${encodeURIComponent(serija)}">Otvori stanicu →</a></div>`);
       LJ.osveziUzivo();
       if (!kartica.isOpen()) kartica.addTo(m);
       prikazana = serija;

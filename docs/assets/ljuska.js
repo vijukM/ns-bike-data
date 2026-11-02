@@ -4,8 +4,11 @@
 "use strict";
 
 const LJ = (() => {
+  // adrese bez .html (GitHub Pages i dalje otvara mapa.html za /mapa): ko dođe starim linkom, adresa se skrati
+  if (location.protocol !== "file:" && /\.html$/.test(location.pathname))
+    history.replaceState(history.state, "", location.pathname.replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "") + location.search + location.hash);
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.50";
+  const VERZIJA = "1.1.51";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -67,35 +70,35 @@ const LJ = (() => {
   // zakljucano: u meniju je katanac i klik ne otvara stranu (adresa i dalje radi, ko je zna)
   const MENI = [
     { grupa: "Pregled", stavke: [
-      { id: "kontrolna", t: "Kontrolna tabla", href: "index.html", ik: "home" },
-      { id: "danas", t: "Danas uživo", href: "danas.html", ik: "activity", uzivo: true }] },
+      { id: "kontrolna", t: "Kontrolna tabla", href: "./", ik: "home" },
+      { id: "danas", t: "Danas uživo", href: "danas", ik: "activity", uzivo: true }] },
     { grupa: "Mapa", stavke: [
-      { id: "mapa", t: "Mapa brojača", href: "mapa.html", ik: "map" },
-      { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna.html", ik: "flame", zakljucano: true },
-      { id: "staze", t: "Biciklističke staze", href: "staze.html", ik: "route", oznaka: "NOVO" }] },
+      { id: "mapa", t: "Mapa brojača", href: "mapa", ik: "map" },
+      { id: "toplotna", t: "Toplotna mapa grada", href: "toplotna", ik: "flame", zakljucano: true },
+      { id: "staze", t: "Biciklističke staze", href: "staze", ik: "route", oznaka: "NOVO" }] },
     { grupa: "Podaci", stavke: [
-      { id: "grafici", t: "Grafici", href: "grafici.html", ik: "chart" },
-      { id: "stanice", t: "Stanice", href: "stanice.html", ik: "table", oznaka: "46", klasa: "plava" },
-      { id: "poredjenje", t: "Poređenje stanica", href: "poredjenje.html", ik: "compare", uskoro: true },
-      { id: "godine", t: "Poređenje godina", href: "grafici.html#godine", ik: "bars" },
-      { id: "kalendar", t: "Kalendar", href: "kalendar.html", ik: "calendar", oznaka: "NOVO" },
-      { id: "rekordi", t: "Rekordi i zanimljivosti", href: "rekordi.html", ik: "trophy", oznaka: "NOVO" }] },
+      { id: "grafici", t: "Grafici", href: "grafici", ik: "chart" },
+      { id: "stanice", t: "Stanice", href: "stanice", ik: "table", oznaka: "46", klasa: "plava" },
+      { id: "poredjenje", t: "Poređenje stanica", href: "poredjenje", ik: "compare", uskoro: true },
+      { id: "godine", t: "Poređenje godina", href: "grafici#godine", ik: "bars" },
+      { id: "kalendar", t: "Kalendar", href: "kalendar", ik: "calendar", oznaka: "NOVO" },
+      { id: "rekordi", t: "Rekordi i zanimljivosti", href: "rekordi", ik: "trophy", oznaka: "NOVO" }] },
     { grupa: "Analize", stavke: [
-      { id: "praznici", t: "Praznici i događaji", href: "praznici.html", ik: "star", zakljucano: true },
-      { id: "ritam", t: "Ritam grada", href: "ritam.html", ik: "pulse", oznaka: "NOVO" },
-      { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet.html", ik: "shield", zakljucano: true }] },
+      { id: "praznici", t: "Praznici i događaji", href: "praznici", ik: "star", zakljucano: true },
+      { id: "ritam", t: "Ritam grada", href: "ritam", ik: "pulse", oznaka: "NOVO" },
+      { id: "kvalitet", t: "Kvalitet podataka", href: "kvalitet", ik: "shield", zakljucano: true }] },
     { grupa: "Prognoza", stavke: [
-      { id: "prognoza", t: "Prognoza za sutra", href: "prognoza.html", ik: "cloud", zakljucano: true },
-      { id: "tacnost", t: "Tačnost prognoze", href: "tacnost.html", ik: "target", zakljucano: true },
-      { id: "model", t: "Model — kako radi", href: "model.html", ik: "cpu", zakljucano: true }] },
+      { id: "prognoza", t: "Prognoza za sutra", href: "prognoza", ik: "cloud", zakljucano: true },
+      { id: "tacnost", t: "Tačnost prognoze", href: "tacnost", ik: "target", zakljucano: true },
+      { id: "model", t: "Model — kako radi", href: "model", ik: "cpu", zakljucano: true }] },
     { grupa: "Projekat", stavke: [
-      { id: "o-projektu", t: "O projektu", href: "o-projektu.html", ik: "info" },
-      { id: "recnik", t: "Rečnik pojmova", href: "recnik.html", ik: "book", zakljucano: true }] },
+      { id: "o-projektu", t: "O projektu", href: "o-projektu", ik: "info" },
+      { id: "recnik", t: "Rečnik pojmova", href: "recnik", ik: "book", zakljucano: true }] },
     // Admin: strane za upravljanje — traže i admin lozinku (KAPIJA.trazAdmina), i kad je sajt otključan
     { grupa: "Admin", stavke: [
-      { id: "kamere", t: "Kamere uživo", href: "kamere.html", ik: "camera", kamera: true },
-      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje.html", ik: "download" },
-      { id: "razvoj", t: "Verzije i zadaci", href: "razvoj.html", ik: "clock" }] },
+      { id: "kamere", t: "Kamere uživo", href: "kamere", ik: "camera", kamera: true },
+      { id: "preuzimanje", t: "Preuzimanje podataka", href: "preuzimanje", ik: "download" },
+      { id: "razvoj", t: "Verzije i zadaci", href: "razvoj", ik: "clock" }] },
   ];
   for (const g of MENI) for (const x of g.stavke) if (x.uskoro) Object.assign(x, { oznaka: "USKORO", klasa: "siva" });
   const oznakaStavke = (x) => (x.uzivo ? uzivoZnak() : x.kamera ? stalnoUzivo() : x.zakljucano ? `<span class="oznaka-meni katanac" title="još nije dostupno">${ik("lock")}</span>`
@@ -478,7 +481,7 @@ const LJ = (() => {
   const uliceZaPretragu = () => (uliceP ||= NS.json("staze_analiza.json", "data/")
     .then((a) => (a.ulice || []).filter((u) => u.n && !u.van_ulice).map((u) => ({ grupa: "Ulice", t: u.n,
       opis: `${NS.dec(u.km)} km staza${u.brojaci && u.brojaci.length ? ` · brojači ${u.brojaci.join(", ")}` : ""}`,
-      href: `staze.html?ulica=${encodeURIComponent(u.n)}`, ik: "route" })))
+      href: `staze?ulica=${encodeURIComponent(u.n)}`, ik: "route" })))
     .catch(() => { uliceP = null; return []; }));
   async function otvoriPretragu() {
     if (paleta) return;
@@ -486,7 +489,7 @@ const LJ = (() => {
     const stavke = [
       ...MENI.flatMap((g) => g.stavke.filter((x) => !x.zakljucano).map((x) => ({ grupa: "Strane", t: x.t, opis: g.grupa + (x.uskoro ? " · uskoro" : ""), href: x.href, ik: x.ik }))),
       ...s.serije.map((r) => ({ grupa: "Stanice", t: `${r.serija} · ${r.naziv}`, opis: r.smerovi.join(" · "),
-        href: `stanica.html?id=${encodeURIComponent(r.serija)}`, pin: r.stanje })),
+        href: `stanica?id=${encodeURIComponent(r.serija)}`, pin: r.stanje })),
     ];
     let filter = "sve";
     paleta = document.createElement("div");
@@ -597,7 +600,7 @@ const LJ = (() => {
     meni.className = "meni";
     meni.dataset.stil = stilMenija();
     meni.setAttribute("aria-label", "Glavni meni");
-    meni.innerHTML = `<a class="brend" href="index.html" aria-label="NaSicu — početna">${BREND_MENI}</a>` +
+    meni.innerHTML = `<a class="brend" href="./" aria-label="NaSicu — početna">${BREND_MENI}</a>` +
       MENI.map((g, gi) => {
         // grupa se otvara i zatvara strelicom; zatvorene grupe se pamte, a grupa sa trenutnom stranom je uvek otvorena pri učitavanju
         const sadrziStranu = g.stavke.some((x) => x.id === strana);
@@ -624,7 +627,7 @@ const LJ = (() => {
     gornja.className = "gornja";
     gornja.innerHTML = `
       <button class="ikonica-dugme" id="meni-dugme" aria-label="Meni">${ik("menu")}</button>
-      <a class="brend-gornji" href="index.html" aria-label="NaSicu — početna">${BREND}</a>
+      <a class="brend-gornji" href="./" aria-label="NaSicu — početna">${BREND}</a>
       <nav class="putanja" aria-label="Putanja">${putanja.map((p, i) => i === putanja.length - 1 ? `<b>${p}</b>`
         : `<span class="${i ? "srednje" : ""}">${p}</span>${ik("chevron", i ? "srednje" : "")}`).join("")}</nav>
       <span class="razmak"></span>
@@ -723,7 +726,7 @@ const LJ = (() => {
     brojac.textContent = String(lose.length + 1);
     brojac.classList.remove("skriveno");
     padajuce(dugme, async () => `<div class="naslov-panela"><b>Obaveštenja</b><span class="eyebrow">${s.stanje_period}</span></div>` +
-      lose.map((r) => `<a class="red-panela" href="stanica.html?id=${encodeURIComponent(r.serija)}"><img src="${NS.pin(r.stanje)}" alt="">
+      lose.map((r) => `<a class="red-panela" href="stanica?id=${encodeURIComponent(r.serija)}"><img src="${NS.pin(r.stanje)}" alt="">
         <span>${r.serija} · ${r.naziv}<small>${r.napomena || s.stanja[r.stanje]} · kompletnih dana ${r.kompletnih_30d}/30</small></span></a>`).join("") +
       `<div class="red-panela">${ik("cloud")}<span>Prognoza za sutra<small>model E31 — uskoro na sajtu</small></span></div>`);
   }

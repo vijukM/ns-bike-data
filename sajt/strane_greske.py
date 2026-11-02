@@ -101,7 +101,7 @@ def strana(kod: int) -> str:
     <p>{g["tekst"]}</p>
     <div class="akcije">
       <a class="dugme primarno" id="pocetna" href="{SAJT}/">Na kontrolnu tablu</a>
-      <a class="dugme" id="mapa" href="{SAJT}/mapa.html">Mapa brojača</a>
+      <a class="dugme" id="mapa" href="{SAJT}/mapa">Mapa brojača</a>
       <button class="dugme" type="button" onclick="history.back()">Nazad</button>
     </div>
     <div class="tehnicki"><span>STATUS <b>{kod}</b></span><span>KOD <b>{g["kod"]}</b></span><span>PUTANJA <b id="putanja">—</b></span></div>

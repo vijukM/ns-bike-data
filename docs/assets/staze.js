@@ -281,7 +281,7 @@
       <div class="tt-red"><i class="st-linija mala${o.t === "z" ? " isprekidana" : ""}" style="--boja:var(${VRSTE.find((v) => v[0] === o.t)[3]})"></i>${VRSTA[o.t]} · deonica ${metri(Math.round(duz / 10) * 10)}</div>
       ${o.r < 0.75 ? `<div class="tt-red sitno">sa druge strane ulice ide još jedna staza</div>` : ""}
       ${u ? `<div class="tt-red">${u.km_ulice ? `staza duž <b>${km(u.km_staze, 2)} km</b> od ${km(u.km_ulice, 2)} km ulice` : `cela staza: <b>${km(u.km_staze, 2)} km</b>`}</div>` : ""}
-      ${b ? `<div class="tt-red">brojač <a href="stanica.html?id=${prviS}">${b.naziv}</a>: <b>${NS.broj(b.prosek)}</b> / dan</div>
+      ${b ? `<div class="tt-red">brojač <a href="stanica?id=${prviS}">${b.naziv}</a>: <b>${NS.broj(b.prosek)}</b> / dan</div>
         <div class="tt-red sitno">${o.b != null && b.ulica === (u && u.n) ? "najbliži brojač na istoj ulici" : ""}</div>` : prelaz ? "" : `<div class="tt-red sitno">na ovoj deonici nema brojača</div>`}
       ${u ? `<div class="tt-red"><button type="button" class="veza-dugme" data-ulica="${o.u}">Istakni celu ulicu</button></div>` : ""}`).addTo(m);
     const d = kartica.getElement().querySelector("[data-ulica]");
@@ -448,7 +448,7 @@
         return `<tr data-u="${u.i}" tabindex="0" class="${u.i === izabranaUlica ? "izabran" : ""}"><td><b>${x.t}</b>${x.sitno ? `<small>${x.sitno}</small>` : ""}</td>
           <td class="broj">${km(u.km_staze, 2)}<small> km</small></td>
           <td>${u.km_ulice ? `<span class="st-pokr" title="staza duž ${km(u.km_ulice_staza, 2)} od ${km(u.km_ulice, 2)} km ulice"><span class="st-traka-mini"><i style="width:${Math.min(1, u.km_ulice_staza / u.km_ulice) * 100}%"></i></span><small>${pct(Math.min(1, u.km_ulice_staza / u.km_ulice))} od ${km(u.km_ulice)} km</small></span>` : "<span class=\"sitno\">van ulica</span>"}</td><td><span class="st-strane st-strane-${st}" title="${stOpis}">${st}</span></td><td>${vrstaBar(u)}</td>
-          <td class="broj">${b ? `<a href="stanica.html?id=${b.serije[0]}" title="${b.naziv}">${NS.broj(b.prosek)}</a>${u.brojaci.length > 1 ? `<small> +${u.brojaci.length - 1}</small>` : ""}` : "<span class=\"sitno\">—</span>"}</td></tr>`;
+          <td class="broj">${b ? `<a href="stanica?id=${b.serije[0]}" title="${b.naziv}">${NS.broj(b.prosek)}</a>${u.brojaci.length > 1 ? `<small> +${u.brojaci.length - 1}</small>` : ""}` : "<span class=\"sitno\">—</span>"}</td></tr>`;
       }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema ulice „${document.getElementById("ul-pretraga").value}“ sa stazom.</td></tr>`) + "</tbody>";
   }
   const tab = document.getElementById("ul-tabela");

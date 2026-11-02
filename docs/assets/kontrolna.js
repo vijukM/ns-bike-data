@@ -47,13 +47,13 @@ function mapaKartica(s, a) {
     podlogaEl: document.getElementById("podloga"), stazeEl: document.getElementById("staze-cip"),
   });
   MAPA.legenda(document.getElementById("legenda-mape"), s);
-  MAPA.stanjeGrafik(document.getElementById("krofna"), s, (k) => { location.href = "stanice.html#" + k; });
+  MAPA.stanjeGrafik(document.getElementById("krofna"), s, (k) => { location.href = "stanice#" + k; });
   // najprometnija mesta (kao „Site visits“): prosek 12 m, traka u odnosu na najveći
   const top = s.serije.filter((r) => r.prosek_12m != null && r.stanje !== "neispravan")
     .sort((x, y) => y.prosek_12m - x.prosek_12m).slice(0, 4);
   const maks = top[0].prosek_12m;
   const boje = ["var(--primary)", "var(--purple)", "var(--teal)", "var(--orange)"];
-  document.getElementById("mesta").innerHTML = top.map((r, i) => `<a class="mesto-stat" href="stanica.html?id=${r.serija}" style="--boja:${boje[i]};color:inherit;text-decoration:none">
+  document.getElementById("mesta").innerHTML = top.map((r, i) => `<a class="mesto-stat" href="stanica?id=${r.serija}" style="--boja:${boje[i]};color:inherit;text-decoration:none">
       <div class="ime"><i></i>${r.serija} · ${r.naziv}</div>
       <div class="broj">${NS.broj(r.prosek_12m)}<small>/ DAN</small></div>
       <div class="traka-napretka"><i data-w="${Math.round(100 * r.prosek_12m / maks)}"></i></div></a>`).join("");
@@ -171,7 +171,7 @@ function topStanice(s) {
   const el = document.getElementById("top-stanice");
   el.innerHTML = `<thead><tr><th>#</th><th>Stanica</th><th class="broj">Prosek / dan</th><th>Udeo</th><th>Stanje</th></tr></thead><tbody>` +
     top.map((r, i) => `<tr><td class="mono">${String(i + 1).padStart(2, "0")}</td>
-      <td><a class="stanica-celija" href="stanica.html?id=${r.serija}" style="color:inherit;text-decoration:none"><img src="${NS.pin(r.stanje)}" alt="">
+      <td><a class="stanica-celija" href="stanica?id=${r.serija}" style="color:inherit;text-decoration:none"><img src="${NS.pin(r.stanje)}" alt="">
         <span><b>${r.serija} · ${r.naziv}</b><small>${r.smerovi[0]}</small></span></a></td>
       <td class="broj"><b>${NS.broj(r.prosek_12m)}</b></td>
       <td><div class="mini-traka"><div class="traka-napretka"><i data-w="${Math.round(100 * r.prosek_12m / maks)}"></i></div></div></td>
@@ -182,7 +182,7 @@ function topStanice(s) {
 function loseStanice(s) {
   document.getElementById("stanje-period").textContent = `Stanje · ${s.stanje_period}`;
   const lose = s.serije.filter((r) => r.stanje !== "radi");
-  document.getElementById("lose-stanice").innerHTML = lose.map((r) => `<button type="button" onclick="location.href='stanica.html?id=${r.serija}'">
+  document.getElementById("lose-stanice").innerHTML = lose.map((r) => `<button type="button" onclick="location.href='stanica?id=${r.serija}'">
     <img src="${NS.pin(r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}<small>${r.napomena || s.stanja[r.stanje]}</small></span>
     <span class="vrednost-reda">${r.kompletnih_30d}/30</span></button>`).join("") || '<p class="sitno">Svi brojači rade.</p>';
 }

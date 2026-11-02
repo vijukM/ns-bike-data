@@ -53,7 +53,7 @@
     };
     document.getElementById("spisak").addEventListener("click", (e) => {
       const d = e.target.closest("button[data-s]"); if (!d) return;
-      if (izabrana === d.dataset.s) location.href = `stanica.html?id=${encodeURIComponent(d.dataset.s)}`;
+      if (izabrana === d.dataset.s) location.href = `stanica?id=${encodeURIComponent(d.dataset.s)}`;
       else ctl.fokus(d.dataset.s, { leti: true, skok: true });
     });
     crtajSpisak();
