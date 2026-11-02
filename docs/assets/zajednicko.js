@@ -112,11 +112,26 @@ const NS = (() => {
 
   /** ECharts grafik: crta se (i animira) tek kad dođe na ekran; ponovo na promenu teme i veličine. */
   const grafici = [];
+  /** Sajt ima CSS zoom 0,9 (široki ekrani), pa ECharts (offsetX) promaši sat/dan pod mišem. Pre ECharts-a (faza hvatanja)
+      upisujemo tačan položaj iz udela širine i visine grafika — zrender tada ne računa svoj (e.zrX već postoji). */
+  const MIS_DOGADJAJI = ["mousemove", "mousedown", "mouseup", "click", "dblclick", "contextmenu", "wheel", "mouseout",
+    "pointermove", "pointerdown", "pointerup", "pointerout"];
+  function tacanMis(el, ec) {
+    const upisi = (e) => {
+      if (e.clientX == null) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      e.zrX = ((e.clientX - r.left) / r.width) * ec.getWidth();
+      e.zrY = ((e.clientY - r.top) / r.height) * ec.getHeight();
+    };
+    for (const t of MIS_DOGADJAJI) el.addEventListener(t, upisi, { capture: true, passive: true });
+  }
   function grafik(el, crtaj, { odmah = false } = {}) {
     const g = { el, crtaj, ec: null, spreman: null };
     g.spreman = new Promise((ok) => {
       const pokreni = () => {
         g.ec = echarts.init(el, null, { renderer: "canvas" });
+        tacanMis(el, g.ec);
         g.ec.setOption(g.crtaj(boje()), { notMerge: true });
         ok(g);
       };

@@ -25,6 +25,7 @@ Poslednji broj ima uvek dve cifre (00–99).
   (`python -m sajt.verzije`). Uz svaki commit koji podiže VERZIJA: poruku commit-a napisati u fajl, pokrenuti
   `python -m sajt.verzije --poruka <fajl>` (doda unos za trenutnu verziju) i commit-ovati sa `git commit -F <fajl>`.
   Prvi red poruke = naslov, redovi „- …“ = stavke. `tests/test_verzije.py` proverava da je prvi unos = VERZIJA.
+  Poruka je kratka: naslov + 2–3 crtice, samo osnovno (šta je izmenjeno), bez detalja implementacije.
 
 ## Pri svakoj izmeni sajta
 

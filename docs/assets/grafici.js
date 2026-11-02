@@ -5,9 +5,10 @@
 (async () => {
   const main = document.getElementById("sadrzaj");
   try {
-    const g = await NS.json("grad_dnevno.json");
+    const [g, N, D] = await Promise.all([NS.json("grad_dnevno.json"), NS.json("dnevno_novo.json").catch(() => null),
+      NS.json("danas.json", "data/").catch(() => null)]);
     const a = NS.analizaGrada(g);
-    const grad = gradGrafik(g);
+    const grad = gradGrafik(produziGrad(g, N, D));
     noga(g, a);
     godine(g);
     temperatura(g, a);
@@ -24,6 +25,26 @@
     NS.greska(main, e);
   }
 })();
+
+// rupa 1. 9. – 8. 10. 2026: brojači su brojali, ali sajt tada nije preuzimao podatke — mogu se naknadno dopuniti
+// (za razliku od pravih rupa, kada brojač nije radio i te podatke nema niko)
+const NIJE_PREUZETO = ["2026-09-01", "2026-10-08"];
+const nijePreuzeto = (iso) => iso >= NIJE_PREUZETO[0] && iso <= NIJE_PREUZETO[1];
+
+/** Istorija grada (do 31. 8. 2026.) + dani posle nje (dnevno_novo.json) + danas (u toku, bez dnevnog zbira). */
+function produziGrad(g0, N, D) {
+  const danas = D ? D.datum : new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
+  const g = { ...g0, danas: null };
+  for (const k of ["v", "n", "postoji", "tsr", "tmin", "tmax", "pad"]) g[k] = [...g0[k]];
+  for (let iso = NS.dodajDane(g0.do, 1); iso <= danas; iso = NS.dodajDane(iso, 1)) {
+    const j = N && N.od ? NS.razlikaDana(N.od, iso) : -1, ima = j >= 0 && j < N.grad.v.length;
+    g.v.push(ima ? N.grad.v[j] : null); g.n.push(ima ? N.grad.n[j] : 0); g.postoji.push(ima ? N.grad.postoji[j] : 0);
+    for (const k of ["tmin", "tmax", "tsr", "pad"]) g[k].push(ima ? N.vreme[k][j] : null);
+  }
+  g.do = danas;
+  if (D) g.danas = { i: g.v.length - 1, zbir: D.danas, do: D.brojaci_do };
+  return g;
+}
 
 function gradGrafik(g) {
   const praznici = new Set(g.praznik);
@@ -53,6 +74,25 @@ function gradGrafik(g) {
     return { x: grp.x, v: grp.v, p7: null, n: sr(g.n), tsr: sr(g.tsr, true), tmin: sr(g.tmin, true), tmax: sr(g.tmax, true),
       pad: grp.x.map((k) => Math.round(zbir.get(k) * 10) / 10), dana: grp.dana };
   }
+  /** premošćene rupe podeljene na prave (brojač nije radio) i „nije preuzeto“ (1. 9. – 8. 10. 2026.) */
+  function rupe(d) {
+    const most = NS.premosti(d.v), prave = d.v.map(() => null), nije = d.v.map(() => null);
+    let i = 0;
+    while (i < d.v.length) {
+      if (d.v[i] != null) { i++; continue; }
+      let j = i;
+      while (j < d.v.length && d.v[j] == null) j++;
+      let uRupi = false;
+      for (let k = i; k < j; k++) {
+        const iso = gustina === "dan" ? d.x[k] : gustina === "mesec" ? `${d.x[k]}-15` : d.x[k];
+        if (nijePreuzeto(iso)) uRupi = true;
+      }
+      const cilj = uRupi ? nije : prave;
+      for (let k = Math.max(0, i - 1); k <= Math.min(d.v.length - 1, j); k++) cilj[k] = most[k];
+      i = j;
+    }
+    return [prave, nije];
+  }
   function paneli() {
     return ["n", "t", "p"].filter((k) => ukljuceno.has(k));
   }
@@ -78,8 +118,14 @@ function gradGrafik(g) {
     if (ukljuceno.has("v")) {
       serije.push({ name: "biciklisti", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: d.v, showSymbol: gustina === "mesec", symbolSize: 5,
         connectNulls: false, lineStyle: { width: gustina === "dan" ? 1 : 2, color: b.bicikl, opacity: gustina === "dan" ? 0.55 : 1 }, itemStyle: { color: b.bicikl } });
-      serije.push({ name: "nema podataka", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: NS.premosti(d.v), showSymbol: false, silent: true,
+      const [prave, nijeUzeto] = rupe(d);
+      serije.push({ name: "nema podataka", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: prave, showSymbol: false, silent: true,
         lineStyle: { width: 1.5, type: [4, 4], color: b.nema }, itemStyle: { color: b.nema }, z: 1 });
+      const [od, doK] = NIJE_PREUZETO.map((x) => (gustina === "dan" ? x : NS.kljucPerioda(x, gustina)));
+      serije.push({ name: "nije preuzeto", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: nijeUzeto, showSymbol: false, silent: true,
+        lineStyle: { width: 1.8, type: [2, 3], color: b.warning }, itemStyle: { color: b.warning }, z: 1,
+        markArea: { silent: true, itemStyle: { color: b.warning, opacity: 0.08 },
+          label: { show: true, position: "insideTop", color: b.warning, fontSize: 10.5, formatter: "nije preuzeto" }, data: [[{ xAxis: od }, { xAxis: doK }]] } });
     }
     if (ukljuceno.has("p7") && d.p7) {
       serije.push({ name: "prosek 7 dana", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: d.p7, showSymbol: false,
@@ -121,9 +167,12 @@ function gradGrafik(g) {
       tooltip: { ...NS.osnova(b).tooltip, formatter: (q) => {
         const i = q[0].dataIndex, k = d.x[i];
         let t = `<b>${NS.oznakaPerioda(k, gustina)}</b>${gustina === "dan" && praznici.has(i) ? " · praznik" : ""}<br>`;
-        t += d.v[i] == null ? `<span style="color:${b.nema}">nema kompletnih podataka</span><br>` : `biciklista: <b>${NS.broj(d.v[i])}</b>${gustina === "dan" ? "" : " prosečno dnevno"}<br>`;
+        const danas = gustina === "dan" && g.danas && i === g.danas.i;
+        t += danas ? `<span style="color:${b.primary}">danas, u toku</span> — do ${g.danas.do} izbrojano ${NS.broj(g.danas.zbir)}<br>`
+          : d.v[i] == null && gustina === "dan" && nijePreuzeto(k) ? `<span style="color:${b.warning}">nije preuzeto</span> — brojači su radili, podaci se mogu dopuniti<br>`
+            : d.v[i] == null ? `<span style="color:${b.nema}">nema kompletnih podataka</span><br>` : `biciklista: <b>${NS.broj(d.v[i])}</b>${gustina === "dan" ? "" : " prosečno dnevno"}<br>`;
         if (d.p7 && d.p7[i] != null) t += `prosek 7 dana: ${NS.broj(d.p7[i])}<br>`;
-        t += `brojača: ${NS.broj(d.n[i])}${gustina === "dan" ? ` od ${g.postoji[i]}` : " (prosek)"}<br>`;
+        if (!danas && !(d.v[i] == null && gustina === "dan" && nijePreuzeto(k))) t += `brojača: ${NS.broj(d.n[i])}${gustina === "dan" ? ` od ${g.postoji[i]}` : " (prosek)"}<br>`;
         if (d.dana) t += `dana sa podatkom: ${d.dana[i][0]} od ${d.dana[i][1]}<br>`;
         if (d.tsr[i] != null) t += `temperatura: ${NS.dec(d.tsr[i])} °C (${NS.dec(d.tmin[i])} – ${NS.dec(d.tmax[i])})<br>`;
         if (d.pad[i] != null) t += `padavine: ${NS.dec(d.pad[i])} mm`;
