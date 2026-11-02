@@ -1,10 +1,20 @@
 {
- "generisano_utc": "2026-11-02T12:59Z",
+ "generisano_utc": "2026-11-02T13:28Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.55",
+   "datum": "2026-11-02T14:28",
+   "naslov": "Tačan hover na graficima; grafik grada do danas",
+   "stavke": [
+    "hover pokazuje tačno sat/dan pod mišem (ispravka za zoom sajta, svi grafici)",
+    "Grafici: „Biciklisti, broj brojača i vreme“ ide do danas; 1. 9. – 8. 10. 2026. označeno kao „nije preuzeto“"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.54",
-   "datum": "2026-11-02T13:59",
+   "datum": "2026-11-02T14:02",
    "naslov": "Kalendar do danas, sveži dani posle istorije, izbor serija na grafiku dana; boje proseka i godina",
    "stavke": [
     "kalendar podrazumevano otvara današnji dan (ranije najprometniji dan, 5. 9. 2025.); dani posle istorije (od 1. 9. 2026.) i danas su u kalendaru, a dan u toku piše koliko je izbrojano do poslednjeg čitanja",
@@ -14,7 +24,7 @@
     "prosek 7 dana je ljubičast (kao čip), ne plav kao biciklisti — stanica i Grafici; godine na „Meseci po godinama“ (i Ritam) imaju različite boje",
     "test za dnevno_novo.json i satno vreme"
    ],
-   "commit": null
+   "commit": "3028da8"
   },
   {
    "verzija": "1.1.53",
