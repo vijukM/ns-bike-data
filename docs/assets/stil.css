@@ -1224,10 +1224,13 @@ html.bez-skrola { overflow: hidden; }
 .st-delovi-grafik { min-height: 400px; cursor: pointer; }
 .st-delovi-omot { max-height: 440px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 
-.st-metod-mreza { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 22px; }
-.st-metod-mreza h3 { font-size: 13px; margin: 0 0 6px; }
-.st-metod-mreza p { font-size: 12.5px; color: var(--t-muted); line-height: 1.55; margin: 0; }
-.st-metod-mreza p b { color: var(--t-base); font-weight: 600; }
+/* „Ulice sa stazom“: kartice Sve ulice / Najduže + pretraga */
+.st-ul-alat { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }
+.st-tabela-omot[hidden], .st-pretraga[hidden] { display: none; }
+.st-najduze td:first-child { white-space: nowrap; }
+.st-najduze .st-pokr { min-width: 120px; }
+/* link koji se ne vidi kao link (npr. atribucija OpenStreetMap u nadnaslovu) */
+a.tihi-link, a.tihi-link:hover, a.tihi-link:focus-visible { color: inherit; text-decoration: none; }
 
 .maplibregl-popup.kartica-staze .maplibregl-popup-content { padding: 10px 30px 10px 12px; font-size: 12.5px; }
 .kartica-staze .tt-red.sitno:empty { display: none; }
@@ -1237,11 +1240,10 @@ html.bez-skrola { overflow: hidden; }
 @media (max-width: 1100px) {
   .st-raspored { grid-template-columns: minmax(0, 1fr); }
   .st-strana { height: auto; min-height: 0; max-height: 620px; }
-  .st-metod-mreza { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
   .st-mapa { height: 460px; }
-  .st-metod-mreza { grid-template-columns: minmax(0, 1fr); }
+  .st-ul-alat { width: 100%; justify-content: flex-start; }
   .st-pretraga { width: 100%; }
   .st-tabela .st-slozena.mala { width: 54px; }
 }
