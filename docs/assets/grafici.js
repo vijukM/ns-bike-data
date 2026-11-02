@@ -30,7 +30,7 @@ function gradGrafik(g) {
   let gustina = "dan";
   const b0 = NS.boje();
   let ukljuceno = NS.cipovi(document.getElementById("serije"), [
-    ["v", "Biciklisti (zbir dana)", b0.bicikl, true], ["p7", "Prosek 7 dana", b0.primary, true],
+    ["v", "Biciklisti (zbir dana)", b0.bicikl, true], ["p7", "Prosek 7 dana", b0.prosek, true],
     ["n", "Broj brojača", b0["ink-3"], false], ["t", "Temperatura", b0.temp, true], ["p", "Padavine", b0.kisa, false],
   ], (sk) => { ukljuceno = sk; prilagodiVisinu(); graf.osvezi(); });
   const el = document.getElementById("grad-grafik");

@@ -32,10 +32,10 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
   --overlay: rgba(11, 17, 32, 0.72);
   /* grafici (provereno validatorom na #141B2D) */
-  --g-bicikl: #3987e5; --g-bicikl-blago: #256abf; --g-prosek: #60A5FA; --g-temp: #d95926; --g-kisa: #199e70;
+  --g-bicikl: #3987e5; --g-bicikl-blago: #256abf; --g-prosek: #c084fc; --g-temp: #d95926; --g-kisa: #199e70;
   --g-nema: #64748B; --g-mreza: #222C42; --g-osa: #334155;
   --g-tip-1: #3987e5; --g-tip-2: #d55181; --g-tip-3: #9085e9;
-  --g-god-0: #475569; --g-god-1: #256abf; --g-god-2: #3987e5; --g-god-3: #6da7ec; --g-god-4: #9ec5f4; --g-god-5: #cde2fb;
+  --g-god-0: #94a3b8; --g-god-1: #a78bfa; --g-god-2: #2dd4bf; --g-god-3: #fbbf24; --g-god-4: #f472b6; --g-god-5: #60a5fa;
   --g-top-0: #1A2237; --g-top-1: #184f95; --g-top-2: #256abf; --g-top-3: #3987e5; --g-top-4: #86b6ef; --g-top-5: #cde2fb;
   /* staze (kao bikemap: žuto-zelena sredina, zeleni obod) */
   --pin-radi: #4282F5; --pin-delimicno: #FF9800; --pin-ne_radi: #E5484D; --pin-neispravan: #94A3B8;
@@ -66,10 +66,10 @@
   --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.04);
   --shadow-lg: 0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.05);
   --overlay: rgba(240, 244, 248, 0.72);
-  --g-bicikl: #2563EB; --g-bicikl-blago: #93C5FD; --g-prosek: #1D4ED8; --g-temp: #EA580C; --g-kisa: #0D9488;
+  --g-bicikl: #2563EB; --g-bicikl-blago: #93C5FD; --g-prosek: #9333ea; --g-temp: #EA580C; --g-kisa: #0D9488;
   --g-nema: #94A3B8; --g-mreza: #EEF1F5; --g-osa: #CBD5E1;
   --g-tip-1: #2563EB; --g-tip-2: #DB2777; --g-tip-3: #7C3AED;
-  --g-god-0: #CBD5E1; --g-god-1: #86b6ef; --g-god-2: #5598e7; --g-god-3: #2a78d6; --g-god-4: #1c5cab; --g-god-5: #104281;
+  --g-god-0: #94a3b8; --g-god-1: #7c3aed; --g-god-2: #0d9488; --g-god-3: #d97706; --g-god-4: #db2777; --g-god-5: #2563eb;
   --g-top-0: #F1F5F9; --g-top-1: #cde2fb; --g-top-2: #86b6ef; --g-top-3: #3987e5; --g-top-4: #1c5cab; --g-top-5: #0d366b;
   --pin-radi: #4282F5; --pin-delimicno: #FF9800; --pin-ne_radi: #E5484D; --pin-neispravan: #1E293B;
   --staza-obod: #15803d; --staza: #a3e635; --traka: #facc15; --zajednicka: #4ade80;

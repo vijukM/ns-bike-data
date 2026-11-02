@@ -12,8 +12,9 @@
     if (!r) throw new Error(`nepoznata stanica „${id}“`);
     const krajPutanje = document.querySelector(".putanja b");
     if (krajPutanje) krajPutanje.textContent = `${r.serija} · ${r.naziv}`;
-    const [d, p] = await Promise.all([NS.json(`dnevno/${id}.json`), NS.json(`profili/${id}.json`)]);
-    glava(s, r, d);
+    const [d0, p, N] = await Promise.all([NS.json(`dnevno/${id}.json`), NS.json(`profili/${id}.json`), NS.json("dnevno_novo.json").catch(() => null)]);
+    glava(s, r, d0);
+    const d = produzi(d0, N && N.serije[id] ? N : null, id);
     const izaberiDan = izabraniDan(s, r, d, p);
     dnevniGrafik(s, d, izaberiDan);
     profil(p);
@@ -25,6 +26,19 @@
 })();
 
 const satiDana = (s, iso) => s.dani_bez_24h[iso] || 24;
+
+/** Dnevni zbirovi posle istorije (dnevno_novo.json, pravi ga sajt/sati_novi.py) dodati na istoriju serije, do juče.
+    KPI u zaglavlju ostaju na istoriji (prosek 12 meseci, udeo kompletnih dana). */
+function produzi(d, N, id) {
+  if (!N || !N.od) return d;
+  const v = [...d.v], h = [...d.h];
+  for (let iso = NS.dodajDane(d.od, v.length); iso <= N.do; iso = NS.dodajDane(iso, 1)) {
+    const j = NS.razlikaDana(N.od, iso), x = N.serije[id];
+    v.push(j >= 0 && j < x.v.length ? x.v[j] : null);
+    h.push(j >= 0 && j < x.h.length ? x.h[j] : 0);
+  }
+  return { ...d, v, h };
+}
 
 function glava(s, r, d) {
   document.getElementById("glava-eyebrow").textContent = `Stanica · mesto ${r.mesto}`;
@@ -61,7 +75,7 @@ function dnevniGrafik(s, d, izaberiDan) {
   let gustina = "dan";
   const b0 = NS.boje();
   let ukljuceno = NS.cipovi(document.getElementById("serije"), [
-    ["v", "Dnevni zbir", b0.bicikl, true], ["p7", "Prosek 7 dana", b0.primary, true],
+    ["v", "Dnevni zbir", b0.bicikl, true], ["p7", "Prosek 7 dana", b0.prosek, true],
   ], (sk) => { ukljuceno = sk; graf.osvezi(); });
 
   function podaci() {
@@ -230,6 +244,7 @@ function izabraniDan(s, r, d, p) {
   let poslednji = danasIso();
   datumEl.min = prvi; datumEl.max = poslednji;
   let stanje = null, graf = null;
+  const dostupno = NS.json("sati_dostupno.json").catch(() => null);
   const izvori = Promise.all([
     NS.json("danas.json", "data/").catch(() => null),
     NS.json("prognoza_biciklista.json", "data/").catch(() => null),
@@ -238,9 +253,9 @@ function izabraniDan(s, r, d, p) {
 
   async function danIzIstorije(iso) {
     const ym = iso.slice(0, 7);
-    const [mes, met, dost] = await Promise.all([NS.json(`sati/${ym}.json`).catch(() => null),
-      iso <= s.period.do ? NS.json(`meteo_sati/${ym}.json`).catch(() => null) : null,   // satno vreme postoji do kraja istorije
-      NS.json("sati_dostupno.json").catch(() => null)]);
+    const dost = await dostupno, poslednjiSat = dost && dost.do > s.period.do ? dost.do : s.period.do;
+    const [mes, met] = await Promise.all([NS.json(`sati/${ym}.json`).catch(() => null),
+      iso <= poslednjiSat ? NS.json(`meteo_sati/${ym}.json`).catch(() => null) : null]);   // satno vreme ima koliko i satnih fajlova
     const dan = mes && mes.dani.find((x) => x[0] === iso);
     if (!dan || (dost && dost.prazni_dani.includes(iso))) {   // rupa u podacima (01.09–08.10.2026) ili dan van istorije
       const pocetak = Date.parse(`${iso}T00:00:00Z`) - (Number(fSatBg.format(Date.parse(`${iso}T12:00:00Z`))) - 12) * 3600e3;
