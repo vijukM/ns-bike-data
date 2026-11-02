@@ -46,6 +46,11 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Stanica (`stanica?id=`): ispod istorije po danu su „Izabrani dan“ (podrazumevano danas iz `data/danas.json`, ranije iz
   `istorija/sati`; danas i sutra uz prognozu i interval 10–90 %) i „Prognoza · sutra“, jedan pored drugog. Prognoza po stanici se
   ne računa u pregledaču: model pravi sve serije odjednom → `data/prognoza_biciklista.json` (danas i sutra).
+- Posle istorije (do 31. 8. 2026.) dani dolaze iz `sajt/sati_novi.py` (noću u `citaj.yml`): `istorija/sati`, `meteo_sati`
+  (izmereno vreme iz `podaci/vremenska_prognoza/stvarno/`) i `dnevno_novo.json` (dnevni zbirovi po seriji i za grad).
+  Kalendar i stanica ih dodaju na istoriju, a danas uzimaju iz `data/danas.json`; kalendar podrazumevano otvara danas.
+  Grafik dana u kalendaru: čipovi (biciklisti, temperatura, padavine, prosečan isti dan u nedelji u mesecu, prosek 7 dana,
+  prognoza za danas), izbor se pamti u `localStorage` „ns-kalendar-serije“.
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 

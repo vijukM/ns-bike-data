@@ -1,10 +1,24 @@
 {
- "generisano_utc": "2026-11-02T09:51Z",
+ "generisano_utc": "2026-11-02T12:59Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.54",
+   "datum": "2026-11-02T13:59",
+   "naslov": "Kalendar do danas, sveži dani posle istorije, izbor serija na grafiku dana; boje proseka i godina",
+   "stavke": [
+    "kalendar podrazumevano otvara današnji dan (ranije najprometniji dan, 5. 9. 2025.); dani posle istorije (od 1. 9. 2026.) i danas su u kalendaru, a dan u toku piše koliko je izbrojano do poslednjeg čitanja",
+    "sajt/sati_novi.py pravi i dnevno_novo.json (dnevni zbirovi po seriji i za grad, samo kompletni dani) i meteo_sati za nove mesece (izmereno vreme, Open-Meteo analiza); citaj.yml ih čuva svake noći",
+    "grafik dana u kalendaru: čipovi Biciklisti, Temperatura, Padavine, prosečan isti dan u nedelji (u tom mesecu, ili poslednje 4 nedelje), Prosek 7 dana i Prognoza (danas); izbor se pamti",
+    "stanica: „Istorija po danu“ ide do juče, a izabrani dan ima satno vreme i za nove mesece",
+    "prosek 7 dana je ljubičast (kao čip), ne plav kao biciklisti — stanica i Grafici; godine na „Meseci po godinama“ (i Ritam) imaju različite boje",
+    "test za dnevno_novo.json i satno vreme"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.53",
-   "datum": "2026-11-02T10:51",
+   "datum": "2026-11-02T10:52",
    "naslov": "Stanica: danas i prognoza za sutra jedan pored drugog, ispod istorije po danu",
    "stavke": [
     "„Izabrani dan“ je podrazumevano danas (sati do poslednjeg čitanja iz danas.json, vreme za danas), uz prognozu i interval 10–90 % i prosečan isti dan u nedelji; može se izabrati bilo koji dan od početka rada brojača do danas, dugme „Danas“ vraća na današnji dan",
@@ -12,7 +26,7 @@
     "nova kartica „Prognoza · sutra“: satna prognoza za tu stanicu sa intervalom 10–90 % i prosečnim istim danom (iz data/prognoza_biciklista.json — model pravi sve serije odjednom, pa se ništa ne računa na klik)",
     "oba grafika su odmah ispod „Istorija · po danu“; uklonjena kartica „Prognoza za sutra — USKORO“"
    ],
-   "commit": null
+   "commit": "5e4664d"
   },
   {
    "verzija": "1.1.51",
