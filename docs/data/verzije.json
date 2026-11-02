@@ -1,17 +1,30 @@
 {
- "generisano_utc": "2026-11-02T07:42Z",
+ "generisano_utc": "2026-11-02T08:31Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.52",
+   "datum": "2026-11-02T09:31",
+   "naslov": "Staze: krofna cela, deo grada na mapi pri hoveru, kartica Najduže sa % ulice",
+   "stavke": [
+    "krofna „Kakve su staze“: raspored u pikselima prema veličini grafika, pa prsten (i uvećan deo pri hoveru) više nije odsečen gore; tooltip stoji uz deo koji je pod mišem i prikazuje samo naziv vrste staze",
+    "Delovi grada: hover na deo grada na grafiku obeleži ga na mapi kao na mapi brojača (popuna, senka i linija granice); klik i dalje vodi do njega i ostavlja oznaku",
+    "„Najduže ulice sa stazom“ je kartica u delu „Ulice sa stazom“ (Sve ulice / Najduže), sa kolonama Staza i % ulice i sortiranjem po svakoj",
+    "uklonjen deo „O podacima — Odakle su staze i kako je računato“",
+    "nadnaslov: Mapa · © OpenStreetMap i saradnici (ODbL) · stanje …; atribucija je link koji ne izgleda kao link"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.51",
-   "datum": "2026-11-02T08:42",
+   "datum": "2026-11-02T08:44",
    "naslov": "Adrese strana bez .html (nasicu.rs/mapa umesto nasicu.rs/mapa.html)",
    "stavke": [
     "svi linkovi između strana su bez .html: meni, pretraga, stanice, kalendar, rekordi, staze, mapa, strane 404/403; početna je „./“",
     "ko dođe starim linkom (mapa.html, index.html), adresa se skrati bez ponovnog učitavanja; stari linkovi i dalje rade",
     "lokalni server za probu sa adresama bez .html (python -m sajt.server), test tests/test_adrese.py; CLAUDE.md"
    ],
-   "commit": null
+   "commit": "e560924"
   },
   {
    "verzija": "1.1.50",

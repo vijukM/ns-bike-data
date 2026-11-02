@@ -7,7 +7,7 @@
   <meta name="description" content="Mreža biciklističkih staza u Novom Sadu: kakve su, koliko biciklista nose, koliko su daleko od svake ulice i gde se prekidaju.">
   <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark",z=JSON.parse(localStorage.getItem("ns-izgled")||"{}")||{};if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t;if(!z.raspored&&localStorage.getItem("ns-meni-uzak")==="1")z.raspored="uzak";["boja","gustina","raspored","sirina"].forEach(function(k){if(z[k])d.dataset[k]=z[k]});if(z.smer)d.dir=z.smer}catch(e){}</script>
   <meta name="robots" content="noindex, nofollow">
-  <script src="assets/kapija.js?v=202611021200"></script>
+  <script src="assets/kapija.js?v=202611021500"></script>
   <link rel="icon" href="assets/slike/brend/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="assets/slike/brend/NaSicu_ikonica_NS.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/slike/brend/favicon-32.png">
@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"
         integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/stil.css?v=202611021200">
+  <link rel="stylesheet" href="assets/stil.css?v=202611021500">
 </head>
 <body data-strana="staze" data-putanja="Mapa|Biciklističke staze">
   <main class="sadrzaj staze" id="sadrzaj">
@@ -48,11 +48,13 @@
     <div class="mreza-2 st-dole">
       <section class="kartica pojava">
         <div class="kartica-glava">
-          <div><span class="eyebrow" id="ul-oznaka">Pravci</span><h2>Ulice sa stazom<span id="ul-info"></span></h2></div>
+          <div><span class="eyebrow" id="ul-oznaka">Pravci</span><h2><span id="ul-naslov">Ulice sa stazom</span><span id="ul-info"></span></h2></div>
+          <div class="st-ul-alat"><div id="ul-kartica" role="group" aria-label="Prikaz ulica"></div>
           <div class="pretraga st-pretraga"><svg class="ik" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="search" id="ul-pretraga" placeholder="Ulica…" aria-label="Pretraga ulica"></div>
+            <input type="search" id="ul-pretraga" placeholder="Ulica…" aria-label="Pretraga ulica"></div></div>
         </div>
-        <div class="tabela-omot st-tabela-omot"><table class="tabela st-tabela" id="ul-tabela"></table></div>
+        <div class="tabela-omot st-tabela-omot" id="ul-omot"><table class="tabela st-tabela" id="ul-tabela"></table></div>
+        <div class="tabela-omot st-tabela-omot" id="nj-omot" hidden><table class="tabela st-tabela st-najduze" id="nj-tabela"></table></div>
       </section>
 
       <section class="kartica pojava">
@@ -65,26 +67,16 @@
       </section>
     </div>
 
-    <div class="mreza-2 st-dole">
-      <section class="kartica pojava">
-        <div class="kartica-glava"><div><span class="eyebrow">Pravci</span><h2>Najduže ulice sa stazom<span id="nj-info"></span></h2></div></div>
-        <div class="st-najduze" id="st-najduze"></div>
-      </section>
-      <section class="kartica pojava st-metod">
-        <div class="kartica-glava"><div><span class="eyebrow">O podacima</span><h2>Odakle su staze i kako je računato</h2></div></div>
-        <div class="st-metod-mreza" id="st-metod"></div>
-      </section>
-    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"
           integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"
           integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
-  <script src="assets/zajednicko.js?v=202611021200"></script>
-  <script src="assets/ljuska.js?v=202611021200"></script>
-  <script src="assets/pin3d.js?v=202611021200"></script>
-  <script src="assets/mapa-modul.js?v=202611021200"></script>
-  <script src="assets/staze.js?v=202611021200"></script>
+  <script src="assets/zajednicko.js?v=202611021500"></script>
+  <script src="assets/ljuska.js?v=202611021500"></script>
+  <script src="assets/pin3d.js?v=202611021500"></script>
+  <script src="assets/mapa-modul.js?v=202611021500"></script>
+  <script src="assets/staze.js?v=202611021500"></script>
 </body>
 </html>
