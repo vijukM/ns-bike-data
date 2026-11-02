@@ -1,7 +1,10 @@
 # NaSicu — biciklisti Novog Sada
 
 Sajt: **https://nasicu.rs** (GitHub Pages iz `docs/`, domen u `docs/CNAME`). Sajt je u korenu domena:
-linkovi unutar sajta su relativni (`danas.html`, `assets/...`), a apsolutni (strane 404/403, `og:image`) počinju sa `/` ili `https://nasicu.rs/`.
+linkovi unutar sajta su relativni (`danas`, `assets/...`), a apsolutni (strane 404/403, `og:image`) počinju sa `/` ili `https://nasicu.rs/`.
+Adrese strana su **bez .html** (`nasicu.rs/mapa`, `stanica?id=23a`, početna `./`): GitHub Pages za `/mapa` sam otvori `mapa.html`;
+fajlovi ostaju `docs/mapa.html`. Ko dođe starim linkom sa `.html`, `ljuska.js` skrati adresu (`history.replaceState`).
+Proverava `tests/test_adrese.py`. Lokalna proba: `python -m sajt.server` (`python -m http.server` ne otvara `/mapa`).
 
 Jezik projekta (kod, komentari, tekst na sajtu, commit poruke): srpski, latinica.
 
@@ -39,7 +42,7 @@ Poslednji broj ima uvek dve cifre (00–99).
   (isti koordinatni sistem); pri skupljanju/širenju menija slova NS klize između malog znaka i rama bicikla, a
   bicikl i natpis nestaju/pojavljuju se (`.brend-slika` u `stil.css`).
 - Pretraga (lupa u gornjoj traci, Ctrl K ili /): modal sa poljem, filterima Sve / Strane / Stanice / Ulice (ulice iz
-  `staze_analiza.json` → `staze.html?ulica=`), zatvaranje ×, Esc ili klikom van.
+  `staze_analiza.json` → `staze?ulica=`), zatvaranje ×, Esc ili klikom van.
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 

@@ -52,7 +52,7 @@
       tabela.innerHTML = `<thead><tr>${kolone.map(([id, t, f, c]) => `<th data-k="${f ? id : ""}" class="${c || ""}"
           aria-sort="${id === sort ? (smer > 0 ? "ascending" : "descending") : "none"}">${t}${id === sort ? (smer > 0 ? " ↑" : " ↓") : ""}</th>`).join("")}</tr></thead>
         <tbody>${deo.map((r) => `<tr>
-          <td><a class="stanica-celija" href="stanica.html?id=${encodeURIComponent(r.serija)}" style="color:inherit;text-decoration:none">
+          <td><a class="stanica-celija" href="stanica?id=${encodeURIComponent(r.serija)}" style="color:inherit;text-decoration:none">
             <img src="${NS.pin(r.stanje)}" alt=""><span><b>${r.serija} · ${r.naziv}</b><small>${r.smerovi.join(" · ")}</small></span></a></td>
           <td class="broj mono">${r.mesto}</td>
           <td><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span>${r.napomena ? `<small class="sitno" style="display:block;margin-top:4px">${r.napomena}</small>` : ""}</td>
@@ -61,8 +61,8 @@
             <span class="mono">${Math.round(100 * r.udeo_validnih_dana)}%</span></div></td>
           <td class="broj mono">${r.kompletnih_30d}/30</td>
           <td class="mono">${NS.datum(r.od)}<br>${NS.datum(r.do)}</td>
-          <td style="white-space:nowrap"><a class="ikonica-dugme" style="display:inline-grid" href="stanica.html?id=${encodeURIComponent(r.serija)}" title="Otvori stanicu">${LJ.ik("eye")}</a>
-            <a class="ikonica-dugme" style="display:inline-grid" href="mapa.html?id=${encodeURIComponent(r.serija)}" title="Na mapi">${LJ.ik("pin")}</a></td>
+          <td style="white-space:nowrap"><a class="ikonica-dugme" style="display:inline-grid" href="stanica?id=${encodeURIComponent(r.serija)}" title="Otvori stanicu">${LJ.ik("eye")}</a>
+            <a class="ikonica-dugme" style="display:inline-grid" href="mapa?id=${encodeURIComponent(r.serija)}" title="Na mapi">${LJ.ik("pin")}</a></td>
         </tr>`).join("") || `<tr><td colspan="${kolone.length}" class="sitno">Nema stanica za ovu pretragu.</td></tr>`}</tbody>`;
       tabela.querySelectorAll("th[data-k]").forEach((th) => th.dataset.k && th.addEventListener("click", () => {
         if (sort === th.dataset.k) smer = -smer; else { sort = th.dataset.k; smer = ["prosek", "udeo", "k30"].includes(sort) ? -1 : 1; }

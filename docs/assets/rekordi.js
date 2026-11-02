@@ -1,5 +1,5 @@
 /* Rekordi i zanimljivosti (data/istorija/rekordi.json, računa pripremi_istoriju.py): top dani, godine, vremenski
-   rekordi, činjenice i rekordi po stanici. Dani vode u kalendar (kalendar.html?dan=…). */
+   rekordi, činjenice i rekordi po stanici. Dani vode u kalendar (kalendar?dan=…). */
 "use strict";
 
 (async () => {
@@ -7,7 +7,7 @@
   let s, r;
   try { [s, r] = await Promise.all([NS.stanice(), NS.json("rekordi.json")]); } catch (e) { NS.greska(main, e); return; }
   const poSerijama = Object.fromEntries(s.serije.map((x) => [x.serija, x]));
-  const kalLink = (iso, serija) => `kalendar.html?${serija ? `id=${encodeURIComponent(serija)}&` : ""}dan=${iso}`;
+  const kalLink = (iso, serija) => `kalendar?${serija ? `id=${encodeURIComponent(serija)}&` : ""}dan=${iso}`;
   const procenat = (x) => `${x > 0 ? "+" : x < 0 ? "−" : "±"}${Math.abs(x)} %`;
   const TIP = { radni: "radni dan", subota: "subota", nedelja_praznik: "nedelja / praznik" };
   const kratak = (iso) => { const [g, m, d] = iso.split("-").map(Number); return `${d}. ${m}. ${g}.`; };
@@ -97,7 +97,7 @@
   // ---------------------------------------------------------------- zanimljivosti
   const zEl = document.getElementById("zanimljivosti");
   zEl.innerHTML = r.zanimljivosti.map((x, i) => {
-    const link = x.serija && x.datum ? kalLink(x.datum, x.serija) : x.serija ? `stanica.html?id=${encodeURIComponent(x.serija)}` : x.datum ? kalLink(x.datum) : null;
+    const link = x.serija && x.datum ? kalLink(x.datum, x.serija) : x.serija ? `stanica?id=${encodeURIComponent(x.serija)}` : x.datum ? kalLink(x.datum) : null;
     const tag = link ? "a" : "div";
     return `<${tag} class="cinjenica pojava" ${link ? `href="${link}"` : ""}><span class="kvadrat">${LJ.ik(x.ik)}</span>
       <span class="eyebrow">${x.naslov}</span><b class="vel" id="z-${i}">${typeof x.vrednost === "number" ? "0" : x.vrednost}</b><span class="muted">${x.opis}</span></${tag}>`;
@@ -133,7 +133,7 @@
     tabela.innerHTML = `<thead><tr>${kolone.map(([id, t, , c]) => `<th data-k="${id}" class="${c || ""}" aria-sort="${id === sort ? (smer > 0 ? "ascending" : "descending") : "none"}">${t}${id === sort ? (smer > 0 ? " ↑" : " ↓") : ""}</th>`).join("")}</tr></thead>
       <tbody>${redovi.map((x) => {
     const st = poSerijama[x.serija] || { naziv: "", stanje: "radi" };
-    return `<tr><td><a class="stanica-celija" href="stanica.html?id=${encodeURIComponent(x.serija)}" style="color:inherit;text-decoration:none">
+    return `<tr><td><a class="stanica-celija" href="stanica?id=${encodeURIComponent(x.serija)}" style="color:inherit;text-decoration:none">
           <img src="${NS.pin(st.stanje)}" alt=""><span><b>${x.serija} · ${st.naziv}</b><small>${(st.smerovi || []).join(" · ")}</small></span></a></td>
         <td class="broj">${x.dan ? `<b>${NS.broj(x.dan.v)}</b><a class="sitno" style="display:block;white-space:nowrap" href="${kalLink(x.dan.datum, x.serija)}">${NS.datum(x.dan.datum)}</a>` : "—"}</td>
         <td class="broj"><b>${NS.broj(x.sat.v)}</b><a class="sitno" style="display:block;white-space:nowrap" href="${kalLink(x.sat.datum, x.serija)}">${NS.datum(x.sat.datum)} · ${NS.dvaMesta(x.sat.sat)}–${NS.dvaMesta((x.sat.sat + 1) % 24)} h</a></td>

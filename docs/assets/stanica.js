@@ -1,4 +1,4 @@
-/* Stanica (stanica.html?id=23a): zaglavlje i KPI, upozorenja, dnevni grafik celog perioda (isprekidano preko
+/* Stanica (stanica?id=23a): zaglavlje i KPI, upozorenja, dnevni grafik celog perioda (isprekidano preko
    rupa), satni profil, toplotna mapa sat × dan, meseci po godinama, izabrani dan (satno + vreme).
    Grafici primaju i dodatne serije (prognoza, interval) kasnije. */
 "use strict";
@@ -30,7 +30,7 @@ function glava(s, r, d) {
   document.getElementById("glava-eyebrow").textContent = `Stanica · mesto ${r.mesto}`;
   document.getElementById("glava-naslov").innerHTML = `${r.serija} · <em>${r.naziv}</em>`;
   document.getElementById("glava-uvod").innerHTML = `${r.smerovi.length > 1 ? "Smerovi (zbir)" : "Smer"}: <b>${r.smerovi.join(" · ")}</b>`;
-  document.getElementById("na-mapi").href = `mapa.html?id=${encodeURIComponent(r.serija)}`;
+  document.getElementById("na-mapi").href = `mapa?id=${encodeURIComponent(r.serija)}`;
   const godina = NS.razlikaDana(r.od, r.do) / 365.25;
   const el = document.getElementById("kpi");
   const k = (boja, ikona, naslov, delta, idv, dole) => `<div class="kpi ${boja} pojava"><div class="vrh"><span class="kvadrat">${ikona}</span>
