@@ -1692,6 +1692,18 @@ body.km-fokus-otvoren { overflow: hidden; }
 @keyframes km-krug { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .km-krug { animation-duration: 2.4s; } }   /* display:flex/grid inače gazi hidden */
 .km-broj-po { color: #9FB3CC; font-size: 11px; }
+/* tabla „Prešlo liniju“: broj vozila po liniji brojanja (desno gore, uz brojanje) */
+.km-linije-tabla { position: absolute; right: 10px; top: 10px; z-index: 5; min-width: 190px; max-width: 46%; padding: 8px 10px; border-radius: 12px;
+  background: rgb(2 14 34 / .84); color: #E8EEF7; font-size: 12px; backdrop-filter: blur(3px); display: grid; gap: 4px; }
+.km-linije-tabla[hidden] { display: none; }
+.km-lt-glava { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #9FB3CC; font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: .08em; }
+.km-lt-ponisti { border: 0; background: none; color: #7DD3FC; font: inherit; text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0; }
+.km-lt-red { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto auto; gap: 7px; align-items: center; }
+.km-lt-red i { width: 10px; height: 4px; border-radius: 2px; }
+.km-lt-red span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.km-lt-red b { font-size: 14px; color: #fff; font-variant-numeric: tabular-nums; }
+.km-lt-red small { color: #9FB3CC; font-size: 10.5px; min-width: 44px; text-align: right; }
 .km-broj-rad { color: #9FB3CC; font-size: 11.5px; }
 .km-poruka { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; color: #9FB3CC; font-size: 13px; }
 .km-glava { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; }

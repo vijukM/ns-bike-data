@@ -141,6 +141,10 @@ Poslednji broj ima uvek dve cifre (00–99).
   „Region“ u fokusu ga uključuje/isključuje. ROI poligoni su izvučeni iz označenih snimaka (žuta granica) alatom cv2
   (flood-fill); kad stigne nova granica, samo se promeni `roi` u JSON-u. Protok preko linije + praćenje i poređenje sa
   zvaničnim brojačima (ns-trafic-data) dolaze kasnije; za javni rad treba dozvola/licenca prenosa.
+- Linije brojanja: polje `linije` kamere u `kamere.json` ({id, naziv, smer, boja, a, b}, krajevi 0–1, izvučene iz
+  nacrtanih linija na snimcima). Vide se na kameri (dugme „Linije“); uz brojanje se vozila prate iz kadra u kadar i
+  broje kad pređu liniju (jednom po vozilu; tabla „Prešlo liniju“ sa ≈ vozila/h i „poništi“). Važi dok je kamera otvorena;
+  stalno brojanje i jači model idu na server kad bude backend.
 - Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma
   ns-trafic-data, adresa u `docs/data/admin.json`) i podsetnik za tokene (datumi isteka u `docs/data/admin.json`).
 - **Verzije i zadaci** (`docs/razvoj.html` + `assets/razvoj.js`, admin lozinka): kartica „Istorija verzija“ (verzije.json,

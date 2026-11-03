@@ -2,7 +2,8 @@
    Štednja protoka: u mreži se prikazuju SLIČICE (poster), a živ prenos kreće tek kad se uđe u kameru (fokus).
    Dok se kamera ne otvori ne šalje se nijedan zahtev ka serveru prenosa. Napuštanjem kamere prenos i brojanje staju. Odgovor 403 = server pušta samo svoje sajtove (Referer); rešenje: no-referrer + proksi (kamere-proksi/).
    U fokusu: zum (scroll), pomeranje (prevlačenje), strelice ←/→, ceo ekran, i u okviru snimka kontrole — brojanje,
-   prikaz regiona i izbor klasa. Region interesa (polje „roi“ u kamere.json, poligon 0–1) se zadaje unapred. */
+   prikaz regiona i izbor klasa. Region interesa (polje „roi“ u kamere.json, poligon 0–1) se zadaje unapred, kao i
+   linije brojanja (polje „linije“): vide se na kameri (dugme „Linije“), a uz brojanje se broji ko ih pređe. */
 "use strict";
 
 (async () => {
@@ -19,6 +20,8 @@
     <path d="M3 8V5a2 2 0 0 1 2-2h3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M21 16v3a2 2 0 0 0-2 2h-3"/><rect x="8" y="9.5" width="8" height="5" rx="1"/></svg>`;
   const IKONA_REGION = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M5 4 19 7 17 20 8 18 3 11Z"/></svg>`;
+  const IKONA_LINIJE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 17 20 7"/><path d="M4 8h4M16 16h4"/></svg>`;
   const IKONA_LEVO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>`;
   const IKONA_DESNO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>`;
 
@@ -28,6 +31,30 @@
   const PODRAZUMEVANE = ["car", "truck", "bus", "motorcycle"];
   const izabraneKlase = (() => { try { const s = JSON.parse(localStorage.getItem(KLJUC_KLASE)); return new Set(Array.isArray(s) && s.length ? s : PODRAZUMEVANE); } catch (e) { return new Set(PODRAZUMEVANE); } })();
   const dajKlase = () => izabraneKlase;
+  /** Linije brojanja na platnu (i bez brojanja i uz njega, BROJAC zove isto): linija u boji iz kamere.json, krajevi,
+      kratak natpis, a uz brojanje i broj vozila; linija preko koje je vozilo upravo prešlo kratko zasvetli. */
+  window.KM_CRTEZ = {
+    linije(ctx, linije, u, w, brojevi) {
+      const lw = Math.max(2.5, (w / 640) * 3), f = Math.max(10, Math.round((w / 640) * 10.5)), sada = performance.now();
+      ctx.save();
+      ctx.lineCap = "round"; ctx.font = `600 ${f}px Inter, system-ui, sans-serif`; ctx.textBaseline = "middle";
+      for (const l of linije) {
+        const [ax, ay] = u(l.a[0], l.a[1]), [bx, by] = u(l.b[0], l.b[1]);
+        const b = brojevi && brojevi[l.id], blic = b && sada - b.blic < 600;
+        ctx.strokeStyle = "rgba(2,10,24,.7)"; ctx.lineWidth = lw + 3;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.strokeStyle = blic ? "#ffffff" : l.boja || "#ef4444"; ctx.lineWidth = blic ? lw * 1.8 : lw;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        for (const [x, y] of [[ax, ay], [bx, by]]) { ctx.fillStyle = l.boja || "#ef4444"; ctx.beginPath(); ctx.arc(x, y, lw * 0.9, 0, 7); ctx.fill(); }
+        const t = b ? `${b.n}` : l.naziv, mx = (ax + bx) / 2, my = (ay + by) / 2 - lw * 2.4;
+        const tw = ctx.measureText(t).width + f;
+        ctx.fillStyle = "rgba(2,14,34,.85)"; ctx.beginPath(); ctx.roundRect(mx - tw / 2, my - f * 0.8, tw, f * 1.6, f * 0.8); ctx.fill();
+        ctx.fillStyle = l.boja || "#ef4444"; ctx.fillRect(mx - tw / 2 + f * 0.35, my - 1.5, f * 0.25, 3);
+        ctx.fillStyle = "#fff"; ctx.fillText(t, mx - tw / 2 + f * 0.75, my);
+      }
+      ctx.restore();
+    },
+  };
   const povrsina = (poly) => { let s = 0; for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length]; s += a[0] * b[1] - b[0] * a[1]; } return Math.abs(s) / 2; };
 
   /** Glavna adresa, pa ista sa drugim nazivom fajla (chunks.m3u8 ↔ playlist.m3u8); „bez_druge_adrese“ = samo glavna. */
@@ -47,6 +74,9 @@
     const roi = (k.roi && k.roi.length >= 3) ? k.roi : null;
     let roiOn = !!roi;                 // podrazumevano prikaži region ako ga ima
     const dajRoi = () => roi;
+    const linije = Array.isArray(k.linije) ? k.linije.filter((l) => l && l.a && l.b) : [];
+    let linOn = linije.length > 0;      // linije se podrazumevano vide
+    const tabla = el.querySelector(".km-linije-tabla");
     const sveAdrese = () => adrese(k.url, !!k.bez_druge_adrese);
     if (k.slika) { const im = new Image(); im.onerror = () => { video.poster = NEMA_SLIKE; }; im.src = k.slika; }   // spoljna sličica ne radi → placeholder
 
@@ -64,34 +94,48 @@
 
     // --- region (statički prikaz kad se ne broji) ---
     function osveziRoi() {
-      if (brojac) return;                       // kad broji, region crta BROJAC
-      if (!roi || !roiOn || !uzivo || stanje !== "radi") { platno.hidden = true; return; }
+      if (brojac) return;                       // kad broji, region i linije crta BROJAC
+      const ima = (roi && roiOn) || (linije.length && linOn);
+      if (!ima || !uzivo || stanje !== "radi") { platno.hidden = true; return; }
       const vw = video.videoWidth || 16, vh = video.videoHeight || 9;
       const w = video.clientWidth || vw, h = video.clientHeight || vh;
       platno.width = w; platno.height = h; platno.hidden = false;
       const ctx = platno.getContext("2d"); ctx.clearRect(0, 0, w, h);
       const sk = Math.min(w / vw, h / vh), dx = (w - vw * sk) / 2, dy = (h - vh * sk) / 2;
       const put = () => { ctx.beginPath(); roi.forEach((p, i) => { const x = dx + p[0] * vw * sk, y = dy + p[1] * vh * sk; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); };
-      put(); ctx.rect(0, 0, w, h); ctx.fillStyle = "rgba(2,10,28,.42)"; ctx.fill("evenodd");
-      put(); ctx.lineWidth = Math.max(1.5, (w / 640) * 1.6); ctx.strokeStyle = "rgba(96,165,250,.9)"; ctx.stroke();
+      if (roi && roiOn) {
+        put(); ctx.rect(0, 0, w, h); ctx.fillStyle = "rgba(2,10,28,.42)"; ctx.fill("evenodd");
+        put(); ctx.lineWidth = Math.max(1.5, (w / 640) * 1.6); ctx.strokeStyle = "rgba(96,165,250,.9)"; ctx.stroke();
+      }
+      if (linije.length && linOn) KM_CRTEZ.linije(ctx, linije, (x, y) => [dx + x * vw * sk, dy + y * vh * sk], w, null);
     }
 
     // --- brojanje (samo dok je kamera uživo / u fokusu) ---
-    function naBroj(n, po) {
+    function naBroj(n, po, stLinija) {
       const d = Object.entries(po).map(([kk, v]) => `${v} ${(window.BROJAC && BROJAC.KLASE[kk]) || kk}`).join(" · ");
       brojEl.hidden = false; brojEl.innerHTML = `<b>${n}</b><span class="km-broj-po">${d || "ništa u regionu"}</span>`;
+      if (stLinija && stLinija.length) crtajTablu(stLinija);
     }
+    // tabla sa brojem vozila po liniji (prešlo liniju otkad je brojanje uključeno) i procenom na sat
+    function crtajTablu(st) {
+      const naziv = (kk) => (window.BROJAC && BROJAC.KLASE[kk]) || kk;
+      tabla.hidden = false;
+      tabla.innerHTML = `<div class="km-lt-glava"><span>Prešlo liniju</span><button type="button" class="km-lt-ponisti" title="Brojanje ispočetka">poništi</button></div>` +
+        st.map((l) => `<div class="km-lt-red" title="${esc(Object.entries(l.po).map(([kk, v]) => `${v} ${naziv(kk)}`).join(" · "))}">
+          <i style="background:${esc(l.boja)}"></i><span>${esc(l.naziv)}</span><b>${l.n}</b><small>${l.naSat != null ? `≈ ${Math.round(l.naSat)}/h` : ""}</small></div>`).join("");
+    }
+    tabla.addEventListener("click", (e) => { if (e.target.closest(".km-lt-ponisti") && brojac) { brojac.ponisti(); tabla.querySelectorAll(".km-lt-red b").forEach((x) => { x.textContent = "0"; }); } });
     async function brojStart() {
       if (!brojOn || !uzivo || brojac || stanje !== "radi") return;
       brojEl.hidden = false; brojEl.innerHTML = `<span class="km-broj-rad">učitavam model…</span>`;
       try {
         await LJ.ucitajSkript("assets/kamere-brojac.js");
         if (!brojOn || !uzivo || stanje !== "radi") { brojEl.hidden = true; osveziRoi(); return; }
-        brojac = await BROJAC.ukljuci(video, platno, naBroj, () => (roiOn ? roi : null), dajKlase);
+        brojac = await BROJAC.ukljuci(video, platno, naBroj, () => (roiOn ? roi : null), dajKlase, { linije, prikaziLinije: () => linOn });
         platno.hidden = false;
       } catch (e) { brojEl.innerHTML = `<span class="km-broj-rad">brojanje nije dostupno</span>`; }
     }
-    function brojStop() { if (brojac) { brojac.stop(); brojac = null; } brojEl.hidden = true; osveziRoi(); }
+    function brojStop() { if (brojac) { brojac.stop(); brojac = null; } brojEl.hidden = true; tabla.hidden = true; osveziRoi(); }
 
     // --- živ prenos (poziva se iz fokusa) ---
     function ugasiHls() { if (hls) { hls.destroy(); hls = null; } }
@@ -120,7 +164,7 @@
       ugasiHls();
       video.onplaying = null; try { video.pause(); } catch (e) { /* */ }
       video.removeAttribute("src"); try { video.load(); } catch (e) { /* */ }
-      platno.hidden = true; brojEl.hidden = true;
+      platno.hidden = true; brojEl.hidden = true; tabla.hidden = true;
       postavi("mirno");          // van fokusa se ništa ne proverava ni ne prenosi
     }
     function pauzirajUzivo(p) {
@@ -132,11 +176,12 @@
     // prekidači (iz kontrola u fokusu)
     function brojToggle() { brojOn = !brojOn; if (brojOn) brojStart(); else brojStop(); return brojOn; }
     function roiToggle() { roiOn = !roiOn; if (brojac) return roiOn; osveziRoi(); return roiOn; }
+    function linToggle() { linOn = !linOn; osveziRoi(); return linOn; }
 
     return {
-      pokreniUzivo, zaustaviUzivo, pauzirajUzivo, osveziRoi, brojToggle, roiToggle,
-      imaRoi: () => !!roi, roiPokr: () => roi ? Math.round(povrsina(roi) * 100) : 0,
-      stBroj: () => brojOn, stRoi: () => roiOn, stanje: () => stanje,
+      pokreniUzivo, zaustaviUzivo, pauzirajUzivo, osveziRoi, brojToggle, roiToggle, linToggle,
+      imaRoi: () => !!roi, roiPokr: () => roi ? Math.round(povrsina(roi) * 100) : 0, brLinija: () => linije.length,
+      stBroj: () => brojOn, stRoi: () => roiOn, stLin: () => linOn, stanje: () => stanje,
     };
   }
 
@@ -162,6 +207,7 @@
               <canvas class="km-platno" hidden></canvas>
             </div>
             <div class="km-broj" hidden></div>
+            <div class="km-linije-tabla" hidden></div>
             <div class="km-poruka" hidden></div>
             <div class="km-ucitava" role="status" aria-label="Učitavam prenos"><span class="km-krug"></span><span>Učitavam prenos…</span></div>
             <div class="km-alati">
@@ -193,6 +239,7 @@
         <div class="km-kontrole">
           <button type="button" class="km-k-dug km-k-broj" aria-pressed="false">${IKONA_BROJ}<span>Brojanje</span></button>
           <button type="button" class="km-k-dug km-k-roi" aria-pressed="false">${IKONA_REGION}<span>Region</span></button>
+          <button type="button" class="km-k-dug km-k-lin" aria-pressed="false">${IKONA_LINIJE}<span>Linije</span></button>
           <div class="km-padaj">
             <button type="button" class="km-k-dug km-k-klase" aria-expanded="false" aria-haspopup="true">Broji: <b class="km-k-saz"></b> ▾</button>
             <div class="km-padaj-meni" role="menu" hidden>${Object.entries(SVE_KLASE).map(([kk, naz]) => `<label><input type="checkbox" value="${kk}"${izabraneKlase.has(kk) ? " checked" : ""}> ${naz}</label>`).join("")}</div>
@@ -201,7 +248,7 @@
       </div></div>`;
     document.body.appendChild(fokusEl);
     const ram = fokusEl.querySelector(".km-fokus-ram");
-    const kDugBroj = fokusEl.querySelector(".km-k-broj"), kDugRoi = fokusEl.querySelector(".km-k-roi");
+    const kDugBroj = fokusEl.querySelector(".km-k-broj"), kDugRoi = fokusEl.querySelector(".km-k-roi"), kDugLin = fokusEl.querySelector(".km-k-lin");
     const kKlaseDug = fokusEl.querySelector(".km-k-klase"), kKlaseMeni = fokusEl.querySelector(".km-padaj-meni"), kKlaseSaz = fokusEl.querySelector(".km-k-saz");
     const osveziSaz = () => { kKlaseSaz.textContent = izabraneKlase.size === Object.keys(SVE_KLASE).length ? "sve" : `${izabraneKlase.size}`; };
     osveziSaz();
@@ -213,6 +260,8 @@
       kDugBroj.setAttribute("aria-pressed", km.stBroj() ? "true" : "false"); kDugBroj.classList.toggle("ukljuceno", km.stBroj());
       kDugRoi.hidden = !km.imaRoi();
       kDugRoi.setAttribute("aria-pressed", km.stRoi() ? "true" : "false"); kDugRoi.classList.toggle("ukljuceno", km.stRoi());
+      kDugLin.hidden = !km.brLinija();
+      kDugLin.setAttribute("aria-pressed", km.stLin() ? "true" : "false"); kDugLin.classList.toggle("ukljuceno", km.stLin());
     }
     function primeniZum() {
       const z = ram.querySelector(".km-zum"); if (!z) return;
@@ -233,7 +282,8 @@
       ram.insertBefore(kartice[i].querySelector(".km-video"), ram.firstChild);
       kartice[i].classList.add("u-fokusu");
       fokusEl.querySelector(".km-fokus-ime").textContent = spisak[i].naziv;
-      fokusEl.querySelector(".km-fokus-roi").textContent = kamere[i].imaRoi() ? `· region: ${kamere[i].roiPokr()}% slike` : "";
+      fokusEl.querySelector(".km-fokus-roi").textContent = [kamere[i].imaRoi() ? `region: ${kamere[i].roiPokr()}% slike` : "",
+        kamere[i].brLinija() ? `linija brojanja: ${kamere[i].brLinija()}` : ""].filter(Boolean).map((x) => `· ${x}`).join(" ");
       S = 1; X = 0; Y = 0; primeniZum();
       fokusEl.hidden = false; document.body.classList.add("km-fokus-otvoren"); uFokusu = i;
       osveziKontrole();
@@ -281,6 +331,7 @@
       if (e.target.closest(".km-fokus-cel")) return ceoEkran();
       if (e.target.closest(".km-k-broj")) { kamere[uFokusu].brojToggle(); osveziKontrole(); return; }
       if (e.target.closest(".km-k-roi")) { kamere[uFokusu].roiToggle(); osveziKontrole(); return; }
+      if (e.target.closest(".km-k-lin")) { kamere[uFokusu].linToggle(); osveziKontrole(); return; }
       if (e.target.closest(".km-k-klase")) { e.stopPropagation(); const o = kKlaseMeni.hidden; kKlaseMeni.hidden = !o; kKlaseDug.setAttribute("aria-expanded", o ? "true" : "false"); return; }
       if (e.target.closest(".km-padaj-meni")) return;
       if (e.target === fokusEl) zatvoriFokus();

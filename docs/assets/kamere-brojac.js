@@ -6,7 +6,12 @@
  *
  * Zašto „pločice“ (tiling): SSD kadar interno smanji na ~300 px, pa sitna/daleka vozila nestanu. Zato kadar delimo
  * na PLOCICE.x × PLOCICE.y delova, svaki zasebno detektujemo i spojimo (NMS). Više pločica = bolje na sitnim
- * vozilima, ali sporije. Ovo je „koliko se trenutno vidi“ (bez praćenja i linije); protok preko linije dolazi kasnije.
+ * vozilima, ali sporije. Broj u uglu je „koliko se trenutno vidi“.
+ *
+ * Linije brojanja (polje „linije“ u kamere.json, krajevi a/b u razmeri 0–1): vozila se prate iz kadra u kadar
+ * (najbliža kutija iz prethodnog kadra, prag zavisi od veličine vozila), a vozilo se broji kad duž između njegove
+ * prethodne i sadašnje tačke (donji deo kutije, gde vozilo dodiruje put) preseče liniju — svaka linija najviše
+ * jednom po vozilu. Brojevi važe dok je kamera otvorena (kad se kamera napusti, brojanje staje i kreće iz početka).
  *
  * Granica: radi kroz hls.js (MSE), gde se slike sa videa mogu čitati. Na iOS nativnom HLS-u čitanje piksela može
  * biti blokirano (tada brojanje ne radi, prikaz da). Ovo je prototip; za „zvanične“ brojke treba linija + praćenje
@@ -27,6 +32,9 @@ window.BROJAC = (() => {
   const PRAG = 0.25;                              // najmanja pouzdanost detekcije
   const INTERVAL_MS = 220;                        // razmak između detekcija (~4–5 u sekundi)
   const IOU = 0.45;                               // spajanje duplih kutija iz susednih pločica
+  const PRACENJE = { prag: 1.6, minPx: 30, izgubljen: 5, tacka: 0.8, produzi: 0.06 };
+  // prag: najveći pomak između dva kadra (× veća stranica kutije); izgubljen: posle koliko kadara bez vozila se staza briše;
+  // tacka: visina tačke vozila u kutiji (0 = vrh, 1 = dno); produzi: linija se sa svake strane produži za udeo dužine
   const KLASE = { car: "auto", truck: "kamion", bus: "autobus", motorcycle: "motor", person: "pešak", bicycle: "bicikl" };
   const BOJE = { car: "#38BDF8", truck: "#F59E0B", bus: "#A78BFA", motorcycle: "#34D399", person: "#F472B6", bicycle: "#FBBF24" };
 
@@ -80,12 +88,61 @@ window.BROJAC = (() => {
     return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
   };
 
+  // presek duži p1–p2 i q1–q2
+  const strana = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const preseca = (p1, p2, q1, q2) => {
+    const d1 = strana(q1, q2, p1), d2 = strana(q1, q2, p2), d3 = strana(p1, p2, q1), d4 = strana(p1, p2, q2);
+    return ((d1 > 0) !== (d2 > 0)) && ((d3 > 0) !== (d4 > 0)) && d1 !== 0 && d2 !== 0;
+  };
+
   // ------------------------------------------------------------ jedna kamera: petlja detekcije + crtanje
   // dajRoi() → poligon [[x,y]…] u razmeri 0–1 (ili null): detekcija se radi samo unutar njega.
-  function napravi(video, platno, naBroj, dajRoi, dajKlase) {
+  // opcije.linije: linije brojanja iz kamere.json; opcije.prikaziLinije() → da li se crtaju (brojanje ide uvek).
+  function napravi(video, platno, naBroj, dajRoi, dajKlase, opcije = {}) {
     const ctx = platno.getContext("2d");
     const off = document.createElement("canvas"), octx = off.getContext("2d");
     let radi = true, zadnje = [];
+    const linije = opcije.linije || [];
+    let staze = [], pocetak = performance.now();
+    const brojevi = {};
+    const ponisti = () => { staze = []; pocetak = performance.now(); for (const l of linije) brojevi[l.id] = { n: 0, po: {}, blic: 0 }; };
+    ponisti();
+
+    /** praćenje: spoji nove kutije sa stazama iz prethodnog kadra i broji preseke linija */
+    function prati(dets, vw, vh) {
+      const tacka = (d) => [d.b[0] + d.b[2] / 2, d.b[1] + d.b[3] * PRACENJE.tacka];
+      const duzi = linije.map((l) => {
+        const a = [l.a[0] * vw, l.a[1] * vh], b = [l.b[0] * vw, l.b[1] * vh], e = PRACENJE.produzi;
+        return [l.id, [a[0] - (b[0] - a[0]) * e, a[1] - (b[1] - a[1]) * e], [b[0] + (b[0] - a[0]) * e, b[1] + (b[1] - a[1]) * e]];
+      });
+      const parovi = [];
+      dets.forEach((d, i) => {
+        const p = tacka(d);
+        staze.forEach((st, j) => {
+          const r = Math.hypot(p[0] - st.p[0], p[1] - st.p[1]);
+          if (r < Math.max(PRACENJE.minPx, PRACENJE.prag * Math.max(st.w, st.h, d.b[2], d.b[3]))) parovi.push([r, i, j]);
+        });
+      });
+      parovi.sort((x, y) => x[0] - y[0]);
+      const uzetD = new Set(), uzetS = new Set(), sada = performance.now();
+      for (const [, i, j] of parovi) {
+        if (uzetD.has(i) || uzetS.has(j)) continue;
+        uzetD.add(i); uzetS.add(j);
+        const st = staze[j], d = dets[i], p = tacka(d);
+        for (const [id, a, b] of duzi) {
+          if (st.presao.has(id) || !preseca(st.p, p, a, b)) continue;
+          st.presao.add(id);
+          const x = brojevi[id]; x.n++; x.po[d.k] = (x.po[d.k] || 0) + 1; x.blic = sada;
+        }
+        Object.assign(st, { p, w: d.b[2], h: d.b[3], k: d.k, gubi: 0 });
+      }
+      staze = staze.filter((st, j) => uzetS.has(j) || ++st.gubi <= PRACENJE.izgubljen);
+      dets.forEach((d, i) => { if (!uzetD.has(i)) staze.push({ p: tacka(d), w: d.b[2], h: d.b[3], k: d.k, gubi: 0, presao: new Set() }); });
+    }
+    const stanjeLinija = () => {
+      const sati = (performance.now() - pocetak) / 3600e3;
+      return linije.map((l) => ({ ...l, n: brojevi[l.id].n, po: brojevi[l.id].po, naSat: sati > 1 / 60 ? brojevi[l.id].n / sati : null }));
+    };
 
     async function detektuj() {
       const vw = video.videoWidth, vh = video.videoHeight;
@@ -97,7 +154,7 @@ window.BROJAC = (() => {
       x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0));
       x1 = Math.min(vw, Math.ceil(x1)); y1 = Math.min(vh, Math.ceil(y1));
       const rw = x1 - x0, rh = y1 - y0;
-      if (rw < 8 || rh < 8) { zadnje = []; crtaj(vw, vh, roi); naBroj(0, {}); return; }
+      if (rw < 8 || rh < 8) { zadnje = []; crtaj(vw, vh, roi); naBroj(0, {}, stanjeLinija()); return; }
       const { x: nx, y: ny, preklop: ov } = PLOCICE;
       const tw = Math.ceil(rw / nx), th = Math.ceil(rh / ny);
       const sve = [];
@@ -118,9 +175,10 @@ window.BROJAC = (() => {
         }
       }
       zadnje = nms(sve);
+      if (linije.length) prati(zadnje, vw, vh);
       crtaj(vw, vh, roi);
       const po = {}; zadnje.forEach((d) => (po[d.k] = (po[d.k] || 0) + 1));
-      naBroj(zadnje.length, po);
+      naBroj(zadnje.length, po, stanjeLinija());
     }
 
     function crtaj(vw, vh, roi) {
@@ -137,6 +195,8 @@ window.BROJAC = (() => {
         ctx.lineWidth = Math.max(1, (w / 640) * 1.5); ctx.strokeStyle = "rgba(96,165,250,.8)"; ctx.stroke();
         ctx.restore();
       }
+      if (linije.length && (!opcije.prikaziLinije || opcije.prikaziLinije()) && window.KM_CRTEZ)
+        KM_CRTEZ.linije(ctx, linije, (x, y) => [dx + x * vw * sk, dy + y * vh * sk], w, brojevi);
       const lw = Math.max(1.5, (w / 640) * 2);
       ctx.lineWidth = lw;
       for (const d of zadnje) {
@@ -156,10 +216,10 @@ window.BROJAC = (() => {
       }
     }
     petlja();
-    return { stop() { radi = false; try { ctx.clearRect(0, 0, platno.width, platno.height); } catch (e) {} } };
+    return { stop() { radi = false; try { ctx.clearRect(0, 0, platno.width, platno.height); } catch (e) {} }, ponisti };
   }
 
-  async function ukljuci(video, platno, naBroj, dajRoi, dajKlase) { await spremiModel(); return napravi(video, platno, naBroj, dajRoi, dajKlase); }
+  async function ukljuci(video, platno, naBroj, dajRoi, dajKlase, opcije) { await spremiModel(); return napravi(video, platno, naBroj, dajRoi, dajKlase, opcije); }
 
-  return { ukljuci, spremiModel, KLASE, BOJE };
+  return { ukljuci, spremiModel, KLASE, BOJE, preseca, PRACENJE };
 })();
