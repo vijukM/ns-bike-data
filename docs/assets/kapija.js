@@ -210,7 +210,8 @@ const KAPIJA = (() => {
     html.kapija body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; box-sizing: border-box;
       background: radial-gradient(120% 80% at 45% 0%, #0B2A52 0%, #04162F 55%, #020E22 100%) fixed; color: #F1F5F9; font: 15px/1.6 Inter, system-ui, sans-serif; }
     html.kapija[data-theme="light"] body { background: linear-gradient(180deg, #F0F5FB, #E2ECF7); color: #0B1630; }
-    #kapija { width: min(400px, 100%); text-align: center; }
+    #kapija { width: min(480px, 100%); text-align: center; }
+    @media (min-width: 520px) { #kapija .k-kartica p { white-space: nowrap; } }   /* uvod u jednom redu na računaru */
     #kapija .k-znak { width: 150px; height: auto; display: block; margin: 0 auto 6px; }
     #kapija .k-natpis { width: 170px; height: auto; display: block; margin: 0 auto 18px; }
     #kapija .k-kartica { padding: 24px; border-radius: 16px; border: 1px solid #1C3558; background: #0B1F3D; text-align: left; box-shadow: 0 24px 60px rgb(0 0 0 / .35); }
@@ -225,6 +226,10 @@ const KAPIJA = (() => {
       background: linear-gradient(135deg, #3AD0FF, #14A0F5); color: #04162F; }
     #kapija button:disabled { opacity: .6; cursor: wait; }
     #kapija .k-greska { min-height: 20px; margin-top: 10px; font-size: 13px; color: #FF7550; }
+    #kapija .k-kontakt { margin: 16px 0 0; font-size: 13px; text-align: center; }
+    #kapija .k-kontakt a { color: #3AD0FF; text-decoration: none; font-weight: 600; }
+    #kapija .k-kontakt a:hover { text-decoration: underline; }
+    html.kapija[data-theme="light"] #kapija .k-kontakt a { color: #0B7CC4; }
   </style>`);
 
   async function prikazi() {
@@ -249,7 +254,8 @@ const KAPIJA = (() => {
         <input id="k-lozinka" type="password" placeholder="Lozinka" required>
         <button type="submit">Uđi</button>
         <div class="k-greska" role="alert">${poruka}</div>
-      </form>`;
+      </form>
+      <p class="k-kontakt">Za više informacija: <a href="mailto:info@nasicu.rs">info@nasicu.rs</a></p>`;
     document.body.prepend(k);
     const forma = k.querySelector("form"), polje = k.querySelector("input"), dugme = k.querySelector("button[type=submit]"), greska = k.querySelector(".k-greska");
     okoSvuda(forma);
