@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-02T13:28Z",
+ "generisano_utc": "2026-11-03T07:52Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.56",
+   "datum": "2026-11-03T08:52",
+   "naslov": "Kamere: linije brojanja vozila",
+   "stavke": [
+    "linije za Most Duga, Bulevar Mihajla Pupina i Raskrsnicu kod pozorišta (kamere.json), vide se na kameri (dugme „Linije“)",
+    "uz brojanje se vozila prate i broje kad pređu liniju (po liniji, ≈ vozila/h, poništi)"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.55",
-   "datum": "2026-11-02T14:28",
+   "datum": "2026-11-02T14:29",
    "naslov": "Tačan hover na graficima; grafik grada do danas",
    "stavke": [
     "hover pokazuje tačno sat/dan pod mišem (ispravka za zoom sajta, svi grafici)",
     "Grafici: „Biciklisti, broj brojača i vreme“ ide do danas; 1. 9. – 8. 10. 2026. označeno kao „nije preuzeto“"
    ],
-   "commit": null
+   "commit": "65c5fac"
   },
   {
    "verzija": "1.1.54",
