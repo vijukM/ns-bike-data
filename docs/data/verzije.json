@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-03T07:52Z",
+ "generisano_utc": "2026-11-03T08:46Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.57",
+   "datum": "2026-11-03T09:46",
+   "naslov": "Kapija: kontakt info@nasicu.rs i uvod u jednom redu",
+   "stavke": [
+    "ispod prijave: „Za više informacija: info@nasicu.rs“",
+    "šira kartica, uvodna rečenica u jednom redu na računaru"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.56",
-   "datum": "2026-11-03T08:52",
+   "datum": "2026-11-03T08:55",
    "naslov": "Kamere: linije brojanja vozila",
    "stavke": [
     "linije za Most Duga, Bulevar Mihajla Pupina i Raskrsnicu kod pozorišta (kamere.json), vide se na kameri (dugme „Linije“)",
     "uz brojanje se vozila prate i broje kad pređu liniju (po liniji, ≈ vozila/h, poništi)"
    ],
-   "commit": null
+   "commit": "a12d716"
   },
   {
    "verzija": "1.1.55",
