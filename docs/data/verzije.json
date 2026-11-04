@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-04T11:29Z",
+ "generisano_utc": "2026-11-04T15:11Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.59",
+   "datum": "2026-11-04T16:11",
+   "naslov": "Kapija: animacija znaka odmah i brža, S bez prelaza na kraju",
+   "stavke": [
+    "S se iscrtava celo (bez naknadnog „doskakanja“ delova slova na kraju)",
+    "animacija kreće čim se ekran prikaže i brža je; slova natpisa se kucaju sporije"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.58",
-   "datum": "2026-11-04T12:29",
+   "datum": "2026-11-04T12:32",
    "naslov": "Kapija: animacija znaka NaSicu",
    "stavke": [
     "znak se iscrtava deo po deo: točkovi, N i S, sic i korman, pa se NS spusti u natpis i ostala slova se otkucaju",
     "uz „manje pokreta“ odmah gotov znak"
    ],
-   "commit": null
+   "commit": "a7e1e3e"
   },
   {
    "verzija": "1.1.57",

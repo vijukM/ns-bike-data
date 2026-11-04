@@ -69,7 +69,7 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Prvi ekran kapije: znak se iscrtava deo po deo (`docs/assets/kapija-logo.js`, učitava se samo tada, tek kad je strana
   učitana i vidljiva): točkovi kao kazaljka (zadnji od desne sredine, prednji od vrha) → N i S zajedno → sic i korman →
   kopija NS se spusti na mesto natpisa, N levo / S desno → kucanje „a“ i „icu“ (dva kursora). Trajanja su u `T` na vrhu
-  modula (ukupno ~5,5 s); uz „manje pokreta“ ili ako nešto ne uspe — odmah gotov znak (dve slike). Ispod kartice je
+  modula (kreće odmah, ukupno ~4,5 s); uz „manje pokreta“ ili ako nešto ne uspe — odmah gotov znak (dve slike). Ispod kartice je
   „Za više informacija: info@nasicu.rs“.
 - Svako polje za lozinku dobija dugme „oko“ (prikaži/sakrij) — `kapija.js` ga dodaje sam (MutationObserver), i za forme
   koje se iscrtaju kasnije (prijava, privremeni link…).

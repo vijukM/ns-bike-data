@@ -9,23 +9,23 @@
  *   5. kucanje: posle N „a“, posle S „i“, „c“, „u“ (dva kursora u isto vreme, ista brzina).
  *
  * Crta se iz natpis-tamna.svg / natpis-svetla.svg (tu su i bicikl i natpis u istom koordinatnom sistemu); id-jevi
- * dobijaju predznak „kp-“. Sve se pokreće tek kad je strana učitana i vidljiva. Uz „manje pokreta“ se ne poziva
+ * dobijaju predznak „kp-“. Kreće čim se ekran kapije prikaže (ne čeka učitavanje strane iza kapije). Uz „manje pokreta“ se ne poziva
  * (kapija tada prikaže gotov znak). */
 "use strict";
 
 window.KAPIJA_LOGO = (() => {
   // trajanja u ms
   const T = {
-    pocetak: 300,        // pauza posle prikaza strane
-    tockovi: 1100,       // oba točka u isto vreme
-    slova: 900,          // N i S u isto vreme
-    sicKorman: 380,      // sic i korman u isto vreme
-    pauza: 220,
-    spustanje: 850,      // NS iz bicikla na visinu natpisa + smanjenje
-    razdvajanje: 450,    // N levo, S desno
-    zamena: 160,         // pretapanje kopije NS u slova natpisa
-    slovo: 120,          // razmak između otkucanih slova
-    kursorKraj: 650,     // kursor još malo trepće, pa nestaje
+    tockovi: 800,        // oba točka u isto vreme (kreće odmah, čim se ekran prikaže)
+    slova: 650,          // N i S u isto vreme
+    sicKorman: 280,      // sic i korman u isto vreme
+    pauza: 100,
+    spustanje: 620,      // NS iz bicikla na visinu natpisa + smanjenje
+    razdvajanje: 360,    // N levo, S desno
+    zamena: 130,         // pretapanje kopije NS u slova natpisa
+    kursorPre: 260,      // kursori trepnu pre prvog slova
+    slovo: 210,          // razmak između otkucanih slova (a i i zajedno, pa c, pa u)
+    kursorKraj: 550,     // kursor još malo trepće, pa nestaje
   };
   // geometrija znaka (koordinate bicikla iz SVG-a, pre pomaka „translate(0,-26)“ grupe bicikl)
   const TOCKOVI = [
@@ -34,7 +34,10 @@ window.KAPIJA_LOGO = (() => {
   ];
   // „kičma“ slova: maska se iscrtava duž ove linije (debljina D), pa se slovo pojavljuje kao da se piše
   const KICMA_N = { d: [[487, 513], [606, 304], [740, 512], [829, 298]], D: 112 };
-  const KICMA_S = { d: [[752, 524], [859, 480], [906, 436], [893, 408], [828, 396], [800, 364], [818, 314], [878, 292], [985, 278]], D: 74 };
+  // S: kostur izvučen iz samog oblika slova (od donjeg repa do gornjeg kraja); D pokriva i spoljni luk i oba vrha,
+  // pa na kraju iscrtavanja nema naknadnog „doskakanja“ delova slova
+  const KICMA_S = { d: [[747, 526], [785, 496], [898, 458], [919, 438], [929, 398], [926, 384], [920, 377], [822, 383], [811, 377],
+    [806, 354], [817, 316], [830, 305], [854, 295], [939, 273], [973, 252]], D: 98 };
 
   const NS = "http://www.w3.org/2000/svg";
   const el = (ime, atr = {}, deca = []) => {
@@ -57,13 +60,12 @@ window.KAPIJA_LOGO = (() => {
     requestAnimationFrame(korak);
   });
 
-  /** strana učitana, prikazana i vidljiva (dva kadra posle „load“) */
+  /** ekran kapije je nacrtan i vidljiv (dva kadra); ne čeka se „load“ cele strane iza kapije */
   const spremno = () => new Promise((ok) => {
-    const dalje = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
       if (document.visibilityState === "visible") ok();
       else document.addEventListener("visibilitychange", function v() { if (document.visibilityState === "visible") { document.removeEventListener("visibilitychange", v); ok(); } });
     }));
-    if (document.readyState === "complete") dalje(); else addEventListener("load", dalje, { once: true });
   });
 
   async function napravi(mesto, tema) {
@@ -187,7 +189,6 @@ window.KAPIJA_LOGO = (() => {
     mesto.classList.remove("k-logo-ceka");
 
     await spremno();
-    await cekaj(T.pocetak);
     // 1. točkovi
     await tween(T.tockovi, (p) => tPokreti.forEach((f) => f(p)));
     // 2. N i S zajedno
@@ -235,7 +236,7 @@ window.KAPIJA_LOGO = (() => {
     const postavi = (c, g) => { const o = okvirOblika(g, koren); c.setAttribute("x", o.x + o.w + 1.2); };
     postavi(k1, z.slovoN); postavi(k2, z.slovoS);
     const trep = setInterval(() => { for (const c of [k1, k2]) c.setAttribute("opacity", c.getAttribute("opacity") === "0" ? 1 : 0); }, 260);
-    await cekaj(T.slovo * 1.5);
+    await cekaj(T.kursorPre);
     const koraci = [[z.slovoA, z.slovoI], [null, z.slovoC], [null, z.slovoU]];
     for (const [a, s] of koraci) {
       if (a) { a.setAttribute("opacity", 1); postavi(k1, a); }
