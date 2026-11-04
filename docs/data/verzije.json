@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-03T08:46Z",
+ "generisano_utc": "2026-11-04T11:29Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.58",
+   "datum": "2026-11-04T12:29",
+   "naslov": "Kapija: animacija znaka NaSicu",
+   "stavke": [
+    "znak se iscrtava deo po deo: točkovi, N i S, sic i korman, pa se NS spusti u natpis i ostala slova se otkucaju",
+    "uz „manje pokreta“ odmah gotov znak"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.57",
-   "datum": "2026-11-03T09:46",
+   "datum": "2026-11-03T09:48",
    "naslov": "Kapija: kontakt info@nasicu.rs i uvod u jednom redu",
    "stavke": [
     "ispod prijave: „Za više informacija: info@nasicu.rs“",
     "šira kartica, uvodna rečenica u jednom redu na računaru"
    ],
-   "commit": null
+   "commit": "179aed8"
   },
   {
    "verzija": "1.1.56",

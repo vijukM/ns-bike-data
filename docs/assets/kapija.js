@@ -212,8 +212,11 @@ const KAPIJA = (() => {
     html.kapija[data-theme="light"] body { background: linear-gradient(180deg, #F0F5FB, #E2ECF7); color: #0B1630; }
     #kapija { width: min(480px, 100%); text-align: center; }
     @media (min-width: 520px) { #kapija .k-kartica p { white-space: nowrap; } }   /* uvod u jednom redu na računaru */
-    #kapija .k-znak { width: 150px; height: auto; display: block; margin: 0 auto 6px; }
-    #kapija .k-natpis { width: 170px; height: auto; display: block; margin: 0 auto 18px; }
+    #kapija .k-logo { width: 170px; height: 194px; margin: 0 auto 18px; }
+    #kapija .k-logo-ceka > img { visibility: hidden; }
+    #kapija .k-logo-svg { display: block; width: 170px; height: 194px; overflow: visible; }
+    #kapija .k-znak { width: 150px; height: 150px; display: block; margin: 0 auto 6px; }
+    #kapija .k-natpis { width: 170px; height: 38px; display: block; margin: 0 auto; }
     #kapija .k-kartica { padding: 24px; border-radius: 16px; border: 1px solid #1C3558; background: #0B1F3D; text-align: left; box-shadow: 0 24px 60px rgb(0 0 0 / .35); }
     html.kapija[data-theme="light"] #kapija .k-kartica { border-color: #D5E0EE; background: #fff; box-shadow: 0 18px 40px rgb(15 23 42 / .1); }
     #kapija h1 { font: 700 19px/1.3 "Inter Tight", Inter, sans-serif; margin: 0 0 4px; }
@@ -232,6 +235,16 @@ const KAPIJA = (() => {
     html.kapija[data-theme="light"] #kapija .k-kontakt a { color: #0B7CC4; }
   </style>`);
 
+  /** Znak se iscrtava deo po deo (assets/kapija-logo.js, učitava se samo ovde); ako nešto ne uspe — gotov znak. */
+  function animirajZnak(mesto, gotov) {
+    const vrati = () => { mesto.innerHTML = gotov; mesto.classList.remove("k-logo-ceka"); };
+    const s = document.createElement("script");
+    s.src = `assets/kapija-logo.js${VER_K ? `?v=${VER_K}` : ""}`;
+    s.onload = () => { if (!window.KAPIJA_LOGO) return vrati(); KAPIJA_LOGO.pokreni(mesto, d.dataset.theme).catch((e) => { console.warn("znak:", e); vrati(); }); };
+    s.onerror = vrati;
+    document.head.appendChild(s);
+  }
+
   async function prikazi() {
     let poruka = "";
     if (kod) {
@@ -245,8 +258,10 @@ const KAPIJA = (() => {
     if (!poruka && z && z.p && z.h === HES) poruka = "Privremeni pristup je istekao.";
     const k = document.createElement("main");
     k.id = "kapija";
-    k.innerHTML = `<img class="k-znak" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="">
-      <img class="k-natpis" src="assets/slike/brend/natpis-${d.dataset.theme !== "light" ? "tamna" : "svetla"}.svg" alt="NaSicu">
+    const znak = `<img class="k-znak" src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="">
+      <img class="k-natpis" src="assets/slike/brend/natpis-${d.dataset.theme !== "light" ? "tamna" : "svetla"}.svg" alt="NaSicu">`;
+    const animacija = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    k.innerHTML = `<div class="k-logo${animacija ? " k-logo-ceka" : ""}">${znak}</div>
       <form class="k-kartica" autocomplete="off">
         <h1>Sajt je u izradi</h1>
         <p>Za sada je otvoren samo za tim. Unesi lozinku za pristup.</p>
@@ -260,6 +275,7 @@ const KAPIJA = (() => {
     const forma = k.querySelector("form"), polje = k.querySelector("input"), dugme = k.querySelector("button[type=submit]"), greska = k.querySelector(".k-greska");
     okoSvuda(forma);
     cestice("k-cestice");
+    if (animacija) animirajZnak(k.querySelector(".k-logo"), znak);
     polje.focus();
     forma.addEventListener("submit", async (e) => {
       e.preventDefault();
