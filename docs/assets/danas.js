@@ -17,6 +17,15 @@
   let izabrana = null, zbirno = false, saPrognozom = false, sort = { kol: "danas", smer: -1 };
   const g = {};
 
+  /** „prosečna sreda u novembru (2024. i 2025.)“ — prosek istog dana u nedelji i istog meseca iz istorije
+      (sajt/pripremi_istoriju.py prosek_dana: 1. 9. 2024. – 31. 8. 2026., bez praznika) */
+  const MESEC_U = ["januaru", "februaru", "martu", "aprilu", "maju", "junu", "julu", "avgustu", "septembru", "oktobru", "novembru", "decembru"];
+  function prosecniDan(iso) {
+    const dan = NS.DANI[NS.danUNedelji(iso)], m = +iso.slice(5, 7);
+    const god = m >= 9 ? "2024. i 2025." : "2025. i 2026.";
+    return { kratko: `${["sreda", "subota", "nedelja"].includes(dan) ? "prosečna" : "prosečan"} ${dan} u ${MESEC_U[m - 1]}`, godine: god };
+  }
+
   async function ucitaj() {
     const r = await fetch(`${IZVOR}?t=${Date.now()}`, { cache: "no-store" });
     if (!r.ok) throw new Error(`danas.json: HTTP ${r.status}`);
@@ -212,13 +221,15 @@
     }
     document.getElementById("danas-naslov").innerHTML = "Danas <em>uživo</em>";
     document.getElementById("danas-datum").textContent = `Pregled · ${NS.datumDug(D.datum)}`;
+    // korisniku: koliko do sledećeg čitanja (minuti); kad to vreme prođe — „čitam brojače…“ dok ne stigne novi sat
     const starost = (Date.now() - Date.parse(D.citanje_utc)) / 60e3;
-    const sledece = Math.max(0, 60 - starost);
-    const staro = starost > 75;
+    const sledece = 60 - starost;
+    const staro = starost > 75, cita = !staro && sledece <= 0;
     document.getElementById("danas-uzivo").innerHTML = `${LJ.uzivoZnak()}
-      <span class="danas-osvezeno">čitanje u <b>${D.citanje_lokalno}</b> · brojači do <b>${D.brojaci_do}</b>
-        · ${staro ? `<span class="upozorenje">pre ${Math.round(starost)} min</span>` : `sledeće oko <b>${sat(new Date(Date.parse(D.citanje_utc) + 3600e3).toISOString())}</b>`}</span>
-      <span class="danas-traka" title="do sledećeg čitanja"><span style="width:${staro ? 100 : Math.round(100 * (1 - sledece / 60))}%"></span></span>`;
+      <span class="danas-osvezeno">${staro ? `<span class="upozorenje">poslednje čitanje pre ${Math.round(starost)} min</span>`
+        : cita ? `<span class="danas-cita"><i class="danas-krug" aria-hidden="true"></i>čitam brojače…</span>`
+          : `sledeće čitanje za ~<b>${Math.max(1, Math.ceil(sledece))} min</b>`}</span>
+      ${cita ? "" : `<span class="danas-traka" title="do sledećeg čitanja"><span style="width:${staro ? 100 : Math.round(100 * (1 - Math.max(0, sledece) / 60))}%"></span></span>`}`;
     LJ.osveziUzivo();
     const ob = document.getElementById("danas-obavestenje");
     const danasLok = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
@@ -313,7 +324,7 @@
       n.dopZbirno ? `<span class="sitno">zbir uključuje procenu za sate kad drugi smer nije radio</span>` : "",
       (zbirno ? [] : (izabrana ? D.serije[izabrana].procena : D.procena_sati) || []).length
         ? `<span><i class="srafura-dopuna" style="--b:${boja.stv}"></i>procena — čitanje u XX:02 je izostalo (zbir oba sata je tačan)</span>` : "",
-      n.pros ? `<span><i class="isprekidano" style="border-color:${boja.pros}"></i>prosečan ${NS.datumDug(D.datum).split(",")[0].toLowerCase()} u ovom mesecu</span>` : "",
+      n.pros ? `<span title="prosek istog dana u nedelji u istom mesecu, ${prosecniDan(D.datum).godine}, bez praznika"><i class="isprekidano" style="border-color:${boja.pros}"></i>${prosecniDan(D.datum).kratko} (${prosecniDan(D.datum).godine})</span>` : "",
       saPrognozom && !P ? `<span class="sitno">prognoza za danas još nije izdata</span>` : "",
     ].join("");
     // pri „Pusti dan“: tekući sat druge boje, prošli sati obični, budući bledi
@@ -338,7 +349,7 @@
       { name: "q10", type: "line", data: n.q[0], stack: "int", symbol: "none", lineStyle: { opacity: 0 }, silent: true, tooltip: { show: false } },
       { name: "int", type: "line", data: n.q[1].map((v, i) => (v == null || n.q[0][i] == null ? null : v - n.q[0][i])), stack: "int", symbol: "none",
         lineStyle: { opacity: 0 }, areaStyle: { color: boja.pr, opacity: 0.16 }, silent: true, tooltip: { show: false } });
-    if (n.pros) serije.push({ name: "prosečan isti dan", type: "line", data: n.pros, symbol: "none", smooth: 0.3, lineStyle: { color: boja.pros, width: 1.6, type: "dashed" }, itemStyle: { color: boja.pros } });
+    if (n.pros) serije.push({ name: prosecniDan(D.datum).kratko, type: "line", data: n.pros, symbol: "none", smooth: 0.3, lineStyle: { color: boja.pros, width: 1.6, type: "dashed" }, itemStyle: { color: boja.pros } });
     const o = NS.osnova(b);
     return { ...o,
       grid: { left: 52, right: 12, top: 18, bottom: 28 },
@@ -654,14 +665,19 @@
     ctl = MAPA.napravi(document.getElementById("mapa"), s, { naFokus: (k) => { if (k && k !== izabrana) izaberi(k, { saMape: true }); } });
     nacrtajSve();
     LJ.pojave(main);
-    setInterval(() => { if (D.uzivo) zaglavlje(); }, 60e3);
+    // zaglavlje (minuti do čitanja) na 30 s; novi podaci na 5 min, a kad je čitanje u toku na 30 s
+    let poslednjaProvera = Date.now();
     setInterval(async () => {
-      if (document.hidden || !D.uzivo) return;
+      if (!D.uzivo) return;
+      zaglavlje();
+      const ceka = (Date.now() - Date.parse(D.citanje_utc)) / 60e3 >= 60;
+      if (document.hidden || (!ceka && Date.now() - poslednjaProvera < PROVERA_MS)) return;
+      poslednjaProvera = Date.now();
       try {
         const novo = await ucitaj();
         if (novo.citanje_utc !== D.citanje_utc || novo.napravljeno_utc !== D.napravljeno_utc) { ziv = novo; D = novo; nacrtajSve(); }
       } catch (e) { /* bez mreže: ostaje poslednje stanje */ }
-    }, PROVERA_MS);
+    }, 30e3);
   } catch (e) {
     NS.greska(main, e);
   }
