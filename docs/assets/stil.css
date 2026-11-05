@@ -1837,3 +1837,32 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .rz-f-red { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .rz-f-dugmad { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 .dugme.opasno { background: var(--danger, #F0391F); border-color: var(--danger, #F0391F); color: #fff; }
+
+/* ---------------------------------------------------------------- Poređenje stanica */
+.pr-izbor { display: grid; gap: 12px; }
+.pr-izabrane { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.pr-cip { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 6px 0 12px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--boja) 55%, transparent); background: color-mix(in srgb, var(--boja) 12%, transparent);
+  font-size: 13px; font-weight: 600; }
+.pr-cip i { width: 10px; height: 10px; border-radius: 3px; background: var(--boja); }
+.pr-cip a { color: var(--t-base); text-decoration: none; }
+.pr-cip a:hover { text-decoration: underline; }
+.pr-cip button { width: 24px; height: 24px; border: 0; border-radius: 50%; background: none; color: var(--t-muted); font-size: 17px; line-height: 1; cursor: pointer; }
+.pr-cip button:hover { background: var(--bg-hover); color: var(--t-base); }
+.pr-cip:not(:has(button)) { padding-right: 14px; }
+.pr-brzo { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pr-red { width: 100%; border: 0; background: none; color: inherit; font: inherit; text-align: left; }
+.pr-red small { margin-left: auto; color: var(--t-light); font-size: 11.5px; white-space: nowrap; }
+.pr-kontrole { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: flex-end; }
+.pr-zajedno { padding: 4px 6px; font-size: 12.5px; color: var(--t-muted); }
+.pr-tabela th[scope="row"] { font: 500 13px Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none; color: var(--t-muted); white-space: nowrap; text-align: left; }
+.pr-tabela thead th small { font-family: Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none; font-size: 12px; color: var(--t-muted); }
+.pr-tabela thead th .pr-glava { font-size: 13px; }
+.pr-tabela td small, .pr-tabela th small { display: block; color: var(--t-light); font-size: 11.5px; font-weight: 400; margin-top: 2px; }
+.pr-tabela td b { font-size: 15px; font-variant-numeric: tabular-nums; }
+.pr-glava { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; }
+.pr-glava i { width: 10px; height: 10px; border-radius: 3px; background: var(--boja); }
+.pr-toplote { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px 18px; }
+.pr-toplota[hidden] { display: none; }
+.pr-toplota-ime { font-size: 13px; color: var(--t-muted); margin-bottom: 4px; }
+.pr-toplota-g { height: 200px; }

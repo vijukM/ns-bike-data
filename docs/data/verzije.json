@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-05T10:59Z",
+ "generisano_utc": "2026-11-05T12:43Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.62",
+   "datum": "2026-11-05T13:43",
+   "naslov": "Poređenje stanica: prava strana sa podacima",
+   "stavke": [
+    "izbor 2–4 stanice (pamti se u adresi), ključni brojevi jedan pored drugog",
+    "grafici: po danu (broj ili indeks), prosečan dan po satu, meseci kroz godine, sat × dan u nedelji"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.61",
-   "datum": "2026-11-05T11:59",
+   "datum": "2026-11-05T12:03",
    "naslov": "Grafici: zum točkićem ponovo radi; stanica: dugmad za dan u jednom redu",
    "stavke": [
     "zum točkićem (dataZoom) radi i ostaje na danu pod mišem",
     "„Izabrani dan“: dugmad uvek gore desno, kraći opis nepotpunog dana (razlog u oblačiću)"
    ],
-   "commit": null
+   "commit": "64c78e5"
   },
   {
    "verzija": "1.1.60",
