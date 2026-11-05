@@ -46,6 +46,26 @@ const NS = (() => {
     return out;
   }
 
+  /** Prognoza za jednu seriju i dan (data/prognoza_biciklista.json; sati su u konvenciji modela, UTC+1) → 24 lokalna sata
+      { pred, q10, q90 }; leti se pomera za sat (00 h dolazi iz prethodnog dana). null ako nema prognoze. */
+  function prognozaLokalno(P, serija, iso) {
+    const st = P && P.stanice && P.stanice[serija];
+    if (!st || !st[iso]) return null;
+    const pred = Array(24).fill(null), q10 = Array(24).fill(null), q90 = Array(24).fill(null);
+    for (const dan of [dodajDane(iso, -1), iso]) {
+      const x = st[dan];
+      if (!x) continue;
+      const pocetak = Date.parse(`${dan}T00:00:00Z`) - 3600e3;
+      x.pred.forEach((v, k) => {
+        const ms = pocetak + k * 3600e3;
+        if (new Date(ms).toLocaleDateString("sv-SE", { timeZone: TZ }) !== iso) return;
+        const h = lokalniSat(ms);
+        pred[h] = v; q10[h] = x.q10[k]; q90[h] = x.q90[k];
+      });
+    }
+    return { pred, q10, q90, nepouzdano: st[iso].nepouzdano, razlog: st[iso].razlog_nepouzdano };
+  }
+
   // ---------------------------------------------------------------- podaci
   const kes = new Map();
   function json(put, koren = PODACI) {
@@ -283,7 +303,7 @@ const NS = (() => {
   return {
     TZ, DANI, DANI_KRATKO, MESECI, MESECI_KRATKO, SEZONE, TIPOVI, STANJA,
     broj, dec, datum, datumDug, dodajDane, razlikaDana, danUNedelji, mesecNaziv, dvaMesta, utcDan, procenat,
-    satneOznake, json, stanice, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
+    satneOznake, prognozaLokalno, json, stanice, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
     grupisi, oznakaPerioda, kljucPerioda, rupe, premosti, greska, analizaGrada,
   };
 })();

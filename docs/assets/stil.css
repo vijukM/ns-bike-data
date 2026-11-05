@@ -1839,7 +1839,25 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .dugme.opasno { background: var(--danger, #F0391F); border-color: var(--danger, #F0391F); color: #fff; }
 
 /* ---------------------------------------------------------------- Poređenje stanica */
-.pr-izbor { display: grid; gap: 12px; }
+.pr-izbor { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px 22px; align-items: start; }
+.pr-izbor-levo { display: grid; gap: 12px; align-content: start; }
+@media (max-width: 900px) { .pr-izbor { grid-template-columns: minmax(0, 1fr); } }
+.pr-mapa svg { display: block; width: 100%; height: auto; max-height: 260px; }
+.pr-mapa-reka { fill: var(--g-bicikl); opacity: .14; }
+.pr-mapa-t { cursor: pointer; }
+.pr-mapa-t circle { fill: var(--t-light); opacity: .55; stroke: var(--bg-card); stroke-width: 1.2; transition: opacity .15s; }
+.pr-mapa-t:hover circle { opacity: 1; }
+.pr-mapa-t.izabrana circle { fill: var(--boja); opacity: 1; stroke: #fff; stroke-width: 1.6; }
+.pr-mapa-t text { fill: var(--t-base); font: 600 10.5px Inter, system-ui, sans-serif; text-anchor: middle; paint-order: stroke; stroke: var(--bg-card); stroke-width: 3px; }
+.pr-dan-g { height: 360px; }
+.pr-mali { height: 230px; }
+.pr-radar { height: 280px; }
+.pr-karakter-opis { display: grid; gap: 4px; font-size: 12.5px; color: var(--t-muted); margin-top: 4px; }
+.pr-karakter-opis b { color: var(--t-base); font-weight: 600; }
+.pr-karakter-opis .pr-glava { margin-right: 6px; color: var(--t-base); }
+.pr-strane-prazno { line-height: 1.7; padding: 8px 0; }
+.pr-strane-prazno .veza-dugme { font-weight: 500; }
+.pr-toplote .pr-toplota-ime { font-size: 12px; }
 .pr-izabrane { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .pr-cip { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 6px 0 12px; border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--boja) 55%, transparent); background: color-mix(in srgb, var(--boja) 12%, transparent);
@@ -1875,4 +1893,4 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .pr-tabela .info::after { left: -10px; right: auto; transform: none; bottom: auto; top: calc(100% + 8px); white-space: normal; width: 280px; z-index: 20; }
 .pr-toplota[hidden] { display: none; }
 .pr-toplota-ime { font-size: 13px; color: var(--t-muted); margin-bottom: 4px; }
-.pr-toplota-g { height: 230px; }
+.pr-toplota-g { height: 170px; }

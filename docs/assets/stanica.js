@@ -212,27 +212,7 @@ const danasIso = () => new Date().toLocaleDateString("sv-SE", { timeZone: NS.TZ 
 const fSatBg = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Belgrade", hour: "2-digit", hourCycle: "h23" });
 const zbir = (a) => a.reduce((x, v) => x + (v ?? 0), 0);
 
-/** Prognoza (sati „UTC+1“, kao u modelu) → 24 lokalna sata dana; leti se pomera za sat (00 h dolazi iz prethodnog dana). */
-function prognozaLokalno(P, serija, iso) {
-  const st = P && P.stanice && P.stanice[serija];
-  if (!st || !st[iso]) return null;
-  const n = 24, pred = Array(n).fill(null), q10 = Array(n).fill(null), q90 = Array(n).fill(null);
-  const upisi = (dan) => {
-    const x = st[dan];
-    if (!x) return;
-    const pocetak = Date.parse(`${dan}T00:00:00Z`) - 3600e3;      // 00:00 po UTC+1
-    x.pred.forEach((v, k) => {
-      const ms = pocetak + k * 3600e3;
-      const lok = new Date(ms).toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
-      if (lok !== iso) return;
-      const h = Number(fSatBg.format(ms));
-      pred[h] = v; q10[h] = x.q10[k]; q90[h] = x.q90[k];
-    });
-  };
-  upisi(NS.dodajDane(iso, -1));
-  upisi(iso);
-  return { pred, q10, q90, nepouzdano: st[iso].nepouzdano, razlog: st[iso].razlog_nepouzdano };
-}
+const prognozaLokalno = NS.prognozaLokalno;     // sati modela (UTC+1) → lokalni sati dana (zajednicko.js)
 
 /** prosečan isti dan u nedelji (toplotna mapa sat × dan iz profila; redovi pon–ned) */
 const prosekDana = (p, iso) => (p && p.toplotna_mapa ? p.toplotna_mapa[(NS.danUNedelji(iso) + 6) % 7] : null);

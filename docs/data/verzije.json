@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-05T13:45Z",
+ "generisano_utc": "2026-11-05T13:59Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.65",
+   "datum": "2026-11-05T14:59",
+   "naslov": "Poređenje stanica: karakter, dve strane ulice, danas i sutra, mala mapa",
+   "stavke": [
+    "novo: karakter stanice (radar), dve strane ulice (a/b), danas i prognoza za sutra, izbor stanica na maloj mapi",
+    "kompaktniji raspored: delovi dva po redu, manja tabela ključnih brojeva"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.64",
-   "datum": "2026-11-05T14:45",
+   "datum": "2026-11-05T14:46",
    "naslov": "Poređenje stanica: svaka stanica se može ukloniti, kraći opisi",
    "stavke": [
     "moguće je ukloniti sve stanice; bez izabrane stanice grafici se sklone i stoji poruka",
     "kontrole „Prosečan dan po satu“ u jednom redu, izbačeni suvišni opisi"
    ],
-   "commit": null
+   "commit": "8b9e11f"
   },
   {
    "verzija": "1.1.63",

@@ -1,11 +1,15 @@
-/* Poređenje stanica (2–4): ključni brojevi, po danu (broj ili indeks), prosečan dan po satu, meseci kroz godine i
-   ritam nedelje (sat × dan). Sve iz istih fajlova kao strana stanice: istorija/dnevno/<serija>.json (+ dnevno_novo.json
-   za dane posle istorije) i istorija/profili/<serija>.json. Izbor se pamti u adresi: poredjenje?id=34a,23a */
+/* Poređenje stanica (0–4): izbor (čipovi, pretraga, mala mapa), ključni brojevi, karakter (radar), po danu (broj ili
+   indeks), prosečan dan po satu, dve strane ulice (a/b), danas i sutra (prognoza), meseci kroz godine, sat × dan.
+   Podaci: istorija/dnevno/<serija>.json (+ dnevno_novo.json), istorija/profili/<serija>.json, grad_dnevno.json (kiša),
+   data/danas.json, data/prognoza_biciklista.json, data/mapa/voda.geojson (podloga male mape).
+   Izbor se pamti u adresi: poredjenje?id=34a,23a */
 "use strict";
 
 (async () => {
   const main = document.getElementById("sadrzaj");
   const MAKS = 4;
+  const INFO_KARAKTER = "Svaka osa je jedna osobina, 0–100. Jutro: udeo radnog dana od 6 do 9 h (30 % = 100). Popodne: udeo od 15 do 18 h (30 % = 100). Vikend: subota i nedelja prema radnom danu (120 % = 100). Leto: leto prema zimi (1× = 0, 3× = 100). Kiša: koliko ostaje biciklista radnim danom sa kišom (3 mm i više) prema suvom (100 % = 100). Rast: poslednjih 365 kompletnih dana prema prethodnih 365 (−40 % = 0, +40 % = 100).";
+  const INFO_STRANE = "Brojači a i b stoje na dve strane iste ulice; svaki broji oba smera na svojoj strani. Po svakoj strani se uglavnom vozi u smeru saobraćaja, pa razlika između strana tokom dana pokazuje kuda se ide ujutru, a kuda popodne.";
   const INFO_INDEKS = "Indeks: 100 = prosek te stanice u prikazanom periodu. 120 znači 20 % više od njenog proseka, 80 znači 20 % manje. Tako se stanice različite veličine vide na istoj skali i porede se oblik i trend, a ne veličina.";
   const BOJE = ["--g-tip-1", "--g-tip-2", "--g-tip-3", "--g-god-3"];
   const css = (ime) => getComputedStyle(document.documentElement).getPropertyValue(ime).trim();
@@ -46,18 +50,28 @@
       <div><span class="eyebrow">Podaci</span><h1>Poređenje <em>stanica</em></h1></div>
     </header>
     <section class="kartica pojava pr-izbor">
-      <div class="pr-izabrane" id="pr-izabrane"></div>
-      <div class="pr-brzo" id="pr-brzo"></div>
+      <div class="pr-izbor-levo">
+        <div class="pr-izabrane" id="pr-izabrane"></div>
+        <div class="pr-brzo" id="pr-brzo"></div>
+      </div>
+      <div class="pr-mapa" id="pr-mapa" aria-label="Mapa brojača — klik dodaje ili uklanja stanicu"></div>
     </section>
     <section class="kartica pojava pr-prazno" id="pr-prazno" hidden>
       <span class="ikona-velika">${LJ.ik("compare") || ""}</span>
       <div><h2>Nijedna stanica nije izabrana</h2><p class="opis">Za prikaz mora biti izabrana bar jedna stanica — dodaj je iznad („+ Dodaj stanicu“) ili izaberi brzo.</p></div>
     </section>
     <div class="pr-sadrzaj" id="pr-sadrzaj">
-    <section class="kartica pojava">
-      <div class="kartica-glava"><div><span class="eyebrow">Ukratko</span><h2>Ključni brojevi</h2></div></div>
-      <div class="tabela-omot pr-tabela-omot"><table class="tabela pr-tabela" id="pr-tabela"></table></div>
-    </section>
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Ukratko</span><h2>Ključni brojevi</h2></div></div>
+        <div class="tabela-omot pr-tabela-omot"><table class="tabela pr-tabela" id="pr-tabela"></table></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Karakter</span><h2>Kakva je koja stanica${LJ.info(INFO_KARAKTER)}</h2></div></div>
+        <div class="grafik pr-radar" id="pr-karakter"></div>
+        <div class="pr-karakter-opis" id="pr-karakter-opis"></div>
+      </section>
+    </div>
     <section class="kartica pojava">
       <div class="kartica-glava">
         <div><span class="eyebrow">Po danu</span><h2>Biciklisti kroz vreme${LJ.info(INFO_INDEKS)}</h2>
@@ -65,7 +79,7 @@
         <div class="pr-kontrole"><div id="pr-gustina"></div><div id="pr-mera"></div>
           <label class="red-izbora pr-zajedno"><input type="checkbox" id="pr-zajedno"><span>samo dani kada sve rade</span></label></div>
       </div>
-      <div class="grafik visok" id="pr-dan"></div>
+      <div class="grafik pr-dan-g" id="pr-dan"></div>
     </section>
     <div class="mreza-2">
       <section class="kartica pojava">
@@ -77,17 +91,36 @@
       </section>
       <section class="kartica pojava">
         <div class="kartica-glava">
+          <div><span class="eyebrow">Dve strane ulice</span><h2 id="pr-strane-naslov">Strana a i strana b${LJ.info(INFO_STRANE)}</h2><p class="opis" id="pr-strane-opis"></p></div>
+          <div class="pr-kontrole"><div id="pr-strane-izbor"></div></div>
+        </div>
+        <div class="grafik" id="pr-strane"></div>
+        <div class="pr-strane-prazno sitno" id="pr-strane-prazno" hidden></div>
+      </section>
+    </div>
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Danas</span><h2 id="pr-danas-naslov">Danas</h2><p class="opis" id="pr-danas-opis"></p></div></div>
+        <div class="grafik pr-mali" id="pr-danas"></div>
+      </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Prognoza</span><h2 id="pr-sutra-naslov">Sutra</h2><p class="opis" id="pr-sutra-opis"></p></div></div>
+        <div class="grafik pr-mali" id="pr-sutra"></div>
+      </section>
+    </div>
+    <div class="mreza-2">
+      <section class="kartica pojava">
+        <div class="kartica-glava">
           <div><span class="eyebrow">Godine</span><h2>Prosečan dan u mesecu${LJ.info(INFO_INDEKS)}</h2></div>
           <div class="pr-kontrole"><div id="pr-mes-mera"></div></div>
         </div>
         <div class="grafik" id="pr-mes"></div>
       </section>
+      <section class="kartica pojava">
+        <div class="kartica-glava"><div><span class="eyebrow">Nedelja</span><h2>Sat × dan u nedelji${LJ.info("Prosečan broj biciklista u satu, ceo period. Svaka stanica je u svojoj skali: najsvetlije polje je njen najprometniji sat.")}</h2></div></div>
+        <div class="pr-toplote" id="pr-toplote" data-n="2">${[0, 1, 2, 3].map((i) => `<div class="pr-toplota" data-i="${i}"><div class="pr-toplota-ime"></div><div class="grafik pr-toplota-g"></div></div>`).join("")}</div>
+      </section>
     </div>
-    <section class="kartica pojava">
-      <div class="kartica-glava"><div><span class="eyebrow">Nedelja</span><h2>Sat × dan u nedelji</h2>
-        <p class="opis">Prosečan broj biciklista u satu, ceo period; svaka stanica u svojoj skali (najsvetlije = njen najprometniji sat).</p></div></div>
-      <div class="pr-toplote" id="pr-toplote" data-n="2">${[0, 1, 2, 3].map((i) => `<div class="pr-toplota" data-i="${i}"><div class="pr-toplota-ime"></div><div class="grafik pr-toplota-g"></div></div>`).join("")}</div>
-    </section>
     </div>`;
 
   // ---------------------------------------------------------------- izbor stanica: čipovi, dodavanje, brzi izbori
@@ -298,12 +331,198 @@
     return { el, g };
   });
 
+  // ---------------------------------------------------------------- karakter (radar)
+  let gradP = null;
+  const ucitajGrad = () => (gradP ||= NS.json("grad_dnevno.json").catch(() => null));
+  const zbir = (a, od, doS) => { let z = 0; for (let h = od; h <= doS; h++) z += (a && a[h]) || 0; return z; };
+  const sr = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+  /** sirove osobine stanice: jutro i popodne (udeo radnog dana), vikend, leto/zima, kiša, rast */
+  function osobine(d, G) {
+    const rad = d.p.profil.ukupno.radni, uk = zbir(rad, 0, 23) || 1;
+    const leto = zbir(d.p.profil.leto.radni, 0, 23), zima = zbir(d.p.profil.zima.radni, 0, 23);
+    const praznik = new Set(G ? G.praznik.map((i) => NS.dodajDane(G.od, i)) : []);
+    const pad = (iso) => {
+      if (G && iso <= G.do) { const j = NS.razlikaDana(G.od, iso); return j >= 0 ? G.pad[j] : null; }
+      if (N && N.od && iso >= N.od) { const j = NS.razlikaDana(N.od, iso); return N.vreme.pad[j] ?? null; }
+      return null;
+    };
+    const zadnjih = [], pre = [], vik = [], radD = [], kisni = [], suvi = [];
+    for (let i = d.v.length - 1; i >= 0; i--) {
+      const v = d.v[i]; if (v == null) continue;
+      const iso = NS.dodajDane(d.od, i), dn = NS.danUNedelji(iso);
+      if (zadnjih.length < 365) { zadnjih.push(v); (dn === 0 || dn === 6 ? vik : radD).push(v); } else if (pre.length < 365) pre.push(v);
+      if (dn !== 0 && dn !== 6 && !praznik.has(iso)) { const p = pad(iso); if (p != null) { if (p >= 3) kisni.push(v); else if (p < 0.2) suvi.push(v); } }
+    }
+    return {
+      jutro: zbir(rad, 6, 8) / uk, popodne: zbir(rad, 15, 17) / uk,
+      vikend: sr(vik) && sr(radD) ? sr(vik) / sr(radD) : null,
+      leto: zima ? leto / zima : null,
+      kisa: kisni.length >= 8 && suvi.length >= 30 ? sr(kisni) / sr(suvi) : null,
+      rast: zadnjih.length >= 200 && pre.length >= 200 ? sr(zadnjih) / sr(pre) - 1 : null,
+    };
+  }
+  const OSE = [
+    ["Jutro", (o) => o.jutro / 0.3, (o) => `${NS.broj(Math.round(100 * o.jutro))} % dana od 6 do 9 h`],
+    ["Popodne", (o) => o.popodne / 0.3, (o) => `${NS.broj(Math.round(100 * o.popodne))} % dana od 15 do 18 h`],
+    ["Vikend", (o) => o.vikend / 1.2, (o) => o.vikend == null ? "—" : `vikend ${NS.broj(Math.round(100 * o.vikend))} % radnog dana`],
+    ["Leto", (o) => (o.leto - 1) / 2, (o) => o.leto == null ? "—" : `leto ${NS.dec(o.leto)}× zima`],
+    ["Kiša", (o) => o.kisa, (o) => o.kisa == null ? "—" : `po kiši ${NS.broj(Math.round(100 * o.kisa))} % suvog dana`],
+    ["Rast", (o) => (o.rast + 0.4) / 0.8, (o) => o.rast == null ? "—" : `${o.rast >= 0 ? "+" : "−"}${NS.broj(Math.abs(Math.round(100 * o.rast)))} % prema prošloj godini`],
+  ];
+  const ogr = (x) => (x == null || !isFinite(x) ? 0 : Math.max(0, Math.min(100, Math.round(100 * x))));
+  let OS = [];
+  const gKar = NS.grafik(document.getElementById("pr-karakter"), (b) => {
+    if (!OS.length) return {};
+    return {
+      ...NS.osnova(b),
+      tooltip: { ...NS.osnova(b).tooltip, trigger: "item", formatter: (p) => `<b>${p.name}</b><br>` + OSE.map(([t, , opis]) => `${t}: ${opis(OS[izabrane.indexOf(p.name)])}`).join("<br>") },
+      radar: { indicator: OSE.map(([name]) => ({ name, max: 100 })), radius: "68%", center: ["50%", "54%"], splitNumber: 4,
+        axisName: { color: b["ink-2"], fontSize: 11.5 }, splitLine: { lineStyle: { color: b.mreza } }, splitArea: { show: false }, axisLine: { lineStyle: { color: b.mreza } } },
+      series: [{ type: "radar", symbolSize: 4, data: OS.map((o, i) => ({ name: naziv(i), value: OSE.map(([, f]) => ogr(f(o))),
+        lineStyle: { color: boja(i), width: 2 }, itemStyle: { color: boja(i) }, areaStyle: { color: boja(i), opacity: 0.12 } })) }],
+    };
+  });
+  function karakter() {
+    const tip = (o) => (o.vikend >= 0.85 ? "rekreacija" : o.vikend != null && (o.vikend <= 0.55 || (o.jutro >= 0.2 && o.vikend < 0.7)) ? "posao i škola" : "mešovito");
+    document.getElementById("pr-karakter-opis").innerHTML = OS.map((o, i) => `<div><span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${naziv(i)}</span>
+      <b>${tip(o)}</b>${o.leto != null ? ` · leto ${NS.dec(o.leto)}× zima` : ""}${o.kisa != null ? ` · po kiši ${NS.broj(Math.round(100 * o.kisa))} %` : ""}${o.rast != null ? ` · ${o.rast >= 0 ? "+" : "−"}${NS.broj(Math.abs(Math.round(100 * o.rast)))} % godišnje` : ""}</div>`).join("");
+  }
+
+  // ---------------------------------------------------------------- dve strane ulice (a i b)
+  let strMesto = null;
+  const mestaParova = () => [...new Set(izabrane.map((k) => k.replace(/[ab]$/, "")))].filter((m) => po[`${m}a`] && po[`${m}b`]);
+  const smer = (k) => (po[k].smerovi[0] || "").replace(/\s*\(u oba smera\)\s*/, "").replace(" – ", " → ");
+  let STR = null;
+  const gStr = NS.grafik(document.getElementById("pr-strane"), (b) => {
+    if (!STR) return {};
+    const { a, bb, m } = STR, ba = boja(Math.max(0, izabrane.indexOf(`${m}a`))), bbB = izabrane.includes(`${m}b`) ? boja(izabrane.indexOf(`${m}b`)) : b["ink-3"];
+    const udeo = a.map((x, h) => { const z = (x || 0) + (bb[h] || 0); return z ? +((100 * (x || 0)) / z).toFixed(1) : null; });
+    return {
+      ...NS.osnova(b),
+      legend: { top: 0, right: 0, icon: "roundRect", itemWidth: 12, itemHeight: 8, textStyle: { color: b["ink-2"], fontSize: 12 } },
+      grid: { left: 40, right: 12, top: 34, bottom: 28 },
+      xAxis: { type: "category", data: SATI, ...NS.osaX(b) },
+      yAxis: { type: "value", max: 100, ...NS.osaY(b, { axisLabel: { color: b["ink-3"], formatter: "{value} %" } }) },
+      tooltip: { ...NS.osnova(b).tooltip, formatter: (q) => { const h = q[0].dataIndex;
+        return `<b>${SATI[h]}–${NS.dvaMesta(h + 1)} h</b> · radni dan<br>${q.map((p) => `${p.marker}${p.seriesName}: <b>${NS.dec(p.value)} %</b>`).join("<br>")}<br><span style="color:${b["ink-3"]}">prosečno ${NS.broj(Math.round(a[h] || 0))} + ${NS.broj(Math.round(bb[h] || 0))} u satu</span>`; } },
+      series: [
+        { name: `${m}a`, type: "bar", stack: "s", data: udeo, barCategoryGap: "18%", itemStyle: { color: ba } },
+        { name: `${m}b`, type: "bar", stack: "s", data: udeo.map((x) => (x == null ? null : +(100 - x).toFixed(1))), itemStyle: { color: bbB, borderRadius: [3, 3, 0, 0] } },
+      ],
+    };
+  });
+  async function strane() {
+    const mesta = mestaParova(), izb = document.getElementById("pr-strane-izbor"), prazno = document.getElementById("pr-strane-prazno"), el = document.getElementById("pr-strane");
+    if (!mesta.length) {
+      STR = null; el.hidden = true; izb.innerHTML = ""; document.getElementById("pr-strane-opis").textContent = "";
+      prazno.hidden = false;
+      prazno.innerHTML = `Nijedna izabrana stanica nema brojač i na drugoj strani ulice. Takve su: ${s.serije.filter((r) => /a$/.test(r.serija) && po[r.serija.replace(/a$/, "b")]).map((r) => `<button type="button" class="veza-dugme" data-par="${r.serija.replace(/a$/, "")}">${r.serija.replace(/a$/, "")} · ${r.naziv}</button>`).join(", ")}.`;
+      return;
+    }
+    el.hidden = false; prazno.hidden = true;
+    if (!mesta.includes(strMesto)) strMesto = mesta[0];
+    izb.innerHTML = "";
+    if (mesta.length > 1) NS.prekidac(izb, mesta.map((m) => [m, m]), strMesto, (v) => { strMesto = v; strane(); });
+    const m = strMesto, [pa, pb] = await Promise.all([podaci(`${m}a`), podaci(`${m}b`)]);
+    if (m !== strMesto) return;
+    const a = pa.p.profil.ukupno.radni, bb = pb.p.profil.ukupno.radni;
+    STR = { a, bb, m };
+    const ud = (od, doS) => { const x = zbir(a, od, doS), y = zbir(bb, od, doS); return x + y ? Math.round((100 * x) / (x + y)) : null; };
+    const j = ud(6, 8), p = ud(15, 17), c = ud(0, 23);
+    document.getElementById("pr-strane-naslov").firstChild.textContent = `${m} · ${po[`${m}a`].naziv}`;
+    document.getElementById("pr-strane-opis").innerHTML = `strana <b>a</b>: ${smer(`${m}a`)} · strana <b>b</b>: ${smer(`${m}b`)}<br>` +
+      (j != null && p != null ? `Na strani a radnim danom: ceo dan <b>${c} %</b>, ujutru (6–9 h) <b>${j} %</b>, popodne (15–18 h) <b>${p} %</b>.` : "");
+    gStr.osvezi();
+    requestAnimationFrame(() => gStr.ec && gStr.ec.resize());
+  }
+  document.getElementById("pr-strane-prazno").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-par]"); if (!b) return;
+    postavi([...izabrane, `${b.dataset.par}a`, `${b.dataset.par}b`].filter((k, i, a) => a.indexOf(k) === i).slice(-MAKS));
+  });
+
+  // ---------------------------------------------------------------- danas i sutra
+  const izvori = Promise.all([NS.json("danas.json", "data/").catch(() => null), NS.json("prognoza_biciklista.json", "data/").catch(() => null)]);
+  let DS = null;
+  const linijeSata = (b, nizovi, isprekidano) => nizovi.map((a, i) => ({ name: naziv(i), type: "line", data: a, smooth: 0.3, symbol: "none", connectNulls: false,
+    lineStyle: { color: boja(i), width: isprekidano ? 1.5 : 2.4, type: isprekidano ? "dashed" : "solid", opacity: isprekidano ? 0.7 : 1 }, itemStyle: { color: boja(i) } }));
+  const opcijeSata = (b, series, sufiks) => ({
+    ...NS.osnova(b),
+    grid: { left: 42, right: 10, top: 14, bottom: 26 },
+    xAxis: { type: "category", data: SATI, ...NS.osaX(b, { axisLabel: { color: b["ink-3"], fontSize: 10.5, interval: 2 } }) },
+    yAxis: { type: "value", ...NS.osaY(b) },
+    tooltip: { ...NS.osnova(b).tooltip, formatter: (q) => `<b>${SATI[q[0].dataIndex]}–${NS.dvaMesta(q[0].dataIndex + 1)} h</b><br>` +
+      q.filter((p) => p.value != null).map((p) => `${p.marker}${p.seriesName}${String(p.seriesId).startsWith("pr-") ? " (prognoza)" : sufiks}: <b>${NS.broj(Math.round(p.value))}</b>`).join("<br>") },
+    series,
+  });
+  const gDanas = NS.grafik(document.getElementById("pr-danas"), (b) => {
+    if (!DS || !DS.D) return {};
+    const { D: Dn, P } = DS;
+    const stv = izabrane.map((k) => { const x = Dn.serije[k]; return SATI.map((_, h) => (x && h < Dn.sati_gotovo ? x.sati[h] ?? null : null)); });
+    const pr = izabrane.map((k) => { const x = NS.prognozaLokalno(P, k, Dn.datum); return x ? x.pred : SATI.map(() => null); });
+    return opcijeSata(b, [...linijeSata(b, stv, false), ...linijeSata(b, pr, true).map((x) => ({ ...x, id: "pr-" + x.name }))], "");
+  });
+  const gSutra = NS.grafik(document.getElementById("pr-sutra"), (b) => {
+    if (!DS || !DS.P) return {};
+    const iso = DS.sutra, pr = izabrane.map((k) => { const x = NS.prognozaLokalno(DS.P, k, iso); return x ? x.pred : SATI.map(() => null); });
+    return opcijeSata(b, linijeSata(b, pr, false), " (prognoza)");
+  });
+  async function danasSutra() {
+    const [Dn, P] = await izvori;
+    const danas = Dn ? Dn.datum : new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
+    DS = { D: Dn, P, sutra: NS.dodajDane(danas, 1) };
+    const zb = (a) => (a ? a.reduce((x, y) => x + (y || 0), 0) : 0);
+    const oznaka = (i, t) => `<span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${naziv(i)}</span> ${t}`;
+    document.getElementById("pr-danas-naslov").textContent = Dn ? `Danas · ${NS.datumDug(Dn.datum)}` : "Danas";
+    document.getElementById("pr-danas-opis").innerHTML = Dn
+      ? `izbrojano do ${Dn.brojaci_do} (puna linija), isprekidano prognoza za ceo dan<br>` + izabrane.map((k, i) => oznaka(i, `<b>${NS.broj((Dn.serije[k] && Dn.serije[k].danas) || 0)}</b>`)).join(" · ")
+      : "nema podataka za danas";
+    document.getElementById("pr-sutra-naslov").textContent = `Sutra · ${NS.datumDug(DS.sutra)}`;
+    const ps = izabrane.map((k) => NS.prognozaLokalno(P, k, DS.sutra));
+    document.getElementById("pr-sutra-opis").innerHTML = ps.some(Boolean)
+      ? `očekuje se oko<br>` + izabrane.map((k, i) => oznaka(i, ps[i] ? `<b>${NS.broj(Math.round(zb(ps[i].pred)))}</b>` : "—")).join(" · ")
+      : "prognoza za sutra još nije izdata (posle jutarnjeg osvežavanja)";
+    gDanas.osvezi(); gSutra.osvezi();
+  }
+
+  // ---------------------------------------------------------------- mala mapa (izbor klikom)
+  const mapaEl = document.getElementById("pr-mapa");
+  const mesta = (() => {
+    const m = new Map();
+    for (const r of s.serije) { const k = r.serija.replace(/[ab]$/, ""); if (!m.has(k)) m.set(k, { k, naziv: r.naziv, lat: +r.lat, lon: +r.lon, serije: [] }); m.get(k).serije.push(r.serija); }
+    return [...m.values()];
+  })();
+  const W = 380, lat0 = mesta.reduce((a, m) => a + m.lat, 0) / mesta.length, kx = Math.cos((lat0 * Math.PI) / 180);
+  const minX = Math.min(...mesta.map((m) => m.lon * kx)), maxX = Math.max(...mesta.map((m) => m.lon * kx));
+  const minY = Math.min(...mesta.map((m) => -m.lat)), maxY = Math.max(...mesta.map((m) => -m.lat));
+  const pad = 0.12, sx = (maxX - minX) * (1 + 2 * pad), sy = (maxY - minY) * (1 + 2 * pad);
+  const H = Math.round((W * sy) / sx);
+  const tacka = (lon, lat) => [((lon * kx - minX + (maxX - minX) * pad) / sx) * W, ((-lat - minY + (maxY - minY) * pad) / sy) * H];
+  function crtajMapu(voda) {
+    const reka = voda ? voda.features.map((f) => f.geometry.coordinates.map((pr) => "M" + pr.map(([x, y]) => tacka(x, y).map((v) => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("") : "";
+    mapaEl.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"><path class="pr-mapa-reka" d="${reka}"/>${mesta.map((m) => {
+      const [x, y] = tacka(m.lon, m.lat), i = m.serije.map((k) => izabrane.indexOf(k)).find((j) => j >= 0);
+      const izab = i != null && i >= 0;
+      return `<g class="pr-mapa-t${izab ? " izabrana" : ""}" data-mesto="${m.k}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" ${izab ? `style="--boja:var(${BOJE[i]})"` : ""}>
+        <title>${m.k} · ${m.naziv} (${m.serije.join(", ")})</title><circle r="${izab ? 6.5 : 4}"/>${izab ? `<text y="-10">${m.k}</text>` : ""}</g>`;
+    }).join("")}</svg>`;
+  }
+  let vodaP = null;
+  const osveziMapu = () => { (vodaP ||= NS.json("mapa/voda.geojson", "data/").catch(() => null)).then(crtajMapu); };
+  mapaEl.addEventListener("click", (e) => {
+    const g = e.target.closest("[data-mesto]"); if (!g) return;
+    const m = mesta.find((x) => x.k === g.dataset.mesto), u = m.serije.filter((k) => izabrane.includes(k));
+    if (u.length === m.serije.length) return postavi(izabrane.filter((k) => !m.serije.includes(k)));
+    if (izabrane.length >= MAKS) { LJ.tost(`Najviše ${MAKS} stanice odjednom.`, "info"); return; }
+    postavi([...izabrane, m.serije.find((k) => !izabrane.includes(k))]);
+  });
+
   // ---------------------------------------------------------------- promena izbora
   let red = 0;
   async function postavi(nove) {
     izabrane = [...new Set(nove)].filter((k) => po[k]).slice(0, MAKS);
     upisiAdresu();
     crtajIzbor();
+    osveziMapu();
     const moj = ++red;
     let x;
     try { x = await Promise.all(izabrane.map(podaci)); } catch (e) { LJ.tost("Podaci za stanicu nisu učitani.", "alert"); return; }
@@ -313,9 +532,12 @@
     sadrzaj.hidden = nema;
     document.getElementById("pr-prazno").hidden = !nema;
     if (nema) return;
-    if (bio) requestAnimationFrame(() => [gDan, gSat, gMes].forEach((g) => g.ec && g.ec.resize()));   // bili su sakriveni
+    if (bio) requestAnimationFrame(() => [gDan, gSat, gMes, gKar, gStr, gDanas, gSutra].forEach((g) => g.ec && g.ec.resize()));   // bili su sakriveni
     tabela();
     for (const g of [gDan, gSat, gMes]) g.osvezi();
+    ucitajGrad().then((G) => { if (moj !== red) return; OS = D.map((d) => osobine(d, G)); karakter(); gKar.osvezi(); });
+    strane();
+    danasSutra();
     toplote.forEach(({ el, g }, i) => {
       el.hidden = !D[i];
       if (D[i]) { el.querySelector(".pr-toplota-ime").innerHTML = `<span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${D[i].k}</span> ${po[D[i].k].naziv}`; g.osvezi(); }
@@ -323,7 +545,7 @@
     document.getElementById("pr-toplote").dataset.n = D.length;
     requestAnimationFrame(() => toplote.forEach(({ g }) => { if (g.ec) g.ec.resize(); }));
   }
-  document.addEventListener("tema", () => { crtajIzbor(); tabela(); });
+  document.addEventListener("tema", () => { crtajIzbor(); tabela(); karakter(); });
   await postavi(izabrane);
   LJ.pojave(main);
 })();
