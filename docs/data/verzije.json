@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-05T13:05Z",
+ "generisano_utc": "2026-11-05T13:45Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.64",
+   "datum": "2026-11-05T14:45",
+   "naslov": "Poređenje stanica: svaka stanica se može ukloniti, kraći opisi",
+   "stavke": [
+    "moguće je ukloniti sve stanice; bez izabrane stanice grafici se sklone i stoji poruka",
+    "kontrole „Prosečan dan po satu“ u jednom redu, izbačeni suvišni opisi"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.63",
-   "datum": "2026-11-05T14:05",
+   "datum": "2026-11-05T14:07",
    "naslov": "Poređenje stanica: ispravne toplotne mape i jasniji opisi",
    "stavke": [
     "sat × dan: mape se pravilno crtaju i kad se doda stanica (dve po redu)",
     "objašnjenje indeksa i grafika meseci, vidljiv „i“ u tabeli, „Radni dan“ / „Nedelja i praznik“"
    ],
-   "commit": null
+   "commit": "33e2ff1"
   },
   {
    "verzija": "1.1.62",
