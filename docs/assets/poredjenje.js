@@ -6,6 +6,7 @@
 (async () => {
   const main = document.getElementById("sadrzaj");
   const MAKS = 4;
+  const INFO_INDEKS = "Indeks: 100 = prosek te stanice u prikazanom periodu. 120 znači 20 % više od njenog proseka, 80 znači 20 % manje. Tako se stanice različite veličine vide na istoj skali i porede se oblik i trend, a ne veličina.";
   const BOJE = ["--g-tip-1", "--g-tip-2", "--g-tip-3", "--g-god-3"];
   const css = (ime) => getComputedStyle(document.documentElement).getPropertyValue(ime).trim();
   const boja = (i) => css(BOJE[i]);
@@ -41,8 +42,7 @@
   // ---------------------------------------------------------------- kostur strane
   main.innerHTML = `
     <header class="zaglavlje-strane pojava">
-      <div><span class="eyebrow">Podaci</span><h1>Poređenje <em>stanica</em></h1>
-        <p class="uvod">Izaberi dve do četiri stanice i uporedi ih na istim graficima. Link ove strane pamti izbor, pa se poređenje može poslati.</p></div>
+      <div><span class="eyebrow">Podaci</span><h1>Poređenje <em>stanica</em></h1></div>
     </header>
     <section class="kartica pojava pr-izbor">
       <div class="pr-izabrane" id="pr-izabrane"></div>
@@ -50,11 +50,11 @@
     </section>
     <section class="kartica pojava">
       <div class="kartica-glava"><div><span class="eyebrow">Ukratko</span><h2>Ključni brojevi</h2></div></div>
-      <div class="tabela-omot"><table class="tabela pr-tabela" id="pr-tabela"></table></div>
+      <div class="tabela-omot pr-tabela-omot"><table class="tabela pr-tabela" id="pr-tabela"></table></div>
     </section>
     <section class="kartica pojava">
       <div class="kartica-glava">
-        <div><span class="eyebrow">Po danu</span><h2>Biciklisti kroz vreme</h2>
+        <div><span class="eyebrow">Po danu</span><h2>Biciklisti kroz vreme${LJ.info(INFO_INDEKS)}</h2>
           <p class="opis" id="pr-dan-opis"></p></div>
         <div class="pr-kontrole"><div id="pr-gustina"></div><div id="pr-mera"></div>
           <label class="red-izbora pr-zajedno"><input type="checkbox" id="pr-zajedno"><span>samo dani kada sve rade</span></label></div>
@@ -71,7 +71,8 @@
       </section>
       <section class="kartica pojava">
         <div class="kartica-glava">
-          <div><span class="eyebrow">Godine</span><h2>Prosečan dan u mesecu</h2><p class="opis">Samo kompletni dani; mesec se prikazuje uz bar 10 takvih dana.</p></div>
+          <div><span class="eyebrow">Godine</span><h2>Prosečan dan u mesecu${LJ.info(INFO_INDEKS)}</h2>
+            <p class="opis">Koliko biciklista prođe u prosečnom danu svakog meseca, kroz sve godine — vidi se leto i zima i da li stanica raste ili opada. Računaju se samo dani sa svih 24 sata; mesec sa manje od 10 takvih dana se preskače.</p></div>
           <div class="pr-kontrole"><div id="pr-mes-mera"></div></div>
         </div>
         <div class="grafik" id="pr-mes"></div>
@@ -80,7 +81,7 @@
     <section class="kartica pojava">
       <div class="kartica-glava"><div><span class="eyebrow">Nedelja</span><h2>Sat × dan u nedelji</h2>
         <p class="opis">Prosečan broj biciklista u satu, ceo period; svaka stanica u svojoj skali (najsvetlije = njen najprometniji sat).</p></div></div>
-      <div class="pr-toplote" id="pr-toplote">${[0, 1, 2, 3].map((i) => `<div class="pr-toplota" data-i="${i}"><div class="pr-toplota-ime"></div><div class="grafik pr-toplota-g"></div></div>`).join("")}</div>
+      <div class="pr-toplote" id="pr-toplote" data-n="2">${[0, 1, 2, 3].map((i) => `<div class="pr-toplota" data-i="${i}"><div class="pr-toplota-ime"></div><div class="grafik pr-toplota-g"></div></div>`).join("")}</div>
     </section>`;
 
   // ---------------------------------------------------------------- izbor stanica: čipovi, dodavanje, brzi izbori
@@ -132,7 +133,7 @@
   NS.prekidac(document.getElementById("pr-gustina"), [["dan", "Dan"], ["nedelja", "Nedelja"], ["mesec", "Mesec"]], gustina, (v) => { gustina = v; gDan.osvezi(); });
   NS.prekidac(document.getElementById("pr-mera"), [["broj", "Broj"], ["indeks", "Indeks"]], mera, (v) => { mera = v; opisDan(); gDan.osvezi(); });
   document.getElementById("pr-zajedno").addEventListener("change", (e) => { zajedno = e.target.checked; gDan.osvezi(); });
-  NS.prekidac(document.getElementById("pr-tip"), [["radni", "Radni"], ["subota", "Subota"], ["nedelja_praznik", "Nedelja"]], tip, (v) => { tip = v; gSat.osvezi(); });
+  NS.prekidac(document.getElementById("pr-tip"), [["radni", "Radni dan"], ["subota", "Subota"], ["nedelja_praznik", "Nedelja i praznik"]], tip, (v) => { tip = v; gSat.osvezi(); });
   const sez = document.getElementById("pr-sezona");
   sez.innerHTML = [["ukupno", "Cela godina"], ["zima", "Zima"], ["prolece", "Proleće"], ["leto", "Leto"], ["jesen", "Jesen"]].map(([k, t]) => `<option value="${k}">${t}</option>`).join("");
   sez.addEventListener("change", () => { sezona = sez.value; gSat.osvezi(); });
@@ -142,7 +143,7 @@
     ? "Indeks: 100 = prosek te stanice u prikazanom periodu — stanice različite veličine na istoj skali."
     : "Dnevni zbir (nedelja i mesec: prosečan dan). Gde nema kompletnih podataka linija se prekida."; };
   const opisSat = () => { document.getElementById("pr-sat-opis").textContent = satMera === "udeo"
-    ? "Koliki deo dana prođe u kom satu — oblik ritma bez obzira na veličinu stanice." : "Prosečan broj biciklista u satu (lokalno vreme)."; };
+    ? "Koliki deo dana prođe u kom satu — oblik ritma bez obzira na veličinu stanice." : "Prosečan broj biciklista u satu."; };
   opisDan(); opisSat();
 
   let D = [];                                      // podaci izabranih, istim redom
@@ -284,6 +285,10 @@
         series: [{ type: "heatmap", data: podaci, itemStyle: { borderColor: b.povrsina, borderWidth: 1, borderRadius: 2 } }],
       };
     });
+    // grafik je možda nacrtan dok je raspored bio drugačiji (2 → 4 stanice): uvek prati svoju veličinu
+    const gEl = el.querySelector(".pr-toplota-g");
+    let w = 0, h = 0;
+    new ResizeObserver(() => { if (gEl.clientWidth !== w || gEl.clientHeight !== h) { w = gEl.clientWidth; h = gEl.clientHeight; if (g.ec && w) g.ec.resize(); } }).observe(gEl);
     return { el, g };
   });
 
@@ -305,6 +310,7 @@
       if (D[i]) { el.querySelector(".pr-toplota-ime").innerHTML = `<span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${D[i].k}</span> ${po[D[i].k].naziv}`; g.osvezi(); }
     });
     document.getElementById("pr-toplote").dataset.n = D.length;
+    requestAnimationFrame(() => toplote.forEach(({ g }) => { if (g.ec) g.ec.resize(); }));
   }
   document.addEventListener("tema", () => { crtajIzbor(); tabela(); });
   await postavi(izabrane);
