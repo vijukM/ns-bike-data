@@ -1862,7 +1862,11 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .pr-tabela td b { font-size: 15px; font-variant-numeric: tabular-nums; }
 .pr-glava { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; }
 .pr-glava i { width: 10px; height: 10px; border-radius: 3px; background: var(--boja); }
-.pr-toplote { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px 18px; }
+.pr-toplote { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 22px; }   /* dve po redu (2, 3 ili 4 stanice) */
+@media (max-width: 760px) { .pr-toplote { grid-template-columns: minmax(0, 1fr); } }
+/* tabela: oblačić „i“ ne sme da se iseče (na računaru bez skrol-omotača, oblačić ispod ikonice) */
+@media (min-width: 761px) { .pr-tabela-omot { overflow: visible; } }
+.pr-tabela .info::after { left: -10px; right: auto; transform: none; bottom: auto; top: calc(100% + 8px); white-space: normal; width: 280px; z-index: 20; }
 .pr-toplota[hidden] { display: none; }
 .pr-toplota-ime { font-size: 13px; color: var(--t-muted); margin-bottom: 4px; }
-.pr-toplota-g { height: 200px; }
+.pr-toplota-g { height: 230px; }
