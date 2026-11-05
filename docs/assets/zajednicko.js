@@ -123,6 +123,11 @@ const NS = (() => {
       if (!r.width || !r.height) return;
       e.zrX = ((e.clientX - r.left) / r.width) * ec.getWidth();
       e.zrY = ((e.clientY - r.top) / r.height) * ec.getHeight();
+      // zrender uz gotov e.zrX preskače i pomak točkića → računamo ga isto kao on (inače zum točkićem ne radi)
+      if (e.type === "wheel") {
+        const d = e.wheelDelta || (e.deltaY != null ? 3 * (e.deltaY ? Math.abs(e.deltaY) : Math.abs(e.deltaX || 0)) * (e.deltaY > 0 ? -1 : e.deltaY < 0 ? 1 : e.deltaX > 0 ? -1 : 1) : 0);
+        e.zrDelta = d ? d / 120 : -(e.detail || 0) / 3;
+      }
     };
     for (const t of MIS_DOGADJAJI) el.addEventListener(t, upisi, { capture: true, passive: true });
   }

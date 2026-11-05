@@ -296,7 +296,7 @@ function izabraniDan(s, r, d, p) {
       ? `do ${D.brojaci_do || NS.dvaMesta(gotovo) + ":00"} izbrojano <b>${NS.broj(z)}</b> biciklista` +
         (stanje.pr ? ` · prognoza za ceo dan oko <b>${NS.broj(Math.round(zbir(stanje.pr.pred)))}</b>` : "")
       : ok.length === n ? `ukupno <b>${NS.broj(z)}</b> biciklista`
-        : ok.length ? `<span style="color:var(--warning)">nepotpun dan (${ok.length}/${n} h)</span> — ${opisRazloga(sati.find((x) => x.v == null).kod)}; zbir validnih sati ${NS.broj(z)}`
+        : ok.length ? `<span style="color:var(--warning)" title="${opisRazloga(sati.find((x) => x.v == null).kod)}">nepotpun dan (${ok.length}/${n} h)</span> · izbrojano <b>${NS.broj(z)}</b>`
           : `<span style="color:var(--warning)">nema podataka</span> — ${opisRazloga(sati[0].kod)}`;
     document.getElementById("dan-leg-pr").hidden = !stanje.pr;
     if (graf) graf.osvezi(); else crtaj();
