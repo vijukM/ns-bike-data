@@ -1023,6 +1023,8 @@ html.bez-skrola { overflow: hidden; }
 .danas-osvezeno { font-size: 13px; color: var(--t-muted); }
 .danas-osvezeno b { color: var(--t-base); font-family: "JetBrains Mono", monospace; font-size: 12.5px; }
 .danas-osvezeno .upozorenje { color: var(--warning); font-weight: 600; }
+.danas-cita { display: inline-flex; align-items: center; gap: 7px; color: var(--t-base); }
+.danas-krug { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--bg-muted); border-top-color: var(--primary); animation: km-krug .8s linear infinite; }
 .danas-traka { width: 110px; height: 4px; border-radius: 4px; background: var(--bg-muted); overflow: hidden; }
 .danas-traka span { display: block; height: 100%; background: var(--primary); transition: width .4s; }
 .danas-obavestenje { padding: 10px 14px; border-radius: 10px; background: var(--warning-soft); color: var(--warning); font-size: 13.5px; }

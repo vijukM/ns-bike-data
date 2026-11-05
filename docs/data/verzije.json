@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-04T15:11Z",
+ "generisano_utc": "2026-11-05T06:51Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.60",
+   "datum": "2026-11-05T07:51",
+   "naslov": "Danas uživo: odbrojavanje do čitanja i jasniji prosečan dan",
+   "stavke": [
+    "zaglavlje: „sledeće čitanje za ~N min“, a kad čitanje kasni „čitam brojače…“ (bez vremena čitanja i brojača)",
+    "siva linija: „prosečna sreda u novembru (2024. i 2025.)“ umesto „u ovom mesecu“"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.59",
-   "datum": "2026-11-04T16:11",
+   "datum": "2026-11-04T16:14",
    "naslov": "Kapija: animacija znaka odmah i brža, S bez prelaza na kraju",
    "stavke": [
     "S se iscrtava celo (bez naknadnog „doskakanja“ delova slova na kraju)",
     "animacija kreće čim se ekran prikaže i brža je; slova natpisa se kucaju sporije"
    ],
-   "commit": null
+   "commit": "83a2023"
   },
   {
    "verzija": "1.1.58",
