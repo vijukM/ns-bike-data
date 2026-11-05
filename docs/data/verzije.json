@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-05T06:51Z",
+ "generisano_utc": "2026-11-05T10:59Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.61",
+   "datum": "2026-11-05T11:59",
+   "naslov": "Grafici: zum točkićem ponovo radi; stanica: dugmad za dan u jednom redu",
+   "stavke": [
+    "zum točkićem (dataZoom) radi i ostaje na danu pod mišem",
+    "„Izabrani dan“: dugmad uvek gore desno, kraći opis nepotpunog dana (razlog u oblačiću)"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.60",
-   "datum": "2026-11-05T07:51",
+   "datum": "2026-11-05T07:53",
    "naslov": "Danas uživo: odbrojavanje do čitanja i jasniji prosečan dan",
    "stavke": [
     "zaglavlje: „sledeće čitanje za ~N min“, a kad čitanje kasni „čitam brojače…“ (bez vremena čitanja i brojača)",
     "siva linija: „prosečna sreda u novembru (2024. i 2025.)“ umesto „u ovom mesecu“"
    ],
-   "commit": null
+   "commit": "e152f8b"
   },
   {
    "verzija": "1.1.59",
