@@ -1855,6 +1855,12 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .pr-red small { margin-left: auto; color: var(--t-light); font-size: 11.5px; white-space: nowrap; }
 .pr-kontrole { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: flex-end; }
 .pr-zajedno { padding: 4px 6px; font-size: 12.5px; color: var(--t-muted); }
+.pr-jedan-red { justify-content: flex-start; flex-wrap: nowrap; margin: -4px 0 12px; }
+@media (max-width: 700px) { .pr-jedan-red { flex-wrap: wrap; } }
+.pr-sadrzaj { display: grid; gap: inherit; }
+.pr-sadrzaj[hidden], .pr-prazno[hidden] { display: none; }
+.pr-prazno { display: flex; gap: 16px; align-items: center; }
+.pr-prazno h2 { font-size: 16px; margin: 0 0 4px; }
 .pr-tabela th[scope="row"] { font: 500 13px Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none; color: var(--t-muted); white-space: nowrap; text-align: left; }
 .pr-tabela thead th small { font-family: Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none; font-size: 12px; color: var(--t-muted); }
 .pr-tabela thead th .pr-glava { font-size: 13px; }

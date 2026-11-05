@@ -18,10 +18,11 @@
   const ime = (k) => `${k} · ${po[k].naziv}`;
 
   // ---------------------------------------------------------------- izbor (adresa)
-  const izAdrese = (new URLSearchParams(location.search).get("id") || "").split(",").map((x) => x.trim()).filter((k) => po[k]);
+  const qId = new URLSearchParams(location.search).get("id");
+  const izAdrese = (qId || "").split(",").map((x) => x.trim()).filter((k) => po[k]);
   const najprometnije = () => [...s.serije].filter((r) => r.prosek_12m != null && r.stanje !== "neispravan").sort((a, b) => b.prosek_12m - a.prosek_12m).map((r) => r.serija);
   let izabrane = [...new Set(izAdrese)].slice(0, MAKS);
-  if (izabrane.length < 2) izabrane = po["34a"] && po["23a"] ? ["34a", "23a"] : najprometnije().slice(0, 2);
+  if (qId == null && !izabrane.length) izabrane = po["34a"] && po["23a"] ? ["34a", "23a"] : najprometnije().slice(0, 2);
   const upisiAdresu = () => history.replaceState(null, "", `${location.pathname}?id=${izabrane.join(",")}`);
 
   // ---------------------------------------------------------------- podaci po stanici (keš)
@@ -48,6 +49,11 @@
       <div class="pr-izabrane" id="pr-izabrane"></div>
       <div class="pr-brzo" id="pr-brzo"></div>
     </section>
+    <section class="kartica pojava pr-prazno" id="pr-prazno" hidden>
+      <span class="ikona-velika">${LJ.ik("compare") || ""}</span>
+      <div><h2>Nijedna stanica nije izabrana</h2><p class="opis">Za prikaz mora biti izabrana bar jedna stanica — dodaj je iznad („+ Dodaj stanicu“) ili izaberi brzo.</p></div>
+    </section>
+    <div class="pr-sadrzaj" id="pr-sadrzaj">
     <section class="kartica pojava">
       <div class="kartica-glava"><div><span class="eyebrow">Ukratko</span><h2>Ključni brojevi</h2></div></div>
       <div class="tabela-omot pr-tabela-omot"><table class="tabela pr-tabela" id="pr-tabela"></table></div>
@@ -65,14 +71,13 @@
       <section class="kartica pojava">
         <div class="kartica-glava">
           <div><span class="eyebrow">Ritam dana</span><h2>Prosečan dan po satu</h2><p class="opis" id="pr-sat-opis"></p></div>
-          <div class="pr-kontrole"><div id="pr-tip"></div><select id="pr-sezona" aria-label="Godišnje doba"></select><div id="pr-sat-mera"></div></div>
         </div>
+        <div class="pr-kontrole pr-jedan-red"><div id="pr-tip"></div><select id="pr-sezona" aria-label="Godišnje doba"></select><div id="pr-sat-mera"></div></div>
         <div class="grafik" id="pr-sat"></div>
       </section>
       <section class="kartica pojava">
         <div class="kartica-glava">
-          <div><span class="eyebrow">Godine</span><h2>Prosečan dan u mesecu${LJ.info(INFO_INDEKS)}</h2>
-            <p class="opis">Koliko biciklista prođe u prosečnom danu svakog meseca, kroz sve godine — vidi se leto i zima i da li stanica raste ili opada. Računaju se samo dani sa svih 24 sata; mesec sa manje od 10 takvih dana se preskače.</p></div>
+          <div><span class="eyebrow">Godine</span><h2>Prosečan dan u mesecu${LJ.info(INFO_INDEKS)}</h2></div>
           <div class="pr-kontrole"><div id="pr-mes-mera"></div></div>
         </div>
         <div class="grafik" id="pr-mes"></div>
@@ -82,14 +87,15 @@
       <div class="kartica-glava"><div><span class="eyebrow">Nedelja</span><h2>Sat × dan u nedelji</h2>
         <p class="opis">Prosečan broj biciklista u satu, ceo period; svaka stanica u svojoj skali (najsvetlije = njen najprometniji sat).</p></div></div>
       <div class="pr-toplote" id="pr-toplote" data-n="2">${[0, 1, 2, 3].map((i) => `<div class="pr-toplota" data-i="${i}"><div class="pr-toplota-ime"></div><div class="grafik pr-toplota-g"></div></div>`).join("")}</div>
-    </section>`;
+    </section>
+    </div>`;
 
   // ---------------------------------------------------------------- izbor stanica: čipovi, dodavanje, brzi izbori
   const izbEl = document.getElementById("pr-izabrane"), brzoEl = document.getElementById("pr-brzo");
   function crtajIzbor() {
     izbEl.innerHTML = izabrane.map((k, i) => `<span class="pr-cip" style="--boja:var(${BOJE[i]})"><i></i>
         <a href="stanica?id=${encodeURIComponent(k)}">${ime(k)}</a>
-        ${izabrane.length > 2 ? `<button type="button" data-ukloni="${k}" aria-label="Ukloni ${k}" title="Ukloni">×</button>` : ""}</span>`).join("") +
+        <button type="button" data-ukloni="${k}" aria-label="Ukloni ${k}" title="Ukloni">×</button></span>`).join("") +
       (izabrane.length < MAKS ? `<span class="padajuce"><button type="button" class="dugme malo" id="pr-dodaj">+ Dodaj stanicu</button></span>` : "");
     const parovi = izabrane.map((k) => k.replace(/[ab]$/, (c) => (c === "a" ? "b" : "a"))).filter((k) => po[k] && !izabrane.includes(k));
     brzoEl.innerHTML = `<span class="sitno">Brzo:</span>` +
@@ -143,7 +149,7 @@
     ? "Indeks: 100 = prosek te stanice u prikazanom periodu — stanice različite veličine na istoj skali."
     : "Dnevni zbir (nedelja i mesec: prosečan dan). Gde nema kompletnih podataka linija se prekida."; };
   const opisSat = () => { document.getElementById("pr-sat-opis").textContent = satMera === "udeo"
-    ? "Koliki deo dana prođe u kom satu — oblik ritma bez obzira na veličinu stanice." : "Prosečan broj biciklista u satu."; };
+    ? "Koliki deo dana prođe u kom satu." : "Prosečan broj biciklista u satu."; };
   opisDan(); opisSat();
 
   let D = [];                                      // podaci izabranih, istim redom
@@ -303,6 +309,11 @@
     try { x = await Promise.all(izabrane.map(podaci)); } catch (e) { LJ.tost("Podaci za stanicu nisu učitani.", "alert"); return; }
     if (moj !== red) return;
     D = x;
+    const nema = !D.length, sadrzaj = document.getElementById("pr-sadrzaj"), bio = sadrzaj.hidden;
+    sadrzaj.hidden = nema;
+    document.getElementById("pr-prazno").hidden = !nema;
+    if (nema) return;
+    if (bio) requestAnimationFrame(() => [gDan, gSat, gMes].forEach((g) => g.ec && g.ec.resize()));   // bili su sakriveni
     tabela();
     for (const g of [gDan, gSat, gMes]) g.osvezi();
     toplote.forEach(({ el, g }, i) => {
