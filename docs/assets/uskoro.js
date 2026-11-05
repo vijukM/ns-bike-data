@@ -86,43 +86,6 @@
       izvor: "satni prosek po brojaču iz istorije, koordinate brojača",
     },
 
-    poredjenje: {
-      ik: "compare", prioritet: 1, naslov: "Poređenje <em>stanica</em>",
-      uvod: "Izaberi dve do četiri stanice i uporedi ih na istim graficima: po danu, po satu, po mesecima — i koliko se kreću zajedno.",
-      kontrole: `<div class="kontrole"><span class="cip" aria-pressed="true" style="--boja:var(--g-tip-1)"><i></i>34a · Futoška (kod Nikole Tesle)</span>
-        <span class="cip" aria-pressed="true" style="--boja:var(--g-tip-2)"><i></i>23a · Bulevar cara Lazara</span><span class="cip">+ dodaj stanicu</span></div>`,
-      skice: [
-        { sirina: "cela", eyebrow: "Po mesecima", naslov: "Prosečan dan u mesecu, dve stanice", opcija: (b, r) => {
-          const x = [], a = [], c = [];
-          for (let g = 2021; g <= 2026; g++) for (let m = 1; m <= 12; m++) {
-            if (g === 2026 && m > 8) break;
-            const sez = 0.55 + 0.45 * Math.sin(((m - 3.5) / 12) * 2 * Math.PI);
-            x.push(`${NS.MESECI_KRATKO[m - 1]} ${g}`); a.push(Math.round(2600 * sez * (0.9 + r() * 0.2))); c.push(Math.round(1500 * sez * sez * (0.85 + r() * 0.3)));
-          }
-          return { ...NS.osnova(b), tooltip: tt(b), legend: legenda(b), grid: { left: 50, right: 12, top: 36, bottom: 28 },
-            xAxis: { type: "category", data: x, ...NS.osaX(b) }, yAxis: { type: "value", ...NS.osaY(b) },
-            series: [{ name: "34a", type: "line", data: a, smooth: true, symbol: "none", lineStyle: { width: 2.5, color: b["tip-1"] }, itemStyle: { color: b["tip-1"] }, areaStyle: { color: b["tip-1"], opacity: 0.08 } },
-              { name: "23a", type: "line", data: c, smooth: true, symbol: "none", lineStyle: { width: 2.5, color: b["tip-2"] }, itemStyle: { color: b["tip-2"] }, areaStyle: { color: b["tip-2"], opacity: 0.08 } }] };
-        } },
-        { sirina: "pola", eyebrow: "Satni profil", naslov: "Udeo dana po satu", opcija: (b) => ({
-          ...NS.osnova(b), tooltip: tt(b), legend: legenda(b), grid: { left: 40, right: 12, top: 36, bottom: 28 },
-          xAxis: { type: "category", data: SATI, ...NS.osaX(b) }, yAxis: { type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], formatter: "{value} %" } }) },
-          series: [{ name: "34a", type: "line", smooth: true, symbol: "none", data: SATI.map((_, h) => +(radniDan(h) / 14).toFixed(1)), lineStyle: { color: b["tip-1"], width: 2.5 }, itemStyle: { color: b["tip-1"] } },
-            { name: "23a", type: "line", smooth: true, symbol: "none", data: SATI.map((_, h) => +((vikendDan(h) + radniDan(h) * 0.4) / 9.5).toFixed(1)), lineStyle: { color: b["tip-2"], width: 2.5 }, itemStyle: { color: b["tip-2"] } }] }) },
-        { sirina: "pola", eyebrow: "Karakter", naslov: "Kakva je koja stanica", opcija: (b) => {
-          const ind = ["jutarnji vrh", "popodnevni vrh", "subota", "nedelja", "leto", "zima"].map((name) => ({ name, max: 100 }));
-          return { ...NS.osnova(b), tooltip: { trigger: "item" }, legend: { ...legenda(b), top: "bottom" },
-            radar: { indicator: ind, radius: "64%", center: ["50%", "46%"], axisName: { color: b["ink-2"], fontSize: 11 }, splitLine: { lineStyle: { color: b.mreza } }, splitArea: { show: false }, axisLine: { lineStyle: { color: b.mreza } } },
-            series: [{ type: "radar", data: [{ name: "34a", value: [88, 80, 52, 40, 70, 45], itemStyle: { color: b["tip-1"] }, areaStyle: { opacity: 0.18 } },
-              { name: "23a", value: [45, 60, 85, 92, 95, 25], itemStyle: { color: b["tip-2"] }, areaStyle: { opacity: 0.18 } }] }] };
-        } },
-      ],
-      plan: [["Izbor 2–4 stanice", "iz liste ili klikom na mapi"], ["Isti grafici jedan preko drugog", "po danu, prosečan dan po satu, meseci po godinama"],
-        ["Karakter stanice", "da li je „posao“ (jutarnji vrh) ili „rekreacija“ (vikend, leto)"], ["Koliko se kreću zajedno", "sličnost (korelacija) dnevnih brojeva"],
-        ["Link koji se deli", "poređenje se pamti u adresi strane"]],
-      izvor: "dnevni i satni podaci iz istorije, isti kao na strani stanice",
-    },
-
     praznici: {
       ik: "star", prioritet: 2, naslov: "Praznici i <em>događaji</em>",
       uvod: "Kako praznici, školski raspust i veliki događaji u gradu menjaju broj biciklista u odnosu na običan isti dan.",
