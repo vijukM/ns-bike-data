@@ -52,9 +52,11 @@ Poslednji broj ima uvek dve cifre (00–99).
   Kalendar i stanica ih dodaju na istoriju, a danas uzimaju iz `data/danas.json`; kalendar podrazumevano otvara danas.
   Grafik dana u kalendaru: čipovi (biciklisti, temperatura, padavine, prosečan isti dan u nedelji u mesecu, prosek 7 dana,
   prognoza za danas), izbor se pamti u `localStorage` „ns-kalendar-serije“.
-- Poređenje stanica (`poredjenje?id=34a,23a`, `assets/poredjenje.js`): 0–4 stanice (bez stanice nema grafika, samo poruka; bez `id` u adresi 34a i 23a) (čipovi, dodavanje uz pretragu, brzi izbori),
-  ključni brojevi, po danu (dan/nedelja/mesec, broj ili indeks, „samo dani kada sve rade“), prosečan dan po satu,
-  meseci kroz godine, sat × dan; iz `dnevno/`, `dnevno_novo.json` i `profili/`. Faza 2 (karakter, sličnost, smerovi a/b) i 3 (danas/sutra, mapa) kasnije.
+- Poređenje stanica (`poredjenje?id=34a,23a`, `assets/poredjenje.js`): 0–4 stanice (bez stanice samo poruka; bez `id` 34a i 23a).
+  Izbor: čipovi, pretraga, brzi izbori i mala SVG mapa (klik na mesto doda a, pa b, treći klik ukloni; podloga `mapa/voda.geojson`).
+  Delovi (dva po redu): ključni brojevi | karakter (radar: jutro, popodne, vikend, leto/zima, kiša iz `grad_dnevno`, rast);
+  po danu (ceo red); prosečan dan po satu | dve strane ulice (a/b — dve strane, svaka broji oba smera); danas | sutra
+  (`danas.json`, `NS.prognozaLokalno` iz `prognoza_biciklista.json`); meseci kroz godine | sat × dan.
 - Strane u meniju: `MENI` u `docs/assets/ljuska.js`. `uskoro: true` = oznaka USKORO i skica strane;
   `zakljucano: true` = katanac, klik u meniju ne otvara stranu (nema je ni u pretrazi), a adresa i dalje radi.
 
