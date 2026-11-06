@@ -1847,6 +1847,10 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .pr-mapa-panel .sitno { margin: 6px 2px 0; }
 .pr-mapa svg { display: block; width: 100%; height: auto; max-height: 340px; }
 .pr-mapa-reka { fill: var(--g-bicikl); opacity: .14; }
+.pr-mapa-bul path { fill: none; stroke: var(--t-light); stroke-width: 1.6; opacity: .55; stroke-linecap: round; stroke-linejoin: round; }
+.pr-mapa-bul:hover path { opacity: 1; stroke: var(--t-muted); }
+.pr-mapa-bul text { fill: var(--t-light); font: 500 7.5px Inter, system-ui, sans-serif; text-anchor: middle; opacity: .85; pointer-events: none;
+  paint-order: stroke; stroke: var(--bg-card); stroke-width: 2.5px; }
 .pr-mapa-t { cursor: pointer; }
 .pr-mapa-t circle { fill: var(--t-light); opacity: .55; stroke: var(--bg-card); stroke-width: 1.2; transition: opacity .15s; }
 .pr-mapa-t:hover circle { opacity: 1; }

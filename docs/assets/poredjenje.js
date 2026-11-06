@@ -222,8 +222,8 @@
     document.getElementById("pr-tabela").innerHTML = `<thead><tr><th></th>${D.map((d, i) => `<th scope="col"><span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${d.k}</span><small>${po[d.k].naziv}</small></th>`).join("")}</tr></thead><tbody>` +
       red("Prosek dnevno", (d, i) => r(i).prosek_12m != null ? `<b>${NS.broj(r(i).prosek_12m)}</b>` : "—", "Prosečan kompletan dan, 1. 9. 2025. – 31. 8. 2026.") +
       red("Rekordan dan", (d, i) => st[i].max != null ? `<b>${NS.broj(st[i].max)}</b><small>${NS.datum(st[i].kad)}</small>` : "—") +
-      red("Vikend prema radnom danu", (d, i) => st[i].vikend != null ? `<b>${NS.broj(Math.round(100 * st[i].vikend))} %</b><small>${st[i].vikend >= 0.85 ? "rekreacija" : st[i].vikend <= 0.55 ? "posao, škola" : "mešovito"}</small>` : "—",
-        "Prosečna subota i nedelja prema prosečnom radnom danu, poslednjih 365 kompletnih dana. Ispod 55 % = stanica „za posao“, preko 85 % = „za rekreaciju“.") +
+      red("Vikend prema radnom danu", (d, i) => st[i].vikend != null ? `<b>${NS.broj(Math.round(100 * st[i].vikend))} %</b><small>${st[i].vikend >= 0.85 ? "rekreacija" : st[i].vikend <= 0.65 ? "posao, škola" : "mešovito"}</small>` : "—",
+        "Prosečna subota i nedelja prema prosečnom radnom danu, poslednjih 365 kompletnih dana. Do 65 % = stanica „za posao, školu“, od 85 % = „za rekreaciju“, između = mešovito.") +
       red("Jutarnji vrh (radni dan)", (d) => vrh(d.p.profil.ukupno.radni, 5, 11)) +
       red("Popodnevni vrh (radni dan)", (d) => vrh(d.p.profil.ukupno.radni, 12, 21)) +
       red("Kompletnih dana", (d, i) => `<b>${NS.broj(Math.round(100 * (r(i).udeo_validnih_dana || 0)))} %</b><small>${NS.broj(st[i].n)} dana sa podacima</small>`) +
@@ -396,7 +396,7 @@
     };
   });
   function karakter() {
-    const tip = (o) => (o.vikend >= 0.85 ? "rekreacija" : o.vikend != null && (o.vikend <= 0.55 || (o.jutro >= 0.2 && o.vikend < 0.7)) ? "posao i škola" : "mešovito");
+    const tip = (o) => (o.vikend >= 0.85 ? "rekreacija" : o.vikend != null && o.vikend <= 0.65 ? "posao, škola" : "mešovito");   // isti pragovi kao u tabeli
     document.getElementById("pr-karakter-opis").innerHTML = OS.map((o, i) => `<div><span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${naziv(i)}</span>
       <b>${tip(o)}</b>${o.leto != null ? ` · leto ${NS.dec(o.leto)}× zima` : ""}${o.kisa != null ? ` · po kiši ${NS.broj(Math.round(100 * o.kisa))} %` : ""}${o.rast != null ? ` · ${o.rast >= 0 ? "+" : "−"}${NS.broj(Math.abs(Math.round(100 * o.rast)))} % godišnje` : ""}</div>`).join("");
   }
@@ -509,19 +509,30 @@
   const pad = 0.12, sx = (maxX - minX) * (1 + 2 * pad), sy = (maxY - minY) * (1 + 2 * pad);
   const H = Math.round((W * sy) / sx);
   const tacka = (lon, lat) => [((lon * kx - minX + (maxX - minX) * pad) / sx) * W, ((-lat - minY + (maxY - minY) * pad) / sy) * H];
-  function crtajMapu(voda) {
+  function crtajMapu([voda, bul]) {
+    const linija = (l) => "M" + l.map(([x, y]) => tacka(x, y).map((v) => v.toFixed(1)).join(",")).join("L");
+    // bulevari: tanke linije + kratak natpis na sredini najduže deonice (pun naziv na prelazu mišem)
+    const bulevari = bul ? bul.features.map((f) => {
+      const najduza = f.geometry.coordinates.reduce((a, l) => (l.length > a.length ? l : a), []);
+      const ime = f.properties.n.replace("Bulevar ", "Bul. "), pola = ime.length * 1.9 + 3;    // ~ pola širine natpisa
+      const [px, py] = tacka(...najduza[Math.floor(najduza.length / 2)]);
+      const mx = Math.max(pola, Math.min(W - pola, px)), my = Math.max(10, Math.min(H - 4, py - 3));   // natpis ne izlazi van mape
+      return `<g class="pr-mapa-bul"><title>${f.properties.n}</title><path d="${f.geometry.coordinates.map(linija).join("")}"/>
+        <text x="${mx.toFixed(1)}" y="${my.toFixed(1)}">${ime}</text></g>`;
+    }).join("") : "";
     const reka = voda ? voda.features.map((f) => f.geometry.coordinates.map((pr) => "M" + pr.map(([x, y]) => tacka(x, y).map((v) => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("") : "";
     const mapaEl = document.getElementById("pr-mapa");
     if (!mapaEl) return;
-    mapaEl.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"><path class="pr-mapa-reka" d="${reka}"/>${mesta.map((m) => {
+    mapaEl.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"><path class="pr-mapa-reka" d="${reka}"/>${bulevari}${mesta.map((m) => {
       const [x, y] = tacka(m.lon, m.lat), i = m.serije.map((k) => izabrane.indexOf(k)).find((j) => j >= 0);
       const izab = i != null && i >= 0;
       return `<g class="pr-mapa-t${izab ? " izabrana" : ""}" data-mesto="${m.k}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" ${izab ? `style="--boja:var(${BOJE[i]})"` : ""}>
         <title>${m.k} · ${m.naziv} (${m.serije.join(", ")})</title><circle r="${izab ? 6.5 : 4}"/>${izab ? `<text y="-10">${m.k}</text>` : ""}</g>`;
     }).join("")}</svg>`;
   }
-  let vodaP = null;
-  const osveziMapu = () => { (vodaP ||= NS.json("mapa/voda.geojson", "data/").catch(() => null)).then(crtajMapu); };
+  let podlogaP = null;
+  const osveziMapu = () => { (podlogaP ||= Promise.all([NS.json("mapa/voda.geojson", "data/").catch(() => null),
+    NS.json("mapa/bulevari.geojson", "data/").catch(() => null)])).then(crtajMapu); };
   izbEl.addEventListener("click", (e) => {
     if (!e.target.closest(".pr-mapa")) return;
     const g = e.target.closest("[data-mesto]"); if (!g) return;
