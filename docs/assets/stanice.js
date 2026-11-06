@@ -59,7 +59,7 @@
           <td class="broj"><b>${r.stanje === "neispravan" ? "—" : NS.broj(r.prosek_12m)}</b></td>
           <td><div class="mini-traka"><div class="traka-napretka"><i style="width:${Math.round(100 * r.udeo_validnih_dana)}%;--boja:${r.udeo_validnih_dana > 0.9 ? "var(--success)" : r.udeo_validnih_dana > 0.7 ? "var(--warning)" : "var(--danger)"}"></i></div>
             <span class="mono">${Math.round(100 * r.udeo_validnih_dana)}%</span></div></td>
-          <td class="broj mono">${r.kompletnih_30d}/30</td>
+          <td class="broj mono">${r.kompletnih_30d}/${r.dana_30d ?? 30}</td>
           <td class="mono">${NS.datum(r.od)}<br>${NS.datum(r.do)}</td>
           <td style="white-space:nowrap"><a class="ikonica-dugme" style="display:inline-grid" href="stanica?id=${encodeURIComponent(r.serija)}" title="Otvori stanicu">${LJ.ik("eye")}</a>
             <a class="ikonica-dugme" style="display:inline-grid" href="mapa?id=${encodeURIComponent(r.serija)}" title="Na mapi">${LJ.ik("pin")}</a></td>

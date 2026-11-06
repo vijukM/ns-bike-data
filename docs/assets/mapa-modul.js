@@ -924,7 +924,7 @@ const MAPA = (() => {
         if (moj !== poziv) return;
         postaviPin(r.serija, r.stanje, null, `${opis(r)}<div class="tt-red"><span class="znacka tacka z-${r.stanje}">${s.stanja[r.stanje]}</span></div>
           ${r.prosek_12m != null && r.stanje !== "neispravan" ? `<div class="tt-red">prosek <b>${NS.broj(r.prosek_12m)}</b> / dan
-            ${info("prosečan broj biciklista dnevno — samo kompletni dani, 1. 9. 2025. – 31. 8. 2026. (poslednjih 12 meseci istorije)")}</div>` : ""}${danas}
+            ${info(`prosečan broj biciklista dnevno — samo kompletni dani, poslednjih 12 meseci (${NS.period12(s)})`)}</div>` : ""}${danas}
           ${r.napomena ? `<div class="tt-red sitno">${r.napomena}</div>` : ""}`);
       }
     }

@@ -21,7 +21,7 @@
     kpi("narandzasta", "trophy", "Najprometniji dan", "k-dan", `<a href="${kalLink(top.datum)}">${NS.datumDug(top.datum)}</a> · ${top.n} brojača`) +
     kpi("plava", "clock", "Najprometniji sat", "k-sat", z.clock ? z.clock.opis : "") +
     kpi("ljubicasta", "calendar", "Najprometnija nedelja", "k-ned", z.calendar ? z.calendar.opis.replace(" (zbir svih brojača)", "") : "") +
-    kpi("zelena", "bike", "Ukupno izbrojano", "k-uk", "od 1. 1. 2021. do 31. 8. 2026.");
+    kpi("zelena", "bike", "Ukupno izbrojano", "k-uk", `od ${NS.datum(s.period.od)} do ${NS.datum(s.period.do)}`);
   LJ.brojanje(document.getElementById("k-dan"), top.zbir, (x) => NS.broj(Math.round(x)));
   if (z.clock) LJ.brojanje(document.getElementById("k-sat"), z.clock.vrednost, (x) => NS.broj(Math.round(x)));
   if (z.calendar) LJ.brojanje(document.getElementById("k-ned"), z.calendar.vrednost, (x) => NS.broj(Math.round(x)));
@@ -56,14 +56,14 @@
   NS.prekidac(document.getElementById("top-mera"), [["zbir", "Zbir grada"], ["po", "Po brojaču"]], mera, (v) => { mera = v; topGraf.osvezi(); });
 
   // ---------------------------------------------------------------- godine
-  document.getElementById("god-info").outerHTML = LJ.info("Zbir svih validnih sati svih brojača u godini. Mreža je rasla (crta = broj brojača), a 2026. je do 31. 8. — pa rast nije samo rast broja biciklista.");
+  document.getElementById("god-info").outerHTML = LJ.info(`Zbir svih validnih sati svih brojača u godini. Mreža je rasla (crta = broj brojača), a poslednja godina je do ${NS.datum(s.period.do)} — pa rast nije samo rast broja biciklista.`);
   NS.grafik(document.getElementById("god-grafik"), (b) => ({
     ...NS.osnova(b),
     legend: { top: 0, left: 0, icon: "roundRect", itemWidth: 10, itemHeight: 10, textStyle: { color: b["ink-2"], fontSize: 12 } },
     grid: { left: 56, right: 40, top: 36, bottom: 26 },
     tooltip: { ...NS.osnova(b).tooltip, axisPointer: { type: "shadow", shadowStyle: { color: b.mreza, opacity: 0.5 } }, formatter: (p) => {
       const g = r.godine[p[0].dataIndex];
-      return `<b>${g.godina}.${g.godina === 2026 ? " (do 31. 8.)" : ""}</b><br>izbrojano: <b>${NS.broj(g.ukupno)}</b><br>brojača: ${g.brojaca}`;
+      return `<b>${g.godina}.${g.godina === +s.period.do.slice(0, 4) ? ` (do ${NS.datum(s.period.do).slice(0, -6)})` : ""}</b><br>izbrojano: <b>${NS.broj(g.ukupno)}</b><br>brojača: ${g.brojaca}`;
     } },
     xAxis: { type: "category", data: r.godine.map((g) => String(g.godina)), ...NS.osaX(b) },
     yAxis: [{ type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], fontSize: 11, formatter: (v) => `${NS.dec(v / 1e6)} M` } }) },

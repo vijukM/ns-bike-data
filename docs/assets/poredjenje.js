@@ -220,7 +220,7 @@
     const st = D.map(stat);
     const r = (i) => po[izabrane[i]];
     document.getElementById("pr-tabela").innerHTML = `<thead><tr><th></th>${D.map((d, i) => `<th scope="col"><span class="pr-glava" style="--boja:var(${BOJE[i]})"><i></i>${d.k}</span><small>${po[d.k].naziv}</small></th>`).join("")}</tr></thead><tbody>` +
-      red("Prosek dnevno", (d, i) => r(i).prosek_12m != null ? `<b>${NS.broj(r(i).prosek_12m)}</b>` : "—", "Prosečan kompletan dan, 1. 9. 2025. – 31. 8. 2026.") +
+      red("Prosek dnevno", (d, i) => r(i).prosek_12m != null ? `<b>${NS.broj(r(i).prosek_12m)}</b>` : "—", `Prosečan kompletan dan, ${NS.period12(s)}`) +
       red("Rekordan dan", (d, i) => st[i].max != null ? `<b>${NS.broj(st[i].max)}</b><small>${NS.datum(st[i].kad)}</small>` : "—") +
       red("Vikend prema radnom danu", (d, i) => st[i].vikend != null ? `<b>${NS.broj(Math.round(100 * st[i].vikend))} %</b><small>${st[i].vikend >= 0.85 ? "rekreacija" : st[i].vikend <= 0.65 ? "posao, škola" : "mešovito"}</small>` : "—",
         "Prosečna subota i nedelja prema prosečnom radnom danu, poslednjih 365 kompletnih dana. Do 65 % = stanica „za posao, školu“, od 85 % = „za rekreaciju“, između = mešovito.") +

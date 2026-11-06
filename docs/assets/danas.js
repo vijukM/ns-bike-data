@@ -18,7 +18,7 @@
   const g = {};
 
   /** „prosečna sreda u novembru (2024. i 2025.)“ — prosek istog dana u nedelji i istog meseca iz istorije
-      (sajt/pripremi_istoriju.py prosek_dana: 1. 9. 2024. – 31. 8. 2026., bez praznika) */
+      (sajt/pripremi_istoriju.py prosek_dana: 1. 9. 2024. – 31. 8. 2026., bez praznika — samo očišćena istorija) */
   const MESEC_U = ["januaru", "februaru", "martu", "aprilu", "maju", "junu", "julu", "avgustu", "septembru", "oktobru", "novembru", "decembru"];
   function prosecniDan(iso) {
     const dan = NS.DANI[NS.danUNedelji(iso)], m = +iso.slice(5, 7);
@@ -35,7 +35,7 @@
   }
   // ---------------------------------------------------------------- prošli dani
   // izvori: danas.json (danas, uživo) · data/dani/YYYY-MM-DD.json (od 9. 10. 2026., konačni snimak sa prognozom i vremenom)
-  // · istorija sati/YYYY-MM.json + meteo_sati (2021 – 31. 8. 2026., bez prognoze)
+  // · istorija sati/YYYY-MM.json + meteo_sati (od 2021. do juče, bez prognoze; sati_dostupno.json)
   const danasLok = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
   let dostupno = { od: "2021-01-01", do: "2026-08-31", prazni_dani: [] }, arhiva = [], ziv = null;
   const prazan = (iso) => (dostupno.prazni_dani || []).includes(iso);
@@ -216,7 +216,7 @@
         ? "očišćeni satni podaci iz istorije (master rada)" : `čitanja brojača · poslednje u <b>${D.citanje_lokalno}</b>`}</span>`;
       const ob = document.getElementById("danas-obavestenje");
       ob.classList.toggle("skriveno", !prazan(D.datum));
-      ob.textContent = "Za ovaj dan nema podataka — između istorije (do 31. 8. 2026.) i čitanja brojača uživo (od 9. 10. 2026.).";
+      ob.textContent = "Za ovaj dan nema podataka — brojači tada nisu čitani (1. 9. – 7. 10. 2026.).";
       return;
     }
     document.getElementById("danas-naslov").innerHTML = "Danas <em>uživo</em>";

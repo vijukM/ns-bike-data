@@ -84,6 +84,8 @@ const NS = (() => {
     razlozi = s.razlozi;
     return s;
   }
+  /** „1. 9. 2025. – 31. 8. 2026.“: period proseka od 12 meseci iz stanice.json (pomera se svake noći, do juče). */
+  const period12 = (s) => (s && s.period_12m ? `${datum(s.period_12m.od)} – ${datum(s.period_12m.do)}` : "poslednjih 12 meseci");
   const razlog = (kod) => (razlozi[kod] ? razlozi[kod].opis : "nema podataka");
   function razlogSata(rle, i) {
     for (const [a, n, k] of rle || []) { if (i >= a && i < a + n) return k; if (a > i) break; }
@@ -303,7 +305,7 @@ const NS = (() => {
   return {
     TZ, DANI, DANI_KRATKO, MESECI, MESECI_KRATKO, SEZONE, TIPOVI, STANJA,
     broj, dec, datum, datumDug, dodajDane, razlikaDana, danUNedelji, mesecNaziv, dvaMesta, utcDan, procenat,
-    satneOznake, prognozaLokalno, json, stanice, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
+    satneOznake, prognozaLokalno, json, stanice, period12, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
     grupisi, oznakaPerioda, kljucPerioda, rupe, premosti, greska, analizaGrada,
   };
 })();

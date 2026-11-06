@@ -382,7 +382,7 @@
     const maks = lista[0].prosek;
     return `<div class="st-blok"><span class="eyebrow">Biciklista dnevno (prosek)</span>
       <div class="st-gradijent" style="--g:linear-gradient(90deg,${bojePrometa().join(",")})"><i></i><span>300</span><span>1.300</span><span>3.500+</span></div>
-      <p class="st-napomena">${km(kmSaBrojacem, 0)} od ${km(U.km_pravaca, 0)} km pravaca (${pct(kmSaBrojacem / U.km_pravaca)}) ima brojač na istoj ulici, na manje od 1,5 km. Prosek: 1. 9. 2025. – 31. 8. 2026.</p></div>
+      <p class="st-napomena">${km(kmSaBrojacem, 0)} od ${km(U.km_pravaca, 0)} km pravaca (${pct(kmSaBrojacem / U.km_pravaca)}) ima brojač na istoj ulici, na manje od 1,5 km. Prosek: ${NS.period12(s)}.</p></div>
       <div class="st-blok"><span class="eyebrow">Brojači po prometu${LJ.info("Zbir oba brojača na istom mestu (a i b su dve strane ulice). Klik: ulica na mapi.")}</span>
       ${lista.map((x) => red(`data-mesto="${x.mesto}"`, `<span class="st-red-ime">${x.naziv}<small>${VRSTA[x.vrsta]}</small></span>
         <span class="st-traka-mini"><i style="width:${(x.prosek / maks) * 100}%;background:${bojaPrometa(x.prosek)}"></i></span>`, NS.broj(x.prosek), izabranaUlica != null && ulice[izabranaUlica].brojaci.includes(x.mesto) ? "izabran" : "")).join("")}</div>`;

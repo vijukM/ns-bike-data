@@ -26,12 +26,12 @@
   }
 })();
 
-// rupa 1. 9. – 8. 10. 2026: brojači su brojali, ali sajt tada nije preuzimao podatke — mogu se naknadno dopuniti
+// rupa 1. 9. – 7. 10. 2026 (8. 10. ima dnevni zbir iz „juče“ čitanja 9. 10.): brojači su brojali, ali sajt tada nije preuzimao podatke — mogu se naknadno dopuniti
 // (za razliku od pravih rupa, kada brojač nije radio i te podatke nema niko)
-const NIJE_PREUZETO = ["2026-09-01", "2026-10-08"];
+const NIJE_PREUZETO = ["2026-09-01", "2026-10-07"];
 const nijePreuzeto = (iso) => iso >= NIJE_PREUZETO[0] && iso <= NIJE_PREUZETO[1];
 
-/** Istorija grada (do 31. 8. 2026.) + dani posle nje (dnevno_novo.json) + danas (u toku, bez dnevnog zbira). */
+/** Istorija grada (do juče) + dani posle nje (dnevno_novo.json, sada prazan) + danas (u toku, bez dnevnog zbira). */
 function produziGrad(g0, N, D) {
   const danas = D ? D.datum : new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Belgrade" });
   const g = { ...g0, danas: null };
@@ -74,7 +74,7 @@ function gradGrafik(g) {
     return { x: grp.x, v: grp.v, p7: null, n: sr(g.n), tsr: sr(g.tsr, true), tmin: sr(g.tmin, true), tmax: sr(g.tmax, true),
       pad: grp.x.map((k) => Math.round(zbir.get(k) * 10) / 10), dana: grp.dana };
   }
-  /** premošćene rupe podeljene na prave (brojač nije radio) i „nije preuzeto“ (1. 9. – 8. 10. 2026.) */
+  /** premošćene rupe podeljene na prave (brojač nije radio) i „nije preuzeto“ (1. 9. – 7. 10. 2026.) */
   function rupe(d) {
     const most = NS.premosti(d.v), prave = d.v.map(() => null), nije = d.v.map(() => null);
     let i = 0;

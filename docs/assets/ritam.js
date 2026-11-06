@@ -5,7 +5,8 @@
 (async () => {
   const main = document.getElementById("sadrzaj");
   let t;
-  try { t = await NS.json("ritam.json"); } catch (e) { NS.greska(main, e); return; }
+  let s = null;
+  try { [t, s] = await Promise.all([NS.json("ritam.json"), NS.stanice().catch(() => null)]); } catch (e) { NS.greska(main, e); return; }
   const SATI = Array.from({ length: 24 }, (_, h) => NS.dvaMesta(h));
   const satTekst = (h) => `${NS.dvaMesta(h)}–${NS.dvaMesta((h + 1) % 24)}\u00a0h`;
   const sat = (x) => { const h = Math.floor(x), m = Math.round((x - h) * 60); return `${NS.dvaMesta(h + (m === 60 ? 1 : 0))}:${NS.dvaMesta(m % 60)}`; };
@@ -113,7 +114,7 @@
   });
 
   // ---------------------------------------------------------------- kroz godine
-  document.getElementById("gg-info").outerHTML = LJ.info("Udeo dnevnog prometa po satu (radni dani), svaka godina posebno — da se vidi da li se špice pomeraju. 2026. je do 31. 8.");
+  document.getElementById("gg-info").outerHTML = LJ.info(`Udeo dnevnog prometa po satu (radni dani), svaka godina posebno — da se vidi da li se špice pomeraju.${s ? ` Poslednja godina je do ${NS.datum(s.period.do)}` : ""}`);
   NS.grafik(document.getElementById("gg-grafik"), (b) => {
     const god = Object.keys(t.radni_po_godini);
     return {
