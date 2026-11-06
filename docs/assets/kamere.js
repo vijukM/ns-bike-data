@@ -35,22 +35,39 @@
       kratak natpis, a uz brojanje i broj vozila; linija preko koje je vozilo upravo prešlo kratko zasvetli. */
   window.KM_CRTEZ = {
     linije(ctx, linije, u, w, brojevi) {
-      const lw = Math.max(2.5, (w / 640) * 3), f = Math.max(10, Math.round((w / 640) * 10.5)), sada = performance.now();
+      const lw = Math.max(2.5, (w / 640) * 3), f = Math.max(8, Math.round((w / 640) * 7.5)), sada = performance.now();
+      const H = ctx.canvas.height / (ctx.getTransform().d || 1);
       ctx.save();
       ctx.lineCap = "round"; ctx.font = `600 ${f}px Inter, system-ui, sans-serif`; ctx.textBaseline = "middle";
       for (const l of linije) {
-        const [ax, ay] = u(l.a[0], l.a[1]), [bx, by] = u(l.b[0], l.b[1]);
+        const [ax, ay] = u(l.a[0], l.a[1]), [bx, by] = u(l.b[0], l.b[1]), boja = l.boja || "#ef4444";
         const b = brojevi && brojevi[l.id], blic = b && sada - b.blic < 600;
         ctx.strokeStyle = "rgba(2,10,24,.7)"; ctx.lineWidth = lw + 3;
         ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-        ctx.strokeStyle = blic ? "#ffffff" : l.boja || "#ef4444"; ctx.lineWidth = blic ? lw * 1.8 : lw;
+        ctx.strokeStyle = blic ? "#ffffff" : boja; ctx.lineWidth = blic ? lw * 1.8 : lw;
         ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
-        for (const [x, y] of [[ax, ay], [bx, by]]) { ctx.fillStyle = l.boja || "#ef4444"; ctx.beginPath(); ctx.arc(x, y, lw * 0.9, 0, 7); ctx.fill(); }
-        const t = b ? `${b.n}` : l.naziv, mx = (ax + bx) / 2, my = (ay + by) / 2 - lw * 2.4;
-        const tw = ctx.measureText(t).width + f;
-        ctx.fillStyle = "rgba(2,14,34,.85)"; ctx.beginPath(); ctx.roundRect(mx - tw / 2, my - f * 0.8, tw, f * 1.6, f * 0.8); ctx.fill();
-        ctx.fillStyle = l.boja || "#ef4444"; ctx.fillRect(mx - tw / 2 + f * 0.35, my - 1.5, f * 0.25, 3);
-        ctx.fillStyle = "#fff"; ctx.fillText(t, mx - tw / 2 + f * 0.75, my);
+        for (const [x, y] of [[ax, ay], [bx, by]]) { ctx.fillStyle = boja; ctx.beginPath(); ctx.arc(x, y, lw * 0.9, 0, 7); ctx.fill(); }
+        // natpis (naziv, a uz brojanje broj): mala pravougaona oznaka sa ivicom u boji linije, PORED linije, da ne
+        // prekriva saobraćaj. l.natpis "a"/"b" = u produžetku linije iza tog kraja (linija ide od ivice do ivice
+        // kolovoza, pa je to trotoar/zelenilo); bez toga = upravno na liniju, na stranu ka vrhu kadra.
+        const t = b ? `${b.n}` : l.naziv, tw = ctx.measureText(t).width + f, th = f * 1.5;
+        const d = Math.hypot(bx - ax, by - ay) || 1;
+        let mx, my;
+        if (l.natpis === "a" || l.natpis === "b") {
+          const [kx, ky] = l.natpis === "a" ? [ax, ay] : [bx, by], ux = (l.natpis === "a" ? ax - bx : bx - ax) / d, uy = (l.natpis === "a" ? ay - by : by - ay) / d;
+          const pomak = Math.abs(ux) * tw / 2 + Math.abs(uy) * th / 2 + lw + 5;
+          mx = kx + ux * pomak; my = ky + uy * pomak;
+        } else {
+          let nx = -(by - ay) / d, ny = (bx - ax) / d;
+          if (ny > 0 || (ny === 0 && nx > 0)) { nx = -nx; ny = -ny; }
+          const pomak = Math.abs(nx) * tw / 2 + Math.abs(ny) * th / 2 + lw + 4;
+          mx = (ax + bx) / 2 + nx * pomak; my = (ay + by) / 2 + ny * pomak;
+          if (my - th / 2 < 2) { mx = (ax + bx) / 2 - nx * pomak; my = (ay + by) / 2 - ny * pomak; }   // uz gornju ivicu → druga strana
+        }
+        mx = Math.max(tw / 2 + 2, Math.min(w - tw / 2 - 2, mx)); my = Math.max(th / 2 + 2, Math.min(H - th / 2 - 2, my));
+        ctx.fillStyle = "rgba(2,14,34,.82)"; ctx.fillRect(mx - tw / 2, my - th / 2, tw, th);
+        ctx.strokeStyle = boja; ctx.lineWidth = 1.5; ctx.strokeRect(mx - tw / 2, my - th / 2, tw, th);
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.fillText(t, mx, my + 0.5);
       }
       ctx.restore();
     },

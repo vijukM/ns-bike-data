@@ -1,16 +1,24 @@
 {
- "generisano_utc": "2026-11-06T08:03Z",
+ "generisano_utc": "2026-11-06T08:27Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.69",
-   "datum": "2026-11-06T09:03",
-   "naslov": "Futoška ulica na mapi; glatka paleta u gornjoj traci",
+   "verzija": "1.1.70",
+   "datum": "2026-11-06T09:27",
+   "naslov": "Kamere: manji natpisi linija, pored linije",
    "stavke": [
-    "Na mapi u Poređenju i Futoška (između Futoškog puta i Jevrejske)",
-    "Paleta se više ne trza pri vraćanju u početni položaj"
+    "Natpisi su imena ulica (bez „Ka …“), manji i bez zaobljenih ivica",
+    "Natpis stoji pored linije, van kolovoza, da ne zaklanja saobraćaj",
+    "Uz brojanje broj je u okviru boje linije"
    ],
    "commit": null
+  },
+  {
+   "verzija": "1.1.69",
+   "datum": "2026-11-06T09:04",
+   "naslov": "Futoška ulica na mapi; glatka paleta u gornjoj traci - Na mapi u Poređenju i Futoška (između Futoškog puta i Jevrejske) - Paleta se više ne trza pri vraćanju u početni položaj",
+   "stavke": [],
+   "commit": "a629814"
   },
   {
    "verzija": "1.1.68",
