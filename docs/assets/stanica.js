@@ -27,8 +27,8 @@
 
 const satiDana = (s, iso) => s.dani_bez_24h[iso] || 24;
 
-/** Dnevni zbirovi posle istorije (dnevno_novo.json, pravi ga sajt/sati_novi.py) dodati na istoriju serije, do juče.
-    KPI u zaglavlju ostaju na istoriji (prosek 12 meseci, udeo kompletnih dana). */
+/** Dnevni zbirovi posle dnevno/<serija>.json (dnevno_novo.json) — danas je prazan jer istorija ide do juče
+    (sajt/pripremi_istoriju.py noću); ostaje kao rezerva. KPI u zaglavlju su iz stanice.json, do juče. */
 function produzi(d, N, id) {
   if (!N || !N.od) return d;
   const v = [...d.v], h = [...d.h];
@@ -46,14 +46,15 @@ function glava(s, r, d) {
   document.getElementById("glava-uvod").innerHTML = `${r.smerovi.length > 1 ? "Smerovi (zbir)" : "Smer"}: <b>${r.smerovi.join(" · ")}</b>`;
   document.getElementById("na-mapi").href = `mapa?id=${encodeURIComponent(r.serija)}`;
   const godina = NS.razlikaDana(r.od, r.do) / 365.25;
+  const ukupno = r.dana_ukupno || d.v.length, nepotpuni = r.dana_ukupno ? r.dana_ukupno - r.dana_kompletnih : d.v.filter((x) => x == null).length;
   const el = document.getElementById("kpi");
   const k = (boja, ikona, naslov, delta, idv, dole) => `<div class="kpi ${boja} pojava"><div class="vrh"><span class="kvadrat">${ikona}</span>
     <span class="naslov">${naslov}</span><span class="kpi-delta">${delta}</span></div><div class="vrednost" id="${idv}">—</div><div class="dole">${dole}</div></div>`;
   el.innerHTML = [
-    k("c-plava", LJ.ik("bike"), "Prosek dnevno", "12 meseci", "k-prosek", "<b>1. 9. 2025. – 31. 8. 2026.</b>"),
-    k("c-zelena", LJ.ik("check"), "Kompletnih dana", "ceo period", "k-udeo", `nepotpunih <b>${NS.broj(d.v.filter((x) => x == null).length)}</b> od ${NS.broj(d.v.length)}`),
+    k("c-plava", LJ.ik("bike"), "Prosek dnevno", "12 meseci", "k-prosek", `<b>${NS.period12(s)}</b>`),
+    k("c-zelena", LJ.ik("check"), "Kompletnih dana", "ceo period", "k-udeo", `nepotpunih <b>${NS.broj(nepotpuni)}</b> od ${NS.broj(ukupno)}`),
     k("c-ljubicasta", `<img src="${NS.pin(r.stanje)}" alt="" style="width:24px;height:24px">`, "Stanje", "30 dana", "k-stanje",
-      `kompletnih dana <b>${r.kompletnih_30d}/30</b>`),
+      `kompletnih dana <b>${r.kompletnih_30d}/${r.dana_30d ?? 30}</b>`),
     k("c-teal", LJ.ik("calendar"), "Period rada", `od ${r.od.slice(0, 4)}.`, "k-period", `<b>${NS.datum(r.od)} – ${NS.datum(r.do)}</b>`),
   ].join("");
   LJ.pojave(el);
@@ -62,10 +63,10 @@ function glava(s, r, d) {
   document.getElementById("k-stanje").innerHTML = `<span class="znacka tacka z-${r.stanje}" style="font-size:15px;padding:6px 14px">${s.stanja[r.stanje]}</span>`;
   LJ.brojanje(document.getElementById("k-period"), godina, (x) => `${NS.dec(x)}<sup>god.</sup>`);
   const upoz = [];
+  // dani „nije preuzeto“ (1. 9. – 7. 10. 2026.) ne ulaze ni u nepotpune ni u ukupan broj dana
   if (r.napomena) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span><b>${r.napomena}</b>. Ti sati su sivi i ne ulaze u gradske zbirove.</span></div>`);
-  const nepotpuni = d.v.filter((x) => x == null).length;
-  if (nepotpuni / d.v.length > 0.05) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span>Brojač nije imao kompletne podatke za
-    <b>${NS.broj(nepotpuni)}</b> od ${NS.broj(d.v.length)} dana (${NS.dec(100 * nepotpuni / d.v.length)} %). Ti delovi su isprekidani; razlog piše kad se pređe preko njih.</span></div>`);
+  if (nepotpuni / ukupno > 0.05) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span>Brojač nije imao kompletne podatke za
+    <b>${NS.broj(nepotpuni)}</b> od ${NS.broj(ukupno)} dana (${NS.dec(100 * nepotpuni / ukupno)} %). Ti delovi su isprekidani; razlog piše kad se pređe preko njih.</span></div>`);
   document.getElementById("upozorenja").innerHTML = upoz.join("");
 }
 
@@ -250,7 +251,7 @@ function izabraniDan(s, r, d, p) {
     });
   }
 
-  const opisRazloga = (kod) => (kod === "rupa" ? "brojači tada nisu čitani (rupa 1. 9. – 8. 10. 2026.)" : NS.razlog(kod));
+  const opisRazloga = (kod) => (kod === "rupa" ? "brojači tada nisu čitani (rupa 1. 9. – 7. 10. 2026.)" : NS.razlog(kod));
   async function izaberi(iso, skroluj) {
     const [D, P] = await izvori;
     if (D && D.datum > poslednji) { poslednji = D.datum; datumEl.max = poslednji; }

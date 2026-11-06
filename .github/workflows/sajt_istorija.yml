@@ -1,5 +1,5 @@
 # SAJT — podaci za prikaz. Pokreće se ručno:
-#   sta=istorija  istorija 2021-01 … 2026-08 (docs/data/istorija/) iz Release-a istorija-v1 (parquet ne ide u git)
+#   sta=istorija  istorija 2021-01 … juče (docs/data/istorija/) iz Release-a istorija-v1 + čitanja (isto radi citaj.yml noću)
 #   sta=staze     biciklističke staze iz OpenStreetMap-a (docs/data/staze.geojson), Overpass API
 #   (posle svakog pokretanja: analiza staza → docs/data/staze_analiza.json, strana Biciklističke staze)
 #   sta=mapa      vektorska osnova mape (ulice, voda, zelenilo, pruga, zgrade) iz OpenStreetMap-a (docs/data/mapa/)

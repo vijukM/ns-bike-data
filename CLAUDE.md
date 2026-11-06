@@ -48,9 +48,14 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Stanica (`stanica?id=`): ispod istorije po danu su „Izabrani dan“ (podrazumevano danas iz `data/danas.json`, ranije iz
   `istorija/sati`; danas i sutra uz prognozu i interval 10–90 %) i „Prognoza · sutra“, jedan pored drugog. Prognoza po stanici se
   ne računa u pregledaču: model pravi sve serije odjednom → `data/prognoza_biciklista.json` (danas i sutra).
-- Posle istorije (do 31. 8. 2026.) dani dolaze iz `sajt/sati_novi.py` (noću u `citaj.yml`): `istorija/sati`, `meteo_sati`
-  (izmereno vreme iz `podaci/vremenska_prognoza/stvarno/`) i `dnevno_novo.json` (dnevni zbirovi po seriji i za grad).
-  Kalendar i stanica ih dodaju na istoriju, a danas uzimaju iz `data/danas.json`; kalendar podrazumevano otvara danas.
+- **Istorija ide do juče** (`sajt/pripremi_istoriju.py`, noću u `citaj.yml` posle `scraper.satno`; master iz Release-a
+  istorija-v1 u kešu): očišćena istorija do 31. 8. 2026. + satni obračun čitanja (`satno_YYYY-MM.parquet`, `ts_utc`) +
+  dnevni zbir iz polja „juče“ čitanja kad sati nisu potpuni (`dana_iz_juce`) + izmereno vreme i praznici. Svi fajlovi
+  u `docs/data/istorija/` (stanice/KPI, grad_dnevno, dnevno, profili, rekordi, ritam, sati) se računaju ponovo, pa i
+  `staze_analiza.json`. Dani bez ijednog čitanja (1. 9. – 7. 10. 2026.) = šifra `nije_preuzeto`, ne ulaze u udeo kompletnih
+  dana ni u „30 dana“ (`dana_30d`). Period proseka: `period_12m` u stanice.json (`NS.period12(s)`), nigde tvrdo upisan.
+  Bez mastera radi rezerva `sajt/sati_novi.py` (sati, meteo_sati, `dnevno_novo.json`); strane dodaju `dnevno_novo` samo
+  posle kraja istorije (sada je prazan). Danas uzimaju iz `data/danas.json`; kalendar podrazumevano otvara danas.
   Grafik dana u kalendaru: čipovi (biciklisti, temperatura, padavine, prosečan isti dan u nedelji u mesecu, prosek 7 dana,
   prognoza za danas), izbor se pamti u `localStorage` „ns-kalendar-serije“.
 - Poređenje stanica (`poredjenje?id=34a,23a`, `assets/poredjenje.js`): 0–4 stanice (bez stanice samo poruka; bez `id` 34a i 23a).
@@ -154,7 +159,8 @@ Poslednji broj ima uvek dve cifre (00–99).
   zvaničnim brojačima (ns-trafic-data) dolaze kasnije; za javni rad treba dozvola/licenca prenosa.
 - Linije brojanja: polje `linije` kamere u `kamere.json` ({id, naziv, smer, boja, a, b, natpis}, krajevi 0–1, izvučene iz
   nacrtanih linija na snimcima). Naziv = ime ulice u nominativu (bez „Ka …“). Natpis je mali pravougaonik sa ivicom u boji
-  linije (uz brojanje u njemu je broj), PORED linije: `natpis` "a"/"b" = u produžetku iza tog kraja (van kolovoza). Vide se na kameri (dugme „Linije“); uz brojanje se vozila prate iz kadra u kadar i
+  linije (uz brojanje u njemu je broj), PORED linije: `natpis` "a"/"b" = u produžetku iza tog kraja (van kolovoza),
+  `[x, y]` (0–1) = tačno mesto (npr. na travi). Vide se na kameri (dugme „Linije“); uz brojanje se vozila prate iz kadra u kadar i
   broje kad pređu liniju (jednom po vozilu; tabla „Prešlo liniju“ sa ≈ vozila/h i „poništi“). Važi dok je kamera otvorena;
   stalno brojanje i jači model idu na server kad bude backend.
 - Preuzimanje: dnevnik čitanja biciklista, stanje prikupljanja drumskog saobraćaja (`stanje.json` iz repozitorijuma

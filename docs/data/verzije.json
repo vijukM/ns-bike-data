@@ -1,17 +1,29 @@
 {
- "generisano_utc": "2026-11-06T08:27Z",
+ "generisano_utc": "2026-11-06T13:17Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.70",
-   "datum": "2026-11-06T09:27",
-   "naslov": "Kamere: manji natpisi linija, pored linije",
+   "verzija": "1.1.71",
+   "datum": "2026-11-06T14:17",
+   "naslov": "Istorija do juče: svi KPI i strane se obnavljaju svake noći",
    "stavke": [
-    "Natpisi su imena ulica (bez „Ka …“), manji i bez zaobljenih ivica",
-    "Natpis stoji pored linije, van kolovoza, da ne zaklanja saobraćaj",
-    "Uz brojanje broj je u okviru boje linije"
+    "Nova čitanja brojača i dnevni zbir „juče“ ulaze u stanice, kalendar, rekorde, ritam i staze",
+    "Prosek 12 meseci, kompletni dani i stanje računaju se do juče (bez dana koji nisu preuzeti)",
+    "Kamere: natpis „Ka parku“ na travi"
    ],
    "commit": null
+  },
+  {
+   "verzija": "1.1.70",
+   "datum": "2026-11-06T09:28",
+   "naslov": "Kamere: manji natpisi linija, pored linije - Natpisi su imena ulica (bez „Ka …“), manji i bez zaobljenih ivica - Natpis stoji pored linije, van kolovoza, da ne zaklanja saobraćaj - Uz brojanje broj je u okviru boje linije",
+   "stavke": [
+    "Kamere: novi regioni i nazivi linija",
+    "Regioni (ROI) ponovo izvučeni sa unutrašnje ivice žute granice",
+    "Linija za Jevrejsku produžena naniže, natpis iznad nje",
+    "Nazivi: Ka pozorištu, Ka Izvršnom veću, Ka keju, Ka parku"
+   ],
+   "commit": "8b7778d"
   },
   {
    "verzija": "1.1.69",

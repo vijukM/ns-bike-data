@@ -49,11 +49,12 @@
         for (const [x, y] of [[ax, ay], [bx, by]]) { ctx.fillStyle = boja; ctx.beginPath(); ctx.arc(x, y, lw * 0.9, 0, 7); ctx.fill(); }
         // natpis (naziv, a uz brojanje broj): mala pravougaona oznaka sa ivicom u boji linije, PORED linije, da ne
         // prekriva saobraćaj. l.natpis "a"/"b" = u produžetku linije iza tog kraja (linija ide od ivice do ivice
-        // kolovoza, pa je to trotoar/zelenilo); bez toga = upravno na liniju, na stranu ka vrhu kadra.
+        // kolovoza, pa je to trotoar/zelenilo); [x, y] = tačno mesto; bez toga = upravno na liniju, ka vrhu kadra.
         const t = b ? `${b.n}` : l.naziv, tw = ctx.measureText(t).width + f, th = f * 1.5;
         const d = Math.hypot(bx - ax, by - ay) || 1;
         let mx, my;
-        if (l.natpis === "a" || l.natpis === "b") {
+        if (Array.isArray(l.natpis)) [mx, my] = u(l.natpis[0], l.natpis[1]);   // tačno mesto (0–1), npr. na travi
+        else if (l.natpis === "a" || l.natpis === "b") {
           const [kx, ky] = l.natpis === "a" ? [ax, ay] : [bx, by], ux = (l.natpis === "a" ? ax - bx : bx - ax) / d, uy = (l.natpis === "a" ? ay - by : by - ay) / d;
           const pomak = Math.abs(ux) * tw / 2 + Math.abs(uy) * th / 2 + lw + 5;
           mx = kx + ux * pomak; my = ky + uy * pomak;

@@ -1,7 +1,7 @@
 /* Kalendar: svaki dan 2021–2026 kao polje (ECharts calendar), za ceo grad (prosek po brojaču, jer se broj brojača
    menjao) ili jednu stanicu. Boja: broj biciklista ili odstupanje od uobičajenog istog dana (isti tip dana, isti mesec).
    Dan bez kompletnih podataka je šrafiran (nikad 0). Klik na dan → detalji, satni grafik i vreme. URL: ?id=34a&dan=…&mera=…
-   Istorija (grad_dnevno, dnevno/<serija>) ide do 31. 8. 2026; posle nje dani dolaze iz dnevno_novo.json (pravi ga
+   Istorija (grad_dnevno, dnevno/<serija>) ide do juče (pripremi_istoriju noću); dnevno_novo.json je rezerva za dane posle nje (pravi ga
    sajt/sati_novi.py svake noći), a današnji dan (u toku) iz data/danas.json. Podrazumevano je izabran danas. */
 "use strict";
 
@@ -33,8 +33,8 @@
   const TIP_OPIS = { radni: "radni dan", subota: "subota", nedelja: "nedelja", praznik: "praznik" };
   const poSerijama = Object.fromEntries(s.serije.map((r) => [r.serija, r]));
 
-  const RUPA = "brojači tada nisu čitani (rupa 1. 9. – 8. 10. 2026.)";
-  const rupa = (iso) => iso >= "2026-09-01" && iso <= "2026-10-08";
+  const RUPA = "brojači tada nisu čitani (rupa 1. 9. – 7. 10. 2026.)";
+  const rupa = (iso) => iso >= "2026-09-01" && iso <= "2026-10-07";
   const danasNap = () => {
     if (!D) return "dan je u toku";
     const x = izbor === "grad" ? D.danas : D.serije[izbor] && D.serije[izbor].danas;

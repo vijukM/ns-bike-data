@@ -321,3 +321,50 @@ def test_nsbike_slike_iz_kml():
     assert t[0]["slike"] == ["https://mymaps.usercontent.google.com/hostedimage/m/*/AAA?fife=s800"]      # jedna, manja
     st = [{"sif": "NSB01", "lon": 19.848378, "lat": 45.238311}, {"sif": "NSB99", "lon": 19.9, "lat": 45.2}]
     assert nsbike.dodaj_slike(st, t) == 1 and "slike" in st[0] and "slike" not in st[1]
+
+
+def test_istorija_produzena_novim_citanjima_i_juce(tmp_path):
+    """Posle 31. 8. 2026: satni obračun čitanja, dnevni zbir iz „juče“ kad sati nisu potpuni, rupa „nije preuzeto“."""
+    m = pd.concat([_master("15a", date(2026, 8, 30), date(2026, 8, 31), 1.0),
+                   _master("20a", date(2026, 8, 30), date(2026, 8, 31), 2.0)], ignore_index=True)
+    m.to_parquet(tmp_path / "master.parquet")
+    dani = pd.date_range("2026-08-29", "2026-09-05", freq="D")
+    w = pd.DataFrame([(d.strftime("%Y-%m-%d"), f"{h:02d}:00") for d in dani for h in range(1, 25)], columns=["Datum", "Cas"])
+    w["temperatura"], w["padavine"], w["sneg_N"], w["is_holiday"] = 10.0, 0.0, 0.0, 0
+    w.to_parquet(tmp_path / "meteo.parquet")
+    pd.DataFrame({"serija": ["15a", "20a"], "locationID": ["15NSaPS Vojvodjanska", "20NSa S.Jovanovica"],
+                  "direction": [14, 13], "directionDesc": ["C-D (b)", "A-B (b)"], "lat": [45.246, 45.25],
+                  "lon": [19.84, 19.80]}).to_csv(tmp_path / "feed.csv", index=False)
+    # novo: 3. 9. ceo dan za 15a (po 3), 20a samo prvih 10 sati; „juče“ za 20a iz čitanja 4. 9. = 500
+    novi = tmp_path / "citanja"
+    (novi / "2026" / "09" / "04").mkdir(parents=True)
+    d0 = pi.lokalni_dani(date(2026, 9, 3), date(2026, 9, 3))
+    sati = pd.date_range(d0["pocetak_utc"].iloc[0], periods=24, freq="h")
+    redovi = [("15a", t + pd.Timedelta(hours=1), 3.0, "ok") for t in sati]
+    redovi += [("20a", t + pd.Timedelta(hours=1), 5.0 if i < 10 else np.nan, "ok" if i < 10 else "nema_citanja")
+               for i, t in enumerate(sati)]
+    s = pd.DataFrame(redovi, columns=["stanica_id", "ts_utc", "y_A", "razlog_A"])
+    s["ts_utc"] = s["ts_utc"].dt.tz_localize("UTC")
+    s.to_parquet(novi / "2026" / "09" / "satno_2026-09.parquet")
+    pd.DataFrame({"vreme_citanja_utc": ["2026-09-04T06:02:00Z"] * 2, "serija": ["15a", "20a"], "direction": [14, 13],
+                  "datum_brojaca": ["2026-09-04"] * 2, "juce": [72, 500], "state": [1, 1]}
+                 ).to_csv(novi / "2026" / "09" / "04" / "0802.csv", index=False)
+    izlaz = tmp_path / "istorija"
+    pi.pripremi(tmp_path / "master.parquet", tmp_path / "meteo.parquet", tmp_path / "feed.csv", izlaz,
+                novi=novi, vreme_novo=tmp_path / "nema_vremena")
+    try:
+        assert _dan(izlaz, "15a", date(2026, 9, 3))[0] == 72                        # kompletan iz sati
+        v, h, r = _dan(izlaz, "20a", date(2026, 9, 3))
+        assert (v, h, r) == (500, 10, None)                                         # dopunjen iz „juče“
+        assert _dan(izlaz, "20a", date(2026, 9, 1)) == (None, 0, pi.KOD["nije_preuzeto"])
+        st = json.loads((izlaz / "stanice.json").read_text())
+        assert st["period"]["do"] == "2026-09-03" and st["nije_preuzeto"] == [["2026-09-01", "2026-09-02"]]
+        r20 = {x["serija"]: x for x in st["serije"]}["20a"]
+        assert r20["dana_iz_juce"] == 1 and r20["dana_ukupno"] == 3 and r20["dana_kompletnih"] == 3   # 30., 31. 8. i 3. 9.
+        g = json.loads((izlaz / "grad_dnevno.json").read_text())
+        assert g["do"] == "2026-09-03" and g["v"][-1] == 72 + 500 and g["n"][-1] == 2
+        s9 = json.loads((izlaz / "sati" / "2026-09.json").read_text())
+        assert {c for _, _, c in s9["r"]["20a"]} >= {pi.KOD["nije_preuzeto"], pi.KOD["nema_reda"]}
+        assert json.loads((izlaz / "dnevno_novo.json").read_text())["od"] is None
+    finally:
+        pi.DO = pi.ISTORIJA_DO

@@ -6,6 +6,8 @@
   const main = document.getElementById("sadrzaj");
   try {
     const [s, g] = await Promise.all([NS.stanice(), NS.json("grad_dnevno.json")]);
+    const ep = document.getElementById("ist-period");
+    if (ep && s.period) ep.textContent = `Istorija · ${NS.datum(s.period.od)} – ${NS.datum(s.period.do)}`;
     const a = NS.analizaGrada(g);
     kpi(s, g);
     mapaKartica(s, a);
@@ -184,5 +186,5 @@ function loseStanice(s) {
   const lose = s.serije.filter((r) => r.stanje !== "radi");
   document.getElementById("lose-stanice").innerHTML = lose.map((r) => `<button type="button" onclick="location.href='stanica?id=${r.serija}'">
     <img src="${NS.pin(r.stanje)}" alt=""><span>${r.serija} · ${r.naziv}<small>${r.napomena || s.stanja[r.stanje]}</small></span>
-    <span class="vrednost-reda">${r.kompletnih_30d}/30</span></button>`).join("") || '<p class="sitno">Svi brojači rade.</p>';
+    <span class="vrednost-reda">${r.kompletnih_30d}/${r.dana_30d ?? 30}</span></button>`).join("") || '<p class="sitno">Svi brojači rade.</p>';
 }

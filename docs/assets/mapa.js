@@ -38,7 +38,7 @@
       const el = document.getElementById("spisak");
       const red = s.serije.filter((r) => filter && (filter === "sve" || r.stanje === filter) && (!upit || bez(`${r.serija} ${r.naziv} ${r.smerovi.join(" ")}`).includes(upit)));
       ctl.filtriraj(filter === "sve" && !upit ? null : new Set(red.map((r) => r.serija)));
-      document.getElementById("spisak-kolona").innerHTML = `prosek / dan${MAPA.info("prosečan broj biciklista dnevno: kompletni dani, 1. 9. 2025. – 31. 8. 2026. (poslednjih 12 meseci istorije)")}`;
+      document.getElementById("spisak-kolona").innerHTML = `prosek / dan${MAPA.info(`prosečan broj biciklista dnevno: kompletni dani, poslednjih 12 meseci (${NS.period12(s)})`)}`;
       el.innerHTML = red.map((r) => {
         const desno = r.prosek_12m != null && r.stanje !== "neispravan" ? NS.broj(r.prosek_12m) : "—";
         return `<button type="button" data-s="${r.serija}" class="${r.serija === izabrana ? "izabran" : ""}" role="listitem">
