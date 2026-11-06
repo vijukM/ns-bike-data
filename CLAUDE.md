@@ -42,6 +42,7 @@ Poslednji broj ima uvek dve cifre (00–99).
 - Znak u bočnom meniju = `NaSicu_ikonica_bicikl_bez_NS.svg` + `NaSicu_ikonica_NS.svg` kao poseban sloj na istom mestu
   (isti koordinatni sistem); pri skupljanju/širenju menija slova NS klize između malog znaka i rama bicikla, a
   bicikl i natpis nestaju/pojavljuju se (`.brend-slika` u `stil.css`).
+- Dugmad gore desno (lupa, zvonce, paleta, sunce/mesec) imaju svoj pokret na prelazu mišem (`ik-*` u `stil.css`); uz „manje pokreta“ stoje.
 - Pretraga (lupa u gornjoj traci, Ctrl K ili /): modal sa poljem, filterima Sve / Strane / Stanice / Ulice (ulice iz
   `staze_analiza.json` → `staze?ulica=`), zatvaranje ×, Esc ili klikom van.
 - Stanica (`stanica?id=`): ispod istorije po danu su „Izabrani dan“ (podrazumevano danas iz `data/danas.json`, ranije iz
@@ -53,7 +54,7 @@ Poslednji broj ima uvek dve cifre (00–99).
   Grafik dana u kalendaru: čipovi (biciklisti, temperatura, padavine, prosečan isti dan u nedelji u mesecu, prosek 7 dana,
   prognoza za danas), izbor se pamti u `localStorage` „ns-kalendar-serije“.
 - Poređenje stanica (`poredjenje?id=34a,23a`, `assets/poredjenje.js`): 0–4 stanice (bez stanice samo poruka; bez `id` 34a i 23a).
-  Izbor: čipovi, pretraga, brzi izbori i dugme „Na mapi“ (padajuća mala SVG mapa; klik na mesto doda a, pa b, treći klik ukloni; podloga `mapa/voda.geojson` + glavni bulevari `mapa/bulevari.geojson` iz `python -m sajt.bulevari`).
+  Izbor: čipovi, pretraga, brzi izbori i dugme „Na mapi“ (padajuća mala SVG mapa; klik na mesto doda a, pa b, treći klik ukloni; podloga `mapa/voda.geojson` + glavni bulevari i ulice iz `ULICE` (Jevrejska, Futoški put, Rumenačka, Hadži Ruvimova, Kornelija Stankovića) → `mapa/bulevari.geojson` iz `python -m sajt.bulevari`).
   Delovi (dva po redu): ključni brojevi | karakter (radar: jutro, popodne, vikend, leto/zima, kiša iz `grad_dnevno`, rast);
   po danu (ceo red); prosečan dan po satu | dve strane ulice (a/b — dve strane, svaka broji oba smera); danas | sutra
   (`danas.json`, `NS.prognozaLokalno` iz `prognoza_biciklista.json`); meseci kroz godine | sat × dan.

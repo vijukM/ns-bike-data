@@ -511,12 +511,26 @@
   const tacka = (lon, lat) => [((lon * kx - minX + (maxX - minX) * pad) / sx) * W, ((-lat - minY + (maxY - minY) * pad) / sy) * H];
   function crtajMapu([voda, bul]) {
     const linija = (l) => "M" + l.map(([x, y]) => tacka(x, y).map((v) => v.toFixed(1)).join(",")).join("L");
-    // bulevari: tanke linije + kratak natpis na sredini najduže deonice (pun naziv na prelazu mišem)
+    // bulevari i glavne ulice: tanke linije + kratak natpis na najduže deonici (pun naziv na prelazu mišem);
+    // natpis ide na sredinu, a ako bi prekrio već postavljen, pomera se duž linije
+    const zauzeto = mesta.map((m) => { const [x, y] = tacka(m.lon, m.lat); return [x, y + 3, 5]; });   // i tačke stanica
     const bulevari = bul ? bul.features.map((f) => {
-      const najduza = f.geometry.coordinates.reduce((a, l) => (l.length > a.length ? l : a), []);
+      const duzina = (l) => l.reduce((a, t, i) => a + (i ? Math.hypot(t[0] - l[i - 1][0], t[1] - l[i - 1][1]) : 0), 0);
+      const najduza = f.geometry.coordinates.map((l) => l.map((t) => tacka(...t))).reduce((a, l) => (duzina(l) > duzina(a) ? l : a), []);
       const ime = f.properties.n.replace("Bulevar ", "Bul. "), pola = ime.length * 1.9 + 3;    // ~ pola širine natpisa
-      const [px, py] = tacka(...najduza[Math.floor(najduza.length / 2)]);
-      const mx = Math.max(pola, Math.min(W - pola, px)), my = Math.max(10, Math.min(H - 4, py - 3));   // natpis ne izlazi van mape
+      const mesto = (u) => {     // tačka na delu u (0–1) dužine linije
+        let ostalo = duzina(najduza) * u, [px, py] = najduza[0];
+        for (let i = 1; i < najduza.length; i++) {
+          const [ax, ay] = najduza[i - 1], [bx, by] = najduza[i], d = Math.hypot(bx - ax, by - ay);
+          if (ostalo <= d) { [px, py] = [ax + ((bx - ax) * ostalo) / (d || 1), ay + ((by - ay) * ostalo) / (d || 1)]; break; }
+          ostalo -= d; [px, py] = [bx, by];
+        }
+        return [Math.max(pola, Math.min(W - pola, px)), Math.max(10, Math.min(H - 4, py - 3))];   // ne izlazi van mape
+      };
+      const sudar = ([x, y]) => zauzeto.some(([a, b, p]) => Math.abs(a - x) < p + pola && Math.abs(b - y) < 9);
+      const kandidati = [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9].map(mesto);
+      const [mx, my] = kandidati.find((k) => !sudar(k)) || kandidati[0];
+      zauzeto.push([mx, my, pola]);
       return `<g class="pr-mapa-bul"><title>${f.properties.n}</title><path d="${f.geometry.coordinates.map(linija).join("")}"/>
         <text x="${mx.toFixed(1)}" y="${my.toFixed(1)}">${ime}</text></g>`;
     }).join("") : "";

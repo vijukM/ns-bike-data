@@ -8,7 +8,7 @@ const LJ = (() => {
   if (location.protocol !== "file:" && /\.html$/.test(location.pathname))
     history.replaceState(history.state, "", location.pathname.replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "") + location.search + location.hash);
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.67";
+  const VERZIJA = "1.1.68";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -154,7 +154,8 @@ const LJ = (() => {
       } catch (e) { /* bez memorije */ }
     }
     const td = document.getElementById("tema-dugme");
-    if (td) td.innerHTML = ik(stvarna === "dark" ? "sun" : "moon");
+    if (td) { const ime = stvarna === "dark" ? "sun" : "moon"; td.innerHTML = ik(ime, `ik-${ime}${pre.temaStvarna && stvarna !== pre.temaStvarna ? " ulaz" : ""}`);
+      td.firstChild.addEventListener("animationend", (e) => e.target.classList.remove("ulaz"), { once: true }); }
     if (stvarna !== pre.temaStvarna || izgled.boja !== pre.boja) document.dispatchEvent(new Event("tema"));
     if (["gustina", "raspored", "sirina", "smer"].some((k) => izgled[k] !== pre[k])) {
       [60, 320].forEach((ms) => setTimeout(() => window.dispatchEvent(new Event("resize")), ms));   // grafici i mape
@@ -635,7 +636,7 @@ const LJ = (() => {
       <div class="padajuce"><button class="ikonica-dugme jezik" id="jezik-dugme" aria-label="Jezik">SR</button></div>
       <div class="padajuce"><button class="ikonica-dugme" id="obavestenja-dugme" aria-label="Obaveštenja">${ik("bell")}<span class="brojac skriveno"></span></button></div>
       <button class="ikonica-dugme" id="prilagodi-dugme" aria-label="Prilagodi izgled" title="Prilagodi izgled" aria-haspopup="dialog">${ik("palette")}${videno() ? "" : '<span class="tacka-novo"></span>'}</button>
-      <button class="ikonica-dugme" id="tema-dugme" aria-label="Svetla ili tamna tema" title="Svetla / tamna tema">${ik(tema() === "dark" ? "sun" : "moon")}</button>
+      <button class="ikonica-dugme" id="tema-dugme" aria-label="Svetla ili tamna tema" title="Svetla / tamna tema">${ik(tema() === "dark" ? "sun" : "moon", tema() === "dark" ? "ik-sun" : "ik-moon")}</button>
       <button class="dugme malo prijava-dugme" id="prijava-dugme" aria-haspopup="dialog">${ik("user")}<span>Prijava</span></button>`;
 
     main.parentNode.insertBefore(ljuska, main);
