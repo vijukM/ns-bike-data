@@ -1,16 +1,27 @@
 {
- "generisano_utc": "2026-11-06T07:08Z",
+ "generisano_utc": "2026-11-06T07:44Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.68",
+   "datum": "2026-11-06T08:44",
+   "naslov": "Mapa u Poređenju: glavne ulice; pokret ikonica u gornjoj traci",
+   "stavke": [
+    "Na mapi i Jevrejska, Futoški put, Rumenačka, Hadži Ruvimova i Kornelija Stankovića",
+    "Natpisi ulica ne prekrivaju jedan drugi ni stanice",
+    "Lupa, zvonce, paleta i sunce/mesec imaju animaciju na prelazu mišem"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.67",
-   "datum": "2026-11-06T08:08",
+   "datum": "2026-11-06T08:09",
    "naslov": "Poređenje stanica: bulevari na mapi, prag „posao, škola“ do 65 %",
    "stavke": [
     "na mapi za izbor stanica su glavni bulevari sa nazivima (novi sloj mapa/bulevari.geojson)",
     "vikend do 65 % radnog dana = „posao, škola“ (tabela i karakter isto)"
    ],
-   "commit": null
+   "commit": "439cf16"
   },
   {
    "verzija": "1.1.66",
