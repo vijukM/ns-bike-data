@@ -53,7 +53,7 @@ Poslednji broj ima uvek dve cifre (00–99).
   Grafik dana u kalendaru: čipovi (biciklisti, temperatura, padavine, prosečan isti dan u nedelji u mesecu, prosek 7 dana,
   prognoza za danas), izbor se pamti u `localStorage` „ns-kalendar-serije“.
 - Poređenje stanica (`poredjenje?id=34a,23a`, `assets/poredjenje.js`): 0–4 stanice (bez stanice samo poruka; bez `id` 34a i 23a).
-  Izbor: čipovi, pretraga, brzi izbori i mala SVG mapa (klik na mesto doda a, pa b, treći klik ukloni; podloga `mapa/voda.geojson`).
+  Izbor: čipovi, pretraga, brzi izbori i dugme „Na mapi“ (padajuća mala SVG mapa; klik na mesto doda a, pa b, treći klik ukloni; podloga `mapa/voda.geojson`).
   Delovi (dva po redu): ključni brojevi | karakter (radar: jutro, popodne, vikend, leto/zima, kiša iz `grad_dnevno`, rast);
   po danu (ceo red); prosečan dan po satu | dve strane ulice (a/b — dve strane, svaka broji oba smera); danas | sutra
   (`danas.json`, `NS.prognozaLokalno` iz `prognoza_biciklista.json`); meseci kroz godine | sat × dan.

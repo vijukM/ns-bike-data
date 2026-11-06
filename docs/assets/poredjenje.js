@@ -54,7 +54,6 @@
         <div class="pr-izabrane" id="pr-izabrane"></div>
         <div class="pr-brzo" id="pr-brzo"></div>
       </div>
-      <div class="pr-mapa" id="pr-mapa" aria-label="Mapa brojača — klik dodaje ili uklanja stanicu"></div>
     </section>
     <section class="kartica pojava pr-prazno" id="pr-prazno" hidden>
       <span class="ikona-velika">${LJ.ik("compare") || ""}</span>
@@ -125,11 +124,16 @@
 
   // ---------------------------------------------------------------- izbor stanica: čipovi, dodavanje, brzi izbori
   const izbEl = document.getElementById("pr-izabrane"), brzoEl = document.getElementById("pr-brzo");
+  let mapaOtvorena = false;
+  // klik van mape je zatvara; klik na tačku ponovo nacrta izbor (tačka tada više nije u strani), pa se takav klik ne računa
+  document.addEventListener("click", (e) => { if (mapaOtvorena && e.target.isConnected && !e.target.closest(".pr-mapa-omot")) { mapaOtvorena = false; const p = document.querySelector(".pr-mapa-panel"); if (p) p.remove(); const b = document.getElementById("pr-na-mapi"); if (b) b.setAttribute("aria-expanded", "false"); } });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && mapaOtvorena) { mapaOtvorena = false; crtajIzbor(); } });
   function crtajIzbor() {
     izbEl.innerHTML = izabrane.map((k, i) => `<span class="pr-cip" style="--boja:var(${BOJE[i]})"><i></i>
         <a href="stanica?id=${encodeURIComponent(k)}">${ime(k)}</a>
         <button type="button" data-ukloni="${k}" aria-label="Ukloni ${k}" title="Ukloni">×</button></span>`).join("") +
-      (izabrane.length < MAKS ? `<span class="padajuce"><button type="button" class="dugme malo" id="pr-dodaj">+ Dodaj stanicu</button></span>` : "");
+      (izabrane.length < MAKS ? `<span class="padajuce"><button type="button" class="dugme malo" id="pr-dodaj">+ Dodaj stanicu</button></span>` : "") +
+      `<span class="padajuce pr-mapa-omot"><button type="button" class="dugme malo" id="pr-na-mapi" aria-expanded="${mapaOtvorena}" title="Odaberi stanice na mapi">${LJ.ik("map")}Na mapi</button></span>`;
     const parovi = izabrane.map((k) => k.replace(/[ab]$/, (c) => (c === "a" ? "b" : "a"))).filter((k) => po[k] && !izabrane.includes(k));
     brzoEl.innerHTML = `<span class="sitno">Brzo:</span>` +
       (parovi.length && izabrane.length < MAKS ? `<button type="button" class="dugme malo" data-brzo="par">druga strana ulice (${parovi.slice(0, MAKS - izabrane.length).join(", ")})</button>` : "") +
@@ -137,11 +141,20 @@
       `<button type="button" class="dugme malo" data-brzo="ab">obe strane najprometnije ulice</button>`;
     const d = document.getElementById("pr-dodaj");
     if (d) d.addEventListener("click", otvoriDodavanje);
+    document.getElementById("pr-na-mapi").addEventListener("click", (e) => { e.stopPropagation(); mapaOtvorena = !mapaOtvorena; if (mapaOtvorena) document.querySelectorAll(".padajuce .panel").forEach((p) => p.remove()); crtajIzbor(); });
+    if (mapaOtvorena) {   // panel sa mapom ostaje otvoren dok se biraju stanice (zatvara ga dugme, Esc ili klik van)
+      const p = document.createElement("div");
+      p.className = "panel pr-mapa-panel";
+      p.innerHTML = `<div class="pr-mapa" id="pr-mapa"></div><p class="sitno">Klik na mesto doda stanicu (a, pa b); kad su sve izabrane, klik ih uklanja.</p>`;
+      document.querySelector(".pr-mapa-omot").appendChild(p);
+      osveziMapu();
+    }
   }
   function otvoriDodavanje(e) {
     e.stopPropagation();
     const omot = e.currentTarget.parentElement, stari = omot.querySelector(".panel");
     document.querySelectorAll(".padajuce .panel").forEach((p) => p.remove());
+    mapaOtvorena = false; const bm = document.getElementById("pr-na-mapi"); if (bm) bm.setAttribute("aria-expanded", "false");
     if (stari) return;
     const p = document.createElement("div");
     p.className = "panel izbor-stanica";
@@ -485,7 +498,6 @@
   }
 
   // ---------------------------------------------------------------- mala mapa (izbor klikom)
-  const mapaEl = document.getElementById("pr-mapa");
   const mesta = (() => {
     const m = new Map();
     for (const r of s.serije) { const k = r.serija.replace(/[ab]$/, ""); if (!m.has(k)) m.set(k, { k, naziv: r.naziv, lat: +r.lat, lon: +r.lon, serije: [] }); m.get(k).serije.push(r.serija); }
@@ -499,6 +511,8 @@
   const tacka = (lon, lat) => [((lon * kx - minX + (maxX - minX) * pad) / sx) * W, ((-lat - minY + (maxY - minY) * pad) / sy) * H];
   function crtajMapu(voda) {
     const reka = voda ? voda.features.map((f) => f.geometry.coordinates.map((pr) => "M" + pr.map(([x, y]) => tacka(x, y).map((v) => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("") : "";
+    const mapaEl = document.getElementById("pr-mapa");
+    if (!mapaEl) return;
     mapaEl.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img"><path class="pr-mapa-reka" d="${reka}"/>${mesta.map((m) => {
       const [x, y] = tacka(m.lon, m.lat), i = m.serije.map((k) => izabrane.indexOf(k)).find((j) => j >= 0);
       const izab = i != null && i >= 0;
@@ -508,7 +522,8 @@
   }
   let vodaP = null;
   const osveziMapu = () => { (vodaP ||= NS.json("mapa/voda.geojson", "data/").catch(() => null)).then(crtajMapu); };
-  mapaEl.addEventListener("click", (e) => {
+  izbEl.addEventListener("click", (e) => {
+    if (!e.target.closest(".pr-mapa")) return;
     const g = e.target.closest("[data-mesto]"); if (!g) return;
     const m = mesta.find((x) => x.k === g.dataset.mesto), u = m.serije.filter((k) => izabrane.includes(k));
     if (u.length === m.serije.length) return postavi(izabrane.filter((k) => !m.serije.includes(k)));
@@ -522,7 +537,6 @@
     izabrane = [...new Set(nove)].filter((k) => po[k]).slice(0, MAKS);
     upisiAdresu();
     crtajIzbor();
-    osveziMapu();
     const moj = ++red;
     let x;
     try { x = await Promise.all(izabrane.map(podaci)); } catch (e) { LJ.tost("Podaci za stanicu nisu učitani.", "alert"); return; }
