@@ -1839,10 +1839,13 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .dugme.opasno { background: var(--danger, #F0391F); border-color: var(--danger, #F0391F); color: #fff; }
 
 /* ---------------------------------------------------------------- Poređenje stanica */
-.pr-izbor { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px 22px; align-items: start; }
+.pr-izbor { display: grid; gap: 12px; }
 .pr-izbor-levo { display: grid; gap: 12px; align-content: start; }
-@media (max-width: 900px) { .pr-izbor { grid-template-columns: minmax(0, 1fr); } }
-.pr-mapa svg { display: block; width: 100%; height: auto; max-height: 260px; }
+.pr-mapa-omot .dugme svg { width: 15px; height: 15px; }
+.pr-mapa-omot .dugme[aria-expanded="true"] { border-color: var(--primary); color: var(--primary); }
+.panel.pr-mapa-panel { left: 0; right: auto; width: 420px; max-width: calc(100vw - 32px); padding: 10px; }
+.pr-mapa-panel .sitno { margin: 6px 2px 0; }
+.pr-mapa svg { display: block; width: 100%; height: auto; max-height: 340px; }
 .pr-mapa-reka { fill: var(--g-bicikl); opacity: .14; }
 .pr-mapa-t { cursor: pointer; }
 .pr-mapa-t circle { fill: var(--t-light); opacity: .55; stroke: var(--bg-card); stroke-width: 1.2; transition: opacity .15s; }
