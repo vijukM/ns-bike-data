@@ -1,15 +1,25 @@
 {
- "generisano_utc": "2026-11-06T06:47Z",
+ "generisano_utc": "2026-11-06T07:08Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.67",
+   "datum": "2026-11-06T08:08",
+   "naslov": "Poređenje stanica: bulevari na mapi, prag „posao, škola“ do 65 %",
+   "stavke": [
+    "na mapi za izbor stanica su glavni bulevari sa nazivima (novi sloj mapa/bulevari.geojson)",
+    "vikend do 65 % radnog dana = „posao, škola“ (tabela i karakter isto)"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.66",
-   "datum": "2026-11-06T07:47",
+   "datum": "2026-11-06T07:49",
    "naslov": "Poređenje stanica: mapa za izbor iza dugmeta „Na mapi“",
    "stavke": [
     "mala mapa više ne stoji stalno na strani, otvara se dugmetom „Na mapi“ pored „+ Dodaj stanicu“"
    ],
-   "commit": null
+   "commit": "95ccb33"
   },
   {
    "verzija": "1.1.65",
