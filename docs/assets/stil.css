@@ -165,7 +165,8 @@ svg.ik { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none
 #pretraga-dugme:hover svg.ik { animation: ik-lupa .7s ease-in-out; }
 #obavestenja-dugme svg.ik { transform-origin: 50% 8%; }
 #obavestenja-dugme:hover svg.ik { animation: ik-zvono .8s ease-in-out; }
-#prilagodi-dugme:hover svg.ik { animation: ik-paleta .7s cubic-bezier(.34,1.56,.64,1); }
+#prilagodi-dugme svg.ik { transition: transform .45s cubic-bezier(.34,1.4,.64,1); }   /* prelaz, ne animacija: glatko i u povratku */
+#prilagodi-dugme:hover svg.ik { transform: rotate(-30deg) scale(1.1); }
 #tema-dugme:hover svg.ik-sun { transform: rotate(90deg) scale(1.1); transition-duration: .6s; }
 #tema-dugme:hover svg.ik-moon { animation: ik-mesec .8s ease-in-out; }
 #tema-dugme svg.ulaz, #tema-dugme:hover svg.ulaz { animation: ik-ulaz .45s cubic-bezier(.34,1.56,.64,1); }
@@ -173,7 +174,6 @@ svg.ik { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none
   50% { transform: translate(1.5px, 1px) rotate(6deg) scale(1.1); } 75% { transform: translate(-1px, .5px) rotate(-4deg) scale(1.05); } }
 @keyframes ik-zvono { 0%, 100% { transform: none; } 15% { transform: rotate(16deg); } 30% { transform: rotate(-14deg); }
   45% { transform: rotate(10deg); } 60% { transform: rotate(-6deg); } 75% { transform: rotate(3deg); } }
-@keyframes ik-paleta { 0% { transform: none; } 60% { transform: rotate(-30deg) scale(1.12); } 100% { transform: rotate(0) scale(1); } }
 @keyframes ik-mesec { 0%, 100% { transform: none; } 35% { transform: rotate(-20deg) scale(1.08); } 70% { transform: rotate(10deg); } }
 @keyframes ik-ulaz { from { transform: rotate(-120deg) scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
@@ -806,8 +806,6 @@ a.rekord:hover, a.cinjenica:hover { border-color: var(--kpi-boja, var(--primary)
 /* ================================================================ PRILAGODI: dugme i fioka */
 #prilagodi-dugme .tacka-novo { position: absolute; top: 7px; right: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 0 var(--primary-ring); animation: puls 2s infinite; }
 @keyframes puls { 0% { box-shadow: 0 0 0 0 var(--primary-ring); } 70% { box-shadow: 0 0 0 8px rgba(0, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } }
-#prilagodi-dugme svg { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
-#prilagodi-dugme:hover svg { transform: rotate(35deg); }
 html.bez-skrola { overflow: hidden; }
 .prilagodi-pozadina { position: fixed; inset: 0; z-index: 1900; background: transparent; opacity: 0; pointer-events: none; transition: opacity .25s; }
 .prilagodi-pozadina.otvoren { opacity: 1; pointer-events: auto; }
