@@ -16,7 +16,7 @@ ULAZ = KOREN / "docs" / "data" / "mapa" / "putevi.geojson"
 IZLAZ = KOREN / "docs" / "data" / "mapa" / "bulevari.geojson"
 TOLERANCIJA_M = 15
 # glavne ulice koje nisu bulevari, a pomažu da se stanica smesti na mapi
-ULICE = ("Jevrejska", "Futoški put", "Rumenačka", "Hadži Ruvimova", "Kornelija Stankovića")
+ULICE = ("Jevrejska", "Futoška", "Futoški put", "Rumenačka", "Hadži Ruvimova", "Kornelija Stankovića")
 
 
 def _dp(tacke: list, tol: float) -> list:

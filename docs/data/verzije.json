@@ -1,17 +1,23 @@
 {
- "generisano_utc": "2026-11-06T07:44Z",
+ "generisano_utc": "2026-11-06T08:03Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.68",
-   "datum": "2026-11-06T08:44",
-   "naslov": "Mapa u Poređenju: glavne ulice; pokret ikonica u gornjoj traci",
+   "verzija": "1.1.69",
+   "datum": "2026-11-06T09:03",
+   "naslov": "Futoška ulica na mapi; glatka paleta u gornjoj traci",
    "stavke": [
-    "Na mapi i Jevrejska, Futoški put, Rumenačka, Hadži Ruvimova i Kornelija Stankovića",
-    "Natpisi ulica ne prekrivaju jedan drugi ni stanice",
-    "Lupa, zvonce, paleta i sunce/mesec imaju animaciju na prelazu mišem"
+    "Na mapi u Poređenju i Futoška (između Futoškog puta i Jevrejske)",
+    "Paleta se više ne trza pri vraćanju u početni položaj"
    ],
    "commit": null
+  },
+  {
+   "verzija": "1.1.68",
+   "datum": "2026-11-06T08:45",
+   "naslov": "Mapa u Poređenju: glavne ulice; pokret ikonica u gornjoj traci - Na mapi i Jevrejska, Futoški put, Rumenačka, Hadži Ruvimova i Kornelija Stankovića - Natpisi ulica ne prekrivaju jedan drugi ni stanice - Lupa, zvonce, paleta i sunce/mesec imaju animaciju na prelazu mišem",
+   "stavke": [],
+   "commit": "9d394c3"
   },
   {
    "verzija": "1.1.67",
