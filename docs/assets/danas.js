@@ -54,7 +54,7 @@
       NS.json("prosek_dana.json").catch(() => null), NS.stanice().catch(() => null)]);
     // brojači koji rade, ali ne ulaze u grad (stanice.json van_grada, npr. 36b, 49a/49b za vreme radova)
     const van = (S && S.van_grada) || {};
-    const vanGrada = (k) => { const x = van[k]; return x && (!x.od || iso >= x.od) && (!x.do || iso <= x.do) ? x.opis : null; };
+    const vanGrada = (k) => { const x = [].concat(van[k] || []).find((p) => (!p.od || iso >= p.od) && (!p.do || iso <= p.do)); return x ? x.opis : null; };
     const dan = mes.dani.find((x) => x[0] === iso);
     if (!dan) throw new Error(`nema podataka za ${iso}`);
     const [, i0, n] = dan;

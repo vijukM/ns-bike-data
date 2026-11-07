@@ -26,7 +26,7 @@ Pravila:
   - dnevni zbir postoji samo ako su SVI sati lokalnog dana validni (inače null + broj validnih sati);
   - serija 28 je od 18.04.2026 do popravke 23.10.2026 (13 h) neispravna (jedan smer nije brojao; šifra
     neispravan_brojac): ti sati su null i ne ulaze ni u stanicu ni u grad;
-  - VAN_GRADA (36b, 49a, 49b): podaci se prikazuju na stanici, ali ne ulaze u gradske zbirove ni u statistiku grada
+  - VAN_GRADA (36b, 42a, 49a, 49b; po periodima): podaci se prikazuju na stanici, ali ne ulaze u gradske zbirove ni u statistiku grada
     (rekordi, ritam, prosek dana), a stanje im je „delimično“;
   - gradski zbir = zbir serija sa kompletnim danom + broj uključenih serija.
 
@@ -79,12 +79,17 @@ KOD["odluka_ok"] = 0                                   # ručno potvrđeno kao v
 # 28: smer 21 (Bul. kralja Petra I → Pap Pavla) nije brojao; popravka u petak 23.10.2026, prvi ispravan sat 13–14 h
 # (isto kao prognoza_biciklista.priprema.ISKLJUCENE / KVAR_SMERA i sajt/danas.py)
 NEISPRAVNE = {"28": (date(2026, 4, 18), pd.Timestamp("2026-10-23 11:00"), "neispravan_brojac", "brojač neispravan od 04/2026")}
-# serija: (od, do ili None, opis) — brojač radi i prikazuje se na svojoj stranici, ali NE ulazi u gradske zbirove ni u
-# statistiku grada (nepouzdan ili ne meri ceo saobraćaj); stanje mu je „delimično“
+# serija: [(od ili None, do ili None, opis), …] — brojač radi i prikazuje se na svojoj stranici, ali u tim periodima NE
+# ulazi u gradske zbirove ni u statistiku grada (nepouzdan ili ne meri ceo saobraćaj); stanje mu je tada „delimično“
+_KVAR_SENZORA = "nepouzdano brojanje: senzor satima ne broji (nule), pa dan pokaže samo deo prolazaka"
+_RADOVI = "radovi u ulici: staza je povremeno zatvorena ili otvorena samo u jednom smeru"
 VAN_GRADA = {
-    "36b": (None, None, "nepouzdano brojanje: broji samo deo prolazaka (svega 5–20 % od 36a na istom mestu)"),
-    "49a": (date(2026, 9, 1), None, "radovi u ulici: staza je povremeno zatvorena ili otvorena samo u jednom smeru"),
-    "49b": (date(2026, 9, 1), None, "radovi u ulici: staza je povremeno zatvorena ili otvorena samo u jednom smeru"),
+    "36b": [(None, None, "nepouzdano brojanje: broji samo deo prolazaka (svega 5–20 % od 36a na istom mestu)")],
+    # 42a: isti kvar kao 36b, poređenje sa 42b (druga strana iste ulice, inače ≈ 1 : 1): u ovim periodima trećina do
+    # većina dana ispod 40 % od 42b (7/2026: 15 od 28 dana, 10/2026: 18 od 22, celi dani 0 ili > 10 h nula)
+    "42a": [(date(2025, 2, 1), date(2025, 5, 31), _KVAR_SENZORA), (date(2026, 7, 1), None, _KVAR_SENZORA)],
+    "49a": [(date(2026, 9, 1), None, _RADOVI)],
+    "49b": [(date(2026, 9, 1), None, _RADOVI)],
 }
 
 
@@ -98,22 +103,23 @@ def neispravan_do(serija: str, dan: date) -> bool:
 
 def van_grada(serija: str, dan: date) -> str | None:
     """Opis ako serija na dan `dan` ne ulazi u gradske zbirove (VAN_GRADA), inače None."""
-    if serija not in VAN_GRADA:
-        return None
-    od, do, opis = VAN_GRADA[serija]
-    return opis if (od is None or dan >= od) and (do is None or dan <= do) else None
+    for od, do, opis in VAN_GRADA.get(serija, []):
+        if (od is None or dan >= od) and (do is None or dan <= do):
+            return opis
+    return None
 
 
 def maska_van_grada(serija: pd.Series, datum: pd.Series) -> pd.Series:
     """True za redove (serija, lokalni datum) koji ne ulaze u grad."""
     m = pd.Series(False, index=serija.index)
-    for s, (od, do, _) in VAN_GRADA.items():
-        x = serija == s
-        if od is not None:
-            x &= datum >= od
-        if do is not None:
-            x &= datum <= do
-        m |= x
+    for s, periodi in VAN_GRADA.items():
+        for od, do, _ in periodi:
+            x = serija == s
+            if od is not None:
+                x &= datum >= od
+            if do is not None:
+                x &= datum <= do
+            m |= x
     return m
 SEZONE = {"zima": (12, 1, 2), "prolece": (3, 4, 5), "leto": (6, 7, 8), "jesen": (9, 10, 11)}
 TIPOVI_DANA = ["radni", "subota", "nedelja_praznik"]
@@ -790,8 +796,8 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
         "period_12m": {"od": od_12m.isoformat(), "do": DO.isoformat()},
         "istorija_do": ISTORIJA_DO.isoformat(),
         "nije_preuzeto": _opsezi(rupa),
-        "van_grada": {k: {"od": od.isoformat() if od else None, "do": do.isoformat() if do else None, "opis": o}
-                      for k, (od, do, o) in VAN_GRADA.items()},
+        "van_grada": {k: [{"od": od.isoformat() if od else None, "do": do.isoformat() if do else None, "opis": o}
+                          for od, do, o in periodi] for k, periodi in VAN_GRADA.items()},
         "izvor": "UGZINS / Mikrobit brojači (očišćeno, master_v4_E3 do 31. 8. 2026., zatim čitanja brojača "
                  "svakog sata i dnevni zbir „juče“); vreme: Open-Meteo",
         "razlozi": [{"kod": k, "opis": o} for k, o in RAZLOZI], "stanja": STANJA, "stanja_opis": STANJA_OPIS,

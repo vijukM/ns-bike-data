@@ -1,17 +1,23 @@
 {
- "generisano_utc": "2026-11-07T10:58Z",
+ "generisano_utc": "2026-11-07T11:14Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.72",
-   "datum": "2026-11-07T11:58",
-   "naslov": "Brojači: 28 ponovo radi, 36b i 49a/49b van gradske statistike",
+   "verzija": "1.1.73",
+   "datum": "2026-11-07T12:14",
+   "naslov": "Brojač 42a van gradske statistike u periodima kvara",
    "stavke": [
-    "28: dani posle popravke 23. 10. 2026. se prikazuju i ulaze u zbirove, stanje „radi“",
-    "36b (nepouzdano brojanje) i 49a/49b (radovi) ne ulaze u zbir grada, rekorde i ritam; stanje „delimično“",
-    "Na stranici stanice objašnjenje za ove brojače"
+    "42a (2–5/2025 i od 7/2026): senzor satima ne broji, pa ne ulazi u zbir grada; stanje „delimično“",
+    "42b radi ispravno i ostaje u gradu"
    ],
    "commit": null
+  },
+  {
+   "verzija": "1.1.72",
+   "datum": "2026-11-07T11:58",
+   "naslov": "Brojači: 28 ponovo radi, 36b i 49a/49b van gradske statistike - 28: dani posle popravke 23. 10. 2026. se prikazuju i ulaze u zbirove, stanje „radi“ - 36b (nepouzdano brojanje) i 49a/49b (radovi) ne ulaze u zbir grada, rekorde i ritam; stanje „delimično“ - Na stranici stanice objašnjenje za ove brojače",
+   "stavke": [],
+   "commit": "f4784d3"
   },
   {
    "verzija": "1.1.71",
