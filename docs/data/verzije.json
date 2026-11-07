@@ -1,16 +1,24 @@
 {
- "generisano_utc": "2026-11-07T11:14Z",
+ "generisano_utc": "2026-11-07T12:01Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.73",
-   "datum": "2026-11-07T12:14",
-   "naslov": "Brojač 42a van gradske statistike u periodima kvara",
+   "verzija": "1.1.74",
+   "datum": "2026-11-07T13:01",
+   "naslov": "Privremeni pristup i zaključavanje: jednostavniji prozor i potvrda",
    "stavke": [
-    "42a (2–5/2025 i od 7/2026): senzor satima ne broji, pa ne ulazi u zbir grada; stanje „delimično“",
-    "42b radi ispravno i ostaje u gradu"
+    "Lozinka i trajanje linka u jednom redu, dugme „Kopiraj“ pored linka",
+    "Potvrda pre zaključavanja sajta",
+    "Pokret sata i katanca na prelazu mišem"
    ],
    "commit": null
+  },
+  {
+   "verzija": "1.1.73",
+   "datum": "2026-11-07T12:14",
+   "naslov": "Brojač 42a van gradske statistike u periodima kvara - 42a (2–5/2025 i od 7/2026): senzor satima ne broji, pa ne ulazi u zbir grada; stanje „delimično“ - 42b radi ispravno i ostaje u gradu",
+   "stavke": [],
+   "commit": "e72c1a3"
   },
   {
    "verzija": "1.1.72",

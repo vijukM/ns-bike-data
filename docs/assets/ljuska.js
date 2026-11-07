@@ -7,8 +7,8 @@ const LJ = (() => {
   // adrese bez .html (GitHub Pages i dalje otvara mapa.html za /mapa): ko dođe starim linkom, adresa se skrati
   if (location.protocol !== "file:" && /\.html$/.test(location.pathname))
     history.replaceState(history.state, "", location.pathname.replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "") + location.search + location.hash);
-  // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00 — CLAUDE.md
-  const VERZIJA = "1.1.73";
+  // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00
+  const VERZIJA = "1.1.74";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -321,19 +321,20 @@ const LJ = (() => {
       pristupDlg = document.createElement("dialog");
       pristupDlg.className = "prijava pristup";
       pristupDlg.setAttribute("aria-labelledby", "pristup-naslov");
-      pristupDlg.innerHTML = `<div class="prijava-glava"><div><span class="eyebrow">Kapija</span><h2 id="pristup-naslov">Privremeni pristup</h2></div>
+      pristupDlg.innerHTML = `<div class="prijava-glava"><div><h2 id="pristup-naslov">Privremeni pristup</h2></div>
           <button type="button" class="ikonica-dugme" data-zatvori aria-label="Zatvori">${ik("x")}</button></div>
-        <p class="sitno">Napravi link koji otvara sajt bez lozinke. Pošalji ga nekome — posle isteka više ne radi, a sajt se toj osobi zaključava.</p>
+        <p class="sitno">Napravi link koji otvara sajt bez lozinke.</p>
         <form class="prijava-forma" autocomplete="off">
-          <label>Lozinka sajta<input type="password" name="lozinka" required></label>
+          <div class="pristup-red"><label>Lozinka sajta<input type="password" name="lozinka" required></label>
           <label>Važi<select name="minuta">${[[5, "5 minuta"], [10, "10 minuta"], [30, "30 minuta"], [60, "1 sat"], [240, "4 sata"], [1440, "1 dan"]]
-            .map(([m, t]) => `<option value="${m}"${m === 10 ? " selected" : ""}>${t}</option>`).join("")}</select></label>
+            .map(([m, t]) => `<option value="${m}"${m === 10 ? " selected" : ""}>${t}</option>`).join("")}</select></label></div>
           <div class="prijava-dugmad"><button class="dugme primarno" type="submit">Napravi link</button></div>
           <div class="pristup-greska sitno" role="alert"></div>
         </form>
         <div class="pristup-rezultat" hidden>
-          <label class="sitno">Link<input type="text" readonly></label>
-          <div class="prijava-dugmad"><button class="dugme" type="button" data-kopiraj>${ik("copy")}Kopiraj</button><span class="sitno pristup-istek"></span></div>
+          <label class="sitno" for="pristup-link">Link</label>
+          <div class="pristup-link"><input id="pristup-link" type="text" readonly><button class="dugme" type="button" data-kopiraj>${ik("copy")}Kopiraj</button></div>
+          <span class="sitno pristup-istek"></span>
         </div>`;
       const forma = pristupDlg.querySelector("form"), greska = pristupDlg.querySelector(".pristup-greska"), rez = pristupDlg.querySelector(".pristup-rezultat");
       forma.addEventListener("submit", async (e) => {
@@ -358,6 +359,30 @@ const LJ = (() => {
       document.body.append(pristupDlg);
     }
     pristupDlg.showModal();
+  }
+
+  // ---------------------------------------------------------------- ZAKLJUČAVANJE (uz potvrdu)
+  let zakljucajDlg = null;
+  function potvrdiZakljucavanje() {
+    if (typeof KAPIJA === "undefined") return;
+    if (!zakljucajDlg) {
+      zakljucajDlg = document.createElement("dialog");
+      zakljucajDlg.className = "prijava potvrda";
+      zakljucajDlg.setAttribute("aria-labelledby", "zakljucaj-naslov");
+      zakljucajDlg.innerHTML = `<div class="potvrda-ikona">${ik("lock")}</div>
+        <h2 id="zakljucaj-naslov">Zaključati sajt?</h2>
+        <p class="sitno">Na ovom uređaju sajt će ponovo tražiti lozinku.</p>
+        <div class="prijava-dugmad potvrda-dugmad"><button class="dugme" type="button" data-zatvori>Otkaži</button>
+          <button class="dugme primarno" type="button" data-zakljucaj>${ik("lock")}Zaključaj</button></div>`;
+      zakljucajDlg.addEventListener("click", (e) => {
+        if (e.target.closest("[data-zatvori]")) zakljucajDlg.close();
+        if (e.target.closest("[data-zakljucaj]")) { zakljucajDlg.close(); KAPIJA.zakljucaj(); }
+      });
+      zatvaranjeVan(zakljucajDlg);
+      document.body.append(zakljucajDlg);
+    }
+    zakljucajDlg.showModal();
+    zakljucajDlg.querySelector("[data-zatvori]").focus();      // Enter ne zaključava slučajno
   }
 
   // ---------------------------------------------------------------- UŽIVO (odašiljač koji pulsira)
@@ -665,7 +690,7 @@ const LJ = (() => {
     document.getElementById("prijava-dugme").addEventListener("click", otvoriPrijavu);
     document.getElementById("profil-dugme").addEventListener("click", () => otvoriProfil());
     osveziAvatar();
-    document.getElementById("zakljucaj-dugme").addEventListener("click", () => { if (typeof KAPIJA !== "undefined") KAPIJA.zakljucaj(); });
+    document.getElementById("zakljucaj-dugme").addEventListener("click", potvrdiZakljucavanje);
     const preostalo = document.getElementById("preostalo");
     if (preostalo) {
       const otkucaj = () => {

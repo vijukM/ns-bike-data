@@ -1455,6 +1455,37 @@ dialog.prijava::backdrop { background: rgb(2 8 20 / .6); backdrop-filter: blur(3
 .pristup-rezultat { display: grid; gap: 10px; }
 .pristup-rezultat input { width: 100%; box-sizing: border-box; height: 40px; padding: 0 12px; margin-top: 6px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-base); font: 12px "JetBrains Mono", monospace; }
 .pristup-rezultat .prijava-dugmad { align-items: center; }
+.pristup-red { display: grid; grid-template-columns: 1fr 140px; gap: 10px; }
+@media (max-width: 420px) { .pristup-red { grid-template-columns: 1fr; } }
+.pristup-link { display: flex; gap: 8px; align-items: center; }
+.pristup-link input { flex: 1; min-width: 0; margin-top: 0; }
+.pristup-link .dugme { flex: none; height: 40px; }
+/* potvrda (npr. zaključavanje sajta) */
+dialog.prijava.potvrda { width: min(380px, calc(100vw - 32px)); text-align: center; }
+.potvrda h2 { margin: 10px 0 6px; font-size: 19px; }
+.potvrda p { margin: 0 0 18px; }
+.potvrda-ikona { width: 48px; height: 48px; margin: 4px auto 0; display: grid; place-items: center; border-radius: 14px;
+  background: var(--warning-soft); color: var(--warning); }
+.potvrda-ikona .ik { width: 24px; height: 24px; }
+.potvrda-dugmad { justify-content: center; }
+.potvrda-dugmad .dugme { min-width: 120px; justify-content: center; }
+dialog.prijava.potvrda[open] { animation: potvrda-ulaz .22s cubic-bezier(.34,1.56,.64,1); }
+@keyframes potvrda-ulaz { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+/* sat i katanac u dnu menija: kazaljka se okrene, katanac „otključa“ luk i zanjiše se */
+.zakljucaj-dugme { transition: background-color .2s, color .2s, transform .2s cubic-bezier(.34,1.56,.64,1); }
+.zakljucaj-dugme:hover { transform: translateY(-1px); }
+.zakljucaj-dugme:active { transform: scale(.9); }
+.zakljucaj-dugme svg.ik path { transform-box: view-box; transform-origin: 12px 12px; transition: transform .35s ease; }
+#pristup-dugme:hover svg.ik path { animation: ik-kazaljka .9s cubic-bezier(.45,.05,.3,1); }
+@keyframes ik-kazaljka { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+#zakljucaj-dugme svg.ik { transform-origin: 50% 90%; }
+#zakljucaj-dugme:hover svg.ik path { transform: translateY(-2.5px); }
+#zakljucaj-dugme:hover svg.ik { animation: ik-katanac .6s ease-in-out; }
+@keyframes ik-katanac { 0%, 100% { transform: none; } 25% { transform: rotate(-10deg); } 55% { transform: rotate(7deg); } 80% { transform: rotate(-3deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .zakljucaj-dugme, .zakljucaj-dugme svg.ik, .zakljucaj-dugme svg.ik path { transition: none; animation: none !important; transform: none !important; }
+  dialog.prijava.potvrda[open] { animation: none; }
+}
 
 /* Meni: logo gore i dno (profil, verzija) uvek vidljivi, između se skroluje */
 .meni { padding-top: 0; padding-bottom: 0; }
