@@ -61,14 +61,17 @@ def lokalno(iso: str) -> datetime:
 
 
 def iz_gita() -> tuple[list[dict], list[dict]]:
-    zapis = _git("log", "--no-merges", "--reverse", "--format=%H%x1f%aI%x1f%s%x1f%b%x1e")
+    # %B (cela poruka) umesto %s/%b: kad posle naslova nema praznog reda, git %s spoji sve redove u jedan „naslov“
+    zapis = _git("log", "--no-merges", "--reverse", "--format=%H%x1f%aI%x1f%B%x1e")
     po_verziji: dict[str, dict] = {}
     pre: dict[str, list[dict]] = {}
     for rec in zapis.split("\x1e"):
         rec = rec.strip("\n")
         if not rec:
             continue
-        h, kad, naslov, telo = rec.split("\x1f")
+        h, kad, poruka = rec.split("\x1f")
+        naslov, _, telo = poruka.strip("\n").partition("\n")
+        naslov = naslov.strip()
         if PODACI.match(naslov) or SUM.match(naslov):
             continue
         try:
