@@ -54,6 +54,9 @@ Poslednji broj ima uvek dve cifre (00–99).
   u `docs/data/istorija/` (stanice/KPI, grad_dnevno, dnevno, profili, rekordi, ritam, sati) se računaju ponovo, pa i
   `staze_analiza.json`. Dani bez ijednog čitanja (1. 9. – 7. 10. 2026.) = šifra `nije_preuzeto`, ne ulaze u udeo kompletnih
   dana ni u „30 dana“ (`dana_30d`). Period proseka: `period_12m` u stanice.json (`NS.period12(s)`), nigde tvrdo upisan.
+  `NEISPRAVNE` (28: jedan smer nije brojao 18. 4. – popravka 23. 10. 2026. u 13 h; ti sati null, „30 dana“ od popravke) i
+  `VAN_GRADA` (36b ceo period — broji samo deo prolazaka; 49a/49b od 1. 9. 2026. — radovi): VAN_GRADA se prikazuju na svojoj
+  stanici, ali ne ulaze u zbir grada, rekorde, ritam, prosek dana ni u „Danas“ (`sajt/danas.py`, `danas.js`); stanje „delimično“.
   Bez mastera radi rezerva `sajt/sati_novi.py` (sati, meteo_sati, `dnevno_novo.json`); strane dodaju `dnevno_novo` samo
   posle kraja istorije (sada je prazan). Danas uzimaju iz `data/danas.json`; kalendar podrazumevano otvara danas.
   Grafik dana u kalendaru: čipovi (biciklisti, temperatura, padavine, prosečan isti dan u nedelji u mesecu, prosek 7 dana,

@@ -24,7 +24,10 @@ Vreme:
 Pravila:
   - NaN nikad ne postaje 0 (u JSON-u je null, uz šifru razloga);
   - dnevni zbir postoji samo ako su SVI sati lokalnog dana validni (inače null + broj validnih sati);
-  - serija 28 je od 18.04.2026 neispravna (šifra neispravan_brojac) i ne ulazi u gradske zbirove;
+  - serija 28 je od 18.04.2026 do popravke 23.10.2026 (13 h) neispravna (jedan smer nije brojao; šifra
+    neispravan_brojac): ti sati su null i ne ulaze ni u stanicu ni u grad;
+  - VAN_GRADA (36b, 49a, 49b): podaci se prikazuju na stanici, ali ne ulaze u gradske zbirove ni u statistiku grada
+    (rekordi, ritam, prosek dana), a stanje im je „delimično“;
   - gradski zbir = zbir serija sa kompletnim danom + broj uključenih serija.
 
 Izlaz (docs/data/istorija/):
@@ -66,13 +69,52 @@ RAZLOZI = [
     ("skok", "izbačen lažni skok"),
     ("skok_okolina", "izbačeno — okolina lažnog skoka"),
     ("outlier", "izbačena nerealna vrednost (> 400 / h)"),
-    ("neispravan_brojac", "brojač neispravan od 04/2026"),
+    ("neispravan_brojac", "brojač neispravan (jedan smer nije brojao)"),
     ("nije_postavljen", "brojač još nije postavljen"),
     ("nije_preuzeto", "podaci nisu preuzeti (brojači tada nisu čitani)"),
 ]
 KOD = {k: i for i, (k, _) in enumerate(RAZLOZI)}
 KOD["odluka_ok"] = 0                                   # ručno potvrđeno kao validno
-NEISPRAVNE = {"28": (date(2026, 4, 18), "neispravan_brojac", "brojač neispravan od 04/2026")}
+# serija: (prvi dan kvara, prvi ispravan sat posle popravke — početak sata u UTC ili None, razlog, napomena dok traje)
+# 28: smer 21 (Bul. kralja Petra I → Pap Pavla) nije brojao; popravka u petak 23.10.2026, prvi ispravan sat 13–14 h
+# (isto kao prognoza_biciklista.priprema.ISKLJUCENE / KVAR_SMERA i sajt/danas.py)
+NEISPRAVNE = {"28": (date(2026, 4, 18), pd.Timestamp("2026-10-23 11:00"), "neispravan_brojac", "brojač neispravan od 04/2026")}
+# serija: (od, do ili None, opis) — brojač radi i prikazuje se na svojoj stranici, ali NE ulazi u gradske zbirove ni u
+# statistiku grada (nepouzdan ili ne meri ceo saobraćaj); stanje mu je „delimično“
+VAN_GRADA = {
+    "36b": (None, None, "nepouzdano brojanje: broji samo deo prolazaka (svega 5–20 % od 36a na istom mestu)"),
+    "49a": (date(2026, 9, 1), None, "radovi u ulici: staza je povremeno zatvorena ili otvorena samo u jednom smeru"),
+    "49b": (date(2026, 9, 1), None, "radovi u ulici: staza je povremeno zatvorena ili otvorena samo u jednom smeru"),
+}
+
+
+def neispravan_do(serija: str, dan: date) -> bool:
+    """Da li je serija neispravna (NEISPRAVNE) na kraju dana `dan`."""
+    if serija not in NEISPRAVNE:
+        return False
+    od, popravka, _, _ = NEISPRAVNE[serija]
+    return dan >= od and (popravka is None or dan < popravka.date())
+
+
+def van_grada(serija: str, dan: date) -> str | None:
+    """Opis ako serija na dan `dan` ne ulazi u gradske zbirove (VAN_GRADA), inače None."""
+    if serija not in VAN_GRADA:
+        return None
+    od, do, opis = VAN_GRADA[serija]
+    return opis if (od is None or dan >= od) and (do is None or dan <= do) else None
+
+
+def maska_van_grada(serija: pd.Series, datum: pd.Series) -> pd.Series:
+    """True za redove (serija, lokalni datum) koji ne ulaze u grad."""
+    m = pd.Series(False, index=serija.index)
+    for s, (od, do, _) in VAN_GRADA.items():
+        x = serija == s
+        if od is not None:
+            x &= datum >= od
+        if do is not None:
+            x &= datum <= do
+        m |= x
+    return m
 SEZONE = {"zima": (12, 1, 2), "prolece": (3, 4, 5), "leto": (6, 7, 8), "jesen": (9, 10, 11)}
 TIPOVI_DANA = ["radni", "subota", "nedelja_praznik"]
 MIN_DANA_MESEC = 10                                    # mesečni prosek tek uz ≥ 10 kompletnih dana
@@ -87,9 +129,13 @@ STANJA_OPIS = {
 DANA_STANJE, PRAG_RADI = 30, 0.9
 
 
-def stanje_brojaca(serija: str, kompletnih: int, validnih_sati: int, dana: int = DANA_STANJE) -> str:
-    if serija in NEISPRAVNE:
+def stanje_brojaca(serija: str, kompletnih: int, validnih_sati: int, dana: int = DANA_STANJE,
+                   dan: date | None = None) -> str:
+    dan = dan or DO
+    if neispravan_do(serija, dan):
         return "neispravan"
+    if van_grada(serija, dan):
+        return "delimicno" if validnih_sati > 0 else "ne_radi"
     if kompletnih >= PRAG_RADI * dana:
         return "radi"
     return "delimicno" if validnih_sati > 0 else "ne_radi"
@@ -170,8 +216,10 @@ def obradi_master(m: pd.DataFrame) -> pd.DataFrame:
     m["kod"] = m["razlog_A"].map(KOD).fillna(KOD["nema_reda"]).astype(int)
     m.loc[m["y_A"].notna(), "kod"] = 0
     m.loc[m["y_A"].isna() & (m["kod"] == 0), "kod"] = KOD["nema_reda"]
-    for serija, (od, razlog, _) in NEISPRAVNE.items():
+    for serija, (od, popravka, razlog, _) in NEISPRAVNE.items():
         maska = (m["stanica_id"] == serija) & (m["datum"] >= od)
+        if popravka is not None:
+            maska &= m["pocetak_utc"] < popravka
         m.loc[maska, "y_A"] = np.nan
         m.loc[maska, "kod"] = KOD[razlog]
     return m.sort_values(["stanica_id", "pocetak_utc"]).reset_index(drop=True)
@@ -287,8 +335,9 @@ def dnevno(m: pd.DataFrame, juce: pd.DataFrame | None = None) -> pd.DataFrame:
     d["iz_juce"] = False
     if juce is not None and len(juce):
         j = juce[(juce["datum"] > ISTORIJA_DO) & (juce["datum"] <= DO)]
-        for serija, (od, _, _) in NEISPRAVNE.items():
-            j = j[~((j["stanica_id"] == serija) & (j["datum"] >= od))]
+        for serija, (od, popravka, _, _) in NEISPRAVNE.items():   # „juče“ uključuje i sate kvara → ne uzima se
+            j = j[~((j["stanica_id"] == serija) & (j["datum"] >= od)
+                    & ((j["datum"] <= popravka.date()) if popravka is not None else True))]
         d = d.merge(j, on=["stanica_id", "datum"], how="outer")
         nov = d["sati"].isna()                                 # dan bez ijednog satnog reda (npr. 8. 10. 2026.)
         d.loc[nov, ["validnih", "redova"]] = 0
@@ -406,9 +455,10 @@ def ritam(m: pd.DataFrame, praznici: set) -> dict:
 
 
 def rekordi(m: pd.DataFrame, d: pd.DataFrame, grad: pd.DataFrame, w_dan: pd.DataFrame, dani: pd.DataFrame,
-            praznici: set, serije: list) -> dict:
-    """Rekordi i zanimljivosti: dani, sati, godine, vreme, po stanici."""
+            praznici: set, serije: list, m_stanice: pd.DataFrame | None = None) -> dict:
+    """Rekordi i zanimljivosti: dani, sati, godine, vreme (m = serije koje ulaze u grad), po stanici (m_stanice = sve)."""
     v = m[m["y_A"].notna()]
+    v_st = v if m_stanice is None else m_stanice[m_stanice["y_A"].notna()]
     g = pd.DataFrame({"datum": dani["datum"].to_numpy(), "zbir": grad["sum"].to_numpy(), "n": grad["size"].to_numpy(),
                       "tmin": w_dan["tmin"].to_numpy(), "tmax": w_dan["tmax"].to_numpy(), "tsr": w_dan["tsr"].to_numpy(),
                       "pad": w_dan["pad"].to_numpy(), "sneg": w_dan["sneg"].to_numpy()})
@@ -444,7 +494,7 @@ def rekordi(m: pd.DataFrame, d: pd.DataFrame, grad: pd.DataFrame, w_dan: pd.Data
     po_stanici, nizovi = [], []
     for s in serije:
         ds = d[(d["stanica_id"] == s) & d["kompletan"]]
-        vs = v[v["stanica_id"] == s]
+        vs = v_st[v_st["stanica_id"] == s]
         if vs.empty:
             continue
         hm = vs.loc[vs["y_A"].idxmax()]
@@ -596,10 +646,12 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
                   if not ok],
         })
 
-    # gradski dnevni zbir + vreme
-    k = d[d["kompletan"]]
+    # gradski dnevni zbir + vreme (bez serija VAN_GRADA; statistika grada ide iz m_grad)
+    u_gradu = ~maska_van_grada(d["stanica_id"], d["datum"])
+    k = d[d["kompletan"] & u_gradu]
     grad = k.groupby("datum")["zbir"].agg(["sum", "size"]).reindex(dani["datum"])
-    postoji = d.groupby("datum")["stanica_id"].nunique().reindex(dani["datum"]).fillna(0)
+    postoji = d[u_gradu].groupby("datum")["stanica_id"].nunique().reindex(dani["datum"]).fillna(0)
+    m_grad = m[~maska_van_grada(m["stanica_id"], m["datum"])]
     w_dan = w.copy()
     w_dan["datum"] = w_dan.index.date
     w_dan = w_dan.groupby("datum").agg(tmin=("temperatura", "min"), tmax=("temperatura", "max"),
@@ -629,7 +681,7 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
                  "kisni_po_brojacu": _i(kisni.mean()), "suvi_po_brojacu": _i(suvi.mean()),
                  "razlika_pct": _r1(100 * (kisni.mean() / suvi.mean() - 1)),
                  "opis": "radni dani april–oktobar; kišni ≥ 1 mm padavina, suvi 0 mm; prosek po uključenom brojaču"},
-        "ukupno_izbrojano": _i(m["y_A"].sum()),
+        "ukupno_izbrojano": _i(m_grad["y_A"].sum()),
     }
     velicine["grad_dnevno.json"] = _pisi(izlaz / "grad_dnevno.json", {
         "od": OD.isoformat(), "do": DO.isoformat(),
@@ -644,8 +696,8 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
         "cinjenice": cinjenice,
     })
 
-    velicine["rekordi.json"] = _pisi(izlaz / "rekordi.json", rekordi(m, d, grad, w_dan, dani, praznici, serije))
-    velicine["ritam.json"] = _pisi(izlaz / "ritam.json", ritam(m, praznici))
+    velicine["rekordi.json"] = _pisi(izlaz / "rekordi.json", rekordi(m_grad, d, grad, w_dan, dani, praznici, serije, m_stanice=m))
+    velicine["ritam.json"] = _pisi(izlaz / "ritam.json", ritam(m_grad, praznici))
 
     # profili po seriji
     for s in serije:
@@ -703,12 +755,17 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
         kompl = ds[ds["kompletan"]]
         p12 = kompl[kompl["datum"] >= poslednji_12m]["zbir"]
         od30 = date.fromordinal(DO.toordinal() - DANA_STANJE + 1)
+        if s in NEISPRAVNE and NEISPRAVNE[s][1] is not None and not neispravan_do(s, DO):
+            # popravljen brojač: „30 dana“ broji tek od prvog celog dana posle popravke
+            od30 = max(od30, date.fromordinal(NEISPRAVNE[s][1].tz_localize("UTC").tz_convert(TZ).date().toordinal() + 1))
         d30 = ds[ds["datum"] >= od30]
         k30, v30 = int(d30["kompletan"].sum()), int(d30["validnih"].sum())
-        dana30 = DANA_STANJE - sum(1 for x in rupa if x >= od30)          # bez dana „nije preuzeto“
+        dana30 = (DO - od30).days + 1 - sum(1 for x in rupa if x >= od30)  # bez dana „nije preuzeto“
         napomena = None
-        if s in NEISPRAVNE:
-            napomena = NEISPRAVNE[s][2]
+        if neispravan_do(s, DO):
+            napomena = NEISPRAVNE[s][3]
+        elif van_grada(s, DO):
+            napomena = f"ne ulazi u gradsku statistiku — {van_grada(s, DO)}"
         elif validni.max() < date.fromordinal(DO.toordinal() - DANA_STANJE):
             napomena = f"nema validnih podataka od {datum_sr(validni.max())}"
         redovi.append({
@@ -722,6 +779,9 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
             "dana_iz_juce": int(kompl["iz_juce"].sum()),
             "napomena": napomena,
             "stanje": stanje_brojaca(s, k30, v30, dana30), "kompletnih_30d": k30, "dana_30d": dana30,
+            **({"van_grada": van_grada(s, DO)} if van_grada(s, DO) else {}),
+            **({"popravljen": {"od": NEISPRAVNE[s][0].isoformat(), "do": NEISPRAVNE[s][1].tz_localize("UTC").tz_convert(TZ).date().isoformat()}}
+               if s in NEISPRAVNE and not neispravan_do(s, DO) and NEISPRAVNE[s][1] is not None else {}),
         })
     dst = {r.datum.isoformat(): int(r.sati) for r in dani.itertuples() if r.sati != 24}
     velicine["stanice.json"] = _pisi(izlaz / "stanice.json", {
@@ -730,13 +790,15 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
         "period_12m": {"od": od_12m.isoformat(), "do": DO.isoformat()},
         "istorija_do": ISTORIJA_DO.isoformat(),
         "nije_preuzeto": _opsezi(rupa),
+        "van_grada": {k: {"od": od.isoformat() if od else None, "do": do.isoformat() if do else None, "opis": o}
+                      for k, (od, do, o) in VAN_GRADA.items()},
         "izvor": "UGZINS / Mikrobit brojači (očišćeno, master_v4_E3 do 31. 8. 2026., zatim čitanja brojača "
                  "svakog sata i dnevni zbir „juče“); vreme: Open-Meteo",
         "razlozi": [{"kod": k, "opis": o} for k, o in RAZLOZI], "stanja": STANJA, "stanja_opis": STANJA_OPIS,
         "stanje_period": f"{datum_sr(date.fromordinal(DO.toordinal() - DANA_STANJE + 1))} – {datum_sr(DO)}", "dani_bez_24h": dst, "serije": redovi,
         "meseci": [str(p) for p in pd.period_range(OD, DO, freq="M")],
     })
-    velicine["prosek_dana.json"] = _pisi(izlaz / "prosek_dana.json", prosek_dana(m[m["datum"] <= ISTORIJA_DO], praznici))
+    velicine["prosek_dana.json"] = _pisi(izlaz / "prosek_dana.json", prosek_dana(m_grad[m_grad["datum"] <= ISTORIJA_DO], praznici))
     # dani posle istorije su sada u svim fajlovima: dostupni satni fajlovi i prazan dodatak (strane dodaju samo
     # dane posle grad_dnevno.do, a njih nema)
     validni_dani = set(m.loc[m["y_A"].notna(), "datum"])

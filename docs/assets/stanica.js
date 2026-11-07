@@ -64,7 +64,11 @@ function glava(s, r, d) {
   LJ.brojanje(document.getElementById("k-period"), godina, (x) => `${NS.dec(x)}<sup>god.</sup>`);
   const upoz = [];
   // dani „nije preuzeto“ (1. 9. – 7. 10. 2026.) ne ulaze ni u nepotpune ni u ukupan broj dana
-  if (r.napomena) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span><b>${r.napomena}</b>. Ti sati su sivi i ne ulaze u gradske zbirove.</span></div>`);
+  if (r.van_grada) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span><b>Ne ulazi u gradsku statistiku</b> — ${r.van_grada}.
+    Podaci ove stanice se prikazuju ovde, ali ne ulaze u zbir grada, rekorde ni ritam grada; stanje je „delimično radi“.</span></div>`);
+  else if (r.napomena) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span><b>${r.napomena}</b>. Ti sati su sivi i ne ulaze u gradske zbirove.</span></div>`);
+  if (r.popravljen) upoz.push(`<div class="upozorenje uspeh">${LJ.ik("check")}<span>Jedan smer nije brojao od <b>${NS.datum(r.popravljen.od)}</b>
+    do popravke <b>${NS.datum(r.popravljen.do)}</b> — ti dani su sivi i ne ulaze u zbirove. Od tada brojač radi normalno.</span></div>`);
   if (nepotpuni / ukupno > 0.05) upoz.push(`<div class="upozorenje">${LJ.ik("alert")}<span>Brojač nije imao kompletne podatke za
     <b>${NS.broj(nepotpuni)}</b> od ${NS.broj(ukupno)} dana (${NS.dec(100 * nepotpuni / ukupno)} %). Ti delovi su isprekidani; razlog piše kad se pređe preko njih.</span></div>`);
   document.getElementById("upozorenja").innerHTML = upoz.join("");

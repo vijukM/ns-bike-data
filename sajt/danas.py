@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 
 from prognoza_biciklista.priprema import KVAR_SMERA, procena_iz_smera, udeo_smera
+from sajt.pripremi_istoriju import van_grada
 from scraper import konfig
 
 log = logging.getLogger(__name__)
@@ -222,7 +223,9 @@ def _prognoza_iz(fajlovi: list[Path], sati_utc: pd.DatetimeIndex, dopuna: list[P
     idx = {t: i for i, t in enumerate(sati_utc)}
     n = len(sati_utc)
     grad = {k: [None] * n for k in ("pred", "q10", "q90")}
-    zbir = p.groupby("pocetak_utc")[["pred", "q10", "q90"]].sum()
+    dan = sati_utc[len(sati_utc) // 2].tz_convert(konfig.TZ).date()
+    u_gradu = ~p["stanica_id"].map(lambda x: bool(van_grada(x, dan)))       # VAN_GRADA ne ulaze u zbir grada
+    zbir = p[u_gradu].groupby("pocetak_utc")[["pred", "q10", "q90"]].sum()
     for t, r in zbir.iterrows():
         for k in grad:
             grad[k][idx[t]] = round(float(r[k]), 1)
@@ -333,8 +336,12 @@ def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = Fals
         if s in serije:
             serije[s]["napomena"] = ISKLJUCENE[s][0]
     dopuni_kvar_smera(serije, c, sati_utc)
-    # gradski sat = zbir serija koje imaju taj sat (bez isključenih i bez sati kvara smera); null ako nijedna nema
-    ukljucene = [s for s, v in serije.items() if v["stanje"] != "neispravan"]
+    for s in serije:                                          # radi, ali ne ulazi u grad (sajt/pripremi_istoriju.VAN_GRADA)
+        if van_grada(s, dan):
+            serije[s]["van_grada"] = van_grada(s, dan)
+            serije[s].setdefault("napomena", f"ne ulazi u zbir grada — {van_grada(s, dan)}")
+    # gradski sat = zbir serija koje imaju taj sat (bez isključenih, bez VAN_GRADA i bez sati kvara smera); null ako nijedna nema
+    ukljucene = [s for s, v in serije.items() if v["stanje"] != "neispravan" and not v.get("van_grada")]
     grad = []
     for i in range(len(sati_utc)):
         v = [serije[s]["sati"][i] for s in ukljucene if serije[s]["sati"][i] is not None
@@ -392,7 +399,8 @@ def arhiviraj(dani: list[date], sada_utc: datetime, koren: Path = konfig.PODACI,
     zbir = {}                                                  # za izbor datuma: [zbir sati grada, brojača sa podacima]
     for d in spisak:
         x = json.loads((arhiva / f"{d}.json").read_text(encoding="utf-8"))
-        n = sum(1 for v in x["serije"].values() if v["stanje"] != "neispravan" and any(y is not None for y in v["sati"]))
+        n = sum(1 for v in x["serije"].values() if v["stanje"] != "neispravan" and not v.get("van_grada")
+                and any(y is not None for y in v["sati"]))
         zbir[d] = [int(sum(v for v in x["grad"] if v is not None)), n]
     (arhiva / "spisak.json").write_text(json.dumps({"dani": spisak, "zbir": zbir}, separators=(",", ":")), encoding="utf-8")
     return gotovi
