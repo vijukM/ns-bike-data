@@ -368,3 +368,17 @@ def test_istorija_produzena_novim_citanjima_i_juce(tmp_path):
         assert json.loads((izlaz / "dnevno_novo.json").read_text())["od"] is None
     finally:
         pi.DO = pi.ISTORIJA_DO
+
+
+def test_popravljen_28_i_brojaci_van_grada():
+    """28 je neispravan samo do popravke 23. 10. 2026.; 36b, 49a i 49b (VAN_GRADA) rade, ali ne ulaze u grad."""
+    assert pi.neispravan_do("28", date(2026, 10, 22)) and not pi.neispravan_do("28", date(2026, 10, 23))
+    assert not pi.neispravan_do("28", date(2026, 4, 17))
+    assert pi.stanje_brojaca("28", 14, 336, 14, dan=date(2026, 11, 6)) == "radi"
+    assert pi.van_grada("36b", date(2022, 5, 1)) and pi.van_grada("49b", date(2026, 10, 1))
+    assert pi.van_grada("49a", date(2026, 8, 31)) is None and pi.van_grada("23a", date(2026, 10, 1)) is None
+    assert pi.stanje_brojaca("36b", 30, 720, dan=date(2026, 11, 6)) == "delimicno"
+    assert pi.stanje_brojaca("49b", 0, 0, dan=date(2026, 11, 6)) == "ne_radi"
+    m = pi.maska_van_grada(pd.Series(["36b", "49a", "49a", "23a"]),
+                           pd.Series([date(2021, 6, 1), date(2026, 8, 31), date(2026, 9, 1), date(2026, 9, 1)]))
+    assert m.tolist() == [True, False, True, False]

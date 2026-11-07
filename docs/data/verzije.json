@@ -1,17 +1,24 @@
 {
- "generisano_utc": "2026-11-06T13:17Z",
+ "generisano_utc": "2026-11-07T10:58Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
-   "verzija": "1.1.71",
-   "datum": "2026-11-06T14:17",
-   "naslov": "Istorija do juče: svi KPI i strane se obnavljaju svake noći",
+   "verzija": "1.1.72",
+   "datum": "2026-11-07T11:58",
+   "naslov": "Brojači: 28 ponovo radi, 36b i 49a/49b van gradske statistike",
    "stavke": [
-    "Nova čitanja brojača i dnevni zbir „juče“ ulaze u stanice, kalendar, rekorde, ritam i staze",
-    "Prosek 12 meseci, kompletni dani i stanje računaju se do juče (bez dana koji nisu preuzeti)",
-    "Kamere: natpis „Ka parku“ na travi"
+    "28: dani posle popravke 23. 10. 2026. se prikazuju i ulaze u zbirove, stanje „radi“",
+    "36b (nepouzdano brojanje) i 49a/49b (radovi) ne ulaze u zbir grada, rekorde i ritam; stanje „delimično“",
+    "Na stranici stanice objašnjenje za ove brojače"
    ],
    "commit": null
+  },
+  {
+   "verzija": "1.1.71",
+   "datum": "2026-11-06T14:19",
+   "naslov": "Istorija do juče: svi KPI i strane se obnavljaju svake noći - Nova čitanja brojača i dnevni zbir „juče“ ulaze u stanice, kalendar, rekorde, ritam i staze - Prosek 12 meseci, kompletni dani i stanje računaju se do juče (bez dana koji nisu preuzeti) - Kamere: natpis „Ka parku“ na travi",
+   "stavke": [],
+   "commit": "9dfa70b"
   },
   {
    "verzija": "1.1.70",

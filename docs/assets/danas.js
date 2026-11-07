@@ -50,8 +50,11 @@
   /** Dan iz istorije (satni fajl meseca + izmereno vreme) u obliku danas.json. */
   async function izIstorije(iso) {
     const ym = iso.slice(0, 7);
-    const [mes, met, pros] = await Promise.all([NS.json(`sati/${ym}.json`), NS.json(`meteo_sati/${ym}.json`).catch(() => null),
-      NS.json("prosek_dana.json").catch(() => null)]);
+    const [mes, met, pros, S] = await Promise.all([NS.json(`sati/${ym}.json`), NS.json(`meteo_sati/${ym}.json`).catch(() => null),
+      NS.json("prosek_dana.json").catch(() => null), NS.stanice().catch(() => null)]);
+    // brojači koji rade, ali ne ulaze u grad (stanice.json van_grada, npr. 36b, 49a/49b za vreme radova)
+    const van = (S && S.van_grada) || {};
+    const vanGrada = (k) => { const x = van[k]; return x && (!x.od || iso >= x.od) && (!x.do || iso <= x.do) ? x.opis : null; };
     const dan = mes.dani.find((x) => x[0] === iso);
     if (!dan) throw new Error(`nema podataka za ${iso}`);
     const [, i0, n] = dan;
@@ -65,9 +68,10 @@
       if (kodovi.every((c) => c === 9)) continue;                       // brojač još nije postavljen
       serije[k] = { sati, danas: sati.some((x) => x != null) ? zbir(sati) : null, juce: null, brojac: "24:00",
         stanje: neispravan ? "neispravan" : sati.every((x) => x == null) ? "nema_podataka" : "radi",
-        ...(neispravan ? { napomena: "brojač neispravan od 04/2026" } : {}) };
+        ...(neispravan ? { napomena: "brojač neispravan (jedan smer nije brojao)" } : {}),
+        ...(vanGrada(k) && !neispravan ? { van_grada: vanGrada(k), napomena: `ne ulazi u zbir grada — ${vanGrada(k)}` } : {}) };
     }
-    const ukljucene = Object.keys(serije).filter((k) => serije[k].stanje !== "neispravan");
+    const ukljucene = Object.keys(serije).filter((k) => serije[k].stanje !== "neispravan" && !serije[k].van_grada);
     const grad = lok.map((_, j) => { const v = ukljucene.map((k) => serije[k].sati[j]).filter((x) => x != null); return v.length ? zbir(v) : null; });
     const dow = (NS.danUNedelji(iso) + 6) % 7, mesec = +iso.slice(5, 7);
     const pr = pros && pros.grad[`${dow}-${mesec}`];

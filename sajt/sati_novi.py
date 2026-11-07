@@ -60,8 +60,8 @@ def ucitaj_satno(koren: Path = konfig.PODACI) -> pd.DataFrame:
     d["razlog_A"] = d["razlog_A"].fillna("ok")
     d["kod"] = np.where(d["razlog_A"] == "ok", pi.KOD["ok"], pi.KOD["nema_reda"])
     d.loc[d["y_A"].isna() & (d["kod"] == 0), "kod"] = pi.KOD["nema_reda"]
-    for serija, (od, razlog, _) in pi.NEISPRAVNE.items():
-        maska = d["stanica_id"] == serija
+    for serija, (od, popravka, razlog, _) in pi.NEISPRAVNE.items():
+        maska = (d["stanica_id"] == serija) & ((d["pocetak_utc"] < popravka) if popravka is not None else True)
         d.loc[maska, "y_A"] = np.nan
         d.loc[maska, "kod"] = pi.KOD[razlog]
     return d.drop_duplicates(["stanica_id", "pocetak_utc"], keep="last")

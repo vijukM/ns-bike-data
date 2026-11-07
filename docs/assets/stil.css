@@ -405,6 +405,7 @@ table.tabela { border-collapse: collapse; width: 100%; font-size: 13px; }
 /* upozorenja, uskoro */
 .upozorenje { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: var(--warning-soft); color: var(--warning); border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent); font-size: 13px; }
 .upozorenje span { color: var(--t-base); }
+.upozorenje.uspeh { background: var(--success-soft, color-mix(in srgb, var(--success) 12%, transparent)); color: var(--success); border-color: color-mix(in srgb, var(--success) 35%, transparent); }
 .uskoro { display: flex; gap: 16px; align-items: center; }
 .uskoro .ikona-velika { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); flex: none; }
 .uskoro .ikona-velika svg { width: 26px; height: 26px; }
