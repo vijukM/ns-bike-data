@@ -1,44 +1,68 @@
 {
- "generisano_utc": "2026-11-07T12:01Z",
+ "generisano_utc": "2026-11-07T12:40Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.75",
+   "datum": "2026-11-07T13:40",
+   "naslov": "Verzije i zadaci: vidi se samo glavna izmena, detalji na strelicu",
+   "stavke": [
+    "Svaka verzija prikazuje naslov, a stavke se otvaraju strelicom sa brojem stavki",
+    "Ispravno razdvajanje naslova i stavki i kod ranijih verzija"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.74",
-   "datum": "2026-11-07T13:01",
+   "datum": "2026-11-07T13:02",
    "naslov": "Privremeni pristup i zaključavanje: jednostavniji prozor i potvrda",
    "stavke": [
     "Lozinka i trajanje linka u jednom redu, dugme „Kopiraj“ pored linka",
     "Potvrda pre zaključavanja sajta",
     "Pokret sata i katanca na prelazu mišem"
    ],
-   "commit": null
+   "commit": "456e7e6"
   },
   {
    "verzija": "1.1.73",
    "datum": "2026-11-07T12:14",
-   "naslov": "Brojač 42a van gradske statistike u periodima kvara - 42a (2–5/2025 i od 7/2026): senzor satima ne broji, pa ne ulazi u zbir grada; stanje „delimično“ - 42b radi ispravno i ostaje u gradu",
-   "stavke": [],
+   "naslov": "Brojač 42a van gradske statistike u periodima kvara",
+   "stavke": [
+    "42a (2–5/2025 i od 7/2026): senzor satima ne broji, pa ne ulazi u zbir grada; stanje „delimično“",
+    "42b radi ispravno i ostaje u gradu"
+   ],
    "commit": "e72c1a3"
   },
   {
    "verzija": "1.1.72",
    "datum": "2026-11-07T11:58",
-   "naslov": "Brojači: 28 ponovo radi, 36b i 49a/49b van gradske statistike - 28: dani posle popravke 23. 10. 2026. se prikazuju i ulaze u zbirove, stanje „radi“ - 36b (nepouzdano brojanje) i 49a/49b (radovi) ne ulaze u zbir grada, rekorde i ritam; stanje „delimično“ - Na stranici stanice objašnjenje za ove brojače",
-   "stavke": [],
+   "naslov": "Brojači: 28 ponovo radi, 36b i 49a/49b van gradske statistike",
+   "stavke": [
+    "28: dani posle popravke 23. 10. 2026. se prikazuju i ulaze u zbirove, stanje „radi“",
+    "36b (nepouzdano brojanje) i 49a/49b (radovi) ne ulaze u zbir grada, rekorde i ritam; stanje „delimično“",
+    "Na stranici stanice objašnjenje za ove brojače"
+   ],
    "commit": "f4784d3"
   },
   {
    "verzija": "1.1.71",
    "datum": "2026-11-06T14:19",
-   "naslov": "Istorija do juče: svi KPI i strane se obnavljaju svake noći - Nova čitanja brojača i dnevni zbir „juče“ ulaze u stanice, kalendar, rekorde, ritam i staze - Prosek 12 meseci, kompletni dani i stanje računaju se do juče (bez dana koji nisu preuzeti) - Kamere: natpis „Ka parku“ na travi",
-   "stavke": [],
+   "naslov": "Istorija do juče: svi KPI i strane se obnavljaju svake noći",
+   "stavke": [
+    "Nova čitanja brojača i dnevni zbir „juče“ ulaze u stanice, kalendar, rekorde, ritam i staze",
+    "Prosek 12 meseci, kompletni dani i stanje računaju se do juče (bez dana koji nisu preuzeti)",
+    "Kamere: natpis „Ka parku“ na travi"
+   ],
    "commit": "9dfa70b"
   },
   {
    "verzija": "1.1.70",
    "datum": "2026-11-06T09:28",
-   "naslov": "Kamere: manji natpisi linija, pored linije - Natpisi su imena ulica (bez „Ka …“), manji i bez zaobljenih ivica - Natpis stoji pored linije, van kolovoza, da ne zaklanja saobraćaj - Uz brojanje broj je u okviru boje linije",
+   "naslov": "Kamere: manji natpisi linija, pored linije",
    "stavke": [
+    "Natpisi su imena ulica (bez „Ka …“), manji i bez zaobljenih ivica",
+    "Natpis stoji pored linije, van kolovoza, da ne zaklanja saobraćaj",
+    "Uz brojanje broj je u okviru boje linije",
     "Kamere: novi regioni i nazivi linija",
     "Regioni (ROI) ponovo izvučeni sa unutrašnje ivice žute granice",
     "Linija za Jevrejsku produžena naniže, natpis iznad nje",
@@ -49,15 +73,22 @@
   {
    "verzija": "1.1.69",
    "datum": "2026-11-06T09:04",
-   "naslov": "Futoška ulica na mapi; glatka paleta u gornjoj traci - Na mapi u Poređenju i Futoška (između Futoškog puta i Jevrejske) - Paleta se više ne trza pri vraćanju u početni položaj",
-   "stavke": [],
+   "naslov": "Futoška ulica na mapi; glatka paleta u gornjoj traci",
+   "stavke": [
+    "Na mapi u Poređenju i Futoška (između Futoškog puta i Jevrejske)",
+    "Paleta se više ne trza pri vraćanju u početni položaj"
+   ],
    "commit": "a629814"
   },
   {
    "verzija": "1.1.68",
    "datum": "2026-11-06T08:45",
-   "naslov": "Mapa u Poređenju: glavne ulice; pokret ikonica u gornjoj traci - Na mapi i Jevrejska, Futoški put, Rumenačka, Hadži Ruvimova i Kornelija Stankovića - Natpisi ulica ne prekrivaju jedan drugi ni stanice - Lupa, zvonce, paleta i sunce/mesec imaju animaciju na prelazu mišem",
-   "stavke": [],
+   "naslov": "Mapa u Poređenju: glavne ulice; pokret ikonica u gornjoj traci",
+   "stavke": [
+    "Na mapi i Jevrejska, Futoški put, Rumenačka, Hadži Ruvimova i Kornelija Stankovića",
+    "Natpisi ulica ne prekrivaju jedan drugi ni stanice",
+    "Lupa, zvonce, paleta i sunce/mesec imaju animaciju na prelazu mišem"
+   ],
    "commit": "9d394c3"
   },
   {

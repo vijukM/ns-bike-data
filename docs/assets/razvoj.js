@@ -62,6 +62,21 @@
       <h2 class="rz-pod">Pre uvođenja oznake verzije <span class="sitno">${V.pre_verzija.length} dana · ${brPre} izmena</span></h2>
       <div class="rz-dani" id="rz-v-dani"></div>`;
     const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
+    /** Glavna izmena (naslov) uvek vidljiva; stavke se otvaraju strelicom. otvoreno = pretraga je našla nešto samo u stavkama. */
+    const naslovSaStavkama = (naslov, stavke, tag, otvoreno) => {
+      if (!stavke.length) return `<${tag} class="rz-naslov">${esc(naslov)}</${tag}>`;
+      return `<div class="rz-naslov-red"><${tag} class="rz-naslov">${esc(naslov)}</${tag}>
+          <button type="button" class="rz-strelica" aria-expanded="${!!otvoreno}" title="Detalji izmene">
+            <span>${stavke.length}</span>${LJ.ik("chevron")}</button></div>
+        <ul class="rz-stavke"${otvoreno ? "" : " hidden"}>${stavke.map((s) => `<li${s.startsWith("— ") ? ' class="pod"' : ""}>${esc(s.replace(/^— /, ""))}</li>`).join("")}</ul>`;
+    };
+    pv.addEventListener("click", (e) => {
+      const d = e.target.closest(".rz-strelica");
+      if (!d) return;
+      const ul = d.parentElement.nextElementSibling, otvori = d.getAttribute("aria-expanded") !== "true";
+      d.setAttribute("aria-expanded", String(otvori));
+      ul.hidden = !otvori;
+    });
     const crtajVerzije = () => {
       const q = bez(pv.querySelector("input").value.trim());
       const pog = (t) => !q || bez(t).includes(q);
@@ -70,14 +85,13 @@
         <li class="rz-verzija kartica${i === 0 && !q ? " najnovija" : ""}">
           <div class="rz-v-glava"><span class="rz-v-broj">v ${esc(v.verzija)}</span><time datetime="${esc(v.datum)}">${kad(v.datum)}</time>
             ${i === 0 && !q ? '<span class="rz-oznaka">trenutna</span>' : ""}${v.commit ? `<code class="rz-commit" title="commit">${esc(v.commit)}</code>` : ""}</div>
-          <h3>${esc(v.naslov)}</h3>
-          ${v.stavke.length ? `<ul>${v.stavke.map((s) => `<li${s.startsWith("— ") ? ' class="pod"' : ""}>${esc(s.replace(/^— /, ""))}</li>`).join("")}</ul>` : ""}
+          ${naslovSaStavkama(v.naslov, v.stavke, "h3", q && !pog(`${v.verzija} ${v.naslov}`))}
         </li>`).join("") || '<li class="sitno">Nema verzija za ovaj upit.</li>';
       const dani = V.pre_verzija.map((d) => ({ ...d, stavke: d.stavke.filter((s) => pog(`${s.naslov} ${s.stavke.join(" ")}`)) })).filter((d) => d.stavke.length);
       document.getElementById("rz-v-dani").innerHTML = dani.map((d) => `
         <details class="rz-dan kartica"${q ? " open" : ""}><summary><b>${kad(d.dan + "T12:00", false)}</b><span class="sitno">${d.stavke.length} ${d.stavke.length === 1 ? "izmena" : "izmena"}</span></summary>
-          <ul>${d.stavke.map((s) => `<li><span class="rz-vreme">${esc(s.vreme)}</span><div><b>${esc(s.naslov)}</b>${s.stavke.length
-            ? `<ul>${s.stavke.map((x) => `<li>${esc(x.replace(/^— /, ""))}</li>`).join("")}</ul>` : ""}</div><code class="rz-commit">${esc(s.commit)}</code></li>`).join("")}</ul>
+          <ul>${d.stavke.map((s) => `<li><span class="rz-vreme">${esc(s.vreme)}</span><div>${naslovSaStavkama(s.naslov, s.stavke, "b",
+            q && !pog(s.naslov))}</div><code class="rz-commit">${esc(s.commit)}</code></li>`).join("")}</ul>
         </details>`).join("") || '<p class="sitno">Nema izmena za ovaj upit.</p>';
       document.getElementById("rz-v-br").textContent = `${ver.length} od ${V.verzije.length} verzija · ${dani.reduce((n, d) => n + d.stavke.length, 0)} od ${brPre} ranijih izmena`;
     };

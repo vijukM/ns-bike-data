@@ -1830,6 +1830,22 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
   padding: 2px 8px; border-radius: 999px; }
 .rz-commit { margin-left: auto; font-size: 11.5px; color: var(--t-light); }
 .rz-verzija h3 { margin: 8px 0 6px; font-size: 15.5px; }
+.rz-naslov-red { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+.rz-naslov-red .rz-naslov { flex: 1; min-width: 0; }
+.rz-verzija .rz-naslov-red h3 { margin-bottom: 0; }
+.rz-strelica { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 6px 0 9px; margin-top: 6px;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--bg-muted); color: var(--t-muted); font: 600 11.5px "JetBrains Mono", monospace; cursor: pointer;
+  transition: background-color .2s, color .2s, border-color .2s; }
+.rz-dan .rz-strelica { margin-top: 0; height: 22px; }
+.rz-strelica:hover { color: var(--primary); border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+.rz-strelica .ik { width: 14px; height: 14px; transform: rotate(90deg); transition: transform .25s ease; }
+.rz-strelica[aria-expanded="true"] { color: var(--primary); background: var(--primary-soft); }
+.rz-strelica[aria-expanded="true"] .ik { transform: rotate(-90deg); }
+.rz-stavke { margin-top: 8px !important; }
+.rz-stavke[hidden] { display: none !important; }
+.rz-stavke:not([hidden]) { animation: rz-otvori .2s ease; }
+@keyframes rz-otvori { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rz-strelica .ik { transition: none; } .rz-stavke:not([hidden]) { animation: none; } }
 .rz-verzija ul, .rz-dan ul ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--t-muted); font-size: 13.5px; }
 .rz-verzija li.pod { margin-left: 16px; list-style: circle; }
 .rz-pod { font-size: 17px; margin-top: 10px; display: flex; align-items: baseline; gap: 10px; }
