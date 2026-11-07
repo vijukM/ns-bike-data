@@ -377,6 +377,8 @@ def test_popravljen_28_i_brojaci_van_grada():
     assert pi.stanje_brojaca("28", 14, 336, 14, dan=date(2026, 11, 6)) == "radi"
     assert pi.van_grada("36b", date(2022, 5, 1)) and pi.van_grada("49b", date(2026, 10, 1))
     assert pi.van_grada("49a", date(2026, 8, 31)) is None and pi.van_grada("23a", date(2026, 10, 1)) is None
+    assert pi.van_grada("42a", date(2025, 3, 1)) and pi.van_grada("42a", date(2026, 10, 20))
+    assert pi.van_grada("42a", date(2025, 9, 1)) is None and pi.van_grada("42b", date(2026, 10, 20)) is None
     assert pi.stanje_brojaca("36b", 30, 720, dan=date(2026, 11, 6)) == "delimicno"
     assert pi.stanje_brojaca("49b", 0, 0, dan=date(2026, 11, 6)) == "ne_radi"
     m = pi.maska_van_grada(pd.Series(["36b", "49a", "49a", "23a"]),
