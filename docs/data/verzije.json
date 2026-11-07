@@ -1,16 +1,26 @@
 {
- "generisano_utc": "2026-11-07T12:40Z",
+ "generisano_utc": "2026-11-07T18:48Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.76",
+   "datum": "2026-11-07T19:48",
+   "naslov": "Kapija: nova lozinka sajta",
+   "stavke": [
+    "Nova lozinka i novi ključevi za privremeni pristup",
+    "Stari ulazi i linkovi više ne važe"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.75",
-   "datum": "2026-11-07T13:40",
+   "datum": "2026-11-07T13:41",
    "naslov": "Verzije i zadaci: vidi se samo glavna izmena, detalji na strelicu",
    "stavke": [
     "Svaka verzija prikazuje naslov, a stavke se otvaraju strelicom sa brojem stavki",
     "Ispravno razdvajanje naslova i stavki i kod ranijih verzija"
    ],
-   "commit": null
+   "commit": "485ac48"
   },
   {
    "verzija": "1.1.74",
