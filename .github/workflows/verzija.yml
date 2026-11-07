@@ -1,7 +1,7 @@
 name: verzija aplikacije
 
 # Svaki commit u PR-u koji menja aplikaciju (sve osim podataka) mora da poveća VERZIJA u docs/assets/ljuska.js.
-# Podaci (automatska čitanja, prognoze, preuzeti slojevi) se ne računaju. Pravilo: CLAUDE.md → „Verzija aplikacije“.
+# Podaci (automatska čitanja, prognoze, preuzeti slojevi) se ne računaju.
 on:
   pull_request:
     branches: [main]
