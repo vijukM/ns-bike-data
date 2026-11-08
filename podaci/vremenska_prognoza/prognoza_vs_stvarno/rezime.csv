@@ -1,123 +1,123 @@
 izvor,promenljiva,horizont,n,MAE,RMSE,bias,dana,od,do
-met_norway,brzina_vetra,0–24 h,2121,2.443,3.143,1.856,23,2026-10-14,2026-11-06
-met_norway,brzina_vetra,24–48 h,2015,2.699,3.426,1.88,22,2026-10-15,2026-11-06
-met_norway,brzina_vetra,48+ h,935,3.232,4.097,1.955,21,2026-10-16,2026-11-06
-met_norway,oblacnost,0–24 h,2121,13.504,25.548,-4.856,23,2026-10-14,2026-11-06
-met_norway,oblacnost,24–48 h,2015,17.103,30.144,-6.725,22,2026-10-15,2026-11-06
-met_norway,oblacnost,48+ h,935,21.685,36.194,-12.256,21,2026-10-16,2026-11-06
-met_norway,padavine,0–24 h,2121,0.057,0.207,-0.024,23,2026-10-14,2026-11-06
-met_norway,padavine,24–48 h,2015,0.055,0.197,-0.022,22,2026-10-15,2026-11-06
-met_norway,padavine,48+ h,935,0.077,0.245,-0.005,21,2026-10-16,2026-11-06
-met_norway,temperatura,0–24 h,2121,0.686,0.915,-0.056,23,2026-10-14,2026-11-06
-met_norway,temperatura,24–48 h,2015,0.826,1.078,-0.167,22,2026-10-15,2026-11-06
-met_norway,temperatura,48+ h,935,0.977,1.351,-0.155,21,2026-10-16,2026-11-06
-met_norway,vlaznost,0–24 h,2121,4.853,6.603,0.477,23,2026-10-14,2026-11-06
-met_norway,vlaznost,24–48 h,2015,5.355,7.058,0.564,22,2026-10-15,2026-11-06
-met_norway,vlaznost,48+ h,935,6.144,7.883,0.881,21,2026-10-16,2026-11-06
-open_meteo_best_match (ulaz modela),brzina_vetra,0–24 h,2144,2.284,2.935,1.177,23,2026-10-14,2026-11-06
-open_meteo_best_match (ulaz modela),brzina_vetra,24–48 h,2046,2.612,3.372,1.344,22,2026-10-15,2026-11-06
-open_meteo_best_match (ulaz modela),brzina_vetra,48+ h,932,2.603,3.262,-0.071,21,2026-10-16,2026-11-06
-open_meteo_best_match (ulaz modela),insolacija,0–24 h,2144,25.067,59.111,-1.424,23,2026-10-14,2026-11-06
-open_meteo_best_match (ulaz modela),insolacija,24–48 h,2046,28.013,65.523,-2.547,22,2026-10-15,2026-11-06
-open_meteo_best_match (ulaz modela),insolacija,48+ h,932,22.393,52.392,6.887,21,2026-10-16,2026-11-06
-open_meteo_best_match (ulaz modela),oblacnost,0–24 h,2144,16.905,31.598,-2.382,23,2026-10-14,2026-11-06
-open_meteo_best_match (ulaz modela),oblacnost,24–48 h,2046,17.777,33.1,-6.433,22,2026-10-15,2026-11-06
-open_meteo_best_match (ulaz modela),oblacnost,48+ h,932,20.229,35.73,-11.072,21,2026-10-16,2026-11-06
-open_meteo_best_match (ulaz modela),padavine,0–24 h,2144,0.067,0.279,-0.026,23,2026-10-14,2026-11-06
-open_meteo_best_match (ulaz modela),padavine,24–48 h,2046,0.058,0.219,-0.028,22,2026-10-15,2026-11-06
-open_meteo_best_match (ulaz modela),padavine,48+ h,932,0.075,0.223,0.001,21,2026-10-16,2026-11-06
-open_meteo_best_match (ulaz modela),temperatura,0–24 h,2144,1.15,1.466,-0.501,23,2026-10-14,2026-11-06
-open_meteo_best_match (ulaz modela),temperatura,24–48 h,2046,1.279,1.617,-0.582,22,2026-10-15,2026-11-06
-open_meteo_best_match (ulaz modela),temperatura,48+ h,932,1.029,1.377,-0.227,21,2026-10-16,2026-11-06
-open_meteo_best_match (ulaz modela),vlaznost,0–24 h,2144,10.148,12.872,-5.313,23,2026-10-14,2026-11-06
-open_meteo_best_match (ulaz modela),vlaznost,24–48 h,2046,9.883,12.394,-4.78,22,2026-10-15,2026-11-06
-open_meteo_best_match (ulaz modela),vlaznost,48+ h,932,7.31,9.607,-1.862,21,2026-10-16,2026-11-06
-open_meteo_ecmwf_ifs025,brzina_vetra,0–24 h,2120,1.881,2.407,-0.994,23,2026-10-14,2026-11-06
-open_meteo_ecmwf_ifs025,brzina_vetra,24–48 h,2024,2.168,2.796,-1.098,22,2026-10-15,2026-11-06
-open_meteo_ecmwf_ifs025,brzina_vetra,48+ h,1044,2.776,3.559,-1.478,21,2026-10-16,2026-11-06
-open_meteo_ecmwf_ifs025,insolacija,0–24 h,2120,21.249,47.92,3.088,23,2026-10-14,2026-11-06
-open_meteo_ecmwf_ifs025,insolacija,24–48 h,2024,25.649,55.287,3.95,22,2026-10-15,2026-11-06
-open_meteo_ecmwf_ifs025,insolacija,48+ h,1044,29.958,61.575,12.305,21,2026-10-16,2026-11-06
-open_meteo_ecmwf_ifs025,oblacnost,0–24 h,2120,13.856,25.068,-5.775,23,2026-10-14,2026-11-06
-open_meteo_ecmwf_ifs025,oblacnost,24–48 h,2024,17.493,29.974,-7.214,22,2026-10-15,2026-11-06
-open_meteo_ecmwf_ifs025,oblacnost,48+ h,1044,21.345,35.116,-13.354,21,2026-10-16,2026-11-06
-open_meteo_ecmwf_ifs025,padavine,0–24 h,2120,0.055,0.188,-0.021,23,2026-10-14,2026-11-06
-open_meteo_ecmwf_ifs025,padavine,24–48 h,2024,0.055,0.185,-0.017,22,2026-10-15,2026-11-06
-open_meteo_ecmwf_ifs025,padavine,48+ h,1044,0.089,0.255,0.011,21,2026-10-16,2026-11-06
-open_meteo_ecmwf_ifs025,temperatura,0–24 h,2120,0.775,1.032,0.04,23,2026-10-14,2026-11-06
-open_meteo_ecmwf_ifs025,temperatura,24–48 h,2024,0.919,1.171,-0.059,22,2026-10-15,2026-11-06
-open_meteo_ecmwf_ifs025,temperatura,48+ h,1044,1.048,1.337,-0.061,21,2026-10-16,2026-11-06
-open_meteo_ecmwf_ifs025,vlaznost,0–24 h,2120,5.033,6.569,2.501,23,2026-10-14,2026-11-06
-open_meteo_ecmwf_ifs025,vlaznost,24–48 h,2024,5.667,7.31,2.622,22,2026-10-15,2026-11-06
-open_meteo_ecmwf_ifs025,vlaznost,48+ h,1044,6.489,8.225,2.346,21,2026-10-16,2026-11-06
-open_meteo_gfs_seamless,brzina_vetra,0–24 h,2120,2.191,2.876,0.416,23,2026-10-14,2026-11-06
-open_meteo_gfs_seamless,brzina_vetra,24–48 h,2024,2.444,3.154,-0.124,22,2026-10-15,2026-11-06
-open_meteo_gfs_seamless,brzina_vetra,48+ h,1044,2.671,3.403,-0.665,21,2026-10-16,2026-11-06
-open_meteo_gfs_seamless,insolacija,0–24 h,2120,30.562,70.765,-13.4,23,2026-10-14,2026-11-06
-open_meteo_gfs_seamless,insolacija,24–48 h,2024,35.123,77.272,-11.114,22,2026-10-15,2026-11-06
-open_meteo_gfs_seamless,insolacija,48+ h,1044,38.949,79.72,-9.101,21,2026-10-16,2026-11-06
-open_meteo_gfs_seamless,oblacnost,0–24 h,2120,18.767,33.666,8.049,23,2026-10-14,2026-11-06
-open_meteo_gfs_seamless,oblacnost,24–48 h,2024,21.884,38.119,6.073,22,2026-10-15,2026-11-06
-open_meteo_gfs_seamless,oblacnost,48+ h,1044,22.285,39.427,2.527,21,2026-10-16,2026-11-06
-open_meteo_gfs_seamless,padavine,0–24 h,2120,0.056,0.214,-0.029,23,2026-10-14,2026-11-06
-open_meteo_gfs_seamless,padavine,24–48 h,2024,0.057,0.192,-0.01,22,2026-10-15,2026-11-06
-open_meteo_gfs_seamless,padavine,48+ h,1044,0.086,0.282,-0.017,21,2026-10-16,2026-11-06
-open_meteo_gfs_seamless,temperatura,0–24 h,2120,1.694,2.157,1.453,23,2026-10-14,2026-11-06
-open_meteo_gfs_seamless,temperatura,24–48 h,2024,1.878,2.377,1.583,22,2026-10-15,2026-11-06
-open_meteo_gfs_seamless,temperatura,48+ h,1044,1.798,2.282,1.461,21,2026-10-16,2026-11-06
-open_meteo_gfs_seamless,vlaznost,0–24 h,2120,16.029,17.994,-15.683,23,2026-10-14,2026-11-06
-open_meteo_gfs_seamless,vlaznost,24–48 h,2024,16.084,18.441,-15.413,22,2026-10-15,2026-11-06
-open_meteo_gfs_seamless,vlaznost,48+ h,1044,15.447,18.191,-14.15,21,2026-10-16,2026-11-06
-open_meteo_icon_eu,brzina_vetra,0–24 h,2096,1.795,2.363,-0.195,23,2026-10-14,2026-11-06
-open_meteo_icon_eu,brzina_vetra,24–48 h,2000,2.179,2.871,-0.476,22,2026-10-15,2026-11-06
-open_meteo_icon_eu,brzina_vetra,48+ h,1040,2.495,3.29,-0.928,21,2026-10-16,2026-11-06
-open_meteo_icon_eu,insolacija,0–24 h,2096,24.375,54.623,-6.186,23,2026-10-14,2026-11-06
-open_meteo_icon_eu,insolacija,24–48 h,2000,25.134,56.083,-6.935,22,2026-10-15,2026-11-06
-open_meteo_icon_eu,insolacija,48+ h,1040,29.749,59.236,1.141,21,2026-10-16,2026-11-06
-open_meteo_icon_eu,oblacnost,0–24 h,2096,18.359,29.461,6.319,23,2026-10-14,2026-11-06
-open_meteo_icon_eu,oblacnost,24–48 h,2000,19.192,31.894,4.69,22,2026-10-15,2026-11-06
-open_meteo_icon_eu,oblacnost,48+ h,1040,19.713,33.358,0.515,21,2026-10-16,2026-11-06
-open_meteo_icon_eu,padavine,0–24 h,2096,0.055,0.211,-0.019,23,2026-10-14,2026-11-06
-open_meteo_icon_eu,padavine,24–48 h,2000,0.066,0.213,0.001,22,2026-10-15,2026-11-06
-open_meteo_icon_eu,padavine,48+ h,1040,0.07,0.238,-0.026,21,2026-10-16,2026-11-06
-open_meteo_icon_eu,temperatura,0–24 h,2096,0.825,1.099,-0.261,23,2026-10-14,2026-11-06
-open_meteo_icon_eu,temperatura,24–48 h,2000,0.968,1.285,-0.359,22,2026-10-15,2026-11-06
-open_meteo_icon_eu,temperatura,48+ h,1040,1.128,1.498,-0.227,21,2026-10-16,2026-11-06
-open_meteo_icon_eu,vlaznost,0–24 h,2096,5.672,7.521,1.698,23,2026-10-14,2026-11-06
-open_meteo_icon_eu,vlaznost,24–48 h,2000,6.349,8.414,2.364,22,2026-10-15,2026-11-06
-open_meteo_icon_eu,vlaznost,48+ h,1040,7.211,9.555,0.726,21,2026-10-16,2026-11-06
-open_meteo_meteofrance_seamless,brzina_vetra,0–24 h,2120,3.598,4.547,2.68,23,2026-10-14,2026-11-06
-open_meteo_meteofrance_seamless,brzina_vetra,24–48 h,2024,3.859,5.135,2.467,22,2026-10-15,2026-11-06
-open_meteo_meteofrance_seamless,brzina_vetra,48+ h,1044,3.999,5.239,2.285,21,2026-10-16,2026-11-06
-open_meteo_meteofrance_seamless,insolacija,0–24 h,2120,25.442,57.19,-7.283,23,2026-10-14,2026-11-06
-open_meteo_meteofrance_seamless,insolacija,24–48 h,2024,28.006,61.989,-3.157,22,2026-10-15,2026-11-06
-open_meteo_meteofrance_seamless,insolacija,48+ h,1044,33.885,68.647,1.873,21,2026-10-16,2026-11-06
-open_meteo_meteofrance_seamless,oblacnost,0–24 h,2120,16.178,25.388,1.597,23,2026-10-14,2026-11-06
-open_meteo_meteofrance_seamless,oblacnost,24–48 h,2024,17.988,28.008,-0.957,22,2026-10-15,2026-11-06
-open_meteo_meteofrance_seamless,oblacnost,48+ h,1044,21.378,33.508,-3.319,21,2026-10-16,2026-11-06
-open_meteo_meteofrance_seamless,padavine,0–24 h,2120,0.053,0.194,-0.016,23,2026-10-14,2026-11-06
-open_meteo_meteofrance_seamless,padavine,24–48 h,2024,0.084,0.257,0.034,22,2026-10-15,2026-11-06
-open_meteo_meteofrance_seamless,padavine,48+ h,1044,0.116,0.358,0.052,21,2026-10-16,2026-11-06
-open_meteo_meteofrance_seamless,temperatura,0–24 h,2120,1.004,1.284,-0.241,23,2026-10-14,2026-11-06
-open_meteo_meteofrance_seamless,temperatura,24–48 h,2024,1.156,1.459,-0.238,22,2026-10-15,2026-11-06
-open_meteo_meteofrance_seamless,temperatura,48+ h,1044,1.222,1.545,-0.209,21,2026-10-16,2026-11-06
-open_meteo_meteofrance_seamless,vlaznost,0–24 h,2120,8.731,10.963,-3.695,23,2026-10-14,2026-11-06
-open_meteo_meteofrance_seamless,vlaznost,24–48 h,2024,9.967,12.299,-4.928,22,2026-10-15,2026-11-06
-open_meteo_meteofrance_seamless,vlaznost,48+ h,1044,11.216,13.838,-6.512,21,2026-10-16,2026-11-06
-open_meteo_ukmo_seamless,brzina_vetra,0–24 h,2120,2.459,3.19,1.621,23,2026-10-14,2026-11-06
-open_meteo_ukmo_seamless,brzina_vetra,24–48 h,2024,2.982,3.803,1.836,22,2026-10-15,2026-11-06
-open_meteo_ukmo_seamless,brzina_vetra,48+ h,1044,3.517,4.521,1.897,21,2026-10-16,2026-11-06
-open_meteo_ukmo_seamless,insolacija,0–24 h,2120,29.976,64.033,3.837,23,2026-10-14,2026-11-06
-open_meteo_ukmo_seamless,insolacija,24–48 h,1572,29.308,62.727,4.877,22,2026-10-15,2026-11-06
-open_meteo_ukmo_seamless,oblacnost,0–24 h,2120,18.002,31.206,-7.262,23,2026-10-14,2026-11-06
-open_meteo_ukmo_seamless,oblacnost,24–48 h,2024,21.21,36.066,-10.482,22,2026-10-15,2026-11-06
-open_meteo_ukmo_seamless,oblacnost,48+ h,1044,23.403,37.753,-10.633,21,2026-10-16,2026-11-06
-open_meteo_ukmo_seamless,padavine,0–24 h,2120,0.061,0.225,-0.03,23,2026-10-14,2026-11-06
-open_meteo_ukmo_seamless,padavine,24–48 h,2024,0.065,0.223,-0.011,22,2026-10-15,2026-11-06
-open_meteo_ukmo_seamless,padavine,48+ h,1044,0.086,0.274,-0.007,21,2026-10-16,2026-11-06
-open_meteo_ukmo_seamless,temperatura,0–24 h,2120,0.906,1.16,0.347,23,2026-10-14,2026-11-06
-open_meteo_ukmo_seamless,temperatura,24–48 h,2024,1.05,1.357,0.331,22,2026-10-15,2026-11-06
-open_meteo_ukmo_seamless,temperatura,48+ h,1044,1.146,1.442,0.441,21,2026-10-16,2026-11-06
-open_meteo_ukmo_seamless,vlaznost,0–24 h,2120,8.315,10.423,-5.091,23,2026-10-14,2026-11-06
-open_meteo_ukmo_seamless,vlaznost,24–48 h,2024,9.63,11.871,-6.023,22,2026-10-15,2026-11-06
-open_meteo_ukmo_seamless,vlaznost,48+ h,1044,9.634,12.501,-6.029,21,2026-10-16,2026-11-06
+met_norway,brzina_vetra,0–24 h,2200,2.396,3.097,1.822,24,2026-10-14,2026-11-06
+met_norway,brzina_vetra,24–48 h,2111,2.634,3.363,1.849,23,2026-10-15,2026-11-06
+met_norway,brzina_vetra,48+ h,979,3.173,4.03,1.952,22,2026-10-16,2026-11-06
+met_norway,oblacnost,0–24 h,2200,13.986,26.507,-3.902,24,2026-10-14,2026-11-06
+met_norway,oblacnost,24–48 h,2111,16.819,29.851,-6.308,23,2026-10-15,2026-11-06
+met_norway,oblacnost,48+ h,979,21.219,35.529,-11.497,22,2026-10-16,2026-11-06
+met_norway,padavine,0–24 h,2200,0.055,0.203,-0.023,24,2026-10-14,2026-11-06
+met_norway,padavine,24–48 h,2111,0.053,0.193,-0.021,23,2026-10-15,2026-11-06
+met_norway,padavine,48+ h,979,0.074,0.24,-0.005,22,2026-10-16,2026-11-06
+met_norway,temperatura,0–24 h,2200,0.701,0.937,-0.029,24,2026-10-14,2026-11-06
+met_norway,temperatura,24–48 h,2111,0.828,1.08,-0.165,23,2026-10-15,2026-11-06
+met_norway,temperatura,48+ h,979,0.96,1.333,-0.157,22,2026-10-16,2026-11-06
+met_norway,vlaznost,0–24 h,2200,5.1,6.992,0.837,24,2026-10-14,2026-11-06
+met_norway,vlaznost,24–48 h,2111,5.745,7.658,1.153,23,2026-10-15,2026-11-06
+met_norway,vlaznost,48+ h,979,6.542,8.494,1.515,22,2026-10-16,2026-11-06
+open_meteo_best_match (ulaz modela),brzina_vetra,0–24 h,2240,2.238,2.891,1.153,24,2026-10-14,2026-11-06
+open_meteo_best_match (ulaz modela),brzina_vetra,24–48 h,2142,2.595,3.351,1.374,23,2026-10-15,2026-11-06
+open_meteo_best_match (ulaz modela),brzina_vetra,48+ h,988,2.565,3.227,0.014,22,2026-10-16,2026-11-06
+open_meteo_best_match (ulaz modela),insolacija,0–24 h,2240,24.158,57.854,-1.199,24,2026-10-14,2026-11-06
+open_meteo_best_match (ulaz modela),insolacija,24–48 h,2142,27.072,64.094,-2.12,23,2026-10-15,2026-11-06
+open_meteo_best_match (ulaz modela),insolacija,48+ h,988,21.301,50.91,6.608,22,2026-10-16,2026-11-06
+open_meteo_best_match (ulaz modela),oblacnost,0–24 h,2240,16.462,31.027,-2.559,24,2026-10-14,2026-11-06
+open_meteo_best_match (ulaz modela),oblacnost,24–48 h,2142,17.436,32.665,-6.174,23,2026-10-15,2026-11-06
+open_meteo_best_match (ulaz modela),oblacnost,48+ h,988,19.513,34.931,-10.438,22,2026-10-16,2026-11-06
+open_meteo_best_match (ulaz modela),padavine,0–24 h,2240,0.064,0.272,-0.025,24,2026-10-14,2026-11-06
+open_meteo_best_match (ulaz modela),padavine,24–48 h,2142,0.056,0.214,-0.027,23,2026-10-15,2026-11-06
+open_meteo_best_match (ulaz modela),padavine,48+ h,988,0.071,0.217,0.001,22,2026-10-16,2026-11-06
+open_meteo_best_match (ulaz modela),temperatura,0–24 h,2240,1.14,1.456,-0.504,24,2026-10-14,2026-11-06
+open_meteo_best_match (ulaz modela),temperatura,24–48 h,2142,1.259,1.597,-0.582,23,2026-10-15,2026-11-06
+open_meteo_best_match (ulaz modela),temperatura,48+ h,988,1.013,1.356,-0.221,22,2026-10-16,2026-11-06
+open_meteo_best_match (ulaz modela),vlaznost,0–24 h,2240,10.002,12.717,-4.821,24,2026-10-14,2026-11-06
+open_meteo_best_match (ulaz modela),vlaznost,24–48 h,2142,9.824,12.341,-4.267,23,2026-10-15,2026-11-06
+open_meteo_best_match (ulaz modela),vlaznost,48+ h,988,7.617,9.982,-1.061,22,2026-10-16,2026-11-06
+open_meteo_ecmwf_ifs025,brzina_vetra,0–24 h,2216,1.907,2.422,-1.057,24,2026-10-14,2026-11-06
+open_meteo_ecmwf_ifs025,brzina_vetra,24–48 h,2120,2.178,2.789,-1.149,23,2026-10-15,2026-11-06
+open_meteo_ecmwf_ifs025,brzina_vetra,48+ h,1096,2.712,3.496,-1.461,22,2026-10-16,2026-11-06
+open_meteo_ecmwf_ifs025,insolacija,0–24 h,2216,21.136,47.688,2.215,24,2026-10-14,2026-11-06
+open_meteo_ecmwf_ifs025,insolacija,24–48 h,2120,24.698,54.053,3.84,23,2026-10-15,2026-11-06
+open_meteo_ecmwf_ifs025,insolacija,48+ h,1096,28.913,60.238,11.552,22,2026-10-16,2026-11-06
+open_meteo_ecmwf_ifs025,oblacnost,0–24 h,2216,14.318,25.875,-4.675,24,2026-10-14,2026-11-06
+open_meteo_ecmwf_ifs025,oblacnost,24–48 h,2120,17.181,29.591,-6.793,23,2026-10-15,2026-11-06
+open_meteo_ecmwf_ifs025,oblacnost,48+ h,1096,20.815,34.44,-12.512,22,2026-10-16,2026-11-06
+open_meteo_ecmwf_ifs025,padavine,0–24 h,2216,0.053,0.184,-0.02,24,2026-10-14,2026-11-06
+open_meteo_ecmwf_ifs025,padavine,24–48 h,2120,0.052,0.181,-0.016,23,2026-10-15,2026-11-06
+open_meteo_ecmwf_ifs025,padavine,48+ h,1096,0.085,0.249,0.011,22,2026-10-16,2026-11-06
+open_meteo_ecmwf_ifs025,temperatura,0–24 h,2216,0.807,1.079,0.081,24,2026-10-14,2026-11-06
+open_meteo_ecmwf_ifs025,temperatura,24–48 h,2120,0.937,1.196,-0.039,23,2026-10-15,2026-11-06
+open_meteo_ecmwf_ifs025,temperatura,48+ h,1096,1.059,1.345,-0.044,22,2026-10-16,2026-11-06
+open_meteo_ecmwf_ifs025,vlaznost,0–24 h,2216,5.369,7.151,2.919,24,2026-10-14,2026-11-06
+open_meteo_ecmwf_ifs025,vlaznost,24–48 h,2120,6.041,7.91,3.119,23,2026-10-15,2026-11-06
+open_meteo_ecmwf_ifs025,vlaznost,48+ h,1096,7.042,9.136,3.095,22,2026-10-16,2026-11-06
+open_meteo_gfs_seamless,brzina_vetra,0–24 h,2216,2.145,2.828,0.356,24,2026-10-14,2026-11-06
+open_meteo_gfs_seamless,brzina_vetra,24–48 h,2120,2.448,3.149,-0.229,23,2026-10-15,2026-11-06
+open_meteo_gfs_seamless,brzina_vetra,48+ h,1096,2.623,3.353,-0.679,22,2026-10-16,2026-11-06
+open_meteo_gfs_seamless,insolacija,0–24 h,2216,30.219,70.356,-13.801,24,2026-10-14,2026-11-06
+open_meteo_gfs_seamless,insolacija,24–48 h,2120,36.426,79.951,-13.505,23,2026-10-15,2026-11-06
+open_meteo_gfs_seamless,insolacija,48+ h,1096,40.464,82.937,-12.032,22,2026-10-16,2026-11-06
+open_meteo_gfs_seamless,oblacnost,0–24 h,2216,19.866,35.275,9.44,24,2026-10-14,2026-11-06
+open_meteo_gfs_seamless,oblacnost,24–48 h,2120,23.476,40.053,8.341,23,2026-10-15,2026-11-06
+open_meteo_gfs_seamless,oblacnost,48+ h,1096,24.213,41.759,5.368,22,2026-10-16,2026-11-06
+open_meteo_gfs_seamless,padavine,0–24 h,2216,0.054,0.209,-0.027,24,2026-10-14,2026-11-06
+open_meteo_gfs_seamless,padavine,24–48 h,2120,0.054,0.188,-0.01,23,2026-10-15,2026-11-06
+open_meteo_gfs_seamless,padavine,48+ h,1096,0.082,0.275,-0.016,22,2026-10-16,2026-11-06
+open_meteo_gfs_seamless,temperatura,0–24 h,2216,1.783,2.285,1.553,24,2026-10-14,2026-11-06
+open_meteo_gfs_seamless,temperatura,24–48 h,2120,1.965,2.502,1.683,23,2026-10-15,2026-11-06
+open_meteo_gfs_seamless,temperatura,48+ h,1096,1.899,2.436,1.572,22,2026-10-16,2026-11-06
+open_meteo_gfs_seamless,vlaznost,0–24 h,2216,15.783,17.765,-15.159,24,2026-10-14,2026-11-06
+open_meteo_gfs_seamless,vlaznost,24–48 h,2120,15.852,18.256,-14.358,23,2026-10-15,2026-11-06
+open_meteo_gfs_seamless,vlaznost,48+ h,1096,15.504,18.286,-12.715,22,2026-10-16,2026-11-06
+open_meteo_icon_eu,brzina_vetra,0–24 h,2192,1.781,2.34,-0.25,24,2026-10-14,2026-11-06
+open_meteo_icon_eu,brzina_vetra,24–48 h,2096,2.151,2.834,-0.523,23,2026-10-15,2026-11-06
+open_meteo_icon_eu,brzina_vetra,48+ h,1092,2.448,3.235,-0.949,22,2026-10-16,2026-11-06
+open_meteo_icon_eu,insolacija,0–24 h,2192,24.225,54.105,-6.832,24,2026-10-14,2026-11-06
+open_meteo_icon_eu,insolacija,24–48 h,2096,25.029,55.577,-7.663,23,2026-10-15,2026-11-06
+open_meteo_icon_eu,insolacija,48+ h,1092,30.673,61.005,-1.254,22,2026-10-16,2026-11-06
+open_meteo_icon_eu,oblacnost,0–24 h,2192,19.238,30.732,7.638,24,2026-10-14,2026-11-06
+open_meteo_icon_eu,oblacnost,24–48 h,2096,20.609,33.608,6.653,23,2026-10-15,2026-11-06
+open_meteo_icon_eu,oblacnost,48+ h,1092,21.722,35.589,3.438,22,2026-10-16,2026-11-06
+open_meteo_icon_eu,padavine,0–24 h,2192,0.053,0.207,-0.018,24,2026-10-14,2026-11-06
+open_meteo_icon_eu,padavine,24–48 h,2096,0.063,0.208,0.001,23,2026-10-15,2026-11-06
+open_meteo_icon_eu,padavine,48+ h,1092,0.067,0.232,-0.025,22,2026-10-16,2026-11-06
+open_meteo_icon_eu,temperatura,0–24 h,2192,0.833,1.106,-0.218,24,2026-10-14,2026-11-06
+open_meteo_icon_eu,temperatura,24–48 h,2096,0.979,1.292,-0.31,23,2026-10-15,2026-11-06
+open_meteo_icon_eu,temperatura,48+ h,1092,1.15,1.515,-0.172,22,2026-10-16,2026-11-06
+open_meteo_icon_eu,vlaznost,0–24 h,2192,6.088,8.158,2.288,24,2026-10-14,2026-11-06
+open_meteo_icon_eu,vlaznost,24–48 h,2096,6.949,9.359,3.146,23,2026-10-15,2026-11-06
+open_meteo_icon_eu,vlaznost,48+ h,1092,8.054,10.943,1.878,22,2026-10-16,2026-11-06
+open_meteo_meteofrance_seamless,brzina_vetra,0–24 h,2216,3.518,4.469,2.516,24,2026-10-14,2026-11-06
+open_meteo_meteofrance_seamless,brzina_vetra,24–48 h,2120,3.765,5.038,2.318,23,2026-10-15,2026-11-06
+open_meteo_meteofrance_seamless,brzina_vetra,48+ h,1096,3.878,5.127,2.134,22,2026-10-16,2026-11-06
+open_meteo_meteofrance_seamless,insolacija,0–24 h,2216,26.144,58.816,-8.772,24,2026-10-14,2026-11-06
+open_meteo_meteofrance_seamless,insolacija,24–48 h,2120,28.822,63.412,-5.098,23,2026-10-15,2026-11-06
+open_meteo_meteofrance_seamless,insolacija,48+ h,1096,35.152,71.066,-1.091,22,2026-10-16,2026-11-06
+open_meteo_meteofrance_seamless,oblacnost,0–24 h,2216,17.769,28.126,3.815,24,2026-10-14,2026-11-06
+open_meteo_meteofrance_seamless,oblacnost,24–48 h,2120,19.241,29.719,1.152,23,2026-10-15,2026-11-06
+open_meteo_meteofrance_seamless,oblacnost,48+ h,1096,23.352,36.012,-0.173,22,2026-10-16,2026-11-06
+open_meteo_meteofrance_seamless,padavine,0–24 h,2216,0.051,0.19,-0.015,24,2026-10-14,2026-11-06
+open_meteo_meteofrance_seamless,padavine,24–48 h,2120,0.08,0.251,0.032,23,2026-10-15,2026-11-06
+open_meteo_meteofrance_seamless,padavine,48+ h,1096,0.11,0.349,0.05,22,2026-10-16,2026-11-06
+open_meteo_meteofrance_seamless,temperatura,0–24 h,2216,1.041,1.328,-0.19,24,2026-10-14,2026-11-06
+open_meteo_meteofrance_seamless,temperatura,24–48 h,2120,1.183,1.485,-0.184,23,2026-10-15,2026-11-06
+open_meteo_meteofrance_seamless,temperatura,48+ h,1096,1.261,1.588,-0.17,22,2026-10-16,2026-11-06
+open_meteo_meteofrance_seamless,vlaznost,0–24 h,2216,8.874,11.103,-3.052,24,2026-10-14,2026-11-06
+open_meteo_meteofrance_seamless,vlaznost,24–48 h,2120,10.138,12.483,-4.153,23,2026-10-15,2026-11-06
+open_meteo_meteofrance_seamless,vlaznost,48+ h,1096,11.319,13.895,-5.595,22,2026-10-16,2026-11-06
+open_meteo_ukmo_seamless,brzina_vetra,0–24 h,2216,2.423,3.145,1.61,24,2026-10-14,2026-11-06
+open_meteo_ukmo_seamless,brzina_vetra,24–48 h,2120,2.935,3.747,1.828,23,2026-10-15,2026-11-06
+open_meteo_ukmo_seamless,brzina_vetra,48+ h,1096,3.405,4.423,1.845,22,2026-10-16,2026-11-06
+open_meteo_ukmo_seamless,insolacija,0–24 h,2216,29.056,62.889,3.309,24,2026-10-14,2026-11-06
+open_meteo_ukmo_seamless,insolacija,24–48 h,1644,28.14,61.348,4.557,23,2026-10-15,2026-11-06
+open_meteo_ukmo_seamless,oblacnost,0–24 h,2216,18.149,31.497,-6.291,24,2026-10-14,2026-11-06
+open_meteo_ukmo_seamless,oblacnost,24–48 h,2120,20.977,35.861,-9.645,23,2026-10-15,2026-11-06
+open_meteo_ukmo_seamless,oblacnost,48+ h,1096,23.099,37.407,-9.747,22,2026-10-16,2026-11-06
+open_meteo_ukmo_seamless,padavine,0–24 h,2216,0.058,0.22,-0.028,24,2026-10-14,2026-11-06
+open_meteo_ukmo_seamless,padavine,24–48 h,2120,0.062,0.218,-0.01,23,2026-10-15,2026-11-06
+open_meteo_ukmo_seamless,padavine,48+ h,1096,0.082,0.268,-0.006,22,2026-10-16,2026-11-06
+open_meteo_ukmo_seamless,temperatura,0–24 h,2216,0.909,1.163,0.339,24,2026-10-14,2026-11-06
+open_meteo_ukmo_seamless,temperatura,24–48 h,2120,1.05,1.354,0.32,23,2026-10-15,2026-11-06
+open_meteo_ukmo_seamless,temperatura,48+ h,1096,1.139,1.429,0.413,22,2026-10-16,2026-11-06
+open_meteo_ukmo_seamless,vlaznost,0–24 h,2216,8.554,10.792,-4.35,24,2026-10-14,2026-11-06
+open_meteo_ukmo_seamless,vlaznost,24–48 h,2120,9.828,12.129,-5.216,23,2026-10-15,2026-11-06
+open_meteo_ukmo_seamless,vlaznost,48+ h,1096,10.076,13.092,-4.857,22,2026-10-16,2026-11-06
