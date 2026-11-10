@@ -105,8 +105,20 @@ def iz_poruke(put: Path) -> dict:
             "stavke": stavke_iz_tela("\n".join(tekst[1:])), "commit": None}
 
 
+def _broj(v: str) -> tuple:
+    return tuple(int(x) for x in v.split("."))
+
+
 def napravi(poruka: Path | None = None) -> dict:
     verzije, dani = iz_gita()
+    # postojeći unosi iz verzije.json se čuvaju (git istorija može biti kraća od arhive); git dopuni/obnovi iste verzije
+    if IZLAZ.exists():
+        staro = json.loads(IZLAZ.read_text(encoding="utf-8"))
+        iz_git = {v["verzija"] for v in verzije}
+        verzije += [v for v in staro.get("verzije", []) if v["verzija"] not in iz_git]
+        verzije.sort(key=lambda v: _broj(v["verzija"]), reverse=True)
+        if not dani:
+            dani = staro.get("pre_verzija", [])
     if poruka:
         nova = iz_poruke(poruka)
         verzije = [v for v in verzije if v["verzija"] != nova["verzija"]]

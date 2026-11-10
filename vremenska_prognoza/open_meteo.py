@@ -11,7 +11,7 @@ Svako preuzimanje se čuva (ništa se ne briše):
 
 Vreme: preuzima se i čuva u UTC (`timezone=GMT`); stariji sačuvani odgovori su u Europe/Belgrade i čitaju se
 isto (u_utc prepoznaje zonu). Prevod na oznaku sata modela je JEDNA funkcija, oznaka_modela(df, meteo_vreme):
-  "utc1"    — model-v2 (E31, MODEL_KONTEKST 4b, model/obelezja.json → meteo_konvencija): vreme t (UTC) iz
+  "utc1"    — model-v2 (E31, model/obelezja.json → meteo_konvencija): vreme t (UTC) iz
               Open-Meteo → oznaka ts = t + 1 h (naivno, UTC+1, kraj sata), ista oznaka kao brojači. NIKAKAV
               dodatni pomak; nema DST rupa ni duplikata. Kalendar iz oznake: dan = (ts − 1 h).date(), sat = (ts − 1 h).hour.
   "lokalno" — samo model-v1 (E28, više se ne koristi): lokalno vreme T (DST) → Cas = T + 1 h, kao u treningu E28.

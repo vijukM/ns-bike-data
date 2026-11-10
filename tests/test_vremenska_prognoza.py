@@ -35,7 +35,7 @@ def odgovor(vremena, vrednost=lambda i: float(i)):
 
 
 def test_utc1_ts_je_open_meteo_vreme_plus_1h():
-    # model-v2 (MODEL_KONTEKST 4b): Open-Meteo t (UTC) → ts = t + 1 h (kraj sata UTC+1), bez dodatnog pomaka;
+    # model-v2: Open-Meteo t (UTC) → ts = t + 1 h (kraj sata UTC+1), bez dodatnog pomaka;
     # kalendar iz oznake: dan = (ts − 1 h).date(), Cas = (ts − 1 h).hour + 1
     t = [f"2026-10-14T{h:02d}:00" for h in range(24)] + ["2026-10-15T00:00", "2026-10-15T01:00"]
     o = odgovor(t)
