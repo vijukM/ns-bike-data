@@ -8,7 +8,7 @@
  * Granica: proksi radi SAMO za UPSTREAM host (nije otvoreni proksi). Ovo je privremeno, za demo iza admin lozinke;
  * za javni/produkcijski rad treba dozvola ili licenca vlasnika prenosa.
  *
- * Postavljanje: vidi README.md. Posle postavljanja, adresu Worker-a upiši u docs/data/kamere.json → "proksi".
+ * Posle postavljanja (Cloudflare Workers), adresu Worker-a upiši u docs/data/kamere.json → "proksi".
  */
 
 const UPSTREAM = "https://srbija-nadlanu.ott.solutions/";   // jedini dozvoljeni izvor

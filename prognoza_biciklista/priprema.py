@@ -1,10 +1,10 @@
 """Faza 2: istorija za model = model/istorija.parquet (očišćena, 01.06–31.08.2026) + novi sati iz scrapera,
-očišćeni po istim pravilima kao istorijski master (docs/MODEL_KONTEKST.md, tačka 5).
+očišćeni po istim pravilima kao istorijski master.
 
     python -m prognoza_biciklista.priprema        # -> model_podaci/istorija.parquet
 
 Izlaz: stanica_id, ts, y_A, razlog_A na punoj naivnoj satnoj mreži (rupa 01.09–08.10.2026 = NaN, nema_reda).
-Oznaka vremena kao istorija (MODEL_KONTEKST 4b): ts = ts_utc + 1 h (kraj sata, UTC+1 cele godine) — u_utc1.
+Oznaka vremena kao istorija: ts = ts_utc + 1 h (kraj sata, UTC+1 cele godine) — u_utc1.
 Istorija iz paketa se ne menja; pravila se primenjuju samo na nove sate (istorija služi kao kontekst).
 
 Pravila (redosled primene; vrednost → NaN uz razlog):
@@ -326,7 +326,7 @@ def pripremi(istorija: pd.DataFrame, novo: pd.DataFrame, smerovi: pd.DataFrame,
 
 
 def u_utc1(df: pd.DataFrame) -> pd.DataFrame:
-    """Scraper (satno) → oznaka modela (MODEL_KONTEKST 4b): ts = ts_utc + 1 h (kraj sata, naivno UTC+1, cele godine);
+    """Scraper (satno) → oznaka modela: ts = ts_utc + 1 h (kraj sata, naivno UTC+1, cele godine);
     datum i sat se računaju iz te oznake ((ts − 1 h).date(), (ts − 1 h).hour + 1), kao u istoriji.
     Lokalni ts iz scraper-a (Europe/Belgrade, leti UTC+2) se NE koristi: leti bi bio pomeren 1 h."""
     df = df.copy()

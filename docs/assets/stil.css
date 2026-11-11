@@ -1970,3 +1970,8 @@ body.ima-cestice .ljuska { position: relative; z-index: 1; }
 .pr-toplota[hidden] { display: none; }
 .pr-toplota-ime { font-size: 13px; color: var(--t-muted); margin-bottom: 4px; }
 .pr-toplota-g { height: 170px; }
+/* uski ekran: grupa dugmića (segment) ne sme da izađe van ekrana — prelazi u drugi red */
+@media (max-width: 480px) {
+  .grupa-kontrola { max-width: 100%; min-width: 0; }
+  .segment { max-width: 100%; flex-wrap: wrap; }
+}
