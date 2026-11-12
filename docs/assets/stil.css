@@ -1783,6 +1783,9 @@ body.km-fokus-otvoren { overflow: hidden; }
 .dr-ose { display: flex; justify-content: space-between; font: 500 10px "JetBrains Mono", monospace; color: var(--t-light); margin-top: 4px; }
 .dr-red { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border-soft); }
 .dr-red span { color: var(--t-muted); }
+.dr-rupe { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 4px; font-size: 12.5px; }
+.dr-rupe li { display: grid; grid-template-columns: auto auto 1fr; gap: 10px; align-items: baseline; padding: 4px 8px; border-radius: 8px; background: var(--warning-soft); }
+.dr-rupe li .sitno { text-align: right; color: var(--t-muted); }
 .tk-red { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
 .tk-red b { font-size: 14px; }
 .tk-red .tk-dana { grid-row: span 2; align-self: center; font: 700 15px "JetBrains Mono", monospace; }

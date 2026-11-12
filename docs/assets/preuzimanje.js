@@ -156,6 +156,8 @@
   // ---------------------------------------------------------------- drumski saobraćaj (ns-trafic-data) i tokeni (data/admin.json)
   const vremeLok = (iso) => new Intl.DateTimeFormat("sr-Latn-RS", { timeZone: "Europe/Belgrade", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
   const preMin = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 60 ? `pre ${Math.max(0, m)} min` : `pre ${Math.floor(m / 60)} h ${m % 60} min`; };
+  const UZROK = { nije_pokrenuto: "pokretanje nije stiglo (zastoj GitHub Actions)", izvor_greska: "izvor nije odgovorio",
+    izvor_nije_osvezio: "izvor nije osvežio fajl" };
   async function drumski(A) {
     const el = document.getElementById("dr-telo");
     try {
@@ -165,12 +167,17 @@
       const satKljuc = (d) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Belgrade", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23" }).format(d).replace(" ", "T");
       const sada = new Date(), mapa = Object.fromEntries((S.sati || []).map((x) => [x.sat, x]));
       const sati = Array.from({ length: 24 }, (_, i) => { const k = satKljuc(new Date(sada - (23 - i) * 3600000)); return { k, ...(mapa[k] || { citanja: 0, greske: 0 }), tekuci: i === 23 }; });
+      const rupe = S.propusteno_7d || [];
       const ukupno = sati.slice(0, 23).reduce((a, x) => a + x.citanja, 0), greske = sati.reduce((a, x) => a + x.greske, 0);
       el.innerHTML = `
         <div class="dr-red"><span>Poslednje čitanje</span><b>${p ? `${vremeLok(p.vreme_utc)} · ${preMin(p.vreme_utc)}` : "—"} ${LJ.stalnoUzivo(!!sveze, sveze ? "UŽIVO" : "KASNI")}</b></div>
         <div class="dr-red"><span>Traka u poslednjem čitanju</span><b>${p ? `${p.traka} · ${p.novih_intervala} novih intervala` : "—"}</b></div>
         <div class="dr-red"><span>Čitanja u poslednja 23 puna sata</span><b>${ukupno} od ${23 * 12}</b></div>
         <div class="dr-red"><span>Neuspela čitanja (24 h)</span><b>${greske}${S.poslednja_greska ? ` · poslednje ${vremeLok(S.poslednja_greska)}` : ""}</b></div>
+        <div class="dr-red"><span>Propušteni intervali (7 dana)${LJ.info("5-minutni intervali koje nijedno čitanje nije uhvatilo (ceo grad). Izvor daje samo poslednji interval, pa se propušteni ne mogu kasnije preuzeti — u satnom zbiru taj sat ima manje od 12 intervala. Ceo spisak: podaci/propusteno.csv u ns-trafic-data.")}</span>
+          <b>${rupe.length ? `${rupe.reduce((a, x) => a + x.intervala, 0)} intervala · ${rupe.length} ${rupe.length === 1 ? "rupa" : rupe.length < 5 ? "rupe" : "rupa"}` : "nema"}</b></div>
+        ${rupe.length ? `<ul class="dr-rupe">${rupe.slice(-6).reverse().map((x) => `<li><b>${x.od_lokalno.slice(8, 10)}. ${x.od_lokalno.slice(5, 7)}. ${x.od_lokalno.slice(11)}${x.intervala > 1 ? `–${x.do_lokalno.slice(11)}` : ""}</b>
+          <span>${x.intervala} × 5 min</span><span class="sitno">${UZROK[x.uzrok] || x.uzrok}</span></li>`).join("")}</ul>` : ""}
         <div class="dr-sati">${sati.map((x) => `<span class="dr-sat ${x.tekuci ? "buduce" : x.citanja >= 11 ? "pun" : x.citanja ? "deo" : "prazan"}"
           title="${x.k.slice(8, 10)}. ${x.k.slice(5, 7)}. ${x.k.slice(11)} h: ${x.citanja} čitanja${x.greske ? `, ${x.greske} neuspelih` : ""}${x.tekuci ? " (u toku)" : ""}"></span>`).join("")}</div>
         <div class="dr-ose"><span>${sati[0].k.slice(11)} h</span><span>sada</span></div>`;
