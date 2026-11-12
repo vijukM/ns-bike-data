@@ -1,7 +1,16 @@
 {
- "generisano_utc": "2026-11-10T09:02Z",
+ "generisano_utc": "2026-11-12T07:15Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
+  {
+   "verzija": "1.1.78",
+   "datum": "2026-11-12T08:15",
+   "naslov": "Preuzimanje podataka: propušteni intervali drumskog saobraćaja",
+   "stavke": [
+    "Spisak propuštenih 5-minutnih intervala za 7 dana, sa uzrokom"
+   ],
+   "commit": null
+  },
   {
    "verzija": "1.1.77",
    "datum": "2026-11-10T10:02",
@@ -9,7 +18,7 @@
    "stavke": [
     "Na uskom ekranu dugmad u grupi prelaze u drugi red (npr. mera na strani Staze)"
    ],
-   "commit": null
+   "commit": "7eb80b0"
   },
   {
    "verzija": "1.1.76",
