@@ -1,0 +1,22 @@
+{
+  "opis": "Panorame za scenu profila (mesto vožnje × doba dana × vreme). Ključ: doba dana (vedro vreme) ili „doba-vreme“ (npr. „noc-kisa“). Sve panorame jednog mesta imaju istu širinu (visina 300, staza na y = 272) i nadovezuju se levo–desno. Novu panoramu: dodaj fajl u folder mesta i red ovde — bez izmene koda.",
+  "mesta": {
+    "reka": {
+      "sirina": 4800,
+      "panorame": {
+        "dan": "reka/reka-dan.svg"
+      }
+    },
+    "centar": {
+      "sirina": 6720,
+      "panorame": {
+        "jutro": "centar/centar-jutro.svg",
+        "dan": "centar/centar-dan.svg",
+        "predvece": "centar/centar-predvece.svg",
+        "noc": "centar/centar-noc.svg"
+      }
+    },
+    "bulevari": { "sirina": 4800, "panorame": {} },
+    "periferija": { "sirina": 4800, "panorame": {} }
+  }
+}
