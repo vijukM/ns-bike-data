@@ -1,7 +1,17 @@
 {
- "generisano_utc": "2026-11-12T07:15Z",
+ "generisano_utc": "2026-11-15T17:01Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
+  {
+   "verzija": "1.1.79",
+   "datum": "2026-11-15T18:01",
+   "naslov": "Profil: mesto vožnje Centar i doba dana",
+   "stavke": [
+    "Nova panorama Centar (jutro, dan, predveče, noć); panorame po mestu u folderu mesto-voznje",
+    "Prvo se bira doba dana, pa vreme; nudi se samo ono što postoji"
+   ],
+   "commit": null
+  },
   {
    "verzija": "1.1.78",
    "datum": "2026-11-12T08:15",
@@ -9,7 +19,7 @@
    "stavke": [
     "Spisak propuštenih 5-minutnih intervala za 7 dana, sa uzrokom"
    ],
-   "commit": null
+   "commit": "f5308c5"
   },
   {
    "verzija": "1.1.77",

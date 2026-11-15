@@ -1,7 +1,10 @@
 /* Prozor „Profil“ (klik na profil u dnu menija): prikaz bicikliste (avatara) i čarobnjak u 4 koraka —
-   biciklista, mesto vožnje, vreme, doba dana. Učitava ga ljuska tek na klik (LJ.ucitajSkript); generator likova i scena
-   „Reka“ (assets/nasicu/, gotov materijal, ne menjati) učitavaju se tek kad se prozor prvi put otvori.
-   - Korak 1: samo biciklista, bez pozadine (vektorski, renderFrame). Od koraka 2: scena „Reka“ sa tim biciklistom.
+   biciklista, mesto vožnje, doba dana, vreme. Učitava ga ljuska tek na klik (LJ.ucitajSkript); generator likova
+   (assets/nasicu/, gotov materijal, ne menjati), scena vožnje (assets/scena-voznje.js) i katalog panorama
+   (mesto-voznje/panorame.json) učitavaju se tek kad se prozor prvi put otvori.
+   - Korak 1: samo biciklista, bez pozadine (vektorski, renderFrame). Od koraka 2: scena sa panoramom izabranog mesta.
+   - Panorama = mesto × doba dana × vreme (katalog: ključ „doba“ za vedro, „doba-vreme“ za ostalo). Ponuđeno je samo ono
+     za šta postoji panorama (ostalo „u izradi“); prvo se bira doba dana, pa vreme (noću nema sunca — „Vedro“ je mesec).
    - Izbor koraka se ne vidi pre nego što se do njega dođe (oznake mesta, vremena i doba dana stižu korak po korak).
    - U jednom trenutku se animira samo jedan lik; likovi za izbor su statične sličice (5 po strani, uz filtere).
    - Brzina i veličina bicikliste se podešavaju klizačima i čuvaju uz izbor.
@@ -11,8 +14,9 @@
 const PROFIL = (() => {
   const KLJUC = "ns-profil";
   const PO_STRANI = 5;
-  // scena „Reka“: koliko se panorame vidi (od 4800) i gde stoji biciklista; usko = prozor uži od 640 px
-  const SCENA = { sirinaPrikaza: 750, sirinaPrikazaUsko: 420, polozaj: 0.32, panorama: "reka/reka-panorama.svg" };
+  // scena: koliko se panorame vidi (jedinice visine 300) i gde stoji biciklista; usko = prozor uži od 640 px
+  const SCENA = { sirinaPrikaza: 750, sirinaPrikazaUsko: 420, polozaj: 0.32 };
+  const KATALOG = "mesto-voznje/panorame.json";
   // klizači: [najmanje, najviše, korak, podrazumevano]
   const BRZINA = [0.5, 2, 0.05, 1];
   const VELICINA = [0.4, 0.85, 0.01, 0.62];
@@ -24,7 +28,7 @@ const PROFIL = (() => {
     centar: S('<path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6M9 10h.01M15 10h.01"/>'),
     periferija: S('<path d="M12 3 5 13h4l-3 5h12l-3-5h4zM12 18v3"/>'),
     bulevari: S('<path d="M4 21 8 3M20 21 16 3M12 5v2M12 11v2M12 17v2"/>'),
-    sunce: S('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+    vedro: S('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
     oblacno: S('<path d="M17.5 19H8a5 5 0 1 1 1-9.9A6 6 0 0 1 20.5 12 3.5 3.5 0 0 1 17.5 19Z"/>'),
     kisa: S('<path d="M16 13H8a4 4 0 1 1 .8-7.9A5 5 0 0 1 18.5 8 2.5 2.5 0 0 1 16 13ZM8 17l-1 3M12 17l-1 3M16 17l-1 3"/>'),
     sneg: S('<path d="M12 2v20M4 6l16 12M20 6 4 18M9 3l3 2 3-2M9 21l3-2 3 2"/>'),
@@ -34,26 +38,52 @@ const PROFIL = (() => {
     predvece: S('<path d="M12 10V4M8 7l4-3 4 3M22 21H2M2 17h2M20 17h2M16 17a4 4 0 0 0-8 0"/>'),
     noc: S('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>'),
   };
-  // [id, naziv, kratak opis, gotovo] — gotovo: false → „u izradi“; prva gotova opcija je podrazumevana
+  // [id, naziv, kratak opis, podrazumevano] — da li je opcija gotova, odlučuje katalog panorama (dostupno())
   const MESTA = [["reka", "Reka", "kej uz Dunav", true], ["centar", "Centar", "Zmaj Jovina, Dunavska"], ["periferija", "Periferija", "naselja i salaši"], ["bulevari", "Bulevari", "široke staze uz saobraćaj"]];
-  const VREMENA = [["sunce", "Sunce", "vedro", true], ["oblacno", "Oblačno", "sivo nebo"], ["kisa", "Kiša", "mokra staza"], ["sneg", "Sneg", "zima na biciklu"], ["vetar", "Vetar i lišće", "jesen, košava"]];
   const DOBA = [["jutro", "Jutro", "rani polazak"], ["dan", "Dan", "puno svetla", true], ["predvece", "Predveče", "zalazak sunca"], ["noc", "Noć", "svetla i farovi"]];
-  const OPCIJE = { mesto: MESTA, vreme: VREMENA, doba: DOBA };
-  const KORACI = [["lik", "Biciklista"], ["mesto", "Mesto vožnje"], ["vreme", "Vreme"], ["doba", "Doba dana"]];
+  const VREMENA = [["vedro", "Vedro", "sunce", true], ["oblacno", "Oblačno", "sivo nebo"], ["kisa", "Kiša", "mokra staza"], ["sneg", "Sneg", "zima na biciklu"], ["vetar", "Vetar i lišće", "jesen, košava"]];
+  const OPCIJE = { mesto: MESTA, doba: DOBA, vreme: VREMENA };
+  const KORACI = [["lik", "Biciklista"], ["mesto", "Mesto vožnje"], ["doba", "Doba dana"], ["vreme", "Vreme"]];
+  const STARO = { vreme: { sunce: "vedro" } };            // ranije sačuvani izbori
   // filteri: polje „kategorije“ u likovi.json (jedan lik može biti u više grupa)
   const KATEGORIJE = [["svi", "Svi"], ["svakodnevni", "Svakodnevni"], ["posao", "Dostavljači i posao"], ["deca", "Deca i porodica"],
     ["sportisti", "Sportisti"], ["rekreativci", "Rekreativci"], ["specijalni", "Specijalni"]];
   const podrazumevano = (spisak) => spisak.find((o) => o[3])[0];
   const uOpsegu = (x, [od, doo, , pod]) => (typeof x === "number" && x >= od && x <= doo ? x : pod);
 
-  /** Ispravan izbor ili null: lik_id mora biti jedan od dozvoljenih; ostalo samo gotove opcije i brojevi u opsegu (inače podrazumevano). */
-  function valjan(z, ids) {
+  // ---------------------------------------------------------------- katalog panorama (mesto × doba × vreme)
+  /** Putanja panorame (u mesto-voznje/) ili null: vedro = ključ „doba“, ostalo „doba-vreme“. */
+  function panoramaKljuc(k, mesto, doba, vreme) {
+    const p = (k && k.mesta[mesto] && k.mesta[mesto].panorame) || {};
+    return p[vreme === "vedro" ? doba : `${doba}-${vreme}`] || null;
+  }
+  /** Da li za izbor postoji panorama: mesto (bilo koja), doba (za mesto, vedro), vreme (za mesto i doba). */
+  function dostupno(k, polje, v, z) {
+    if (!k) return OPCIJE[polje].some((o) => o[0] === v && o[3]);   // bez kataloga: samo podrazumevane opcije
+    if (polje === "mesto") return !!(k.mesta[v] && Object.keys(k.mesta[v].panorame).length);
+    if (polje === "doba") return !!panoramaKljuc(k, z.mesto, v, "vedro");
+    return !!panoramaKljuc(k, z.mesto, z.doba, v);
+  }
+  /** Ispravlja izbor redom mesto → doba → vreme: nedostupno postaje podrazumevano, pa prvo dostupno. */
+  function popravi(z, k) {
+    for (const polje of ["mesto", "doba", "vreme"]) {
+      if (dostupno(k, polje, z[polje], z)) continue;
+      const pod = podrazumevano(OPCIJE[polje]);
+      z[polje] = dostupno(k, polje, pod, z) ? pod : (OPCIJE[polje].find((o) => dostupno(k, polje, o[0], z)) || [pod])[0];
+    }
+    return z;
+  }
+
+  /** Ispravan izbor ili null: lik_id mora biti jedan od dozvoljenih; mesto/doba/vreme samo ako postoji panorama
+      (katalog; bez njega samo podrazumevano), brojevi u opsegu (inače podrazumevano). */
+  function valjan(z, ids, katalog = null) {
     if (!z || typeof z !== "object" || typeof z.lik_id !== "string" || !ids.includes(z.lik_id)) return null;
-    const gotova = (k) => (OPCIJE[k].some((o) => o[0] === z[k] && o[3]) ? z[k] : podrazumevano(OPCIJE[k]));
-    return { lik_id: z.lik_id, mesto: gotova("mesto"), vreme: gotova("vreme"), doba: gotova("doba"),
+    const v = (polje) => { const x = (STARO[polje] || {})[z[polje]] || z[polje]; return OPCIJE[polje].some((o) => o[0] === x) ? x : podrazumevano(OPCIJE[polje]); };
+    const izb = popravi({ mesto: v("mesto"), doba: v("doba"), vreme: v("vreme") }, katalog);
+    return { lik_id: z.lik_id, mesto: izb.mesto, doba: izb.doba, vreme: izb.vreme,
       brzina: uOpsegu(z.brzina, BRZINA), velicina: uOpsegu(z.velicina, VELICINA) };
   }
-  if (typeof document === "undefined") return { valjan, KLJUC, KATEGORIJE };
+  if (typeof document === "undefined") return { valjan, panoramaKljuc, KLJUC, KATEGORIJE };
 
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const bezPokreta = matchMedia("(prefers-reduced-motion: reduce)");
@@ -61,17 +91,22 @@ const PROFIL = (() => {
   const broj = (x, d = 2) => x.toLocaleString("sr-Latn-RS", { minimumFractionDigits: d, maximumFractionDigits: d });
 
   let dlg = null, likovi = [], sacuvan = null, izbor = null, prikaz = "pregled", korak = 0, strana = 0, filter = "svi";
-  let scena = null, samo = null, vidljiva = true;
+  let scena = null, samo = null, vidljiva = true, katalog = null;
   const ids = () => likovi.map((l) => l.id);
   const lik = () => likovi.find((l) => l.id === izbor.lik_id);
-  const novIzbor = () => ({ lik_id: likovi[0].id, mesto: podrazumevano(MESTA), vreme: podrazumevano(VREMENA), doba: podrazumevano(DOBA), brzina: BRZINA[3], velicina: VELICINA[3] });
+  const novIzbor = () => popravi({ lik_id: likovi[0].id, mesto: podrazumevano(MESTA), doba: podrazumevano(DOBA), vreme: podrazumevano(VREMENA), brzina: BRZINA[3], velicina: VELICINA[3] }, katalog);
+  /** Panorama i njena širina za izbor (putanje u katalogu su relativne prema mesto-voznje/). */
+  const panorama = (z) => ({ panorama: `mesto-voznje/${panoramaKljuc(katalog, z.mesto, z.doba, z.vreme)}`, sirinaPanorame: katalog.mesta[z.mesto].sirina });
+  /** Naziv, opis i ikonica opcije; „Vedro“ noću je mesec i zvezde, ne sunce. */
+  const prikazOpcije = (polje, [id, t, opis], z) => (polje === "vreme" && id === "vedro" && z.doba === "noc"
+    ? { t, opis: "mesec i zvezde", iko: IKO.noc } : { t, opis, iko: IKO[id] });
   const filtrirani = () => (filter === "svi" ? likovi : likovi.filter((l) => (l.kategorije || []).includes(filter)));
 
   function procitaj() {
-    try { return valjan(JSON.parse(localStorage.getItem(KLJUC) || "null"), ids()); } catch (e) { return null; }
+    try { return valjan(JSON.parse(localStorage.getItem(KLJUC) || "null"), ids(), katalog); } catch (e) { return null; }
   }
 
-  // ---------------------------------------------------------------- animacija: samo biciklista (korak 1) ili scena „Reka“ (ostalo)
+  // ---------------------------------------------------------------- animacija: samo biciklista (korak 1) ili scena vožnje (ostalo)
   // Pokreće se samo ono što se vidi; pauza van ekrana, u sakrivenom tabu, kad je prozor zatvoren i uz „manje pokreta“.
   const smeDaVozi = () => dlg && dlg.open && vidljiva && !document.hidden && !bezPokreta.matches;
   const uSceni = () => prikaz === "pregled" || korak > 0;
@@ -110,16 +145,18 @@ const PROFIL = (() => {
   const sirina = () => (usko.matches ? SCENA.sirinaPrikazaUsko : SCENA.sirinaPrikaza);
 
   async function ucitajMaterijal() {
-    const json = fetch(`likovi/likovi.json${LJ.VER ? `?v=${LJ.VER}` : ""}`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+    const uzmi = (put) => fetch(`${put}${LJ.VER ? `?v=${LJ.VER}` : ""}`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+    const json = uzmi("likovi/likovi.json"), kat = uzmi(KATALOG);
     await LJ.ucitajSkript("assets/nasicu/nasicu-likovi.js");
-    await Promise.all([LJ.ucitajSkript("assets/nasicu/likovi-probni.js"), LJ.ucitajSkript("assets/nasicu/reka-scena.js")]);
+    await Promise.all([LJ.ucitajSkript("assets/nasicu/likovi-probni.js"), LJ.ucitajSkript("assets/scena-voznje.js")]);
     likovi = await json;
+    katalog = await kat;
   }
   function napraviPregled() {
     const el = dlg.querySelector("#pf-scena");
     el.querySelector(".pf-ucitava")?.remove();
     samo = napraviSamo(el.querySelector(".pf-samo"));
-    scena = NaSicuRekaScena.napravi(el.querySelector(".pf-platno"), { ...SCENA, sirinaPrikaza: sirina(), lik: izbor.lik_id, brzina: izbor.brzina, velicinaLika: izbor.velicina });
+    scena = NaSicuScenaVoznje.napravi(el.querySelector(".pf-platno"), { ...SCENA, ...panorama(izbor), sirinaPrikaza: sirina(), lik: izbor.lik_id, brzina: izbor.brzina, velicinaLika: izbor.velicina });
     new IntersectionObserver(([e]) => { vidljiva = e.isIntersecting; osveziPokret(); }).observe(el);
     document.addEventListener("visibilitychange", osveziPokret);
     bezPokreta.addEventListener("change", osveziPokret);
@@ -129,13 +166,12 @@ const PROFIL = (() => {
     if (!scena) return;
     const el = dlg.querySelector("#pf-scena");
     el.classList.toggle("samo-lik", !uSceni());
-    scena.podesi({ lik: izbor.lik_id, brzina: izbor.brzina, velicinaLika: izbor.velicina });
+    scena.podesi({ lik: izbor.lik_id, brzina: izbor.brzina, velicinaLika: izbor.velicina, ...panorama(izbor) });
     samo.crtaj();
-    // oznake stižu korak po korak: mesto od koraka 2, vreme od 3, doba dana od 4 (u pregledu sve)
+    // oznake stižu korak po korak: mesto od koraka 2, doba dana od 3, vreme od 4 (u pregledu sve)
     const do_ = prikaz === "pregled" ? 3 : korak;
-    const ime = (k) => OPCIJE[k].find((o) => o[0] === izbor[k])[1];
-    dlg.querySelector("#pf-oznake").innerHTML = ["mesto", "vreme", "doba"].filter((_, i) => i < do_)
-      .map((k) => `<span>${IKO[izbor[k]]}${ime(k)}</span>`).join("");
+    dlg.querySelector("#pf-oznake").innerHTML = ["mesto", "doba", "vreme"].filter((_, i) => i < do_)
+      .map((k) => { const p = prikazOpcije(k, OPCIJE[k].find((o) => o[0] === izbor[k]), izbor); return `<span>${p.iko}${p.t}</span>`; }).join("");
     dlg.querySelector("#pf-lik-ime").textContent = lik().ime;
     osveziPokret();
   }
@@ -152,7 +188,7 @@ const PROFIL = (() => {
       : `<div class="pf-prazno">
            <img src="assets/slike/brend/NaSicu_ikonica_bicikl.svg" alt="" width="120" height="75">
            <h3>Još nemaš svog biciklistu</h3>
-           <p class="sitno">Izaberi lik koji liči na tebe, gde voziš, po kakvom vremenu i u koje doba dana.</p>
+           <p class="sitno">Izaberi lik koji liči na tebe, gde voziš, u koje doba dana i po kakvom vremenu.</p>
            <div class="pf-akcije"><button type="button" class="dugme primarno" data-akcija="napravi">${LJ.ik("bike")}Napravi biciklistu</button>
              <button type="button" class="dugme" data-akcija="prijava">${LJ.ik("user")}Prijavi se</button></div></div>`;
     dlg.querySelector("#pf-carobnjak").hidden = dlg.querySelector("#pf-koraci").hidden = true;
@@ -162,7 +198,7 @@ const PROFIL = (() => {
   function pocniCarobnjak() {
     prikaz = "carobnjak";
     korak = 0;
-    izbor = sacuvan ? { ...sacuvan } : novIzbor();
+    izbor = sacuvan ? popravi({ ...sacuvan }, katalog) : novIzbor();
     filter = "svi";
     strana = Math.max(0, Math.floor(likovi.findIndex((l) => l.id === izbor.lik_id) / PO_STRANI));
     dlg.querySelector("#pf-naslov").textContent = sacuvan ? "Izmeni biciklistu" : "Napravi biciklistu";
@@ -201,9 +237,11 @@ const PROFIL = (() => {
       <div class="pf-strana sitno">Strana <b>${strana + 1}</b> / ${n}</div>`;
   }
   function korakOpcije(k) {
-    return `<div class="pf-opcije" role="group">${OPCIJE[k].map(([id, t, opis, gotovo]) => `
+    return `<div class="pf-opcije" role="group">${OPCIJE[k].map((o) => {
+      const id = o[0], gotovo = dostupno(katalog, k, id, izbor), p = prikazOpcije(k, o, izbor);
+      return `
       <button type="button" class="pf-opcija${gotovo ? "" : " u-izradi"}" data-k="${k}" data-v="${id}" aria-pressed="${izbor[k] === id}">
-        ${IKO[id]}<b>${t}</b><span>${opis}</span>${gotovo ? "" : '<i class="oznaka-meni siva">U IZRADI</i>'}</button>`).join("")}</div>`;
+        ${p.iko}<b>${p.t}</b><span>${p.opis}</span>${gotovo ? "" : '<i class="oznaka-meni siva">U IZRADI</i>'}</button>`; }).join("")}</div>`;
   }
   function crtajKorak(fokus) {
     dlg.querySelectorAll(".pf-korak").forEach((b, i) => {
@@ -239,7 +277,7 @@ const PROFIL = (() => {
     dugme.disabled = true;
     stanje("Čuvanje…");
     try {
-      const z = valjan(izbor, ids());
+      const z = valjan(izbor, ids(), katalog);
       if (!z) throw new Error("nepoznat biciklista");
       localStorage.setItem(KLJUC, JSON.stringify(z));
       sacuvan = z;
@@ -293,9 +331,14 @@ const PROFIL = (() => {
       if (l) { izaberiLik(l.dataset.id); return; }
       const o = e.target.closest(".pf-opcija");
       if (o) {
-        const [, t, , gotovo] = OPCIJE[o.dataset.k].find((x) => x[0] === o.dataset.v);
-        if (!gotovo) { LJ.tost(`„${t}“ je u izradi — uskoro.`, "info"); return; }
-        izbor[o.dataset.k] = o.dataset.v;
+        const polje = o.dataset.k, v = o.dataset.v;
+        if (!dostupno(katalog, polje, v, izbor)) {
+          const { t } = prikazOpcije(polje, OPCIJE[polje].find((x) => x[0] === v), izbor);
+          LJ.tost(`„${t}“ ${polje === "mesto" ? "je u izradi" : "za ovaj izbor je u izradi"} — uskoro.`, "info");
+          return;
+        }
+        izbor[polje] = v;
+        popravi(izbor, katalog);                               // npr. novo mesto nema noć → najbliže dostupno
         crtajKorak();
       }
     });
