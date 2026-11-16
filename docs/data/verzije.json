@@ -1,15 +1,26 @@
 {
- "generisano_utc": "2026-11-16T08:40Z",
+ "generisano_utc": "2026-11-16T12:06Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.82",
+   "datum": "2026-11-16T13:06",
+   "naslov": "O projektu: izvor UGZINS, ažurna pravila i opis stanja; nova lozinka",
+   "stavke": [
+    "Izvor brojača: Mikrobit senzorika d.o.o., UGZINS (pun naziv na prelazu mišem)",
+    "Pravila računanja ažurirana; tabela stanja ima kolonu Opis",
+    "Nova lozinka sajta"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.81",
-   "datum": "2026-11-16T09:40",
+   "datum": "2026-11-16T09:41",
    "naslov": "Test profila prati katalog panorama",
    "stavke": [
     "Provera izbora: reka sada ima i noć"
    ],
-   "commit": null
+   "commit": "319957e"
   },
   {
    "verzija": "1.1.80",
