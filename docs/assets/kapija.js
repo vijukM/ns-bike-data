@@ -8,11 +8,11 @@
 "use strict";
 
 const KAPIJA = (() => {
-  const SO = "f37b675ffd28a455a5208ae893a65ca0";
-  const HES = "c16d40d3d1c163631fac050207d0007da2725339bc242451ca9a4b3b32ccc35a";
-  const SO_K = "7aded22e333cd234fcb6dcbf1e1d74aa";
-  const JAVNI = "BLY5k4S0pHA/MkAMzLet2KcbZaVPFUxhC9jgs2EMQkjysftWmB2su0e6os+j+g84cCvNqUF3u5vs8cy1bV2//7U=";
-  const TAJNI = "+t64/wKp9unrJknb2MDOd380C7L3Mt7Prhyn8Jp4OcWwWa3A6aH7XN/sWfHWfCuuE8A+zZtDBQl5z9Uzw6cuRnPNwMb3HXbiEe7xlPgHeEIUUwrIqIJ1bNkDG5BjJjyPgG4rCxvh+ZALxsYzDvaDIJjgc2BQtysI1uSjXEXWcvWjTj+dPBn1WpbW5rLKSI+yXaAV7iHhla6dlZXgyDMt5vKbhUf5WQ==";
+  const SO = "3211c1a08f4c0352128a739f2d496a55";
+  const HES = "f883d7d3843ab164a06e219207ca35bddb62e12bd99096d2b5746733e35c2bb2";
+  const SO_K = "ef4c3deaeb50d4ab7e4c7b550a4b05ad";
+  const JAVNI = "BNnNAxJbpuAw7JNjEQyCvMN0TGSbi+fre+8xIlyjPc9E0TgeEUI9t58yCckq0bRTUeofySrdZEQVLTJfZ0tPoCA=";
+  const TAJNI = "jZKqaWF7UgI5cp9uAOc5cv22zvYcP/1imI4yl4IBN3HUxVWQS+gd/4zdIreWSp9/vgeCRc9sBfEohqb8tYekbjWsPQzbP80NUd6+CPPhyZoH1U1xGdVMREMjeEjIwdpRCM9SyzXQZH51wa+Cycf8fFktlAY+cgnrRVw9wYMgS6GI5agxslsarwwmXFn1ulxeEwoSKBJxmcHNwkJnhQcsFKzjuuOF2Q==";
   // admin provera (strane samo za upravljanje, npr. „Preuzimanje podataka“): posebna lozinka, isti PBKDF2
   const ADMIN_SO = "df96cc565462be35b0de891c0a54416a";
   const ADMIN_HES = "fd1f9fc44f341a01fc72d38f7bdea2b8fca8762f5687689e50c51b1c7934bead";
