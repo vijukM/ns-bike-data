@@ -1,7 +1,16 @@
 {
- "generisano_utc": "2026-11-15T17:01Z",
+ "generisano_utc": "2026-11-16T08:39Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
+  {
+   "verzija": "1.1.80",
+   "datum": "2026-11-16T09:39",
+   "naslov": "Profil: Reka u četiri doba dana",
+   "stavke": [
+    "Reka: jutro, dan, predveče i noć (nova panorama za dan)"
+   ],
+   "commit": null
+  },
   {
    "verzija": "1.1.79",
    "datum": "2026-11-15T18:01",
@@ -10,7 +19,7 @@
     "Nova panorama Centar (jutro, dan, predveče, noć); panorame po mestu u folderu mesto-voznje",
     "Prvo se bira doba dana, pa vreme; nudi se samo ono što postoji"
    ],
-   "commit": null
+   "commit": "367e839"
   },
   {
    "verzija": "1.1.78",
