@@ -77,10 +77,10 @@ def test_provera_sacuvanog_izbora():
     r = json.loads(subprocess.run(["node", "-e", js], check=True, capture_output=True, text=True).stdout)
     # staro „sunce“ → „vedro“
     assert r[0] == {"lik_id": IDS[7], "mesto": "reka", "vreme": "vedro", "doba": "dan", "brzina": 1.5, "velicina": 0.5}
-    # sa katalogom: centar noću postoji, kiša još ne → vedro; reka noću ne postoji → dan; bulevari ne postoje → reka
+    # sa katalogom: centar noću postoji, kiša još ne → vedro; reka noću postoji; bulevari ne postoje → reka (jutro ostaje)
     assert {k: r[1][k] for k in ("mesto", "doba", "vreme")} == {"mesto": "centar", "doba": "noc", "vreme": "vedro"}
-    assert {k: r[2][k] for k in ("mesto", "doba", "vreme")} == {"mesto": "reka", "doba": "dan", "vreme": "vedro"}
-    assert {k: r[3][k] for k in ("mesto", "doba", "vreme")} == {"mesto": "reka", "doba": "dan", "vreme": "vedro"}
+    assert {k: r[2][k] for k in ("mesto", "doba", "vreme")} == {"mesto": "reka", "doba": "noc", "vreme": "vedro"}
+    assert {k: r[3][k] for k in ("mesto", "doba", "vreme")} == {"mesto": "reka", "doba": "jutro", "vreme": "vedro"}
     assert r[4] is None and r[6] is None and r[7] is None
     # bez kataloga: samo podrazumevano; brojevi van opsega → podrazumevano
     assert r[5] == {"lik_id": IDS[0], "mesto": "reka", "vreme": "vedro", "doba": "dan", "brzina": 1, "velicina": 0.62}

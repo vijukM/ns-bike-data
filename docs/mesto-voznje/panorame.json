@@ -4,7 +4,10 @@
     "reka": {
       "sirina": 4800,
       "panorame": {
-        "dan": "reka/reka-dan.svg"
+        "jutro": "reka/reka-jutro.svg",
+        "dan": "reka/reka-dan.svg",
+        "predvece": "reka/reka-predvece.svg",
+        "noc": "reka/reka-noc.svg"
       }
     },
     "centar": {
@@ -16,7 +19,13 @@
         "noc": "centar/centar-noc.svg"
       }
     },
-    "bulevari": { "sirina": 4800, "panorame": {} },
-    "periferija": { "sirina": 4800, "panorame": {} }
+    "bulevari": {
+      "sirina": 4800,
+      "panorame": {}
+    },
+    "periferija": {
+      "sirina": 4800,
+      "panorame": {}
+    }
   }
 }
