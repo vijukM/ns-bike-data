@@ -1,15 +1,24 @@
 {
- "generisano_utc": "2026-11-16T08:39Z",
+ "generisano_utc": "2026-11-16T08:40Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.1.81",
+   "datum": "2026-11-16T09:40",
+   "naslov": "Test profila prati katalog panorama",
+   "stavke": [
+    "Provera izbora: reka sada ima i noć"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.1.80",
-   "datum": "2026-11-16T09:39",
+   "datum": "2026-11-16T09:40",
    "naslov": "Profil: Reka u četiri doba dana",
    "stavke": [
     "Reka: jutro, dan, predveče i noć (nova panorama za dan)"
    ],
-   "commit": null
+   "commit": "9784e15"
   },
   {
    "verzija": "1.1.79",
