@@ -280,7 +280,7 @@
     izabran = iso;
     datumEl.value = iso;
     upisiUrl();
-    if (kal.ec) kal.ec.setOption({ series: [serijaIzabranog(NS.boje())] });
+    if (kal.ec) kal.ec.setOption(NS.opcije({ series: [serijaIzabranog(NS.boje())] }));
     const d = poDatumu.get(iso);
     const i = indeksGrada(iso);
     const tip = tipDana(iso);

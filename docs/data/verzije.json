@@ -1,7 +1,18 @@
 {
- "generisano_utc": "2026-11-16T12:06Z",
+ "generisano_utc": "2026-11-20T14:25Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
+  {
+   "verzija": "1.2.00",
+   "datum": "2026-11-20T15:25",
+   "naslov": "Sajt na engleskom jeziku",
+   "stavke": [
+    "izbor jezika SR / EN u gornjoj traci, pamti se u pregledaču (i ?lang=en u adresi)",
+    "prevedene sve strane dostupne iz menija, meni, prozori, grafici, mape i kapija",
+    "provera prevoda: rečnik i obilazak svih strana na engleskom"
+   ],
+   "commit": null
+  },
   {
    "verzija": "1.1.82",
    "datum": "2026-11-16T13:06",
@@ -11,7 +22,7 @@
     "Pravila računanja ažurirana; tabela stanja ima kolonu Opis",
     "Nova lozinka sajta"
    ],
-   "commit": null
+   "commit": "a6cde1d"
   },
   {
    "verzija": "1.1.81",

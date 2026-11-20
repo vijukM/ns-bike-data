@@ -74,7 +74,7 @@ const NS = (() => {
       kes.set(kljuc, fetch(VERZIJA ? `${kljuc}?v=${VERZIJA}` : kljuc).then((r) => {
         if (!r.ok) throw new Error(`${put}: HTTP ${r.status}`);
         return r.json();
-      }));
+      }).then((d) => { if (typeof PREVOD !== "undefined") PREVOD.imenaIz(put, d); return d; }));
     }
     return kes.get(kljuc);
   }
@@ -132,6 +132,8 @@ const NS = (() => {
     splitLine: { lineStyle: { color: b.mreza } }, nameTextStyle: { color: b["ink-3"], align: "left", fontSize: 11 }, ...extra,
   });
 
+  /** Natpisi grafika na engleskom (PREVOD, assets/prevod.js); na srpskom opcije ostaju iste. */
+  const opcije = (o) => (typeof PREVOD !== "undefined" ? PREVOD.opcije(o) : o);
   /** ECharts grafik: crta se (i animira) tek kad dođe na ekran; ponovo na promenu teme i veličine. */
   const grafici = [];
   /** Sajt ima CSS zoom 0,9 (široki ekrani), pa ECharts (offsetX) promaši sat/dan pod mišem. Pre ECharts-a (faza hvatanja)
@@ -159,7 +161,7 @@ const NS = (() => {
       const pokreni = () => {
         g.ec = echarts.init(el, null, { renderer: "canvas" });
         tacanMis(el, g.ec);
-        g.ec.setOption(g.crtaj(boje()), { notMerge: true });
+        g.ec.setOption(opcije(g.crtaj(boje())), { notMerge: true });
         ok(g);
       };
       if (odmah || typeof LJ === "undefined") {
@@ -171,13 +173,13 @@ const NS = (() => {
           const io = new IntersectionObserver((ul) => {
             if (!ul.some((u) => u.intersectionRatio >= 0.5)) return;
             io.disconnect();
-            if (g.ec) { g.ec.clear(); g.ec.setOption(g.crtaj(boje()), { notMerge: true }); }
+            if (g.ec) { g.ec.clear(); g.ec.setOption(opcije(g.crtaj(boje())), { notMerge: true }); }
           }, { threshold: 0.5 });
           io.observe(el);
         }
       } else LJ.kadVidljivo(el, pokreni);
     });
-    g.osvezi = () => { if (g.ec) g.ec.setOption(g.crtaj(boje()), { notMerge: true }); };
+    g.osvezi = () => { if (g.ec) g.ec.setOption(opcije(g.crtaj(boje())), { notMerge: true }); };
     grafici.push(g);
     return g;
   }
@@ -305,7 +307,7 @@ const NS = (() => {
   return {
     TZ, DANI, DANI_KRATKO, MESECI, MESECI_KRATKO, SEZONE, TIPOVI, STANJA,
     broj, dec, datum, datumDug, dodajDane, razlikaDana, danUNedelji, mesecNaziv, dvaMesta, utcDan, procenat,
-    satneOznake, prognozaLokalno, json, stanice, period12, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
+    satneOznake, prognozaLokalno, json, opcije, stanice, period12, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
     grupisi, oznakaPerioda, kljucPerioda, rupe, premosti, greska, analizaGrada,
   };
 })();

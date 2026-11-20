@@ -64,11 +64,12 @@
     const bez = (x) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
     /** Glavna izmena (naslov) uvek vidljiva; stavke se otvaraju strelicom. otvoreno = pretraga je našla nešto samo u stavkama. */
     const naslovSaStavkama = (naslov, stavke, tag, otvoreno) => {
-      if (!stavke.length) return `<${tag} class="rz-naslov">${esc(naslov)}</${tag}>`;
-      return `<div class="rz-naslov-red"><${tag} class="rz-naslov">${esc(naslov)}</${tag}>
+      // tekst commit-a ostaje na srpskom i uz engleski (assets/prevod.js): istorija se menja sa svakim commit-om
+      if (!stavke.length) return `<${tag} class="rz-naslov" translate="no">${esc(naslov)}</${tag}>`;
+      return `<div class="rz-naslov-red"><${tag} class="rz-naslov" translate="no">${esc(naslov)}</${tag}>
           <button type="button" class="rz-strelica" aria-expanded="${!!otvoreno}" title="Detalji izmene">
             <span>${stavke.length}</span>${LJ.ik("chevron")}</button></div>
-        <ul class="rz-stavke"${otvoreno ? "" : " hidden"}>${stavke.map((s) => `<li${s.startsWith("— ") ? ' class="pod"' : ""}>${esc(s.replace(/^— /, ""))}</li>`).join("")}</ul>`;
+        <ul class="rz-stavke" translate="no"${otvoreno ? "" : " hidden"}>${stavke.map((s) => `<li${s.startsWith("— ") ? ' class="pod"' : ""}>${esc(s.replace(/^— /, ""))}</li>`).join("")}</ul>`;
     };
     pv.addEventListener("click", (e) => {
       const d = e.target.closest(".rz-strelica");
@@ -132,7 +133,7 @@
         const posl = z.izmene[z.izmene.length - 1];
         return `<tr data-id="${esc(z.id)}" class="${z.status === "gotovo" ? "gotov" : ""}">
           <td class="mono">${esc(z.id)}</td>
-          <td><b>${esc(z.naslov)}</b>${z.opis ? `<small>${esc(z.opis)}</small>` : ""}
+          <td><b translate="no">${esc(z.naslov)}</b>${z.opis ? `<small translate="no">${esc(z.opis)}</small>` : ""}
             ${posl ? `<button type="button" class="rz-izmenjeno" aria-expanded="false">${LJ.ik("clock")}izmenjeno ${kad(posl.kad)} · ${z.izmene.length}×</button>
               <ol class="rz-istorija" hidden>${[...z.izmene].reverse().map((iz) => `<li><span>${kad(iz.kad)} · ${esc(iz.autor)}</span>${Object.entries(iz.polja)
                 .map(([p, [st, nv]]) => `<div><b>${POLJA[p] || p}:</b> <s>${esc(vrednost(p, st))}</s> → ${esc(vrednost(p, nv))}</div>`).join("")}</li>`).join("")}</ol>` : ""}</td>

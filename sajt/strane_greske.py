@@ -19,6 +19,12 @@ DOCS = KOREN / "docs"
 LOGO = DOCS / "assets" / "slike" / "brend" / "NaSicu_logo.svg"
 SAJT = ""                                       # sajt je u korenu domena nasicu.rs
 
+
+def verzija() -> str:
+    """Oznaka ?v= sa ostalih strana (prevod.js i rečnik se tako ne zadržavaju stari u kešu)."""
+    m = re.search(r"assets/prevod\.js\?v=(\d+)", (DOCS / "index.html").read_text(encoding="utf-8"))
+    return f"?v={m.group(1)}" if m else ""
+
 GRESKE = {
     404: {"oznaka": "nije pronađeno", "kod": "NIJE_PRONADJENO", "naslov": "Ova strana je skrenula sa staze",
           "tekst": "Link je možda zastareo, ili je strana premeštena. Vrati se na kontrolnu tablu ili potraži stanicu na mapi."},
@@ -55,6 +61,7 @@ def strana(kod: int) -> str:
   <link rel="manifest" href="{SAJT}/site.webmanifest">
   <meta name="theme-color" content="#04162F">
   <script>try{{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark";if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t}}catch(e){{}}</script>
+  <script src="{SAJT}/assets/prevod.js{verzija()}"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
   <style>
@@ -104,7 +111,7 @@ def strana(kod: int) -> str:
       <a class="dugme" id="mapa" href="{SAJT}/mapa">Mapa brojača</a>
       <button class="dugme" type="button" onclick="history.back()">Nazad</button>
     </div>
-    <div class="tehnicki"><span>STATUS <b>{kod}</b></span><span>KOD <b>{g["kod"]}</b></span><span>PUTANJA <b id="putanja">—</b></span></div>
+    <div class="tehnicki"><span>STATUS <b>{kod}</b></span><span>KOD <b>{g["kod"]}</b></span><span>PUTANJA <b id="putanja" translate="no">—</b></span></div>
   </main>
   <script>
     document.getElementById("putanja").textContent = location.pathname.length > 40 ? "…" + location.pathname.slice(-38) : location.pathname;
