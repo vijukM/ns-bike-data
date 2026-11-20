@@ -131,7 +131,7 @@
     // --- brojanje (samo dok je kamera uživo / u fokusu) ---
     function naBroj(n, po, stLinija) {
       const d = Object.entries(po).map(([kk, v]) => `${v} ${(window.BROJAC && BROJAC.KLASE[kk]) || kk}`).join(" · ");
-      brojEl.hidden = false; brojEl.innerHTML = `<b>${n}</b><span class="km-broj-po">${d || "ništa u regionu"}</span>`;
+      brojEl.hidden = false; brojEl.innerHTML = `<b>${n}</b><span class="km-broj-po"${d ? ' translate="no"' : ""}>${d || "ništa u regionu"}</span>`;
       if (stLinija && stLinija.length) crtajTablu(stLinija);
     }
     // tabla sa brojem vozila po liniji (prešlo liniju otkad je brojanje uključeno) i procenom na sat

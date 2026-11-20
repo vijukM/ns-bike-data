@@ -8,7 +8,7 @@ const LJ = (() => {
   if (location.protocol !== "file:" && /\.html$/.test(location.pathname))
     history.replaceState(history.state, "", location.pathname.replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "") + location.search + location.hash);
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00
-  const VERZIJA = "1.1.82";
+  const VERZIJA = "1.2.00";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -503,7 +503,7 @@ const LJ = (() => {
   const bezKvacica = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "dj");
   let paleta = null, uliceP = null;
   // grupe pretrage (filteri ispod polja); „Sve“ je podrazumevano
-  const GRUPE_PRETRAGE = [["sve", "Sve"], ["Strane", "Strane"], ["Stanice", "Stanice"], ["Ulice", "Ulice"]];
+  const GRUPE_PRETRAGE = [["sve", "Sve"], ["Strane", "Stranice"], ["Stanice", "Stanice"], ["Ulice", "Ulice"]];
   const uliceZaPretragu = () => (uliceP ||= NS.json("staze_analiza.json", "data/")
     .then((a) => (a.ulice || []).filter((u) => u.n && !u.van_ulice).map((u) => ({ grupa: "Ulice", t: u.n,
       opis: `${NS.dec(u.km)} km staza${u.brojaci && u.brojaci.length ? ` · brojači ${u.brojaci.join(", ")}` : ""}`,
@@ -713,14 +713,22 @@ const LJ = (() => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); otvoriPretragu(); }
       if (e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName)) { e.preventDefault(); otvoriPretragu(); }
     });
-    padajuce(document.getElementById("jezik-dugme"), async (p) => {
+    // jezik: srpski ili engleski (assets/prevod.js prevodi stranu); izbor se pamti i strana se učita ponovo
+    const jezikSada = typeof PREVOD !== "undefined" && PREVOD.en ? "en" : "sr";
+    const jezikDugme = document.getElementById("jezik-dugme");
+    jezikDugme.textContent = jezikSada.toUpperCase();
+    padajuce(jezikDugme, async (p) => {
       p.classList.add("mali");
-      setTimeout(() => p.querySelector("[data-jezik=en]").addEventListener("click", () => {
-        p.remove(); tost("English version is coming soon — the site is in Serbian for now.", "globe");
-      }));
-      return `<div class="naslov-panela eyebrow">Jezik</div>
-        <button class="red-panela" data-jezik="sr">${ik("check")}<span>Srpski<small>latinica</small></span></button>
-        <button class="red-panela" data-jezik="en"><span style="width:18px"></span><span>English<small>uskoro</small></span></button>`;
+      setTimeout(() => p.querySelectorAll("[data-jezik]").forEach((b) => b.addEventListener("click", () => {
+        const j = b.dataset.jezik;
+        if (j === jezikSada) { p.remove(); return; }
+        if (typeof PREVOD !== "undefined") PREVOD.postavi(j);
+        const u = new URL(location.href);
+        u.searchParams.delete("lang");
+        location.replace(u.href);
+      })));
+      const red = (j, ime, opis) => `<button class="red-panela" data-jezik="${j}" translate="no">${j === jezikSada ? ik("check") : '<span style="width:18px"></span>'}<span>${ime}<small>${opis}</small></span></button>`;
+      return `<div class="naslov-panela eyebrow">Jezik</div>${red("sr", "Srpski", "latinica")}${red("en", "English", "engleski")}`;
     });
     obavestenja();
     pojave();

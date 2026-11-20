@@ -12,6 +12,7 @@
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#04162F">
   <script>try{var d=document.documentElement,t=localStorage.getItem("ns-tema")||"dark";if(t==="sistem")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.dataset.theme=t}catch(e){}</script>
+  <script src="/assets/prevod.js?v=202611201300"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
   <style>
@@ -75,7 +76,7 @@
       <a class="dugme" id="mapa" href="/mapa">Mapa brojača</a>
       <button class="dugme" type="button" onclick="history.back()">Nazad</button>
     </div>
-    <div class="tehnicki"><span>STATUS <b>404</b></span><span>KOD <b>NIJE_PRONADJENO</b></span><span>PUTANJA <b id="putanja">—</b></span></div>
+    <div class="tehnicki"><span>STATUS <b>404</b></span><span>KOD <b>NIJE_PRONADJENO</b></span><span>PUTANJA <b id="putanja" translate="no">—</b></span></div>
   </main>
   <script>
     document.getElementById("putanja").textContent = location.pathname.length > 40 ? "…" + location.pathname.slice(-38) : location.pathname;

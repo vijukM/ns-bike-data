@@ -531,7 +531,7 @@
       const kandidati = [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9].map(mesto);
       const [mx, my] = kandidati.find((k) => !sudar(k)) || kandidati[0];
       zauzeto.push([mx, my, pola]);
-      return `<g class="pr-mapa-bul"><title>${f.properties.n}</title><path d="${f.geometry.coordinates.map(linija).join("")}"/>
+      return `<g class="pr-mapa-bul" translate="no"><title>${f.properties.n}</title><path d="${f.geometry.coordinates.map(linija).join("")}"/>
         <text x="${mx.toFixed(1)}" y="${my.toFixed(1)}">${ime}</text></g>`;
     }).join("") : "";
     const reka = voda ? voda.features.map((f) => f.geometry.coordinates.map((pr) => "M" + pr.map(([x, y]) => tacka(x, y).map((v) => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("") : "";

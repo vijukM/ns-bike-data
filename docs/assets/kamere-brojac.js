@@ -35,7 +35,10 @@ window.BROJAC = (() => {
   const PRACENJE = { prag: 1.6, minPx: 30, izgubljen: 5, tacka: 0.8, produzi: 0.06 };
   // prag: najveći pomak između dva kadra (× veća stranica kutije); izgubljen: posle koliko kadara bez vozila se staza briše;
   // tacka: visina tačke vozila u kutiji (0 = vrh, 1 = dno); produzi: linija se sa svake strane produži za udeo dužine
-  const KLASE = { car: "auto", truck: "kamion", bus: "autobus", motorcycle: "motor", person: "pešak", bicycle: "bicikl" };
+  // nazivi uz broj („3 auto · 1 kamion“); na engleskom (assets/prevod.js) odmah engleski, jer se zbir sklapa iz delova
+  const KLASE = typeof PREVOD !== "undefined" && PREVOD.en
+    ? { car: "cars", truck: "trucks", bus: "buses", motorcycle: "motorbikes", person: "pedestrians", bicycle: "bicycles" }
+    : { car: "auto", truck: "kamion", bus: "autobus", motorcycle: "motor", person: "pešak", bicycle: "bicikl" };
   const BOJE = { car: "#38BDF8", truck: "#F59E0B", bus: "#A78BFA", motorcycle: "#34D399", person: "#F472B6", bicycle: "#FBBF24" };
 
   // ------------------------------------------------------------ učitavanje biblioteke i modela (jednom)
