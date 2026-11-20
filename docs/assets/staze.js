@@ -503,7 +503,7 @@
           <td class="broj">${km(u.km_staze, 2)}<small> km</small></td>
           <td>${u.km_ulice ? `<span class="st-pokr" title="staza duž ${km(u.km_ulice_staza, 2)} od ${km(u.km_ulice, 2)} km ulice"><span class="st-traka-mini"><i style="width:${Math.min(1, u.km_ulice_staza / u.km_ulice) * 100}%"></i></span><small>${pct(Math.min(1, u.km_ulice_staza / u.km_ulice))} od ${km(u.km_ulice)} km</small></span>` : "<span class=\"sitno\">van ulica</span>"}</td><td><span class="st-strane st-strane-${st}" title="${stOpis}">${st}</span></td><td>${vrstaBar(u)}</td>
           <td class="broj">${b ? `<a href="stanica?id=${b.serije[0]}" title="${b.naziv}">${NS.broj(b.prosek)}</a>${u.brojaci.length > 1 ? `<small> +${u.brojaci.length - 1}</small>` : ""}` : "<span class=\"sitno\">—</span>"}</td></tr>`;
-      }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema ulice „${document.getElementById("ul-pretraga").value}“ sa stazom.</td></tr>`) + "</tbody>";
+      }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema ulice „<span translate="no">${NS.esc(document.getElementById("ul-pretraga").value)}</span>“ sa stazom.</td></tr>`) + "</tbody>";
   }
   const tab = document.getElementById("ul-tabela");
   tab.addEventListener("click", (e) => {

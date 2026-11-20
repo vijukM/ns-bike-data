@@ -9,7 +9,7 @@
   try {
     const s = await NS.stanice();
     const r = s.serije.find((x) => x.serija === id);
-    if (!r) throw new Error(`nepoznata stanica „${id}“`);
+    if (!r) throw Object.assign(new Error("nepoznata stanica"), { detalj: id });
     const krajPutanje = document.querySelector(".putanja b");
     if (krajPutanje) krajPutanje.textContent = `${r.serija} · ${r.naziv}`;
     const [d0, p, N] = await Promise.all([NS.json(`dnevno/${id}.json`), NS.json(`profili/${id}.json`), NS.json("dnevno_novo.json").catch(() => null)]);

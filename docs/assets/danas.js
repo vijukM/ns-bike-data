@@ -501,7 +501,7 @@
         <td class="broj">${NS.broj(x.danas)}</td><td class="broj">${x.prog == null ? "—" : NS.broj(Math.round(x.prog))}</td>
         <td class="broj"><span class="danas-razlika ${t ? `ton-${t}` : ""}">${znak(x.odst)}</span></td>
         <td>${spark(x.sati)}</td><td><span class="danas-stanje"><i style="background:${boja}"></i>${txt}${x.napomena ? MAPA.info(x.napomena) : ""}</span></td></tr>`;
-    }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema brojača za „${document.getElementById("t-pretraga").value}“.</td></tr>`) + "</tbody>";
+    }).join("") + (r.length ? "" : `<tr><td colspan="6" class="sitno">Nema brojača za „<span translate="no">${NS.esc(document.getElementById("t-pretraga").value)}</span>“.</td></tr>`) + "</tbody>";
     document.getElementById("t-oznaka").textContent = D.uzivo ? `Brojači · danas do ${D.brojaci_do}` : `Brojači · ${NS.datum(D.datum)}`;
   }
 
