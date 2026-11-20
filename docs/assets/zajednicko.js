@@ -299,15 +299,20 @@ const NS = (() => {
     return { po, sezona, dani, radni, vikend, vikendOdnos: vikend / radni, n0, nMaks, praznik };
   }
 
+  /** Tekst u HTML (unos korisnika, deo adrese): bez tumačenja kao oznaka. */
+  const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   function greska(el, e) {
     console.error(e);
-    el.insertAdjacentHTML("afterbegin", `<div class="upozorenje">⚠ <span>Podaci nisu učitani: ${e.message}</span></div>`);
+    // poruka se ne tumači kao HTML (npr. ?id=… iz adrese); tehnička poruka (HTTP 404 …) ostaje i na engleskom ista,
+    // a naša poruka sa delom iz adrese (e.detalj) se prevodi, dok sam taj deo ne
+    const poruka = e.detalj != null ? `${esc(e.message)} „<span translate="no">${esc(e.detalj)}</span>“` : `<span translate="no">${esc(e.message)}</span>`;
+    el.insertAdjacentHTML("afterbegin", `<div class="upozorenje">⚠ <span>Podaci nisu učitani:</span> ${poruka}</div>`);
   }
 
   return {
     TZ, DANI, DANI_KRATKO, MESECI, MESECI_KRATKO, SEZONE, TIPOVI, STANJA,
     broj, dec, datum, datumDug, dodajDane, razlikaDana, danUNedelji, mesecNaziv, dvaMesta, utcDan, procenat,
     satneOznake, prognozaLokalno, json, opcije, stanice, period12, razlog, razlogSata, pin, zameniPin, boje, tamna, osnova, osaX, osaY, grafik, prekidac, cipovi,
-    grupisi, oznakaPerioda, kljucPerioda, rupe, premosti, greska, analizaGrada,
+    grupisi, oznakaPerioda, kljucPerioda, rupe, premosti, greska, esc, analizaGrada,
   };
 })();

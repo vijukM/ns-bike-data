@@ -151,6 +151,12 @@ const PREVOD = (() => {
     // „naziv:“ (oblačići grafika: ime serije + dvotačka) → prevod bez dvotačke + dvotačka
     const dv = /^(.*\S)\s?:$/.exec(jezgro);
     if (dv) { const p = prevedi(dv[1]); if (p != null) return m[1] + p + ":" + m[3]; }
+    // spojeni opisi („… · nepravilnost, nepravilnost“): deo po deo, ako je svaki deo poznat
+    for (const sep of [" · ", ", "]) {
+      if (!jezgro.includes(sep)) continue;
+      const delovi = jezgro.split(sep).map((d) => prevedi(d));
+      if (delovi.every((d) => d != null)) return m[1] + delovi.join(sep) + m[3];
+    }
     return null;
   }
   /** Engleski šabloni iz rečnika: tekst koji je već na engleskom ostaje isti (i ne beleži se kao promašaj). */
@@ -189,7 +195,8 @@ const PREVOD = (() => {
 
   // ---------------------------------------------------------------- DOM
   const PRESKOCI = new Set(["SCRIPT", "STYLE", "CODE", "PRE", "TEXTAREA", "NOSCRIPT", "TEMPLATE"]);
-  const ATRIBUTI = ["title", "aria-label", "placeholder", "alt", "data-info", "data-natpis", "data-tip"];
+  // samo atributi koje čita čovek; data-* sa ključevima (npr. data-natpis="delovi") kod koristi i ne sme da se menja
+  const ATRIBUTI = ["title", "aria-label", "placeholder", "alt", "data-info"];
   const gotovo = new WeakMap();                    // čvor → tekst koji smo upisali (da se ne prevodi ponovo)
   const gotovoAtr = new WeakMap();                 // element → { atribut: upisano }
   const preskocen = (el) => {

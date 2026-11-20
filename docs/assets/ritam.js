@@ -121,7 +121,7 @@
       ...NS.osnova(b),
       legend: legenda(b),
       grid: { left: 44, right: 14, top: 36, bottom: 28 },
-      tooltip: { ...NS.osnova(b).tooltip, valueFormatter: (v) => `${NS.dec(v)} % dana` },
+      tooltip: { ...NS.osnova(b).tooltip, valueFormatter: (v) => `${NS.dec(v)} % celog dana` },
       xAxis: { type: "category", data: SATI, boundaryGap: false, ...NS.osaX(b) },
       yAxis: { type: "value", ...NS.osaY(b, { axisLabel: { color: b["ink-3"], fontSize: 11, formatter: (v) => `${v} %` } }) },
       series: god.map((g, i) => ({ name: g, type: "line", smooth: 0.3, symbol: "none", data: t.radni_po_godini[g],

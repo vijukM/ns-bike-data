@@ -1,7 +1,18 @@
 {
- "generisano_utc": "2026-11-20T14:25Z",
+ "generisano_utc": "2026-11-20T17:55Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
+  {
+   "verzija": "1.2.01",
+   "datum": "2026-11-20T18:55",
+   "naslov": "Popravke engleske verzije",
+   "stavke": [
+    "natpisi i polja na mapi (granice, okolna naselja) ponovo rade",
+    "prevedeni ređi tekstovi: legenda prognoze, prazne pretrage, poruke o greškama",
+    "unos iz pretrage i adrese se prikazuje kao tekst, ne kao HTML"
+   ],
+   "commit": null
+  },
   {
    "verzija": "1.2.00",
    "datum": "2026-11-20T15:25",
@@ -11,7 +22,7 @@
     "prevedene sve strane dostupne iz menija, meni, prozori, grafici, mape i kapija",
     "provera prevoda: rečnik i obilazak svih strana na engleskom"
    ],
-   "commit": null
+   "commit": "85ba5fb"
   },
   {
    "verzija": "1.1.82",

@@ -182,7 +182,7 @@
     function potvrdiBrisanje(z) {
       brisanje.innerHTML = `<div class="rz-f"><div class="rz-f-glava"><h2>Obrisati zahtev ${esc(z.id)}?</h2>
           <button type="button" class="ikonica-dugme" data-a="zatvori" aria-label="Zatvori">${LJ.ik("x")}</button></div>
-        <p class="muted">„${esc(z.naslov)}“ će biti uklonjen sa spiska.</p>
+        <p class="muted">„<span translate="no">${esc(z.naslov)}</span>“ će biti uklonjen sa spiska.</p>
         <div class="rz-f-dugmad"><button type="button" class="dugme" data-a="zatvori">Otkaži</button>
           <button type="button" class="dugme opasno" data-a="potvrdi">Obriši</button></div></div>`;
       brisanje.querySelector("[data-a=potvrdi]").addEventListener("click", () => {
