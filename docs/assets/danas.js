@@ -30,7 +30,9 @@
     const r = await fetch(`${IZVOR}?t=${Date.now()}`, { cache: "no-store" });
     if (!r.ok) throw new Error(`danas.json: HTTP ${r.status}`);
     const x = await r.json();
-    x.uzivo = true;
+    // izvor (UGZINS) se ne osvežava: danas.json nosi poslednji dan sa podacima, ceo — prikazuje se kao prošli dan
+    x.uzivo = !x.izvor_zastareo;
+    if (x.izvor_zastareo) x.izvor = "zastareo";
     return x;
   }
   // ---------------------------------------------------------------- prošli dani
@@ -214,11 +216,20 @@
     document.getElementById("dan-danas").hidden = !!D.uzivo;          // „Danas“ samo kad nije prikazan današnji dan
     if (!D.uzivo) {
       const [dan, datum] = NS.datumDug(D.datum).split(", ");
-      document.getElementById("danas-datum").textContent = `Pregled dana · ${D.izvor === "istorija" ? "istorija" : "konačni podaci"}`;
+      const zast = D.izvor === "zastareo";
+      document.getElementById("danas-datum").textContent = `Pregled dana · ${D.izvor === "istorija" ? "istorija" : zast ? "poslednji podaci" : "konačni podaci"}`;
       document.getElementById("danas-naslov").innerHTML = `${dan}, <em>${datum}</em>`;
       document.getElementById("danas-uzivo").innerHTML = `<span class="danas-osvezeno">${D.izvor === "istorija"
         ? "očišćeni satni podaci iz istorije (master rada)" : `čitanja brojača · poslednje u <b>${D.citanje_lokalno}</b>`}</span>`;
       const ob = document.getElementById("danas-obavestenje");
+      if (zast) {
+        // čitanje radi, ali izvor vraća isti fajl: tačno vreme poslednjeg osvežavanja izvora
+        const t = D.izvor_osvezen_utc ? new Date(D.izvor_osvezen_utc) : null;
+        const kad = t ? `${NS.datum(t.toLocaleDateString("sv-SE", { timeZone: NS.TZ }))} u ${new Intl.DateTimeFormat("sr-Latn-RS", { timeZone: NS.TZ, hour: "2-digit", minute: "2-digit" }).format(t)}` : NS.datum(D.datum);
+        ob.classList.remove("skriveno");
+        ob.textContent = `Brojači ne šalju nove podatke od ${kad} — izvor (UGZINS) se ne osvežava. Čitanje se i dalje pokušava svakog sata; prikazan je poslednji dan sa podacima.`;
+        return;
+      }
       ob.classList.toggle("skriveno", !prazan(D.datum));
       ob.textContent = "Za ovaj dan nema podataka — brojači tada nisu čitani (1. 9. – 7. 10. 2026.).";
       return;

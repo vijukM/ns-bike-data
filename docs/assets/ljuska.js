@@ -8,7 +8,7 @@ const LJ = (() => {
   if (location.protocol !== "file:" && /\.html$/.test(location.pathname))
     history.replaceState(history.state, "", location.pathname.replace(/(^|\/)index\.html$/, "$1").replace(/\.html$/, "") + location.search + location.hash);
   // verzija aplikacije 1.X.YY: +1 na kraju pri svakom commit-u koji menja aplikaciju (ne i podatke), posle .99 ide 1.(X+1).00
-  const VERZIJA = "1.2.01";
+  const VERZIJA = "1.2.02";
   const IK = {
     home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
     map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
@@ -401,11 +401,16 @@ const LJ = (() => {
   function osveziUzivo() {
     if (!uzivoStanje) return;
     const min = Math.round((Date.now() - Date.parse(uzivoStanje.citanje_utc)) / 60000);
-    const sveze = min <= SVEZE_MIN;
-    const sat = new Intl.DateTimeFormat("sr-Latn-RS", { timeZone: "Europe/Belgrade", hour: "2-digit", minute: "2-digit" }).format(new Date(uzivoStanje.citanje_utc));
+    // izvor (UGZINS) ume da stane: čitanje uspe, ali fajl je stari — tada nije „uživo“
+    const izvor = uzivoStanje.izvor_osvezen_utc ? Math.round((Date.now() - Date.parse(uzivoStanje.izvor_osvezen_utc)) / 60000) : null;
+    const izvorStoji = izvor != null && izvor > SVEZE_MIN;
+    const sveze = min <= SVEZE_MIN && !izvorStoji;
+    const fmt = (iso, opc) => new Intl.DateTimeFormat("sr-Latn-RS", { timeZone: "Europe/Belgrade", ...opc }).format(new Date(iso));
+    const sat = fmt(uzivoStanje.citanje_utc, { hour: "2-digit", minute: "2-digit" });
     const kad = min < 60 ? `pre ${Math.max(1, min)} min` : `pre ${Math.floor(min / 60)} h ${min % 60} min`;
-    const naslov = sveze ? `Uživo — podaci sa brojača, poslednje čitanje u ${sat} (${kad}); osvežava se svakog sata`
-      : `Nema svežeg čitanja — poslednje u ${sat} (${kad})`;
+    const naslov = izvorStoji ? `Brojači ne šalju nove podatke od ${fmt(uzivoStanje.izvor_osvezen_utc, { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })} — izvor se ne osvežava`
+      : sveze ? `Uživo — podaci sa brojača, poslednje čitanje u ${sat} (${kad}); osvežava se svakog sata`
+        : `Nema svežeg čitanja — poslednje u ${sat} (${kad})`;
     document.querySelectorAll("[data-uzivo]").forEach((el) => {
       el.classList.toggle("sveze", sveze);
       el.classList.toggle("staro", !sveze);

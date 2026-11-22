@@ -309,8 +309,36 @@ def napravi(sada_utc: datetime, koren: Path = konfig.PODACI, dan: date | None = 
         dan = dan - timedelta(days=1)
         c = citanja_dana(dan, koren)
         if c.empty:
-            return None
+            return zastareo(sada_utc, koren)
     return _snimak(dan, c, sada_utc)
+
+
+def zastareo(sada_utc: datetime, koren: Path = konfig.PODACI, dana_unazad: int = 14) -> dict | None:
+    """Izvor (UGZINS) se ne osvežava: čitanja stižu, ali nose stari datum brojača (npr. od 20. 11. 2026. u 16:59
+    fajl je isti). Tada je u danas.json poslednji dan sa podacima, ceo (kao arhiva), uz oznaku `izvor_zastareo`,
+    vreme poslednjeg osvežavanja izvora i poslednjeg čitanja — strana to napiše umesto „Danas uživo“."""
+    dan = sada_utc.astimezone(konfig.TZ).date()
+    for i in range(dana_unazad + 1):
+        d = dan - timedelta(days=i)
+        fajlovi = sorted((koren / f"{d:%Y}" / f"{d:%m}" / f"{d:%d}").glob("[0-9][0-9][0-9][0-9].csv"))
+        if fajlovi:
+            break
+    else:
+        return None
+    p = pd.read_csv(fajlovi[-1], dtype={"serija": str, "direction": str})
+    if p.empty or "datum_brojaca" not in p:
+        return None
+    posl_dan = date.fromisoformat(str(p["datum_brojaca"].dropna().max()))
+    c = citanja_dana(posl_dan, koren)
+    if c.empty:
+        return None
+    out = _snimak(posl_dan, c, sada_utc, ceo_dan=True)
+    izvor = p["feed_updated_utc"].dropna().astype(str).max() if "feed_updated_utc" in p else None
+    cit = pd.Timestamp(str(p["vreme_citanja_utc"].max()))
+    out.update({"izvor_zastareo": True, "izvor_osvezen_utc": izvor or None,
+                "citanje_utc": cit.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "citanje_lokalno": cit.tz_convert(konfig.TZ).strftime("%H:%M")})
+    return out
 
 
 def _snimak(dan: date, c: pd.DataFrame, sada_utc: datetime, ceo_dan: bool = False) -> dict:
