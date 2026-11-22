@@ -98,3 +98,20 @@ def test_propusteno_citanje_granica_se_procenjuje(tmp_path):
     assert a["procena"] == [11, 12] and d["procena_sati"] == [11, 12]
     # bez čitanja posle granice nema procene (tekući sat ostaje prazan)
     assert d["sati_gotovo"] == 13 and a["sati"][13] is None
+
+
+def test_izvor_stoji_poslednji_dan_ceo_uz_oznaku(tmp_path):
+    """UGZINS ne osvežava fajl: čitanja stižu i danima kasnije, ali sa starim datumom brojača → danas.json nosi
+    poslednji dan sa podacima (ceo, kao arhiva) i oznaku izvor_zastareo, a ne ostaje zaglavljen ili prazan."""
+    for utc, brojac, n in [("2026-10-20 05:02:30", "06:56:00", 10), ("2026-10-20 06:02:30", "07:56:00", 30),
+                           ("2026-10-20 07:02:30", "08:56:00", 45)]:
+        citanje(tmp_path, utc, [{"serija": "a", "direction": "1", "vreme_brojaca": brojac, "danas": n,
+                                 "feed_updated_utc": utc.replace(" ", "T") + "Z"}])
+    # dva dana kasnije: isti (stari) sadržaj izvora
+    citanje(tmp_path, "2026-10-22 10:02:30", [{"serija": "a", "direction": "1", "vreme_brojaca": "08:56:00", "danas": 45,
+                                               "feed_updated_utc": "2026-10-20T07:02:30Z"}])
+    d = danas.napravi(datetime(2026, 10, 22, 10, 5, tzinfo=timezone.utc), tmp_path)
+    assert d is not None and d["izvor_zastareo"] is True
+    assert d["datum"] == "2026-10-20" and d["izvor_osvezen_utc"] == "2026-10-20T07:02:30Z"
+    assert d["citanje_utc"] == "2026-10-22T10:02:30Z" and d["sati_gotovo"] == 24
+    assert d["serije"]["a"]["sati"][7:9] == [20, 15]                  # 07–08 i 08–09 h, ostali sati bez podataka

@@ -1,17 +1,28 @@
 {
- "generisano_utc": "2026-11-20T17:55Z",
+ "generisano_utc": "2026-11-22T18:42Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.2.02",
+   "datum": "2026-11-22T19:42",
+   "naslov": "Danas uživo kad izvor brojača stoji",
+   "stavke": [
+    "kad UGZINS ne osvežava podatke: poslednji dan sa podacima i jasna poruka umesto „prvo čitanje stiže u 00:02“",
+    "znak UŽIVO je siv kad izvor stoji, i kad čitanje stiže",
+    "ostale strane tada ne prikazuju stari dan kao današnji"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.2.01",
-   "datum": "2026-11-20T18:55",
+   "datum": "2026-11-20T18:56",
    "naslov": "Popravke engleske verzije",
    "stavke": [
     "natpisi i polja na mapi (granice, okolna naselja) ponovo rade",
     "prevedeni ređi tekstovi: legenda prognoze, prazne pretrage, poruke o greškama",
     "unos iz pretrage i adrese se prikazuje kao tekst, ne kao HTML"
    ],
-   "commit": null
+   "commit": "a4d372c"
   },
   {
    "verzija": "1.2.00",

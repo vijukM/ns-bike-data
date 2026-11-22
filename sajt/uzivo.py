@@ -35,7 +35,10 @@ def napravi(csv: Path) -> dict:
     for s, g in c.groupby("serija"):
         nema = (g["state"] == 0).any() or g["danas"].isna().any()
         serije[s] = [None if nema else int(g["danas"].sum()), do_sata(g["vreme_brojaca"].max())]
+    # izvor_osvezen_utc: kad je UGZINS poslednji put obnovio fajl (ako stoji, čitanja su „sveža“, a podaci stari)
+    izvor = c["feed_updated_utc"].dropna().astype(str).max() if "feed_updated_utc" in c else None
     return {"datum": str(c["datum_brojaca"].max()), "citanje_utc": str(c["vreme_citanja_utc"].iloc[0]),
+            "izvor_osvezen_utc": izvor or None,
             "napravljeno_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "serije": serije}
 
 

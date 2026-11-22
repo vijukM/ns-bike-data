@@ -74,7 +74,12 @@ const NS = (() => {
       kes.set(kljuc, fetch(VERZIJA ? `${kljuc}?v=${VERZIJA}` : kljuc).then((r) => {
         if (!r.ok) throw new Error(`${put}: HTTP ${r.status}`);
         return r.json();
-      }).then((d) => { if (typeof PREVOD !== "undefined") PREVOD.imenaIz(put, d); return d; }));
+      }).then((d) => {
+        if (typeof PREVOD !== "undefined") PREVOD.imenaIz(put, d);
+        // izvor brojača stoji (danas.json nosi poslednji stari dan): za ostale strane „danas“ još nema podataka
+        if (put === "danas.json" && d && d.izvor_zastareo) return null;
+        return d;
+      }));
     }
     return kes.get(kljuc);
   }
