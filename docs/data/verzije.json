@@ -1,17 +1,27 @@
 {
- "generisano_utc": "2026-11-22T18:42Z",
+ "generisano_utc": "2026-11-24T12:07Z",
  "opis": "Istorija verzija aplikacije (iz git commit-ova; python -m sajt.verzije).",
  "verzije": [
   {
+   "verzija": "1.2.03",
+   "datum": "2026-11-24T13:07",
+   "naslov": "Dani kad izvor stoji ne kvare stanje brojača",
+   "stavke": [
+    "dani bez ijednog podatka za sve brojače (izvor UGZINS stoji od 20. 11.) su „nije preuzeto“",
+    "ne ulaze u „30 dana“: 41 brojač radi, 5 delimično (kao pre prekida)"
+   ],
+   "commit": null
+  },
+  {
    "verzija": "1.2.02",
-   "datum": "2026-11-22T19:42",
+   "datum": "2026-11-22T19:43",
    "naslov": "Danas uživo kad izvor brojača stoji",
    "stavke": [
     "kad UGZINS ne osvežava podatke: poslednji dan sa podacima i jasna poruka umesto „prvo čitanje stiže u 00:02“",
     "znak UŽIVO je siv kad izvor stoji, i kad čitanje stiže",
     "ostale strane tada ne prikazuju stari dan kao današnji"
    ],
-   "commit": null
+   "commit": "5513fd2"
   },
   {
    "verzija": "1.2.01",

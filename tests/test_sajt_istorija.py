@@ -384,3 +384,38 @@ def test_popravljen_28_i_brojaci_van_grada():
     m = pi.maska_van_grada(pd.Series(["36b", "49a", "49a", "23a"]),
                            pd.Series([date(2021, 6, 1), date(2026, 8, 31), date(2026, 9, 1), date(2026, 9, 1)]))
     assert m.tolist() == [True, False, True, False]
+
+
+def test_izvor_stoji_dani_nisu_kvar_brojaca(tmp_path):
+    """Izvor (UGZINS) stoji: čitanja stižu, ali bez ijednog validnog sata ni za jedan brojač → ti dani su „nije
+    preuzeto“ i ne ulaze u „30 dana“, pa brojač koji je radio ostaje „radi“ (ne „delimično“)."""
+    m = _master("15a", date(2026, 7, 20), date(2026, 8, 31), 1.0)
+    m.to_parquet(tmp_path / "master.parquet")
+    dani = pd.date_range("2026-07-19", "2026-09-06", freq="D")
+    w = pd.DataFrame([(d.strftime("%Y-%m-%d"), f"{h:02d}:00") for d in dani for h in range(1, 25)], columns=["Datum", "Cas"])
+    w["temperatura"], w["padavine"], w["sneg_N"], w["is_holiday"] = 10.0, 0.0, 0.0, 0
+    w.to_parquet(tmp_path / "meteo.parquet")
+    pd.DataFrame({"serija": ["15a"], "locationID": ["15NSaPS Vojvodjanska"], "direction": [14], "directionDesc": ["C-D (b)"],
+                  "lat": [45.246], "lon": [19.84]}).to_csv(tmp_path / "feed.csv", index=False)
+    novi = tmp_path / "citanja"
+    (novi / "2026" / "09").mkdir(parents=True)
+    d0 = pi.lokalni_dani(date(2026, 9, 1), date(2026, 9, 5))
+    redovi = []
+    for _, r in d0.iterrows():
+        for t in pd.date_range(r["pocetak_utc"], periods=24, freq="h"):
+            ok = r["datum"] <= date(2026, 9, 2)                         # 1–2. 9. radi, 3–5. 9. izvor stoji
+            redovi.append(("15a", t + pd.Timedelta(hours=1), 3.0 if ok else np.nan, "ok" if ok else "nema_citanja"))
+    s = pd.DataFrame(redovi, columns=["stanica_id", "ts_utc", "y_A", "razlog_A"])
+    s["ts_utc"] = s["ts_utc"].dt.tz_localize("UTC")
+    s.to_parquet(novi / "2026" / "09" / "satno_2026-09.parquet")
+    izlaz = tmp_path / "istorija"
+    pi.pripremi(tmp_path / "master.parquet", tmp_path / "meteo.parquet", tmp_path / "feed.csv", izlaz,
+                novi=novi, vreme_novo=tmp_path / "nema_vremena")
+    try:
+        st = json.loads((izlaz / "stanice.json").read_text())
+        assert ["2026-09-03", "2026-09-05"] in st["nije_preuzeto"]
+        r = st["serije"][0]
+        assert r["stanje"] == "radi" and r["kompletnih_30d"] == r["dana_30d"]
+        assert _dan(izlaz, "15a", date(2026, 9, 4))[2] == pi.KOD["nije_preuzeto"]
+    finally:
+        pi.DO = pi.ISTORIJA_DO
