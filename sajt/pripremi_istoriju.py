@@ -629,13 +629,18 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
     praznici = set(pd.to_datetime(w.loc[w["is_holiday"] == 1, "Datum"]).dt.date)
     velicine = {}
 
-    # dani posle istorije bez ijednog čitanja (rupa 1. 9. – 8. 10. 2026.): „nije preuzeto“
-    sa_redom = set(m.loc[m["datum"] > ISTORIJA_DO, "datum"]) | (set(juce["datum"]) if juce is not None else set())
-    rupa = sorted(x for x in dani["datum"] if x > ISTORIJA_DO and x not in sa_redom)
-    rupa_s = set(rupa)
-
     # dnevno po seriji
     d = dnevno(m, juce)
+
+    # dani posle istorije bez podataka ni za jedan brojač: „nije preuzeto“ — rupa 1. 9. – 8. 10. 2026. (nema čitanja)
+    # i dani kad izvor (UGZINS) stoji, npr. od 20. 11. 2026. u 17 h (čitanja stižu, ali isti stari fajl: nijedan
+    # brojač nema validan sat). Ne računaju se kao kvar brojača, pa ne kvare stanje „30 dana“.
+    sa_redom = set(m.loc[m["datum"] > ISTORIJA_DO, "datum"]) | (set(juce["datum"]) if juce is not None else set())
+    sa_podatkom = set(d.loc[(d["datum"] > ISTORIJA_DO) & (d["validnih"].fillna(0) > 0), "datum"])
+    if juce is not None and len(juce):
+        sa_podatkom |= set(juce.loc[juce["juce"].notna(), "datum"])     # dnevni zbir „juče“ je podatak
+    rupa = sorted(x for x in dani["datum"] if x > ISTORIJA_DO and (x not in sa_redom or x not in sa_podatkom))
+    rupa_s = set(rupa)
     for s in serije:
         ds = d[d["stanica_id"] == s].set_index("datum").reindex(dani["datum"])
         prvi = ds["redova"].first_valid_index()
@@ -643,6 +648,7 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
         bez_reda = ds["razlog"].isna()
         ds.loc[bez_reda, "razlog"] = [KOD["nije_preuzeto"] if x in rupa_s else KOD["nema_reda"] if x > ISTORIJA_DO
                                       else KOD["nije_postavljen"] for x in ds.index[bez_reda]]
+        ds.loc[ds.index.isin(rupa_s), "razlog"] = KOD["nije_preuzeto"]       # i dani kad izvor stoji (redovi bez vrednosti)
         ds["kompletan"] = ds["kompletan"].astype("boolean").fillna(False).astype(bool)
         velicine[f"dnevno/{s}.json"] = _pisi(izlaz / "dnevno" / f"{s}.json", {
             "serija": s, "od": prvi.isoformat(),
@@ -739,7 +745,8 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
             if ms["kod"].isna().all():
                 continue
             kod = ms["kod"].to_numpy(dtype=float)
-            kod = np.where(np.isnan(kod), popuna, kod).astype(int)
+            kod = np.where(np.isnan(kod), popuna, kod)
+            kod = np.where((popuna == KOD["nije_preuzeto"]) & ms["y_A"].isna().to_numpy(), popuna, kod).astype(int)
             sat_obj["v"][s] = [_i(x) for x in ms["y_A"]]
             sat_obj["r"][s] = razlozi_rle(kod)
         velicine[f"sati/{per}.json"] = _pisi(izlaz / "sati" / f"{per}.json", sat_obj)
