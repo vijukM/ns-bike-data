@@ -64,6 +64,15 @@ def oznake(sati_utc: pd.DatetimeIndex) -> list[str]:
 
 # ---------------------------------------------------------------- biciklisti
 
+def prazno_citanje(c: pd.DataFrame) -> bool:
+    """Svi brojači „danas 0“ i „juče 0“ = izvor se ponovo pokrenuo bez podataka (UGZINS 24. 11. 2026. u 14 h);
+    takvo čitanje nije stvaran dan sa nulom. Samo kad ima bar 10 redova (ne mali test ili deo izvora)."""
+    if len(c) < 10 or "juce" not in c or "danas" not in c:
+        return False
+    return bool((pd.to_numeric(c["danas"], errors="coerce").fillna(0) == 0).all()
+                and (pd.to_numeric(c["juce"], errors="coerce").fillna(0) == 0).all())
+
+
 def citanja_dana(dan: date, koren: Path = konfig.PODACI) -> pd.DataFrame:
     """Sva čitanja koja se tiču dana D: folder D i prvo čitanje posle ponoći (folder D+1, ako postoji).
 
@@ -73,7 +82,9 @@ def citanja_dana(dan: date, koren: Path = konfig.PODACI) -> pd.DataFrame:
     delovi = []
     for d in (dan, dan + timedelta(days=1)):
         for f in sorted((koren / f"{d:%Y}" / f"{d:%m}" / f"{d:%d}").glob("[0-9][0-9][0-9][0-9].csv")):
-            delovi.append(pd.read_csv(f, dtype={"serija": str, "direction": str}))
+            x = pd.read_csv(f, dtype={"serija": str, "direction": str})
+            if not prazno_citanje(x):
+                delovi.append(x)
     if not delovi:
         return pd.DataFrame()
     c = pd.concat(delovi, ignore_index=True)
@@ -318,15 +329,17 @@ def zastareo(sada_utc: datetime, koren: Path = konfig.PODACI, dana_unazad: int =
     fajl je isti). Tada je u danas.json poslednji dan sa podacima, ceo (kao arhiva), uz oznaku `izvor_zastareo`,
     vreme poslednjeg osvežavanja izvora i poslednjeg čitanja — strana to napiše umesto „Danas uživo“."""
     dan = sada_utc.astimezone(konfig.TZ).date()
-    for i in range(dana_unazad + 1):
+    p = None
+    for i in range(dana_unazad + 1):                         # poslednje čitanje sa stvarnim podacima
         d = dan - timedelta(days=i)
-        fajlovi = sorted((koren / f"{d:%Y}" / f"{d:%m}" / f"{d:%d}").glob("[0-9][0-9][0-9][0-9].csv"))
-        if fajlovi:
+        for f in reversed(sorted((koren / f"{d:%Y}" / f"{d:%m}" / f"{d:%d}").glob("[0-9][0-9][0-9][0-9].csv"))):
+            x = pd.read_csv(f, dtype={"serija": str, "direction": str})
+            if not x.empty and "datum_brojaca" in x and not prazno_citanje(x):
+                p = x
+                break
+        if p is not None:
             break
-    else:
-        return None
-    p = pd.read_csv(fajlovi[-1], dtype={"serija": str, "direction": str})
-    if p.empty or "datum_brojaca" not in p:
+    if p is None:
         return None
     posl_dan = date.fromisoformat(str(p["datum_brojaca"].dropna().max()))
     c = citanja_dana(posl_dan, koren)

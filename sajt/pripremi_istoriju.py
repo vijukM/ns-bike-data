@@ -636,7 +636,9 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
     # i dani kad izvor (UGZINS) stoji, npr. od 20. 11. 2026. u 17 h (čitanja stižu, ali isti stari fajl: nijedan
     # brojač nema validan sat). Ne računaju se kao kvar brojača, pa ne kvare stanje „30 dana“.
     sa_redom = set(m.loc[m["datum"] > ISTORIJA_DO, "datum"]) | (set(juce["datum"]) if juce is not None else set())
-    sa_podatkom = set(d.loc[(d["datum"] > ISTORIJA_DO) & (d["validnih"].fillna(0) > 0), "datum"])
+    # (i ceo grad 0 ceo dan, npr. 24. 11. 2026. sistem se ponovo pokrenuo: svi brojači „danas 0, juče 0“)
+    posle = m[m["datum"] > ISTORIJA_DO]
+    sa_podatkom = set(posle.loc[posle["y_A"].fillna(0) > 0, "datum"])
     if juce is not None and len(juce):
         sa_podatkom |= set(juce.loc[juce["juce"].notna(), "datum"])     # dnevni zbir „juče“ je podatak
     rupa = sorted(x for x in dani["datum"] if x > ISTORIJA_DO and (x not in sa_redom or x not in sa_podatkom))
@@ -746,8 +748,9 @@ def pripremi(master: Path, meteo: Path, feed_csv: Path, izlaz: Path = IZLAZ, nov
                 continue
             kod = ms["kod"].to_numpy(dtype=float)
             kod = np.where(np.isnan(kod), popuna, kod)
-            kod = np.where((popuna == KOD["nije_preuzeto"]) & ms["y_A"].isna().to_numpy(), popuna, kod).astype(int)
-            sat_obj["v"][s] = [_i(x) for x in ms["y_A"]]
+            rupa_sat = popuna == KOD["nije_preuzeto"]           # ceo dan bez podataka: ni lažne nule (ponovno pokretanje)
+            kod = np.where(rupa_sat, popuna, kod).astype(int)
+            sat_obj["v"][s] = [None if r else _i(x) for x, r in zip(ms["y_A"], rupa_sat)]
             sat_obj["r"][s] = razlozi_rle(kod)
         velicine[f"sati/{per}.json"] = _pisi(izlaz / "sati" / f"{per}.json", sat_obj)
         wm = meteo_na_mrezi(w, mreza)

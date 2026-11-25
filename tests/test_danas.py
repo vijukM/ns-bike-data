@@ -115,3 +115,13 @@ def test_izvor_stoji_poslednji_dan_ceo_uz_oznaku(tmp_path):
     assert d["datum"] == "2026-10-20" and d["izvor_osvezen_utc"] == "2026-10-20T07:02:30Z"
     assert d["citanje_utc"] == "2026-10-22T10:02:30Z" and d["sati_gotovo"] == 24
     assert d["serije"]["a"]["sati"][7:9] == [20, 15]                  # 07–08 i 08–09 h, ostali sati bez podataka
+
+
+def test_citanje_sa_svim_nulama_nije_podatak(tmp_path):
+    """UGZINS se 24. 11. 2026. ponovo pokrenuo: svi brojači „danas 0, juče 0“ — to nije dan sa nulom, već bez podataka."""
+    redovi = [{"serija": f"{i}a", "direction": "1", "vreme_brojaca": "13:58:00", "danas": 0, "juce": 0} for i in range(12)]
+    citanje(tmp_path, "2026-10-20 12:02:30", redovi)
+    c = pd.read_csv(next((tmp_path / "2026" / "10" / "20").glob("*.csv")))
+    assert danas.prazno_citanje(c)
+    assert danas.citanja_dana(date(2026, 10, 20), tmp_path).empty
+    assert not danas.prazno_citanje(c.assign(juce=100))                    # pravi dan sa nulom (npr. noć) ostaje
