@@ -22,7 +22,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,44.0,ok
 15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,31.0,ok
 15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,34.0,ok
-15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+15a,15NSaPS Vojvodjanska,14,Cara Lazara - M. Gorkog (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,19.0,ok
 15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,5.0,ok
 15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,2.0,ok
 15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,3.0,ok
@@ -46,7 +46,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,26.0,ok
 15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,13.0,ok
 15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,16.0,ok
-15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+15b,15NSbPS Vojvodjanska,24,M. Gorkog - Cara Lazara (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,16.0,ok
 20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,1.0,ok
 20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 20b,20NSb S. Jovanovica,23,Futoski put-V. Stepe (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -94,7 +94,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,13.0,ok
 20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,7.0,ok
 20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,1.0,ok
-20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+20a,20NSa S.Jovanovica,13,V. Stepe-Futoski put (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,0.0,ok
 22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,2.0,ok
 22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,1.0,ok
 22b,22NSb Bul. kralja Petra I,23,Kisacka-Kraljevica Marka (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,3.0,ok
@@ -166,7 +166,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,52.0,ok
 23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,43.0,ok
 23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,15.0,ok
-23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+23a,23NSa Bul. cara Lazara,14,Cara Dusana-Balzakova (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,19.0,ok
 25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,0.0,ok
 25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -190,7 +190,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,6.0,ok
 25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,5.0,ok
 25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,2.0,ok
-25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+25a,25NSa Kej zrtava racije,23,Bul. M. Pupina - Maksima Gorkog (b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,5.0,ok
 25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,0.0,ok
 25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -214,7 +214,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,8.0,ok
 25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,6.0,ok
 25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,6.0,ok
-25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+25a,25NSa Kej zrtava racije,13,Maksima Gorkog - Bul. M. Pupina (b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,2.0,ok
 26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,0.0,ok
 26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 26,26NS Strand,21,Beogradski kej - Fruskogorska,2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -262,7 +262,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,2.0,ok
 26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,2.0,ok
 26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,2.0,ok
-26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+26,26NS Strand,11,Fruskogorska - Beogradski kej,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,1.0,ok
 27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,2.0,ok
 27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,1.0,ok
@@ -286,7 +286,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,20.0,ok
 27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,19.0,ok
 27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,5.0,ok
-27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+27b,27NSb Bul. Evrope (K.Racina),24,H. Ruvimova - K. Stankovica (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,14.0,ok
 27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,0.0,ok
 27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -310,7 +310,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,15.0,ok
 27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,9.0,ok
 27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,11.0,ok
-27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+27a,27NSa Bul. Evrope (K.Racina),14,K. Stankovica - H. Ruvimova (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,3.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,2.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,1.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,1.0,ok
@@ -334,7 +334,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,28.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,22.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,13.0,ok
-28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+28,28NS Bul. Oslobodjenja -Slovacka,21,Bul. kralja Petra I - Pap Pavla,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,13.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,3.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,3.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,2.0,ok
@@ -358,7 +358,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,40.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,39.0,ok
 28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,25.0,ok
-28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+28,28NS Bul. Oslobodjenja -Slovacka,11,Pap Pavla - Bul. kralja Petra I,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,20.0,ok
 29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,4.0,ok
 29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,1.0,ok
 29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,1.0,ok
@@ -382,7 +382,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,32.0,ok
 29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,27.0,ok
 29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,13.0,ok
-29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+29a,29NSa Rumenacka,13,J. Tomica - Kralja Petra I (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,16.0,ok
 29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,2.0,ok
 29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,2.0,ok
 29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,1.0,ok
@@ -406,7 +406,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,22.0,ok
 29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,15.0,ok
 29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,8.0,ok
-29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+29b,29NSb Rumenacka,23,Kralja Petra I - J. Tomica (u oba smera)(b),2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,8.0,ok
 30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,5.0,ok
 30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,2.0,ok
 30a,30NSa Bul. cara Lazara,14,Bul. Oslobodj.-Fruskogorska (u oba smera)(b),2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -1318,7 +1318,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,9.0,ok
 51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,5.0,ok
 51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,1.0,ok
-51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+51a,51NSa Futoski put,21,Bul.Evrope-Suboticka,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,9.0,ok
 51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,0.0,ok
 51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,0.0,ok
 51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
@@ -1342,7 +1342,7 @@ serija,locationID,direction,directionDesc,datum,sat,ts,ts_utc,y_A,razlog_A
 51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,21,2026-11-27 21:00:00,2026-11-27 20:00:00+00:00,3.0,ok
 51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,22,2026-11-27 22:00:00,2026-11-27 21:00:00+00:00,5.0,ok
 51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,23,2026-11-27 23:00:00,2026-11-27 22:00:00+00:00,3.0,ok
-51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,,zastarelo
+51a,51NSa Futoski put,11,Suboticka-Bul.Evrope,2026-11-27,24,2026-11-28 00:00:00,2026-11-27 23:00:00+00:00,3.0,ok
 51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-11-27,1,2026-11-27 01:00:00,2026-11-27 00:00:00+00:00,2.0,ok
 51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-11-27,2,2026-11-27 02:00:00,2026-11-27 01:00:00+00:00,2.0,ok
 51b,51NSb Futoski put,21,Suboticka-Bul.Evrope,2026-11-27,3,2026-11-27 03:00:00,2026-11-27 02:00:00+00:00,0.0,ok
